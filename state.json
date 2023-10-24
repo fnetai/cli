@@ -1,0 +1,30 @@
+{
+  ".git": {
+    "success": true,
+    "command": "fnet build"
+  },
+  ".output": {
+    "success": true,
+    "command": "fnet build"
+  },
+  ".vscode": {
+    "success": true,
+    "command": "fnet build"
+  },
+  "dist": {
+    "success": true,
+    "command": "fnet build"
+  },
+  "node_modules": {
+    "success": true,
+    "command": "fnet build"
+  },
+  "src": {
+    "success": true,
+    "command": "fnet build"
+  },
+  "test": {
+    "success": true,
+    "command": "fnet build"
+  }
+}

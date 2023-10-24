@@ -1,0 +1,6 @@
+main:
+  steps:
+    - Hello world step:
+        form: hello-world
+    - Bye bye step:
+        return: Bye bye
