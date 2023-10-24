@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.20.1",
+  "version": "0.20.2",
   "files": [
     "dist"
   ],
@@ -9,6 +9,10 @@
     "build": "rollup --config --bundleConfigAsCjs",
     "deploy": "npm install && npm run build && npm publish --access public",
     "watch": "rollup --config --watch --sourcemap --bundleConfigAsCjs --environment DEVELOPMENT"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/fnetai/cli.git"
   },
   "license": "MIT",
   "dependencies": {
