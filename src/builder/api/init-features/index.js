@@ -246,7 +246,7 @@ module.exports = async ({ atom, context }) => {
     // browsersync default
     const browsersync_default = {
         server: '.',
-        startPath: `${features.app.dir}/index.html`,
+        startPath: `${features.app.dir}`,
         files: ["./dist/**/*"]
     }
 
