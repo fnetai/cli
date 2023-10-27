@@ -46,7 +46,7 @@ module.exports = async ({ atom, context }) => {
             features.src_entry_uses_jsx = usesJSX;
         }
     }
-    
+
     const isAppReact = features.app_has_entry === true || features.src_uses_jsx === true;
     const isCliReact = features.cli_has_entry === true || features.src_uses_jsx === true;
 
@@ -278,6 +278,8 @@ module.exports = async ({ atom, context }) => {
     features.rollup = features.rollup || {};
     features.rollup_output = merge(rollup_output_default, features.rollup_output || features.rollup?.output || {});
 
+    features.string_enabled = features.string === true || (features.string && features.string?.enabled !== false);
+
     const rollup_output_keys = Object.keys(rollup_output_default);
     for (const key of rollup_output_keys) {
         const output = rollup_output_default[key];
@@ -303,6 +305,7 @@ module.exports = async ({ atom, context }) => {
         output.analyzer_options = merge(features.analyzer_options, output.analyzer_options);
         output.visualizer_options = merge(features.visualizer_options, output.visualizer_options);
         output.string_options = merge(features.string_options, output.string_options);
+        output.string = features.string_enabled && output.string;
 
         if (features.form_enabled) output.babel = true;
     }
@@ -320,7 +323,6 @@ module.exports = async ({ atom, context }) => {
     features.image_enabled = features.image === true || (features.image && features.image?.enabled !== false);
     features.analyzer_enabled = features.analyzer === true || (features.analyzer && features.analyzer?.enabled !== false);
     features.visualizer_enabled = features.visualizer === true || (features.visualizer && features.visualizer?.enabled !== false);
-    features.string_enabled = features.string === true || (features.string && features.string?.enabled !== false);
 
     features.dependency_auto_enabled = features.dependency_auto !== false && features.dependency_auto?.enabled !== false;
     features.npm_install_flags = features.npm_install_flags || '';
