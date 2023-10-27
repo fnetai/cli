@@ -73,6 +73,10 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     if (atom.doc.features.visualizer_enabled) {
         packageDevDependencies.push({ package: "rollup-plugin-visualizer", version: "^5.9" });
     }
+
+    if (atom.doc.features.string_enabled) {
+        packageDevDependencies.push({ package: "rollup-plugin-string", version: "^3.0" });
+    }
     
     if (atom.doc.features.css_enabled) {
         packageDevDependencies.push({ package: "rollup-plugin-postcss", version: "4.0" });

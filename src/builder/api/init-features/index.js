@@ -99,7 +99,8 @@ module.exports = async ({ atom, context }) => {
             browser: false,
             replace: true,
             terser: false,
-            enabled: true
+            enabled: true,
+            string: true,
         },
         cjsx: {
             format: "cjs",
@@ -108,7 +109,8 @@ module.exports = async ({ atom, context }) => {
             browser: true,
             replace: true,
             enabled: false,
-            terser: true
+            terser: true,
+            string: true,
         },
         esm: {
             format: "esm",
@@ -119,7 +121,8 @@ module.exports = async ({ atom, context }) => {
             browsersync: true,
             terser: false,
             enabled: true,
-            copy: true
+            copy: true,
+            string: true,
         },
         esmx: {
             format: "esm",
@@ -129,7 +132,8 @@ module.exports = async ({ atom, context }) => {
             replace: true,
             browsersync: false,
             enabled: false,
-            terser: true
+            terser: true,
+            string: true,
         },
         iife: {
             format: "iife",
@@ -138,7 +142,8 @@ module.exports = async ({ atom, context }) => {
             browser: true,
             replace: true,
             enabled: true,
-            terser: true
+            terser: true,
+            string: true,
         },
         umd: {
             format: "umd",
@@ -147,7 +152,8 @@ module.exports = async ({ atom, context }) => {
             browser: true,
             replace: true,
             enabled: false,
-            terser: false
+            terser: false,
+            string: true,
         }
     };
 
@@ -190,6 +196,9 @@ module.exports = async ({ atom, context }) => {
     // visualizer default
     const visualizer_default = {}
 
+    // string default
+    const string_default = {}
+
     if (features.webos === true) {
         rollup_output_default.webos = {
             format: "iife",
@@ -198,6 +207,7 @@ module.exports = async ({ atom, context }) => {
             context: "window",
             replace: true,
             terser: true,
+            string: true,
             babel_options: {
                 targets: {
                     chrome: "79"
@@ -219,6 +229,7 @@ module.exports = async ({ atom, context }) => {
             output_dir: features.app.dir,
             terser: true,
             output_exports: features.app.export === false ? "none" : "auto",
+            string: true,
         }
 
         copy_default.targets = copy_default.targets || [];
@@ -240,6 +251,7 @@ module.exports = async ({ atom, context }) => {
             banner: "#!/usr/bin/env node",
             terser: false,
             output_exports: features.cli.export === false ? "none" : "auto",
+            string: true
         }
     }
 
@@ -261,6 +273,7 @@ module.exports = async ({ atom, context }) => {
     features.image_options = merge(image_default, features.image_options || features.image?.options || {});
     features.analyzer_options = merge(analyzer_default, features.analyzer_options || features.analyzer?.options || {});
     features.visualizer_options = merge(visualizer_default, features.visualizer_options || features.visualizer?.options || {});
+    features.string_options = merge(string_default, features.string_options || features.string?.options || {});
 
     features.rollup = features.rollup || {};
     features.rollup_output = merge(rollup_output_default, features.rollup_output || features.rollup?.output || {});
@@ -289,6 +302,7 @@ module.exports = async ({ atom, context }) => {
         output.image_options = merge(features.image_options, output.image_options);
         output.analyzer_options = merge(features.analyzer_options, output.analyzer_options);
         output.visualizer_options = merge(features.visualizer_options, output.visualizer_options);
+        output.string_options = merge(features.string_options, output.string_options);
 
         if (features.form_enabled) output.babel = true;
     }
@@ -306,6 +320,7 @@ module.exports = async ({ atom, context }) => {
     features.image_enabled = features.image === true || (features.image && features.image?.enabled !== false);
     features.analyzer_enabled = features.analyzer === true || (features.analyzer && features.analyzer?.enabled !== false);
     features.visualizer_enabled = features.visualizer === true || (features.visualizer && features.visualizer?.enabled !== false);
+    features.string_enabled = features.string === true || (features.string && features.string?.enabled !== false);
 
     features.dependency_auto_enabled = features.dependency_auto !== false && features.dependency_auto?.enabled !== false;
     features.npm_install_flags = features.npm_install_flags || '';
