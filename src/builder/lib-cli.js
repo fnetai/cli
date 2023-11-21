@@ -230,19 +230,16 @@ yargs(hideBin(process.argv))
     })
     .command('cli [commands..]', 'npm run cli - bridge', (yargs) => {
         return yargs
-            .option('id', { type: 'string' });
+            .help(false)
+            .version(false);
     }, async (argv) => {
         try {
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const commands = argv.commands || [];
-            const flags = Object.keys(argv)
-                .filter(key => key !== '_' && key !== '$0' && key !== 'commands' && key !== 'id' && typeof argv[key] !== 'object')
-                .map(key => `--${key}=${argv[key]}`)
-                .join(' ');
+            const rawArgs = process.argv.slice(2).join(' ');
 
-            const command = `npm run cli ${commands.join(' ')} ${flags}`;
+            const command = `npm run cli -- ${rawArgs}`;
 
             shell.exec(command, { cwd: projectDir });
             process.exit(0);
