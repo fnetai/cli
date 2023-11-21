@@ -119,7 +119,7 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(2).join(' ');
+            const rawArgs = process.argv.slice(3).join(' ');
 
             const command = `npm ${rawArgs}`;
 
@@ -139,7 +139,7 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(2).join(' ');
+            const rawArgs = process.argv.slice(3).join(' ');
 
             const command = `node ${rawArgs}`;
 
@@ -159,7 +159,7 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(2).join(' ');
+            const rawArgs = process.argv.slice(3).join(' ');
 
             const command = `npm run serve -- ${rawArgs}`;
 
@@ -180,7 +180,7 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(2).join(' ');
+            const rawArgs = process.argv.slice(3).join(' ');
 
             const command = `npm run watch -- ${rawArgs}`;
 
@@ -200,7 +200,7 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(2).join(' ');
+            const rawArgs = process.argv.slice(3).join(' ');
 
             const command = `npm run app -- ${rawArgs}`;
 
@@ -221,7 +221,7 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(2).join(' ');
+            const rawArgs = process.argv.slice(3).join(' ');
 
             const command = `npm run cli -- ${rawArgs}`;
 
