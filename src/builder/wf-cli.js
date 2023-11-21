@@ -112,19 +112,16 @@ yargs(hideBin(process.argv))
     })
     .command('npm [commands..]', 'npm - bridge', (yargs) => {
         return yargs
-            .option('id', { type: 'string' });
+            .help(false)
+            .version(false);
     }, async (argv) => {
         try {
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const commands = argv.commands || [];
-            const flags = Object.keys(argv)
-                .filter(key => key !== '_' && key !== '$0' && key !== 'commands' && key !== 'id' && typeof argv[key] !== 'object')
-                .map(key => `--${key}=${argv[key]}`)
-                .join(' ');
+            const rawArgs = process.argv.slice(2).join(' ');
 
-            const command = `npm ${commands.join(' ')} ${flags}`;
+            const command = `npm ${rawArgs}`;
 
             shell.exec(command, { cwd: projectDir });
             process.exit(0);
@@ -135,19 +132,16 @@ yargs(hideBin(process.argv))
     })
     .command('node [commands..]', 'node - bridge', (yargs) => {
         return yargs
-            .option('id', { type: 'string' });
+            .help(false)
+            .version(false);
     }, async (argv) => {
         try {
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const commands = argv.commands || [];
-            const flags = Object.keys(argv)
-                .filter(key => key !== '_' && key !== '$0' && key !== 'commands' && key !== 'id' && typeof argv[key] !== 'object')
-                .map(key => `--${key}=${argv[key]}`)
-                .join(' ');
+            const rawArgs = process.argv.slice(2).join(' ');
 
-            const command = `node ${commands.join(' ')} ${flags}`;
+            const command = `node ${rawArgs}`;
 
             shell.exec(command, { cwd: projectDir });
             process.exit(0);
@@ -158,19 +152,16 @@ yargs(hideBin(process.argv))
     })
     .command('serve [commands..]', 'npm run serve - bridge', (yargs) => {
         return yargs
-            .option('id', { type: 'string' });
+            .help(false)
+            .version(false);
     }, async (argv) => {
         try {
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const commands = argv.commands || [];
-            const flags = Object.keys(argv)
-                .filter(key => key !== '_' && key !== '$0' && key !== 'commands' && key !== 'id' && typeof argv[key] !== 'object')
-                .map(key => `--${key}=${argv[key]}`)
-                .join(' ');
+            const rawArgs = process.argv.slice(2).join(' ');
 
-            const command = `npm run serve ${commands.join(' ')} ${flags}`;
+            const command = `npm run serve -- ${rawArgs}`;
 
             shell.exec(command, { cwd: projectDir });
             process.exit(0);
@@ -179,21 +170,19 @@ yargs(hideBin(process.argv))
             process.exit(1);
         }
     })
+
     .command('watch [commands..]', 'npm run watch - bridge', (yargs) => {
         return yargs
-            .option('id', { type: 'string' });
+            .help(false)
+            .version(false);
     }, async (argv) => {
         try {
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const commands = argv.commands || [];
-            const flags = Object.keys(argv)
-                .filter(key => key !== '_' && key !== '$0' && key !== 'commands' && key !== 'id' && typeof argv[key] !== 'object')
-                .map(key => `--${key}=${argv[key]}`)
-                .join(' ');
+            const rawArgs = process.argv.slice(2).join(' ');
 
-            const command = `npm run watch ${commands.join(' ')} ${flags}`;
+            const command = `npm run watch -- ${rawArgs}`;
 
             shell.exec(command, { cwd: projectDir });
             process.exit(0);
@@ -204,19 +193,16 @@ yargs(hideBin(process.argv))
     })
     .command('app [commands..]', 'npm run app - bridge', (yargs) => {
         return yargs
-            .option('id', { type: 'string' });
+            .help(false)
+            .version(false);
     }, async (argv) => {
         try {
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const commands = argv.commands || [];
-            const flags = Object.keys(argv)
-                .filter(key => key !== '_' && key !== '$0' && key !== 'commands' && key !== 'id' && typeof argv[key] !== 'object')
-                .map(key => `--${key}=${argv[key]}`)
-                .join(' ');
+            const rawArgs = process.argv.slice(2).join(' ');
 
-            const command = `npm run app ${commands.join(' ')} ${flags}`;
+            const command = `npm run app -- ${rawArgs}`;
 
             shell.exec(command, { cwd: projectDir });
             process.exit(0);
@@ -225,6 +211,7 @@ yargs(hideBin(process.argv))
             process.exit(1);
         }
     })
+
     .command('cli [commands..]', 'npm run cli - bridge', (yargs) => {
         return yargs
             .help(false)
