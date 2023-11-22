@@ -1,5 +1,6 @@
 // #!/usr/bin/env node
 const cwd = process.cwd();
+const { spawn } = require('child_process');
 
 // fnet env
 require('@fnet/config')({
@@ -221,12 +222,15 @@ yargs(hideBin(process.argv))
             const context = await createContext(argv);
             const { projectDir } = context;
 
-            const rawArgs = process.argv.slice(3).join(' ');
+            const rawArgs = process.argv.slice(3);
+            const subprocess = spawn('npm', ['run', 'cli', '--', ...rawArgs], {
+                cwd: projectDir,
+                stdio: 'inherit'
+            });
 
-            const command = `npm run cli -- ${rawArgs}`;
-
-            shell.exec(command, { cwd: projectDir });
-            process.exit(0);
+            subprocess.on('close', (code) => {
+                process.exit(code);
+            });
         } catch (error) {
             console.error(error.message);
             process.exit(1);
