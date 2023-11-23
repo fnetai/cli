@@ -59,6 +59,7 @@ const stepsBlock = require('./block/steps');
 const formBlock = require('./block/form');
 const operationBlock = require('./block/operation');
 const jumpBlock = require('./block/jump');
+const promptBlock = require('./block/prompt');
 
 const htmlScriptBlock = require('./block/html-script');
 const htmlLinkBlock = require('./block/html-link');
@@ -371,11 +372,10 @@ class Builder {
         else if (await yamlBlock.hits(api)) await yamlBlock.init(api);
         else if (await htmlScriptBlock.hits(api)) await htmlScriptBlock.init(api);
         else if (await htmlLinkBlock.hits(api)) await htmlLinkBlock.init(api);
-
         else if (await formBlock.hits(api)) await formBlock.init(api);
-
         else if (await operationBlock.hits(api)) await operationBlock.init(api);
-
+        else if (await promptBlock.hits(api)) await promptBlock.init(api);
+        
         else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
         else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
 

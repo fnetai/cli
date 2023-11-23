@@ -1,6 +1,31 @@
 main:
   steps:
-    - Hello world step:
-        form: hello-world
+    - ask name step:
+        prompt: What is your name?
+        result: user.name
+    - ask surname step:
+        prompt: What is your surname?
+        result: user.surname
+    - ask age step:
+        prompt: What is your age?
+        args:
+          type: number
+        result: user.age
+    - ask provide step:
+        prompt: "Provide the following information:"
+        args:
+          type: form
+          choices:
+            [
+              { name: "firstname", message: "First Name", initial: "Jon" },
+              { name: "lastname", message: "Last Name", initial: "Schlinkert" },
+              {
+                name: "username",
+                message: "GitHub username",
+                initial: "jonschlinkert",
+              },
+            ]
+
+        result: user.form
     - Bye bye step:
-        return: Bye bye
+        return: v::user

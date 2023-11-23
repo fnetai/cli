@@ -1,18 +1,18 @@
 const callBlock = require('../call');
 
 async function hits({ node }) {
-    return node.definition.hasOwnProperty('html-script');
+    return node.definition.hasOwnProperty('prompt');
 }
 
 async function init(api) {
     const { node } = api;
 
-    const name = 'html-script';
+    const name = 'prompt';
     const definition = node.definition;
     const valueType = typeof definition[name];
     if (valueType === 'string' || valueType === 'object') {
-        definition.call = "npm:@flownet/lib-load-browser-script-url";
-        if (valueType === 'string') definition.args = {...definition.args,  src: definition[name] };
+        definition.call = "npm:@fnet/prompt";
+        if (valueType === 'string') definition.args = { ...definition.args, message: definition[name] };
         else definition.args = definition[name];
         delete definition[name];
     }

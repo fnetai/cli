@@ -12,7 +12,7 @@ async function init(api) {
     const valueType = typeof definition[name];
     if (valueType === 'string' || valueType === 'object') {
         definition.call = "npm:@flownet/lib-load-browser-link-url";
-        if (valueType === 'string') definition.args = { src: definition[name] };
+        if (valueType === 'string') definition.args = {...definition.args,  src: definition[name] };
         else definition.args = definition[name];
         delete definition[name];
     }

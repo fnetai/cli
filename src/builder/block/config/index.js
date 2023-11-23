@@ -1,9 +1,3 @@
-const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
-
-const fnetExpression = require('@fnet/expression');
-
 const callBlock = require('../call');
 
 async function hits({ node }) {
@@ -18,7 +12,7 @@ async function init(api) {
     const valueType = typeof definition[name];
     if (valueType === 'string' || valueType === 'object') {
         definition.call = "npm:@fnet/config";
-        if (valueType === 'string') definition.args = { name: definition[name] };
+        if (valueType === 'string') definition.args = { ...definition.args, name: definition[name] };
         else definition.args = definition[name];
         delete definition[name];
     }

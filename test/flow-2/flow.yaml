@@ -1,10 +1,13 @@
 name: flow-2
 features:
-  form: true
-  webos: true
-  terser: true
-  cli: false
   app: false
+  s::rollup.iife: false
+# features:
+  # form: false
+  # webos: true
+  # terser: true
+  # cli: false
+  # app: false
   # rollup:
   #   iife: false
     # output:
