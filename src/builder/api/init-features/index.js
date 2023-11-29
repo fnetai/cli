@@ -87,8 +87,8 @@ module.exports = async ({ atom, context }) => {
         }
     } else features.cli = { enabled: true, extend: features.cli_has_entry === true, export: true, react: isCliReact, ...(features.cli || {}) };
     features.cli.enabled = features.cli.enabled === true && (atom.doc.features.form_enabled === false || features.cli.extend === true || features.cli.enabled === true);
-    features.cli.format = features.cli.format || "cjs";
-    features.cli.folder = features.cli.folder || features.cli.folder || "cjs";
+    features.cli.format = features.cli.format || "esm";
+    features.cli.folder = features.cli.folder || features.cli.folder || "esm";
 
     // rollup output default
     const rollup_output_default = {
