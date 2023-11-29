@@ -92,26 +92,26 @@ module.exports = async ({ atom, context }) => {
 
     // rollup output default
     const rollup_output_default = {
-        cjs: {
-            format: "cjs",
-            context: features.form_enabled ? "window" : "global",
-            babel: (features.src_uses_jsx === true) || false,
-            browser: false,
-            replace: true,
-            terser: false,
-            enabled: true,
-            string: true,
-        },
-        cjsx: {
-            format: "cjs",
-            context: features.form_enabled ? "window" : "global",
-            babel: (features.src_uses_jsx === true) || false,
-            browser: true,
-            replace: true,
-            enabled: false,
-            terser: true,
-            string: true,
-        },
+        // cjs: {
+        //     format: "cjs",
+        //     context: features.form_enabled ? "window" : "global",
+        //     babel: (features.src_uses_jsx === true) || false,
+        //     browser: false,
+        //     replace: true,
+        //     terser: false,
+        //     enabled: true,
+        //     string: true,
+        // },
+        // cjsx: {
+        //     format: "cjs",
+        //     context: features.form_enabled ? "window" : "global",
+        //     babel: (features.src_uses_jsx === true) || false,
+        //     browser: true,
+        //     replace: true,
+        //     enabled: false,
+        //     terser: true,
+        //     string: true,
+        // },
         esm: {
             format: "esm",
             context: features.form_enabled ? "window" : "global",
