@@ -2,6 +2,7 @@ main:
   steps:
     - ask name step:
         prompt: What is your name?
+        s::args.type: clipboard
         result: user.name
     - ask surname step:
         prompt: What is your surname?
