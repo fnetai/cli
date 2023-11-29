@@ -11,7 +11,8 @@
 //     )
 // }
 
-import { prompt, Confirm, AutoComplete, Survey } from 'enquirer';
+import  Enquirer from 'enquirer';
+const { Survey } = Enquirer;
 
 export default async () => {
 
