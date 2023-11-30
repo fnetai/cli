@@ -4,29 +4,29 @@ main:
         prompt: What is your name?
         s::args.type: clipboard
         result: user.name
-    - ask surname step:
-        prompt: What is your surname?
-        result: user.surname
-    - ask age step:
-        prompt: What is your age?
-        args:
-          type: number
-        result: user.age
-    - ask provide step:
-        prompt: "Provide the following information:"
-        args:
-          type: form
-          choices:
-            [
-              { name: "firstname", message: "First Name", initial: "Jon" },
-              { name: "lastname", message: "Last Name", initial: "Schlinkert" },
-              {
-                name: "username",
-                message: "GitHub username",
-                initial: "jonschlinkert",
-              },
-            ]
+    # - ask surname step:
+    #     prompt: What is your surname?
+    #     result: user.surname
+    # - ask age step:
+    #     prompt: What is your age?
+    #     args:
+    #       type: number
+    #     result: user.age
+    # - ask provide step:
+    #     prompt: "Provide the following information:"
+    #     args:
+    #       type: form
+    #       choices:
+    #         [
+    #           { name: "firstname", message: "First Name", initial: "Jon" },
+    #           { name: "lastname", message: "Last Name", initial: "Schlinkert" },
+    #           {
+    #             name: "username",
+    #             message: "GitHub username",
+    #             initial: "jonschlinkert",
+    #           },
+    #         ]
 
-        result: user.form
+    #     result: user.form
     - Bye bye step:
         return: v::user

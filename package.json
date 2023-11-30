@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.24.0",
+  "version": "0.26.0",
   "files": [
     "dist"
   ],
@@ -31,11 +31,11 @@
     "@flownet/lib-to-nextjs": "^0.1.12",
     "@flownet/lib-to-webos": "^0.2.8",
     "@flownet/lib-upload-files-to-gcs": "^0.2.2",
-    "@flownet/template-node-common": "^0.18.0",
+    "@flownet/template-node-common": "^0.19.2",
     "@flownet/template-node-library": "^0.15.2",
     "@flownet/template-node-workflow": "^0.15.1",
     "@fnet/config": "^0.2.6",
-    "@fnet/expression": "^0.1.12",
+    "@fnet/expression": "^0.1.16",
     "@fnet/shell": "^0.1.12",
     "@fnet/yaml": "^0.1.10",
     "@node-red/util": "^3.1.0",

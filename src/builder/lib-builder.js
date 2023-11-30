@@ -448,6 +448,7 @@ class Builder {
         }
         catch (error) {
             await this._cache_set(this.#buildKey, { status: "FAILED", message: error.message || error });
+            console.log(error);
             throw error;
         }
     }
