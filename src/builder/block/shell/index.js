@@ -1,24 +1,18 @@
-const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
-
-const fnetExpression = require('@fnet/expression');
-
 const callBlock = require('../call');
 
 async function hits({ node }) {
-    return node.definition.hasOwnProperty('yaml');
+    return node.definition.hasOwnProperty('shell');
 }
 
 async function init(api) {
     const { node } = api;
 
-    const name = 'yaml';
+    const name = 'shell';
     const definition = node.definition;
     const valueType = typeof definition[name];
     if (valueType === 'string' || valueType === 'object') {
-        definition.call = "npm:@fnet/yaml";
-        if (valueType === 'string') definition.args = { file: definition[name] };
+        definition.call = "npm:@fnet/shell";
+        if (valueType === 'string') definition.args = {...definition.args,  cmd: definition[name] };
         else definition.args = definition[name];
         delete definition[name];
     }

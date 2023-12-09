@@ -1,9 +1,6 @@
 main:
   steps:
-    - ask name step:
-        prompt: What is your name?
-        s::args.type: clipboard
-        result: user.name
+    - build: g::file://src/build.yaml
     # - ask surname step:
     #     prompt: What is your surname?
     #     result: user.surname
