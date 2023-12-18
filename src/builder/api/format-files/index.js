@@ -8,8 +8,7 @@ module.exports = async ({ setInProgress, context }) => {
     await setInProgress({ message: "Prettifiying source files." });
 
     let srcDir=path.join("src","**","*");
-    let binDir=path.join("src","**","*");
 
-    const result = shell.exec(`prettier --write ${srcDir} ${binDir} *.{js,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
+    const result = shell.exec(`prettier --write ${srcDir} *.{js,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
     if (result.code !== 0) throw new Error('Couldnt format files.');
 }
