@@ -217,7 +217,7 @@ module.exports = async ({ atom, context }) => {
     }
 
     if (features.app.enabled === true) {
-        features.app.dir = path.normalize(`./dist/app/${features.app.folder}`);
+        features.app.dir = `./dist/app/${features.app.folder}`;
 
         rollup_output_default.app = {
             format: features.app.format,
@@ -233,7 +233,7 @@ module.exports = async ({ atom, context }) => {
         }
 
         copy_default.targets = copy_default.targets || [];
-        copy_default.targets.push({ src: path.normalize("./src/app/index.html"), dest:  features.app.dir });
+        copy_default.targets.push({ src: "./src/app/index.html", dest:  features.app.dir });
     }
 
     if (features.cli.enabled === true) {
