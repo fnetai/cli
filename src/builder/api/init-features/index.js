@@ -233,7 +233,7 @@ module.exports = async ({ atom, context }) => {
         }
 
         copy_default.targets = copy_default.targets || [];
-        copy_default.targets.push({ src: "./src/app/index.html", dest: features.app.dir });
+        copy_default.targets.push({ src: path.normalize("./src/app/index.html"), dest: features.app.dir });
     }
 
     if (features.cli.enabled === true) {
@@ -258,8 +258,8 @@ module.exports = async ({ atom, context }) => {
     // browsersync default
     const browsersync_default = {
         server: '.',
-        startPath: `${features.app.dir}`,
-        files: ["./dist/**/*"]
+        startPath: `${path.normalize(features.app.dir)}`,
+        files: [path.normalize("./dist/**/*")]
     }
 
     features.babel_options = (features.babel_options || features.babel?.options || babel_default);
