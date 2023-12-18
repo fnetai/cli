@@ -1,0 +1,6 @@
+targets:
+  - name: npm
+    enabled: false
+    params:
+        name: "@flownet/lib-3"
+        version: "0.1.0"

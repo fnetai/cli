@@ -150,17 +150,27 @@ class Builder {
         });
 
         // .
-        result = shell.exec(`mkdir -p ${projectDir}`);
-        if (result.code !== 0) throw new Error('Couldnt create workflow dir.');
+        let target=projectDir;
+        if(!fs.existsSync(target)){
+            result = shell.exec(`mkdir -p "${projectDir}"`);
+            if (result.code !== 0) throw new Error('Couldnt create workflow dir.');    
+        }
 
         // src
-        result = shell.exec(`mkdir ${projectDir}/src`);
-        if (result.code !== 0) throw new Error('Couldnt create library/src dir.');
+        target=path.join(projectDir,"src");
+
+        if(!fs.existsSync(target)){
+            result = shell.exec(`mkdir "${target}"`);
+            if (result.code !== 0) throw new Error('Couldnt create library/src dir.');    
+        }
 
         // default
-        result = shell.exec(`mkdir ${projectDir}/src/default`);
-        if (result.code !== 0) throw new Error('Couldnt create library/src/default dir.');
-
+        target=path.join(projectDir,"src","default");
+        if(!fs.existsSync()){
+            result = shell.exec(`mkdir "${target}"`);
+            if (result.code !== 0) throw new Error('Couldnt create library/src/default dir.');    
+        }
+ 
         // // src/libs
         // result = shell.exec(`mkdir -p ${projectDir}/src/libs`);
         // if (result.code !== 0) throw new Error('Couldnt create library/src/libs dir.');
