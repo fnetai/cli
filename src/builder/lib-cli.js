@@ -229,7 +229,8 @@ yargs(hideBin(process.argv))
             const rawArgs = process.argv.slice(3);
             const subprocess = spawn('npm', ['run', 'cli', '--', ...rawArgs], {
                 cwd: projectDir,
-                stdio: 'inherit'
+                stdio: 'inherit',
+                shell: true
             });
 
             subprocess.on('close', (code) => {
