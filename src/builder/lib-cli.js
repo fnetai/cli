@@ -21,7 +21,10 @@ const fnetYaml = require('@fnet/yaml');
 const flownetRenderTemplatesDir = require('@flownet/lib-render-templates-dir');
 const Builder = require('./lib-builder');
 const nodeModulesDir = require('./find-node-modules')({ baseDir: __dirname });
-process.env.PATH = `${nodeModulesDir}/.bin:${process.env.PATH}`;
+const pathSeparator = process.platform === 'win32' ? ';' : ':';
+process.env.PATH =`${path.join(nodeModulesDir,'/.bin')}${pathSeparator}${process.env.PATH}`;
+
+//console.log(`${path.join(nodeModulesDir,'/.bin')}`);
 
 yargs(hideBin(process.argv))
     .command('create', 'Create flow node project', (yargs) => {

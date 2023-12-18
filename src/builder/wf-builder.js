@@ -214,41 +214,99 @@ class Builder {
         this.#packageDependencies.push({ package: "chalk", version: "^4" });
     }
 
+    #recursiveDelete(filePath) {
+        if (fs.statSync(filePath).isDirectory()) {
+            fs.readdirSync(filePath).forEach(file => {
+                const curPath = path.join(filePath, file);
+                this.#recursiveDelete(curPath);
+            });
+            fs.rmdirSync(filePath);
+        } else {
+            fs.unlinkSync(filePath);
+        }
+    }
+    #copyRecursiveSync(src, dest) {
+        const exists = fs.existsSync(src);
+        const stats = exists && fs.statSync(src);
+        const isDirectory = exists && stats.isDirectory();
+        if (isDirectory) {
+            fs.mkdirSync(dest, { recursive: true });
+            fs.readdirSync(src).forEach(childItemName => {
+                this.#copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+            });
+        } else {
+            fs.copyFileSync(src, dest);
+        }
+    }
     async initWorkflowDir() {
         const projectDir = this.#context.projectDir;
         const coreDir = this.#context.coreDir;
-        // let result = shell.exec(`rm -rf ${projectDir}`);
-        let result;
-
-        const exclude = ['node_modules'];  // List of directories to exclude from deletion.
 
         // Delete all files and directories in projectDir except those in the exclude list.
-        fs.existsSync(projectDir) && fs.readdirSync(projectDir).forEach(file => {
-            if (!exclude.includes(file)) {
-                result = shell.rm('-rf', path.join(projectDir, file));
+        const exclude = ['node_modules']; // List of directories to exclude from deletion.
+        if (fs.existsSync(projectDir)) {
+            const files = fs.readdirSync(projectDir);
+            for (const file of files) {
+                if (!exclude.includes(file)) {
+                    const filePath = path.join(projectDir, file);
+                    this.#recursiveDelete(filePath);
+                }
             }
-        });
+        }
 
-        // .
-        result = shell.exec(`mkdir -p ${projectDir}`);
-        if (result.code !== 0) throw new Error('Couldnt create workflow dir.');
+        // Create projectDir if it doesn't exist.
+        if (!fs.existsSync(projectDir)) {
+            fs.mkdirSync(projectDir, { recursive: true });
+        }
 
-        // src
-        result = shell.exec(`mkdir ${projectDir}/src`);
-        if (result.code !== 0) throw new Error('Couldnt create workflow/src dir.');
+        // Create src directory.
+        const srcDir = path.join(projectDir, 'src');
+        if (!fs.existsSync(srcDir)) {
+            fs.mkdirSync(srcDir, { recursive: true });
+        }
 
-        // src/core
-        result = shell.exec(`cp -a ${coreDir} ${projectDir}/src`);
-        if (result.code !== 0) throw new Error('Couldnt create workflow/src/core dir.');
+        // Copy coreDir to src/core
+        const srcCoreDir = path.join(srcDir, 'core');
+        this.#copyRecursiveSync(coreDir, srcCoreDir);
 
-        // // src/libs
-        // result = shell.exec(`mkdir -p ${projectDir}/src/libs`);
-        // if (result.code !== 0) throw new Error('Couldnt create workflow/src/libs dir.');
-
-        // src/default/blocks
-        result = shell.exec(`mkdir -p ${projectDir}/src/default/blocks`);
-        if (result.code !== 0) throw new Error('Couldnt create workflow/src/default/blocks dir.');
+        // Create src/default/blocks directory.
+        const blocksDir = path.join(srcDir, 'default', 'blocks');
+        if (!fs.existsSync(blocksDir)) {
+            fs.mkdirSync(blocksDir, { recursive: true });
+        }
     }
+       
+    // async initWorkflowDir() {
+    //     const projectDir = this.#context.projectDir;
+    //     const coreDir = this.#context.coreDir;
+    //     // let result = shell.exec(`rm -rf ${projectDir}`);
+    //     let result;
+
+    //     const exclude = ['node_modules'];  // List of directories to exclude from deletion.
+
+    //     // Delete all files and directories in projectDir except those in the exclude list.
+    //     fs.existsSync(projectDir) && fs.readdirSync(projectDir).forEach(file => {
+    //         if (!exclude.includes(file)) {
+    //             result = shell.rm('-rf', path.join(projectDir, file));
+    //         }
+    //     });
+
+    //     // .
+    //     result = shell.exec(`mkdir ${projectDir}`);
+    //     if (result.code !== 0) throw new Error('Couldnt create workflow dir.');
+
+    //     // src
+    //     result = shell.exec(`mkdir ${projectDir}/src`);
+    //     if (result.code !== 0) throw new Error('Couldnt create workflow/src dir.');
+
+    //     // src/core
+    //     result = shell.exec(`cp -a ${coreDir} ${projectDir}/src`);
+    //     if (result.code !== 0) throw new Error('Couldnt create workflow/src/core dir.');
+
+    //     // src/default/blocks
+    //     result = shell.exec(`mkdir -p ${projectDir}/src/default/blocks`);
+    //     if (result.code !== 0) throw new Error('Couldnt create workflow/src/default/blocks dir.');
+    // }
 
     async initNunjucks() {
         const templateDir = this.#context.templateDir;
@@ -719,7 +777,7 @@ class Builder {
                     fs.writeFileSync(srcFilePath, template, 'utf8');
                 }
 
-                atomLib.relativePath = relativePath;
+                atomLib.relativePath = relativePath.split(path.sep).join('/');
 
                 this.#atom.typesDir = `./types/${path.basename(projectDir)}/src`;
             }
@@ -730,7 +788,7 @@ class Builder {
             else {
                 const atomLibPath = `${projectDir}/src/libs/${atomLib.id}.js`;
                 const content = atomLib.doc.contents?.find(w => w.format === 'esm') || atomLib.doc;
-                fs.writeFileSync(atomLibPath, content.content, 'utf8');
+                fs.writeFileSync(path.normalize(atomLibPath), content.content, 'utf8');
             }
         }
     }

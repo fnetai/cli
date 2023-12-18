@@ -152,7 +152,7 @@ class Builder {
     // .
     let target = projectDir;
     if (!fs.existsSync(target)) {
-      result = shell.exec(`mkdir -p "${projectDir}"`);
+      result = shell.exec(`mkdir "${projectDir}"`);
       if (result.code !== 0) throw new Error('Couldnt create workflow dir.');
     }
 
@@ -170,10 +170,6 @@ class Builder {
       result = shell.exec(`mkdir "${target}"`);
       if (result.code !== 0) throw new Error('Couldnt create library/src/default dir.');
     }
-
-    // // src/libs
-    // result = shell.exec(`mkdir -p ${projectDir}/src/libs`);
-    // if (result.code !== 0) throw new Error('Couldnt create library/src/libs dir.');
   }
 
   async initNunjucks() {
