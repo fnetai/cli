@@ -277,7 +277,7 @@ class Builder {
   async createAtomLibFiles({ libs }) {
     await this.setInProgress({ message: "Creating external lib files." });
 
-    this.#atom.typesDir = path.join('.', 'types');
+    this.#atom.typesDir = './types';
 
     const atomLibRefs = libs.filter(w => w.type === 'atom');
     for (let i = 0; i < atomLibRefs.length; i++) {
@@ -296,9 +296,9 @@ class Builder {
           fs.writeFileSync(srcFilePath, template, 'utf8');
         }
 
-        atomLib.relativePath = relativePath;
+        atomLib.relativePath = relativePath.split(path.sep).join('/');
 
-        this.#atom.typesDir = path.join('.', 'types', path.basename(projectDir), 'src');
+        this.#atom.typesDir = `./types/${path.basename(projectDir)}/src`;
       }
       else {
         const atomLibPath = path.join(projectDir, 'src', 'libs', `${atomLib.id}.js`);
