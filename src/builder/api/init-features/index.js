@@ -259,7 +259,8 @@ module.exports = async ({ atom, context }) => {
   const browsersync_default = {
     server: '.',
     startPath: `${path.normalize(features.app.dir || '.')}`,
-    files: [path.normalize("./dist/**/*")]
+    files: [path.normalize("./dist/**/*")],
+    cors: true,
   }
 
   features.babel_options = (features.babel_options || features.babel?.options || babel_default);
