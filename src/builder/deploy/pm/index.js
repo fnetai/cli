@@ -36,9 +36,9 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
     command += ` --dir='${projectDir}'`;
     command += ` --pattern={'dist/**/**','bin/**/**','test/**/**','*.html'}`;
     command += ` --destDir='${packageJSON.name}/${packageJSON.version}'`;
-    command += ` --headers.cacheControl='public, max-age=31536000, immutable'`;
+    command += ` --metadata.cacheControl='public, max-age=31536000, immutable'`;
     command += ` --verbose`;
-
+    
     if (gcsConfig.env.DOMAIN) command += ` --domain='${gcsConfig.env.DOMAIN}'`;
 
     if (target.dryRun === true) command += ` --dryRun`;
