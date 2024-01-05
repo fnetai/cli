@@ -8,6 +8,7 @@ const deployToMacOSApp = require('../macos-app');
 const deployToElectron = require('../electron');
 const deployToWebos = require('../webos');
 const deployToNextjs = require('../nextjs');
+const deployToDocker = require('../docker');
 
 module.exports = async (apiContext) => {
 
@@ -37,6 +38,7 @@ module.exports = async (apiContext) => {
         let deployer;
 
         if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
+        else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
 
         if (!deployer) return;
 
