@@ -3,6 +3,21 @@ const fs = require('fs');
 const path = require('path');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 
+function findEntryFile({ dir, name = 'index' }) {
+  let entryFile = path.resolve(dir, `./${name}.tsx`);
+
+  if (!fs.existsSync(entryFile)) entryFile = path.resolve(dir, `./${name}.ts`);
+  if (!fs.existsSync(entryFile)) entryFile = path.resolve(dir, `./${name}.jsx`);
+  if (!fs.existsSync(entryFile)) entryFile = path.resolve(dir, `./${name}.js`);
+  if (!fs.existsSync(entryFile)) return {};
+
+  const file = entryFile;
+  const ext = path.extname(entryFile);
+  const ts = ext === '.ts' || ext === '.tsx';
+
+  return { file, ext, ts, name };
+}
+
 module.exports = async ({ atom, context }) => {
 
   atom.doc.features = atom.doc.features || {};
@@ -12,41 +27,48 @@ module.exports = async ({ atom, context }) => {
 
   const projectDir = path.resolve(context.project.projectDir);
 
-  const appEntryFile = path.resolve(projectDir, './app/index.js');
-  if (fs.existsSync(appEntryFile)) {
-    let parsed = await fnetParseImports({ file: appEntryFile, recursive: true });
+  const appEntry = findEntryFile({ dir: path.resolve(projectDir, './app') });
+  if (appEntry.file) {
+    let parsed = await fnetParseImports({ file: appEntry.file, recursive: true });
     let usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.app_uses_jsx = usesJSX;
     features.app_has_entry = true;
-    parsed = await fnetParseImports({ file: appEntryFile });
+    parsed = await fnetParseImports({ file: appEntry.file });
     usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.app_entry_uses_jsx = usesJSX;
+    features.app_entry_is_ts = appEntry.ts;
+    features.app_entry_ext = appEntry.ext;    
   }
 
-  const cliEntryFile = path.resolve(projectDir, './cli/index.js');
-  if (fs.existsSync(cliEntryFile)) {
-    let parsed = await fnetParseImports({ file: cliEntryFile, recursive: true });
+  const cliEntry = findEntryFile({ dir: path.resolve(projectDir, './cli') });
+  if (cliEntry.file) {
+    let parsed = await fnetParseImports({ file: cliEntry.file, recursive: true });
     let usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.cli_uses_jsx = usesJSX;
     features.cli_has_entry = true;
-    parsed = await fnetParseImports({ file: cliEntryFile });
+    parsed = await fnetParseImports({ file: cliEntry.file });
     usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.cli_entry_uses_jsx = usesJSX;
+    features.cli_entry_is_ts = cliEntry.ts;
+    features.cli_entry_ext = cliEntry.ext;
   }
 
   if (atom.type === 'workflow.lib') {
-    const srcEntryFile = path.resolve(projectDir, './src/index.js');
-    if (fs.existsSync(srcEntryFile)) {
-      let parsed = await fnetParseImports({ file: srcEntryFile, recursive: true });
+    const srcEntry = findEntryFile({ dir: path.resolve(projectDir, './src') });
+
+    if (srcEntry.file) {
+      let parsed = await fnetParseImports({ file: srcEntry.file, recursive: true });
       let usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
       features.src_uses_jsx = usesJSX;
       features.src_has_entry = true;
-      parsed = await fnetParseImports({ file: srcEntryFile });
+      parsed = await fnetParseImports({ file: srcEntry.file });
       usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
       features.src_entry_uses_jsx = usesJSX;
+      features.src_entry_is_ts = srcEntry.ts;
+      features.src_entry_ext = srcEntry.ext;
     }
   }
-
+  
   const isAppReact = features.app_has_entry === true || features.src_uses_jsx === true;
   const isCliReact = features.cli_has_entry === true || features.src_uses_jsx === true;
 

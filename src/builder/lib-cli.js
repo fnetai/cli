@@ -285,8 +285,6 @@ async function loadLocalProject() {
     const libraryAtom = {
         doc: {
             ...projectFileParsed,
-            "content-type": "javascript",
-            "language": "js"
         },
         fileName: "index"
     };
