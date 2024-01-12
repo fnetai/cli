@@ -27,7 +27,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
         packageDependencies.push({ package: "yargs", version: "^17" });
     }
 
-    packageDependencies.push({ package: "chalk", version: "^4" });
+    // packageDependencies.push({ package: "chalk", version: "^4" });
 
     // DEV DEPENDENCIES
     packageDevDependencies.push({ package: "@babel/core", version: "^7.23" });
