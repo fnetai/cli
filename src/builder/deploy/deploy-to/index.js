@@ -1,5 +1,5 @@
 const deployToGitlab = require('../gitlab');
-const deployToPm = require('../pm');
+const deployToGcs = require('../gcs');
 const deployToNpm = require('../npm');
 const deployToNodeRed = require('../red');
 const deployToAtom = require('../atom');
@@ -23,7 +23,7 @@ module.exports = async (apiContext) => {
     else if (deploymentProjectTarget.name === "npm")
         await deployToNpm({ ...apiContext });
     else if (deploymentProjectTarget.name === "gcs")
-        await deployToPm({ ...apiContext });
+        await deployToGcs({ ...apiContext });
     else if (deploymentProjectTarget.name === "gitlab")
         await deployToGitlab({ ...apiContext });
     else if (deploymentProjectTarget.name === "macos-app")

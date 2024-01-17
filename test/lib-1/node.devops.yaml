@@ -9,8 +9,10 @@ targets:
     params:
       name: "@flownet/lib-1"
       version: 0.1.2
+    register:
+      atom: true
   - name: docker
-    enabled: true
+    enabled: false
     params:
       name: "@fnetai/test"
       version: 0.1.2
