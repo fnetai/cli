@@ -9,45 +9,51 @@ const deployToElectron = require('../electron');
 const deployToWebos = require('../webos');
 const deployToNextjs = require('../nextjs');
 const deployToDocker = require('../docker');
+const deployToFnetPackage = require('../fnet-package');
+const deployToFnetForm = require('../fnet-form');
 
 module.exports = async (apiContext) => {
 
-    const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress } = apiContext;
+  const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress } = apiContext;
 
-    if (deploymentProjectTarget.enabled !== true) return;
+  if (deploymentProjectTarget.enabled !== true) return;
 
-    if (deploymentProjectTarget.name === "lib")
-        await deployToAtom({ ...apiContext });
-    else if (deploymentProjectTarget.name === "red")
-        await deployToNodeRed({ ...apiContext });
-    else if (deploymentProjectTarget.name === "npm")
-        await deployToNpm({ ...apiContext });
-    else if (deploymentProjectTarget.name === "gcs")
-        await deployToGcs({ ...apiContext });
-    else if (deploymentProjectTarget.name === "gitlab")
-        await deployToGitlab({ ...apiContext });
-    else if (deploymentProjectTarget.name === "macos-app")
-        await deployToMacOSApp({ ...apiContext });
-    else if (deploymentProjectTarget.name === "ios-app")
-        await deployToIosApp({ ...apiContext });
-    else if (deploymentProjectTarget.name === "electron")
-        await deployToElectron({ ...apiContext });
-    else if (deploymentProjectTarget.name === "webos")
-        await deployToWebos({ ...apiContext });
-    else {
-        let deployer;
+  if (deploymentProjectTarget.name === "lib")
+    await deployToAtom({ ...apiContext });
+  else if (deploymentProjectTarget.name === "red")
+    await deployToNodeRed({ ...apiContext });
+  else if (deploymentProjectTarget.name === "npm")
+    await deployToNpm({ ...apiContext });
+  else if (deploymentProjectTarget.name === "gcs")
+    await deployToGcs({ ...apiContext });
+  else if (deploymentProjectTarget.name === "gitlab")
+    await deployToGitlab({ ...apiContext });
+  else if (deploymentProjectTarget.name === "macos-app")
+    await deployToMacOSApp({ ...apiContext });
+  else if (deploymentProjectTarget.name === "ios-app")
+    await deployToIosApp({ ...apiContext });
+  else if (deploymentProjectTarget.name === "electron")
+    await deployToElectron({ ...apiContext });
+  else if (deploymentProjectTarget.name === "webos")
+    await deployToWebos({ ...apiContext });
+    else if (deploymentProjectTarget.name === "fnet-package")
+    await deployToFnetPackage({ ...apiContext });
+  else if (deploymentProjectTarget.name === "fnet-form")
+    await deployToFnetForm({ ...apiContext });
+  else {
+    let deployer;
 
-        if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
-        else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
+    if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
+    else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
 
-        if (!deployer) return;
+    if (!deployer) return;
 
-        await deployer({
-            atom: atom,
-            target: deploymentProjectTarget,
-            onProgress: setInProgress,
-            projectDir: context.projectDir,
-            dependencies: packageDependencies
-        });
-    }
+    await deployer({
+      atom: atom,
+      target: deploymentProjectTarget,
+      onProgress: setInProgress,
+      projectDir: context.projectDir,
+      dependencies: packageDependencies
+    });
+  }
 }
