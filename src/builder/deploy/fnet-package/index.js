@@ -86,7 +86,9 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
     data: {
       name: packageJSON.name,
       version: packageJSON.version,
-      version_domain: config.env.DOMAIN
+      version_domain: config.env.DOMAIN,
+      docs: target.params.docs,
+      configs: target.params.configs,
     },
     headers: {
       "Content-Type": "application/json",

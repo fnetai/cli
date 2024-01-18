@@ -49,6 +49,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
       name: target.params.name,
       version: target.params.version,
       docs: target.params.docs,
+      configs: target.params.configs,
     },
     headers: {
       "Content-Type": "application/json",
