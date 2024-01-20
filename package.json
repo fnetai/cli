@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.30.2",
+  "version": "0.30.3",
   "files": [
     "dist"
   ],
@@ -49,7 +49,7 @@
     "helmet": "^5.1.1",
     "isobject": "^4.0.0",
     "js-yaml": "^4.1.0",
-    "keycloak-connect": "^22.0.3",
+    "keycloak-connect": "^23.0.4",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
