@@ -25,10 +25,10 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, "\t"));
 
   const { file: pmFile, data: gcsConfig } = await fnetConfig({
-    name: target.params.config || context.gcsConfig || "gcs",
+    name: target.config || "gcs",
     dir: context.projectDir
   });
-
+  
   let command = `fnet-upload-files-to-gcs`;
   command += ` --projectId='${gcsConfig.env.GCS_PROJECT_ID}'`;
   command += ` --bucketName='${gcsConfig.env.GCS_BUCKET_NAME}'`;

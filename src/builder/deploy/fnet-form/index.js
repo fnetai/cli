@@ -9,10 +9,10 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   const newVersion = semver.inc(target.params.version, "patch");
 
   const { file: configFile, data: config } = await fnetConfig({
-    name: target.params.config || "fnet-form",
+    name: target.config || "fnet-form",
     dir: context.projectDir
   });
-  
+
   if (!config.env.ATOM_API_URL) throw new Error(`ATOM_API_URL is required in ${configFile}`);
   if (!config.env.ATOM_API_USERNAME) throw new Error(`ATOM_API_USERNAME is required in ${configFile}`);
   if (!config.env.ATOM_API_PASSWORD) throw new Error(`ATOM_API_PASSWORD is required in ${configFile}`);
@@ -56,4 +56,6 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
       "Authorization": `Bearer ${access_token}`
     },
   });
+
+  if (response.data?.error) throw new Error('Error publishing fnet form.');
 }

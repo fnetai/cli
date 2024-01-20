@@ -27,7 +27,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, "\t"));
 
   const { file: configFile, data: config } = await fnetConfig({
-    name: target.params.config || context.gcsConfig || "fnet-package",
+    name: target.config || "fnet-package",
     dir: context.projectDir
   });
 
@@ -96,5 +96,5 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
     },
   });
 
-  if (response.data?.error) throw new Error(response.data.error);
+  if (response.data?.error) throw new Error("Failed to publish fnet package.");
 }
