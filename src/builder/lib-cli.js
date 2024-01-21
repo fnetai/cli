@@ -33,7 +33,7 @@ yargs(hideBin(process.argv))
       .option('vscode', { type: 'boolean', default: true, alias: 'vs' });
   }, async (argv) => {
     try {
-      const templateDir = path.resolve(nodeModulesDir, '@flownet/template-node-library/project');
+      const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-node/dist/template/project');
       const outDir = path.resolve(cwd, argv.name);
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
@@ -71,7 +71,7 @@ yargs(hideBin(process.argv))
       .option('update', { type: 'boolean', default: false, alias: '-u' });
   }, async (argv) => {
     try {
-      const templateDir = path.resolve(nodeModulesDir, '@flownet/template-node-library/project');
+      const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-node/dist/template/project');
       const outDir = process.cwd();
       argv.name = path.basename(outDir);
 
@@ -288,10 +288,10 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "ac:",
-      templateDir: path.resolve(nodeModulesDir, './@flownet/template-node-library/default'),
-      templateCommonDir: path.resolve(nodeModulesDir, './@flownet/template-node-common/default'),
+      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
+      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-      coreDir: path.resolve(nodeModulesDir, './@flownet/template-node-library/core'),
+      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/core'),
     };
   } else {
     const project = await loadLocalProject();
@@ -299,9 +299,9 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "local:",
-      templateDir: path.resolve(nodeModulesDir, './@flownet/template-node-library/default'),
-      templateCommonDir: path.resolve(nodeModulesDir, './@flownet/template-node-common/default'),
-      coreDir: path.resolve(nodeModulesDir, './@flownet/template-node-library/core'),
+      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
+      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
+      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/core'),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project
