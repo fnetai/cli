@@ -1,16 +1,8 @@
 targets:
   - name: npm
     enabled: false
-    params:
-      name: "@flownet/lib-1"
-      version: 0.1.2
   - name: gcs
     enabled: false
-    params:
-      name: "@flownet/lib-1"
-      version: 0.1.2
-    register:
-      atom: true
   - name: docker
     enabled: false
     params:

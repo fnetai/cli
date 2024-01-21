@@ -34,7 +34,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^25.0" });
     packageDevDependencies.push({ package: "@rollup/plugin-node-resolve", version: "^15.1" });
     packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^5.0" });
-    packageDevDependencies.push({ package: "rollup", version: "^3.26" });
+    packageDevDependencies.push({ package: "rollup", version: "^4.9" });
     packageDevDependencies.push({ package: "rollup-plugin-delete", version: "^2.0" });
     packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6.0" });
     packageDevDependencies.push({ package: "rollup-plugin-peer-deps-external", version: "^2.2" });
@@ -42,8 +42,8 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
 
     if (atom.doc.features.babel_enabled) {
         packageDevDependencies.push({ package: "@rollup/plugin-babel", version: "^6.0" });
-        packageDevDependencies.push({ package: "@babel/preset-env", version: "7.22" });
-        packageDevDependencies.push({ package: "@babel/preset-react", version: "7.22" });
+        packageDevDependencies.push({ package: "@babel/preset-env", version: "7.23" });
+        packageDevDependencies.push({ package: "@babel/preset-react", version: "7.23" });
     }
 
     if (atom.doc.features.browsersync_enabled) {

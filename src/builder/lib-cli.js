@@ -39,7 +39,8 @@ yargs(hideBin(process.argv))
             await flownetRenderTemplatesDir({
                 dir: templateDir,
                 outDir,
-                context: argv
+                context: argv,
+                copyUnmatchedAlso: true
             });
 
             let shellResult = shell.exec(`fnode build`, { cwd: outDir });
