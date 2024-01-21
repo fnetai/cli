@@ -66,6 +66,35 @@ yargs(hideBin(process.argv))
       process.exit(1);
     }
   })
+  .command('project', 'Flow node project', (yargs) => {
+    return yargs
+      .option('update', { type: 'boolean', default: false, alias: '-u' });
+  }, async (argv) => {
+    try {
+      const templateDir = path.resolve(nodeModulesDir, '@flownet/template-node-library/project');
+      const outDir = process.cwd();
+      argv.name = path.basename(outDir);
+
+      if (argv.update) {
+        await flownetRenderTemplatesDir({
+          dir: templateDir,
+          outDir,
+          context: argv,
+          copyUnmatchedAlso: true
+        });
+        
+        let shellResult = shell.exec(`fnode build`, { cwd: outDir });
+        if (shellResult.code !== 0) throw new Error('Failed to build project.');
+  
+        console.log('Updating project succeeded!');
+      }
+
+      process.exit(0);
+    } catch (error) {
+      console.error('Project failed.', error.message);
+      process.exit(1);
+    }
+  })
   .command('build', 'Build flow node project', (yargs) => {
     return yargs
       .option('id', { type: 'string' })
