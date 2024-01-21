@@ -28,7 +28,8 @@ process.env.PATH =`${path.join(nodeModulesDir,'/.bin')}${pathSeparator}${process
 yargs(hideBin(process.argv))
     .command('create', 'Initialize flow node project', (yargs) => {
         return yargs
-            .option('name', { type: 'string' });
+            .option('name', { type: 'string' })
+            .option('vscode', { type: 'boolean', default: true, alias: 'vs' });            
     }, async (argv) => {
         try {
             const templateDir = path.resolve(nodeModulesDir, './@flownet/template-node-workflow/project');
@@ -50,6 +51,11 @@ yargs(hideBin(process.argv))
                 if (shellResult.code !== 0) throw new Error('Failed to initialize git.');
             }
 
+            if (shell.which('code') && argv.vscode) {
+              shellResult = shell.exec(`cd ${outDir} && code .`);
+              if (shellResult.code !== 0) throw new Error('Failed to open vscode.');
+            }
+      
             console.log('Creating project succeeded!');
 
             process.exit(0);
