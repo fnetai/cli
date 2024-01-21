@@ -37,7 +37,7 @@ module.exports = async ({ atom, context }) => {
     usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.app_entry_uses_jsx = usesJSX;
     features.app_entry_is_ts = appEntry.ts;
-    features.app_entry_ext = appEntry.ext;    
+    features.app_entry_ext = appEntry.ext;
   }
 
   const cliEntry = findEntryFile({ dir: path.resolve(projectDir, './cli') });
@@ -68,7 +68,7 @@ module.exports = async ({ atom, context }) => {
       features.src_entry_ext = srcEntry.ext;
     }
   }
-  
+
   const isAppReact = features.app_has_entry === true || features.src_uses_jsx === true;
   const isCliReact = features.cli_has_entry === true || features.src_uses_jsx === true;
 
@@ -283,6 +283,7 @@ module.exports = async ({ atom, context }) => {
     startPath: `${path.normalize(features.app.dir || '.')}`,
     files: [path.normalize("./dist/**/*")],
     cors: true,
+    open: false,
   }
 
   features.babel_options = (features.babel_options || features.babel?.options || babel_default);
@@ -335,7 +336,7 @@ module.exports = async ({ atom, context }) => {
 
   features.babel_enabled = rollup_output_keys.some(w => features.rollup_output[w].babel === true);
   features.browser_enabled = rollup_output_keys.some(w => features.rollup_output[w].babel === true);
-  features.browsersync_enabled = rollup_output_keys.some(w => features.rollup_output[w].browsersync === true);
+  features.browsersync_enabled = features.browsersync !== false && rollup_output_keys.some(w => features.rollup_output[w].browsersync === true);
   features.browsersync_enabled = features.browsersync_enabled && features.app.enabled;
 
   features.wasm_enabled = features.wasm === true || (features.wasm && features.wasm?.enabled !== false);
