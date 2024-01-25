@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.32.1",
+  "version": "0.32.3",
   "files": [
     "dist"
   ],
@@ -33,8 +33,8 @@
     "@flownet/lib-to-webos": "^0.2.8",
     "@flownet/lib-upload-files-to-gcs": "^0.3.2",
     "@fnet/cli-project-common": "^0.1.4",
-    "@fnet/cli-project-flow": "^0.1.4",
-    "@fnet/cli-project-node": "^0.1.4",
+    "@fnet/cli-project-flow": "^0.1.5",
+    "@fnet/cli-project-node": "^0.1.5",
     "@fnet/config": "^0.2.8",
     "@fnet/expression": "^0.1.16",
     "@fnet/shell": "^0.1.13",
