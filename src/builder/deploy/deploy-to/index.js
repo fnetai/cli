@@ -11,6 +11,8 @@ const deployToNextjs = require('../nextjs');
 const deployToDocker = require('../docker');
 const deployToFnetPackage = require('../fnet-package');
 const deployToFnetForm = require('../fnet-form');
+const deployToFnetFlow = require('../fnet-flow');
+const deployToFnetNode = require('../fnet-node');
 
 module.exports = async (apiContext) => {
 
@@ -36,10 +38,14 @@ module.exports = async (apiContext) => {
     await deployToElectron({ ...apiContext });
   else if (deploymentProjectTarget.name === "webos")
     await deployToWebos({ ...apiContext });
-    else if (deploymentProjectTarget.name === "fnet-package")
+  else if (deploymentProjectTarget.name === "fnet-package")
     await deployToFnetPackage({ ...apiContext });
   else if (deploymentProjectTarget.name === "fnet-form")
     await deployToFnetForm({ ...apiContext });
+  else if (deploymentProjectTarget.name === "fnet-node")
+    await deployToFnetNode({ ...apiContext });
+  else if (deploymentProjectTarget.name === "fnet-flow")
+    await deployToFnetFlow({ ...apiContext });
   else {
     let deployer;
 
