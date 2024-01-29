@@ -55,7 +55,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   const access_token = response.data?.access_token;
   if (!access_token) throw new Error(`Invalid access_token from ${apiUrl}`);
 
-  let command = `fnet-upload-files-to-gcs`;
+  let command = `fnet-files-to-gcs`;
   command += ` --projectId='${config.env.GCS_PROJECT_ID}'`;
   command += ` --bucketName='${config.env.GCS_BUCKET_NAME}'`;
   command += ` --keyFilename='${path.resolve(path.dirname(configFile), config.env.GCS_UPLOADER_KEY_FILE)}'`;
@@ -63,7 +63,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   command += ` --pattern={'dist/**/**','bin/**/**','test/**/**','*.html'}`;
   command += ` --destDir='${packageJSON.name}/${packageJSON.version}'`;
   command += ` --metadata.cacheControl='public, max-age=31536000, immutable'`;
-  command += ` --verbose`;
+  // command += ` --verbose`;
 
   if (config.env.DOMAIN) command += ` --domain='${config.env.DOMAIN}'`;
 

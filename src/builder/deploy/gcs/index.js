@@ -29,7 +29,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
     dir: context.projectDir
   });
   
-  let command = `fnet-upload-files-to-gcs`;
+  let command = `fnet-files-to-gcs`;
   command += ` --projectId='${gcsConfig.env.GCS_PROJECT_ID}'`;
   command += ` --bucketName='${gcsConfig.env.GCS_BUCKET_NAME}'`;
   command += ` --keyFilename='${path.resolve(path.dirname(pmFile), gcsConfig.env.GCS_UPLOADER_KEY_FILE)}'`;
@@ -37,7 +37,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   command += ` --pattern={'dist/**/**','bin/**/**','test/**/**','*.html'}`;
   command += ` --destDir='${packageJSON.name}/${packageJSON.version}'`;
   command += ` --metadata.cacheControl='public, max-age=31536000, immutable'`;
-  command += ` --verbose`;
+  // command += ` --verbose`;
 
   if (gcsConfig.env.DOMAIN) command += ` --domain='${gcsConfig.env.DOMAIN}'`;
 
