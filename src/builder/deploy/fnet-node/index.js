@@ -1,6 +1,9 @@
 const semver = require('semver');
 const fnetConfig = require('@fnet/config');
 const axios = require('axios').default;
+const fs = require('fs');
+const fnetShell = require('@fnet/shell');
+const FormData = require('form-data');
 
 module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target }) => {
 
@@ -10,7 +13,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-node",
-    dir: context.projectDir
+    dir: context.project.projectDir
   });
 
   if (!config.env.ATOM_API_URL) throw new Error(`ATOM_API_URL is required in ${configFile}`);
@@ -56,6 +59,37 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
       "Authorization": `Bearer ${access_token}`
     },
   });
-  
+
   if (response.data?.error) throw new Error('Error publishing fnet node.');
+
+  const upload_session_id = response.data?.upload.id;
+
+  let command = `fnet-dir-zipper`;
+  command += ` --sourceDir='${context.project.projectDir}'`;
+  command += ` -p=**/*`;
+  command += ` -g`;
+  command += ` --stdout_format=json`;
+  // command += ` --outputDir='${context.projectDir}'`;
+  
+  const shResult = await fnetShell({ cmd: command });
+  if (shResult.code !== 0) throw new Error(shResult.stderr);
+
+  const zipData = JSON.parse(shResult.stdout);
+  const zipFilePath = zipData.zip_file_path;
+
+  let formData = new FormData();
+  formData.append('file', fs.createReadStream(zipFilePath));
+
+  const uploadResult = await axios.request({
+    method: 'POST',
+    maxBodyLength: Infinity,
+    url: `${config.env.ATOM_API_URL}/v1/service/upload/single/${upload_session_id}`,
+    headers: {
+      ...formData.getHeaders(),
+      "Authorization": `Bearer ${access_token}`
+    },
+    data: formData
+  });
+
+  if (uploadResult.data?.error) throw new Error('Error uploading fnet node.');
 }

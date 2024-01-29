@@ -13,7 +13,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-flow",
-    dir: context.projectDir
+    dir: context.project.projectDir
   });
 
   if (!config.env.ATOM_API_URL) throw new Error(`ATOM_API_URL is required in ${configFile}`);
@@ -65,13 +65,15 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   const upload_session_id = response.data?.upload.id;
 
   let command = `fnet-dir-zipper`;
-  command += ` --sourceDir='${context.projectDir}'`;
-  command += ` -p=flow.yaml`;
-  command += ` -p=flow.main.yaml`;
-  command += ` -p=project.bpmn`;
+  command += ` --sourceDir='${context.project.projectDir}'`;
+  command += ` -p=**/*`;
+  command += ` -g`;
+  // command += ` -p=flow.yaml`;
+  // command += ` -p=flow.main.yaml`;
+  // command += ` -p=flow.bpmn`;
   command += ` --stdout_format=json`;
   // command += ` --outputDir='${context.projectDir}'`;
-
+  
   const shResult = await fnetShell({ cmd: command });
   if (shResult.code !== 0) throw new Error(shResult.stderr);
 
