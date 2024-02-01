@@ -78,7 +78,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   if (shResult.code !== 0) throw new Error(shResult.stderr);
 
   const zipData = JSON.parse(shResult.stdout);
-  const zipFilePath = zipData.zip_file_path;
+  const zipFilePath = zipData.path;
 
   let formData = new FormData();
   formData.append('file', fs.createReadStream(zipFilePath));
