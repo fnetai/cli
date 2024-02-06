@@ -26,7 +26,7 @@ process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${proce
 
 //console.log(`${path.join(nodeModulesDir,'/.bin')}`);
 
-yargs(hideBin(process.argv))
+let cmdBuilder = yargs(hideBin(process.argv))
   .command('create', 'Create flow node project', (yargs) => {
     return yargs
       .option('name', { type: 'Project name', demandOption: true })
@@ -82,10 +82,10 @@ yargs(hideBin(process.argv))
           context: argv,
           copyUnmatchedAlso: true
         });
-        
+
         let shellResult = shell.exec(`fnode build`, { cwd: outDir });
         if (shellResult.code !== 0) throw new Error('Failed to build project.');
-  
+
         console.log('Updating project succeeded!');
       }
 
@@ -152,134 +152,55 @@ yargs(hideBin(process.argv))
       console.error('Building library failed!', error.message);
       process.exit(1);
     }
-  })
-  .command('npm [commands..]', 'npm - bridge', (yargs) => {
-    return yargs
-      .help(false)
-      .version(false);
-  }, async (argv) => {
-    try {
-      const context = await createContext(argv);
-      const { projectDir } = context;
+  });
 
-      const rawArgs = process.argv.slice(3).join(' ');
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'npm', preArgs: ['run', 'serve', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'npm', preArgs: ['run', 'watch', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'npm', preArgs: ['run', 'app', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'npm', preArgs: ['run', 'cli', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
 
-      const command = `npm ${rawArgs}`;
-
-      shell.exec(command, { cwd: projectDir });
-      process.exit(0);
-    } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-    }
-  })
-  .command('node [commands..]', 'node - bridge', (yargs) => {
-    return yargs
-      .help(false)
-      .version(false);
-  }, async (argv) => {
-    try {
-      const context = await createContext(argv);
-      const { projectDir } = context;
-
-      const rawArgs = process.argv.slice(3).join(' ');
-
-      const command = `node ${rawArgs}`;
-
-      shell.exec(command, { cwd: projectDir });
-      process.exit(0);
-    } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-    }
-  })
-  .command('serve [commands..]', 'npm run serve - bridge', (yargs) => {
-    return yargs
-      .help(false)
-      .version(false);
-  }, async (argv) => {
-    try {
-      const context = await createContext(argv);
-      const { projectDir } = context;
-
-      const rawArgs = process.argv.slice(3).join(' ');
-
-      const command = `npm run serve -- ${rawArgs}`;
-
-      shell.exec(command, { cwd: projectDir });
-      process.exit(0);
-    } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-    }
-  })
-  .command('watch [commands..]', 'npm run watch - bridge', (yargs) => {
-    return yargs
-      .help(false)
-      .version(false);
-  }, async (argv) => {
-    try {
-      const context = await createContext(argv);
-      const { projectDir } = context;
-
-      const rawArgs = process.argv.slice(3).join(' ');
-
-      const command = `npm run watch -- ${rawArgs}`;
-
-      shell.exec(command, { cwd: projectDir });
-      process.exit(0);
-    } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-    }
-  })
-  .command('app [commands..]', 'npm run app - bridge', (yargs) => {
-    return yargs
-      .help(false)
-      .version(false);
-  }, async (argv) => {
-    try {
-      const context = await createContext(argv);
-      const { projectDir } = context;
-
-      const rawArgs = process.argv.slice(3).join(' ');
-
-      const command = `npm run app -- ${rawArgs}`;
-
-      shell.exec(command, { cwd: projectDir });
-      process.exit(0);
-    } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-    }
-  })
-  .command('cli [commands..]', 'npm run cli - bridge', (yargs) => {
-    return yargs
-      .help(false)
-      .version(false);
-  }, async (argv) => {
-    try {
-      const context = await createContext(argv);
-      const { projectDir } = context;
-
-      const rawArgs = process.argv.slice(3);
-      const subprocess = spawn('npm', ['run', 'cli', '--', ...rawArgs], {
-        cwd: projectDir,
-        stdio: 'inherit',
-        shell: true
-      });
-
-      subprocess.on('close', (code) => {
-        process.exit(code);
-      });
-    } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-    }
-  })
+cmdBuilder
   .demandCommand(1, 'You need at least one command before moving on')
   .help()
   .argv;
+
+
+function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
+  return builder.command(
+    `${name || bin} [commands..]`, `${bin} ${preArgs.join(' ')}`,
+    (yargs) => {
+      return yargs
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { projectDir } = context;
+
+        const rawArgs = process.argv.slice(3);
+
+        const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
+          cwd: projectDir,
+          stdio: 'inherit',
+          shell: true
+        });
+
+        subprocess.on('close', (code) => {
+          process.exit(code);
+        });
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
 
 async function createContext(argv) {
   if (argv.id) {

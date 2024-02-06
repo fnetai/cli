@@ -4,9 +4,9 @@ const { spawn } = require('child_process');
 
 // fnet env
 require('@fnet/config')({
-    name: ["redis"],
-    dir: cwd,
-    optional: true
+  name: ["redis"],
+  dir: cwd,
+  optional: true
 });
 
 const path = require('path');
@@ -23,371 +23,289 @@ const Builder = require('./wf-builder');
 
 const nodeModulesDir = require('./find-node-modules')({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
-process.env.PATH =`${path.join(nodeModulesDir,'/.bin')}${pathSeparator}${process.env.PATH}`;
+process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 
-yargs(hideBin(process.argv))
-    .command('create', 'Initialize flow node project', (yargs) => {
-        return yargs
-            .option('name', { type: 'string' })
-            .option('vscode', { type: 'boolean', default: true, alias: 'vs' });            
-    }, async (argv) => {
-        try {
-            const templateDir = path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/project');
-            const outDir = path.resolve(cwd, argv.name);
-            if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
+let cmdBuilder = yargs(hideBin(process.argv))
+  .command('create', 'Initialize flow node project', (yargs) => {
+    return yargs
+      .option('name', { type: 'string' })
+      .option('vscode', { type: 'boolean', default: true, alias: 'vs' });
+  }, async (argv) => {
+    try {
+      const templateDir = path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/project');
+      const outDir = path.resolve(cwd, argv.name);
+      if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
-            await flownetRenderTemplatesDir({
-                dir: templateDir,
-                outDir,
-                context: argv,
-                copyUnmatchedAlso: true
-            });
+      await flownetRenderTemplatesDir({
+        dir: templateDir,
+        outDir,
+        context: argv,
+        copyUnmatchedAlso: true
+      });
 
-            let shellResult = shell.exec(`fnet build`, { cwd: outDir });
-            if (shellResult.code !== 0) throw new Error('Failed to build project.');
+      let shellResult = shell.exec(`fnet build`, { cwd: outDir });
+      if (shellResult.code !== 0) throw new Error('Failed to build project.');
 
-            if (shell.which('git')) {
-                shellResult = shell.exec(`git init`, { cwd: outDir });
-                if (shellResult.code !== 0) throw new Error('Failed to initialize git.');
-            }
+      if (shell.which('git')) {
+        shellResult = shell.exec(`git init`, { cwd: outDir });
+        if (shellResult.code !== 0) throw new Error('Failed to initialize git.');
+      }
 
-            if (shell.which('code') && argv.vscode) {
-              shellResult = shell.exec(`cd ${outDir} && code .`);
-              if (shellResult.code !== 0) throw new Error('Failed to open vscode.');
-            }
-      
-            console.log('Creating project succeeded!');
+      if (shell.which('code') && argv.vscode) {
+        shellResult = shell.exec(`cd ${outDir} && code .`);
+        if (shellResult.code !== 0) throw new Error('Failed to open vscode.');
+      }
 
-            process.exit(0);
-        } catch (error) {
-            console.error('Initialization failed!', error.message);
-            process.exit(1);
-        }
-    })
-    .command('project', 'Flow node project', (yargs) => {
+      console.log('Creating project succeeded!');
+
+      process.exit(0);
+    } catch (error) {
+      console.error('Initialization failed!', error.message);
+      process.exit(1);
+    }
+  })
+  .command('project', 'Flow node project', (yargs) => {
+    return yargs
+      .option('update', { type: 'boolean', default: false, alias: '-u' });
+  }, async (argv) => {
+    try {
+      const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-flow/dist/template/project');
+      const outDir = process.cwd();
+      argv.name = path.basename(outDir);
+
+      if (argv.update) {
+        await flownetRenderTemplatesDir({
+          dir: templateDir,
+          outDir,
+          context: argv,
+          copyUnmatchedAlso: true
+        });
+
+        let shellResult = shell.exec(`fnet build`, { cwd: outDir });
+        if (shellResult.code !== 0) throw new Error('Failed to build project.');
+
+        console.log('Updating project succeeded!');
+      }
+
+      process.exit(0);
+    } catch (error) {
+      console.error('Project failed.', error.message);
+      process.exit(1);
+    }
+  })
+  .command('build', 'Build flow net project', (yargs) => {
+    return yargs
+      .option('id', { type: 'string' })
+      .option('buildId', { type: 'string', alias: 'bid' })
+      .option('mode', { type: 'string', alias: 'm', default: "build", choices: ['all', 'file', 'build', 'deploy', 'bpmn'] })
+      ;
+  }, async (argv) => {
+    try {
+      const context = await createContext(argv);
+      const builder = new Builder(context);
+      await builder.init();
+      await builder.build();
+      console.log('Building workflow succeeded!');
+      process.exit(0);
+    } catch (error) {
+      console.error('Building workflow failed!', error.message);
+      process.exit(1);
+    }
+  })
+  .command('deploy', 'Build and deploy flow net project', (yargs) => {
+    return yargs
+      .option('id', { type: 'string' })
+      .option('buildId', { type: 'string', alias: 'bid' })
+      ;
+  }, async (argv) => {
+    try {
+      const context = await createContext({ ...argv, mode: "all" });
+      const builder = new Builder(context);
+      await builder.init();
+      await builder.build();
+      console.log('Building workflow succeeded!');
+      process.exit(0);
+    } catch (error) {
+      console.error('Building workflow failed!', error.message);
+      process.exit(1);
+    }
+  })
+  .command('file', 'Just create files', (yargs) => {
+    return yargs
+      .option('id', { type: 'string' })
+      .option('buildId', { type: 'string', alias: 'bid' })
+      ;
+  }, async (argv) => {
+    try {
+      const context = await createContext({ ...argv, mode: "file" });
+      const builder = new Builder(context);
+      await builder.init();
+      await builder.build();
+      console.log('Building workflow succeeded!');
+      process.exit(0);
+    } catch (error) {
+      console.error('Building workflow failed!', error.message);
+      process.exit(1);
+    }
+  });
+
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'npm', preArgs: ['run', 'serve', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'npm', preArgs: ['run', 'watch', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'npm', preArgs: ['run', 'app', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'npm', preArgs: ['run', 'cli', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
+
+cmdBuilder
+  .demandCommand(1, 'You need at least one command before moving on')
+  .help()
+  .argv;
+
+function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
+  return builder.command(
+    `${name || bin} [commands..]`, `${bin} ${preArgs.join(' ')}`,
+    (yargs) => {
       return yargs
-        .option('update', { type: 'boolean', default: false, alias: '-u' });
-    }, async (argv) => {
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
       try {
-        const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-flow/dist/template/project');
-        const outDir = process.cwd();
-        argv.name = path.basename(outDir);
-  
-        if (argv.update) {
-          await flownetRenderTemplatesDir({
-            dir: templateDir,
-            outDir,
-            context: argv,
-            copyUnmatchedAlso: true
-          });
-          
-          let shellResult = shell.exec(`fnet build`, { cwd: outDir });
-          if (shellResult.code !== 0) throw new Error('Failed to build project.');
-    
-          console.log('Updating project succeeded!');
-        }
-  
-        process.exit(0);
+        const context = await createContext(argv);
+        const { projectDir } = context;
+
+        const rawArgs = process.argv.slice(3);
+
+        const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
+          cwd: projectDir,
+          stdio: 'inherit',
+          shell: true
+        });
+
+        subprocess.on('close', (code) => {
+          process.exit(code);
+        });
       } catch (error) {
-        console.error('Project failed.', error.message);
+        console.error(error.message);
         process.exit(1);
       }
-    })  
-    .command('build', 'Build flow net project', (yargs) => {
-        return yargs
-            .option('id', { type: 'string' })
-            .option('buildId', { type: 'string', alias: 'bid' })
-            .option('mode', { type: 'string', alias: 'm', default: "build", choices: ['all', 'file', 'build', 'deploy', 'bpmn'] })
-            ;
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const builder = new Builder(context);
-            await builder.init();
-            await builder.build();
-            console.log('Building workflow succeeded!');
-            process.exit(0);
-        } catch (error) {
-            console.error('Building workflow failed!', error.message);
-            process.exit(1);
-        }
-    })
-    .command('deploy', 'Build and deploy flow net project', (yargs) => {
-        return yargs
-            .option('id', { type: 'string' })
-            .option('buildId', { type: 'string', alias: 'bid' })
-            ;
-    }, async (argv) => {
-        try {
-            const context = await createContext({ ...argv, mode: "all" });
-            const builder = new Builder(context);
-            await builder.init();
-            await builder.build();
-            console.log('Building workflow succeeded!');
-            process.exit(0);
-        } catch (error) {
-            console.error('Building workflow failed!', error.message);
-            process.exit(1);
-        }
-    })
-    .command('file', 'Just create files', (yargs) => {
-        return yargs
-            .option('id', { type: 'string' })
-            .option('buildId', { type: 'string', alias: 'bid' })
-            ;
-    }, async (argv) => {
-        try {
-            const context = await createContext({ ...argv, mode: "file" });
-            const builder = new Builder(context);
-            await builder.init();
-            await builder.build();
-            console.log('Building workflow succeeded!');
-            process.exit(0);
-        } catch (error) {
-            console.error('Building workflow failed!', error.message);
-            process.exit(1);
-        }
-    })
-    .command('npm [commands..]', 'npm - bridge', (yargs) => {
-        return yargs
-            .help(false)
-            .version(false);
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const { projectDir } = context;
-
-            const rawArgs = process.argv.slice(3).join(' ');
-
-            const command = `npm ${rawArgs}`;
-
-            shell.exec(command, { cwd: projectDir });
-            process.exit(0);
-        } catch (error) {
-            console.error(error.message);
-            process.exit(1);
-        }
-    })
-    .command('node [commands..]', 'node - bridge', (yargs) => {
-        return yargs
-            .help(false)
-            .version(false);
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const { projectDir } = context;
-
-            const rawArgs = process.argv.slice(3).join(' ');
-
-            const command = `node ${rawArgs}`;
-
-            shell.exec(command, { cwd: projectDir });
-            process.exit(0);
-        } catch (error) {
-            console.error(error.message);
-            process.exit(1);
-        }
-    })
-    .command('serve [commands..]', 'npm run serve - bridge', (yargs) => {
-        return yargs
-            .help(false)
-            .version(false);
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const { projectDir } = context;
-
-            const rawArgs = process.argv.slice(3).join(' ');
-
-            const command = `npm run serve -- ${rawArgs}`;
-
-            shell.exec(command, { cwd: projectDir });
-            process.exit(0);
-        } catch (error) {
-            console.error(error.message);
-            process.exit(1);
-        }
-    })
-
-    .command('watch [commands..]', 'npm run watch - bridge', (yargs) => {
-        return yargs
-            .help(false)
-            .version(false);
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const { projectDir } = context;
-
-            const rawArgs = process.argv.slice(3).join(' ');
-
-            const command = `npm run watch -- ${rawArgs}`;
-
-            shell.exec(command, { cwd: projectDir });
-            process.exit(0);
-        } catch (error) {
-            console.error(error.message);
-            process.exit(1);
-        }
-    })
-    .command('app [commands..]', 'npm run app - bridge', (yargs) => {
-        return yargs
-            .help(false)
-            .version(false);
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const { projectDir } = context;
-
-            const rawArgs = process.argv.slice(3).join(' ');
-
-            const command = `npm run app -- ${rawArgs}`;
-
-            shell.exec(command, { cwd: projectDir });
-            process.exit(0);
-        } catch (error) {
-            console.error(error.message);
-            process.exit(1);
-        }
-    })
-
-    .command('cli [commands..]', 'npm run cli - bridge', (yargs) => {
-        return yargs
-            .help(false)
-            .version(false);
-    }, async (argv) => {
-        try {
-            const context = await createContext(argv);
-            const { projectDir } = context;
-
-            const rawArgs = process.argv.slice(3);
-            const subprocess = spawn('npm', ['run', 'cli', '--', ...rawArgs], {
-                cwd: projectDir,
-                stdio: 'inherit',
-                shell: true
-            });
-
-            subprocess.on('close', (code) => {
-                process.exit(code);
-            });
-        } catch (error) {
-            console.error(error.message);
-            process.exit(1);
-        }
-    })
-    .demandCommand(1, 'You need at least one command before moving on')
-    .help()
-    .argv;
+    }
+  );
+}
 
 async function createContext(argv) {
-    if (argv.id) {
-        const context = {
-            id: argv.id,
-            buildId: argv.buildId,
-            mode: argv.mode,
-            protocol: argv.protocol || "ac:",
-            projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-            templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/default'),
-            templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
-            coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/core'),
-        }
-
-        return context;
-    } else {
-        const project = await loadLocalProject();
-
-        const context = {
-            buildId: argv.buildId,
-            mode: argv.mode,
-            protocol: argv.protocol || "local:",
-            templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/default'),
-            templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
-            coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/core'),
-            projectDir: path.resolve(project.projectDir, `./.workspace`),
-            projectSrcDir: path.resolve(project.projectDir, `./src`),
-            project
-        }
-
-        return context;
+  if (argv.id) {
+    const context = {
+      id: argv.id,
+      buildId: argv.buildId,
+      mode: argv.mode,
+      protocol: argv.protocol || "ac:",
+      projectDir: path.resolve(cwd, `./.output/${argv.id}`),
+      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/default'),
+      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
+      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/core'),
     }
+
+    return context;
+  } else {
+    const project = await loadLocalProject();
+
+    const context = {
+      buildId: argv.buildId,
+      mode: argv.mode,
+      protocol: argv.protocol || "local:",
+      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/default'),
+      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
+      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/core'),
+      projectDir: path.resolve(project.projectDir, `./.workspace`),
+      projectSrcDir: path.resolve(project.projectDir, `./src`),
+      project
+    }
+
+    return context;
+  }
 }
 
 async function loadLocalProject(context) {
 
-    // Project file
-    const projectFilePath = path.resolve(cwd, 'flow.yaml');
-    if (!fs.existsSync(projectFilePath)) throw new Error('flow.yaml file not found in current directory.');
+  // Project file
+  const projectFilePath = path.resolve(cwd, 'flow.yaml');
+  if (!fs.existsSync(projectFilePath)) throw new Error('flow.yaml file not found in current directory.');
 
-    const projectFileContent = fs.readFileSync(projectFilePath, 'utf8');
-    // const projectFileParsed = YAML.parse(projectFileContent);
-    const { parsed: projectFileParsed } = await fnetYaml({ content: projectFileContent });
-    const projectDir = path.dirname(projectFilePath);
+  const projectFileContent = fs.readFileSync(projectFilePath, 'utf8');
+  // const projectFileParsed = YAML.parse(projectFileContent);
+  const { parsed: projectFileParsed } = await fnetYaml({ content: projectFileContent });
+  const projectDir = path.dirname(projectFilePath);
 
-    // Project main file
-    const mainFileName = projectFileParsed.main || 'flow.main.yaml';
+  // Project main file
+  const mainFileName = projectFileParsed.main || 'flow.main.yaml';
 
-    let projectMainFilePath = path.resolve(projectDir, mainFileName);
+  let projectMainFilePath = path.resolve(projectDir, mainFileName);
 
-    if (!fs.existsSync(projectMainFilePath)) {
-        projectMainFilePath = path.resolve(projectDir, mainFileName + ".yaml");
-        if (!fs.existsSync(projectMainFilePath))
-            throw new Error(`${mainFileName} file not found in ${projectMainFilePath}.`);
+  if (!fs.existsSync(projectMainFilePath)) {
+    projectMainFilePath = path.resolve(projectDir, mainFileName + ".yaml");
+    if (!fs.existsSync(projectMainFilePath))
+      throw new Error(`${mainFileName} file not found in ${projectMainFilePath}.`);
+  }
+
+  const projectMainFileContent = fs.readFileSync(projectMainFilePath, 'utf8');
+  // const projectMainFileParsed = YAML.parse(projectMainFileContent);
+  const { parsed: projectMainFileParsed } = await fnetYaml({ content: projectMainFileContent });
+
+  const workflowAtom = {
+    doc: {
+      ...projectFileParsed,
+      "content-type": "yaml",
+      content: projectMainFileContent
     }
+  }
 
-    const projectMainFileContent = fs.readFileSync(projectMainFilePath, 'utf8');
-    // const projectMainFileParsed = YAML.parse(projectMainFileContent);
-    const { parsed: projectMainFileParsed } = await fnetYaml({ content: projectMainFileContent });
+  const result = {
+    workflowAtom,
+    projectDir,
+    projectFilePath,
+    projectFileContent,
+    projectFileParsed,
+    projectMainFilePath,
+    projectMainFileContent,
+    projectMainFileParsed
+  }
 
-    const workflowAtom = {
-        doc: {
-            ...projectFileParsed,
-            "content-type": "yaml",
-            content: projectMainFileContent
-        }
+  // Project devops file
+  const devopsFilePath = path.resolve(projectDir, 'flow.devops.yaml');
+  if (fs.existsSync(devopsFilePath)) {
+    const devopsFileContent = fs.readFileSync(devopsFilePath, 'utf8');
+    const devopsFileParsed = YAML.parse(devopsFileContent);
+    result.devops = {
+      filePath: devopsFilePath,
+      fileContent: devopsFileContent,
+      doc: {
+        ...devopsFileParsed,
+      },
+      type: "workflow.deploy",
+      save: async () => {
+        fs.writeFileSync(result.devops.filePath, YAML.stringify(result.devops.doc));
+      }
     }
+  }
 
-    const result = {
-        workflowAtom,
-        projectDir,
-        projectFilePath,
-        projectFileContent,
-        projectFileParsed,
-        projectMainFilePath,
-        projectMainFileContent,
-        projectMainFileParsed
-    }
+  // Project readme file
+  const readmeFilePath = path.resolve(projectDir, 'readme.md');
+  if (fs.existsSync(readmeFilePath)) {
+    const readmeFileContent = fs.readFileSync(readmeFilePath, 'utf8');
+    result.readme = {
+      filePath: readmeFilePath,
+      fileContent: readmeFileContent,
+      doc: {
+        content: readmeFileContent,
+        "content-type": "markdown",
+      },
+      type: "wiki"
+    };
+  }
 
-    // Project devops file
-    const devopsFilePath = path.resolve(projectDir, 'flow.devops.yaml');
-    if (fs.existsSync(devopsFilePath)) {
-        const devopsFileContent = fs.readFileSync(devopsFilePath, 'utf8');
-        const devopsFileParsed = YAML.parse(devopsFileContent);
-        result.devops = {
-            filePath: devopsFilePath,
-            fileContent: devopsFileContent,
-            doc: {
-                ...devopsFileParsed,
-            },
-            type: "workflow.deploy",
-            save: async () => {
-                fs.writeFileSync(result.devops.filePath, YAML.stringify(result.devops.doc));
-            }
-        }
-    }
-
-    // Project readme file
-    const readmeFilePath = path.resolve(projectDir, 'readme.md');
-    if (fs.existsSync(readmeFilePath)) {
-        const readmeFileContent = fs.readFileSync(readmeFilePath, 'utf8');
-        result.readme = {
-            filePath: readmeFilePath,
-            fileContent: readmeFileContent,
-            doc: {
-                content: readmeFileContent,
-                "content-type": "markdown",
-            },
-            type: "wiki"
-        };
-    }
-
-    return result;
+  return result;
 }

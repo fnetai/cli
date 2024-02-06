@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.33.5",
+  "version": "0.34.0",
   "files": [
     "dist"
   ],
@@ -32,14 +32,14 @@
     "@flownet/lib-to-nextjs": "^0.1.12",
     "@flownet/lib-to-webos": "^0.2.8",
     "@fnet/cli-project-common": "^0.1.4",
-    "@fnet/cli-project-flow": "^0.1.7",
-    "@fnet/cli-project-node": "^0.1.9",
+    "@fnet/cli-project-flow": "^0.1.9",
+    "@fnet/cli-project-node": "^0.1.11",
     "@fnet/config": "^0.2.8",
     "@fnet/dir-zipper": "^0.1.5",
     "@fnet/expression": "^0.1.16",
     "@fnet/files-to-gcs": "^0.3.6",
     "@fnet/shell": "^0.1.13",
-    "@fnet/yaml": "^0.1.11",
+    "@fnet/yaml": "^0.1.12",
     "@node-red/util": "^3.1.0",
     "axios": "^1.5.0",
     "chalk": "^4.1.2",
