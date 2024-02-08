@@ -17,6 +17,7 @@ const YAML = require('yaml');
 const shell = require('shelljs');
 
 const fnetYaml = require('@fnet/yaml');
+const fnetConfig = require('@fnet/config');
 
 const flownetRenderTemplatesDir = require('@flownet/lib-render-templates-dir');
 const Builder = require('./wf-builder');
@@ -158,6 +159,7 @@ cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'npm', pre
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
+cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with' });
 
 cmdBuilder
   .demandCommand(1, 'You need at least one command before moving on')
@@ -183,6 +185,52 @@ function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
           cwd: projectDir,
           stdio: 'inherit',
           shell: true
+        });
+
+        subprocess.on('close', (code) => {
+          process.exit(code);
+        });
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+function bindWithContextCommand(builder, { name, preArgs = [] }) {
+  return builder.command(
+    `${name} <config> <command> [options..]`, `Run a command with a config context`,
+    (yargs) => {
+      return yargs
+        .positional('config', { type: 'string' })
+        .positional('command', { type: 'string' })
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { projectDir } = context;
+
+        // config name
+        const configName = argv.config;
+        const config = await fnetConfig({ name: configName, dir: projectDir, transferEnv: false, optional: true });
+        const env = config?.data?.env || undefined;
+
+        // command name
+        const commandName = argv.command;
+
+        const rawArgs = process.argv.slice(5);
+
+        const subprocess = spawn(commandName, [...preArgs, ...rawArgs], {
+          cwd: projectDir,
+          stdio: 'inherit',
+          shell: true,
+          env: {
+            ...process.env,
+            ...env
+          }
         });
 
         subprocess.on('close', (code) => {
