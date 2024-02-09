@@ -18,6 +18,7 @@ const shell = require('shelljs');
 
 const fnetYaml = require('@fnet/yaml');
 const fnetConfig = require('@fnet/config');
+const fnetObjectFromSchema = require('@fnet/object-from-schema');
 
 const flownetRenderTemplatesDir = require('@flownet/lib-render-templates-dir');
 const Builder = require('./lib-builder');
@@ -154,6 +155,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
       process.exit(1);
     }
   });
+cmdBuilder = bindConfigCreateCommand(cmdBuilder);
 
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
@@ -170,7 +172,6 @@ cmdBuilder
   .demandCommand(1, 'You need at least one command before moving on')
   .help()
   .argv;
-
 
 function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
   return builder.command(
@@ -243,6 +244,36 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
         subprocess.on('close', (code) => {
           process.exit(code);
         });
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+function bindConfigCreateCommand(builder) {
+  return builder.command(
+    `config create <name>`, `Create a config file`,
+    (yargs) => {
+      return yargs
+        .positional('name', { type: 'string' })
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { project } = context;
+        const { projectDir, projectFileParsed } = project;
+        const schema = projectFileParsed.config;
+        if (!schema) throw new Error('Config schema not found in project file.');
+
+        const result = await fnetObjectFromSchema({ schema });
+        const dotFnetDir = path.resolve(projectDir, '.fnet');
+        if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
+        const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
+        fs.writeFileSync(configFilePath, YAML.stringify(result));
       } catch (error) {
         console.error(error.message);
         process.exit(1);
