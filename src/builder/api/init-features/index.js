@@ -303,6 +303,7 @@ module.exports = async ({ atom, context }) => {
   features.rollup_output = merge(rollup_output_default, features.rollup_output || features.rollup?.output || {});
 
   features.string_enabled = features.string === true || (features.string && features.string?.enabled !== false);
+  features.preact_enabled = features.preact === true || (features.preact && features.preact?.enabled !== false);
 
   const rollup_output_keys = Object.keys(rollup_output_default);
   for (const key of rollup_output_keys) {
@@ -330,6 +331,14 @@ module.exports = async ({ atom, context }) => {
     output.visualizer_options = merge(features.visualizer_options, output.visualizer_options);
     output.string_options = merge(features.string_options, output.string_options);
     output.string = features.string_enabled && output.string;
+
+    if (features.preact_enabled) {
+      output.alias_enabled = true;
+      output.alias = output.alias || {};
+      output.alias.entries = output.alias.entries || {};
+      output.alias.entries['react'] = 'preact/compat';
+      output.alias.entries['react-dom'] = 'preact/compat';
+    }
 
     if (features.form_enabled) output.babel = true;
   }
