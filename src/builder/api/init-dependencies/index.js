@@ -43,6 +43,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6.0" });
   packageDevDependencies.push({ package: "rollup-plugin-peer-deps-external", version: "^2.2" });
   packageDevDependencies.push({ package: "@rollup/plugin-alias", version: "^5.0" });
+  packageDevDependencies.push({ package: "fs-extra", version: "^11.2" });
 
   if (atom.doc.features.babel_enabled) {
     packageDevDependencies.push({ package: "@rollup/plugin-babel", version: "^6.0" });
@@ -110,5 +111,6 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
 
   if (atom.doc.features.copy_enabled) {
     packageDevDependencies.push({ package: "rollup-plugin-copy", version: "^3.5" });
+    packageDevDependencies.push({ package: "chokidar", version: "^3.6" });
   }
 }
