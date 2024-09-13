@@ -1116,12 +1116,12 @@ class Builder {
         await createDts(this.#apiContext);
 
         if (this.#buildMode) {
-
+          
           await installNpmPackages(this.#apiContext);
           await runNpmBuild(this.#apiContext);
 
           if (this.#deployMode)
-            await this.deploy();
+            await this.deploy();  
         }
       }
 

@@ -17,7 +17,9 @@ const commonPlugins = () => {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
       preferBuiltins: true,
     }),
-    commonjs(),
+    commonjs({
+      ignoreDynamicRequires: true,
+    }),
   ];
 
   if (!DEVELOPMENT) {

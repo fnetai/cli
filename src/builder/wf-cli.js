@@ -95,7 +95,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
       process.exit(1);
     }
   })
-  .command('build', 'Build flow net project', (yargs) => {
+  .command('build', 'Build flownet project', (yargs) => {
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
@@ -114,7 +114,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
       process.exit(1);
     }
   })
-  .command('deploy', 'Build and deploy flow net project', (yargs) => {
+  .command('deploy', 'Build and deploy flownet project', (yargs) => {
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })

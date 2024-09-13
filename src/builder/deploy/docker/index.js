@@ -3,41 +3,49 @@ const cloneDeep = require("lodash.clonedeep");
 const merge = require('lodash.merge');
 const semver = require('semver');
 const path = require('node:path');
+const fnetConfig = require('@fnet/config');
 
 module.exports = async ({
-    atom,
-    target,
-    onProgress,
-    projectDir,
-    dependencies
+  atom,
+  target,
+  onProgress,
+  projectDir,
+  dependencies
 }) => {
 
-    const deployerName='docker';
+  const deployerName = 'docker';
 
-    if (onProgress) await onProgress({ message: `Deploying it as ${deployerName} package.` });
+  if (onProgress) await onProgress({ message: `Deploying it as ${deployerName} package.` });
 
-    const deployerTargetDefault = {
-    }
+  const config = await fnetConfig({
+    name: target.config || "docker",
+    dir: projectDir,
+    optional: true
+  });
+  
+  const deployerTargetDefault = {
+  }
 
-    target.params = merge(deployerTargetDefault, target.params);
+  target.params = merge(deployerTargetDefault, target.params);
 
-    const nextVersion = semver.inc(target.params.version, "patch");
-    target.params.version = nextVersion;
+  const nextVersion = semver.inc(target.params.version, "patch");
+  target.params.version = nextVersion;
 
-    const deployerTarget = cloneDeep(target);
+  const deployerTarget = cloneDeep(target);
 
-    deployerTarget.params.dependencies = cloneDeep(dependencies);
+  deployerTarget.params.dependencies = cloneDeep(dependencies);
 
-    const args = {
-        atom,
-        target: deployerTarget.params,
-        projectDir,
-        renderDir: path.resolve(projectDir, 'docker')
-    }
-    
-    const result = await fnetDeployer(args);
+  const args = {
+    atom,
+    target: deployerTarget.params,
+    config:config?.config,
+    projectDir,
+    renderDir: path.resolve(projectDir, target.dir || 'docker')
+  }
 
-    return {
-        deployer: result,
-    };
+  const result = await fnetDeployer(args);
+
+  return {
+    deployer: result,
+  };
 }

@@ -446,8 +446,9 @@ class Builder {
           await runNpmBuild(this.#apiContext);
 
           if (this.#deployMode)
-            await this.deploy();
+            await this.deploy();  
         }
+
       }
 
       await this._cache_set(this.#buildKey, { status: "COMPLETED" });
