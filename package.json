@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.38.0",
+  "version": "0.38.1",
   "files": [
     "dist"
   ],
@@ -20,7 +20,7 @@
     "@flownet/lib-bpmn-from-flow": "^0.1.8",
     "@flownet/lib-is-redis-online": "^0.1.13",
     "@flownet/lib-list-npm-versions": "^0.1.31",
-    "@flownet/lib-parse-imports-js": "^0.2.1",
+    "@flownet/lib-parse-imports-js": "^0.3.1",
     "@flownet/lib-parse-node-url": "^0.1.16",
     "@flownet/lib-pick-npm-versions": "^0.1.12",
     "@flownet/lib-render-templates-dir": "^0.1.12",
