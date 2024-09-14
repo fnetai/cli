@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.37.5",
+  "version": "0.38.0",
   "files": [
     "dist"
   ],
@@ -24,7 +24,7 @@
     "@flownet/lib-parse-node-url": "^0.1.16",
     "@flownet/lib-pick-npm-versions": "^0.1.12",
     "@flownet/lib-render-templates-dir": "^0.1.12",
-    "@flownet/lib-to-docker": "^0.1.5",
+    "@flownet/lib-to-docker": "^0.1.13",
     "@flownet/lib-to-electron": "^0.2.1",
     "@flownet/lib-to-gitlab": "^0.1.21",
     "@flownet/lib-to-ios-app": "^0.2.5",

@@ -9,11 +9,11 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
 
   if (target.dryRun === true) return;
 
-  const config = await fnetConfig({
-    name: target.config || "electron",
+  const config =target?.config? await fnetConfig({
+    name: target.config,
     dir: context.projectDir,
     optional: true
-  });
+  }):undefined;
 
   const args = {
     atom: atom,

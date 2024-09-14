@@ -17,12 +17,12 @@ module.exports = async ({
 
   if (onProgress) await onProgress({ message: `Deploying it as ${deployerName} package.` });
 
-  const config = await fnetConfig({
-    name: target.config || "docker",
+  const config = target?.config ? await fnetConfig({
+    name: target.config,
     dir: projectDir,
     optional: true
-  });
-  
+  }) : undefined;
+
   const deployerTargetDefault = {
   }
 
@@ -38,7 +38,7 @@ module.exports = async ({
   const args = {
     atom,
     target: deployerTarget.params,
-    config:config?.config,
+    config: config?.config,
     projectDir,
     renderDir: path.resolve(projectDir, target.dir || 'docker')
   }
