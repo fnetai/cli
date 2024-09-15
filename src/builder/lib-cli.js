@@ -292,7 +292,7 @@ async function createContext(argv) {
       templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
       templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/core'),
+      // coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/core'),
     };
   } else {
     const project = await loadLocalProject();
@@ -302,7 +302,7 @@ async function createContext(argv) {
       protocol: argv.protocol || "local:",
       templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
       templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
-      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/core'),
+      // coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/core'),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project

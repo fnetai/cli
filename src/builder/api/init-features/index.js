@@ -23,6 +23,11 @@ module.exports = async ({ atom, context }) => {
   atom.doc.features = atom.doc.features || {};
   const features = atom.doc.features;
 
+  // project format
+  features.project = features.project || {};
+  features.project.format = features.project.format || features.project_format || "esm";
+  features.project_format = features.project.format;
+
   if (!features.hasOwnProperty('all_parsed_imports')) features.all_parsed_imports = true;
 
   const projectDir = path.resolve(context.project.projectDir);

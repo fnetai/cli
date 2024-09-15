@@ -55,28 +55,28 @@ module.exports = async ({ atom, setInProgress, context, packageDependencies }) =
   // RENDER TEMPLATE rollup.config.js.njk
   const templateDir = context.templateCommonDir;
   let template = nunjucks.compile(
-    fs.readFileSync(path.resolve(templateDir, `rollup.config.js.njk`), "utf8"),
+    fs.readFileSync(path.resolve(templateDir, `rollup.config.mjs.njk`), "utf8"),
     nunjucks.configure(templateDir)
   );
 
   let templateRender = template.render(templateContext);
 
   const projectDir = context.projectDir;
-  let filePath = path.resolve(projectDir, `rollup.config.js`);
+  let filePath = path.resolve(projectDir, `rollup.config.mjs`);
   fs.writeFileSync(filePath, templateRender, 'utf8');
 
 
-  // RENDER TEMPLATE rollup.config.mjs.njk
-  // check file if exists
-  if (fs.existsSync(path.resolve(templateDir, `rollup.config.mjs.njk`))) {
-    template = nunjucks.compile(
-      fs.readFileSync(path.resolve(templateDir, `rollup.config.mjs.njk`), "utf8"),
-      nunjucks.configure(templateDir)
-    );
+  // // RENDER TEMPLATE rollup.config.mjs.njk
+  // // check file if exists
+  // if (fs.existsSync(path.resolve(templateDir, `rollup.config.mjs.njk`))) {
+  //   template = nunjucks.compile(
+  //     fs.readFileSync(path.resolve(templateDir, `rollup.config.mjs.njk`), "utf8"),
+  //     nunjucks.configure(templateDir)
+  //   );
 
-    templateRender = template.render(templateContext);
+  //   templateRender = template.render(templateContext);
 
-    filePath = path.resolve(projectDir, `rollup.config.mjs`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');
-  };
+  //   filePath = path.resolve(projectDir, `rollup.config.mjs`);
+  //   fs.writeFileSync(filePath, templateRender, 'utf8');
+  // };
 }
