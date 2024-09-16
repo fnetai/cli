@@ -1,5 +1,3 @@
-const chalk = require("chalk");
-
 module.exports = ({ node }) => {
   const definition = node.definition;
 

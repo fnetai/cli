@@ -30,9 +30,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "yargs", version: "^17" });
   }
-
-  // packageDependencies.push({ package: "chalk", version: "^4" });
-
+  
   // DEV DEPENDENCIES
   packageDevDependencies.push({ package: "@babel/core", version: "^7" });
   packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^26" });
