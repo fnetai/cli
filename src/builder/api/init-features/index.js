@@ -27,8 +27,8 @@ module.exports = async ({ atom, context }) => {
   features.project = features.project || {};
   features.project.format = features.project.format || features.project_format || "esm";
   features.project_format = features.project.format;
-  features.dts_enabled = features.dts === true || (features.dts && features.dts?.enabled !== false);
-
+  features.dts_enabled = features.dts === true || features.dts?.enabled !== false;
+  
   if (!features.hasOwnProperty('all_parsed_imports')) features.all_parsed_imports = true;
 
   const projectDir = path.resolve(context.project.projectDir);

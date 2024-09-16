@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.39.4",
+  "version": "0.39.5",
   "files": [
     "dist"
   ],
@@ -30,8 +30,8 @@
     "@flownet/lib-to-ios-app": "^0.2.6",
     "@flownet/lib-to-macos-app": "^0.2.4",
     "@flownet/lib-to-nextjs": "^0.1.12",
-    "@flownet/lib-to-webos": "^0.2.9",
-    "@fnet/cli-project-common": "^0.1.25",
+    "@flownet/lib-to-webos": "^0.2.10",
+    "@fnet/cli-project-common": "^0.1.26",
     "@fnet/cli-project-flow": "^0.1.9",
     "@fnet/cli-project-node": "^0.1.12",
     "@fnet/config": "^0.2.8",
