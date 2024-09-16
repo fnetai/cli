@@ -1113,6 +1113,7 @@ class Builder {
         await createPackageJson(this.#apiContext);
 
         await formatFiles(this.#apiContext);
+        
         await createDts(this.#apiContext);
 
         if (this.#buildMode) {

@@ -1,6 +1,6 @@
 const merge = require('lodash.merge');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 
 function findEntryFile({ dir, name = 'index' }) {
@@ -27,6 +27,7 @@ module.exports = async ({ atom, context }) => {
   features.project = features.project || {};
   features.project.format = features.project.format || features.project_format || "esm";
   features.project_format = features.project.format;
+  features.dts_enabled = features.dts === true || (features.dts && features.dts?.enabled !== false);
 
   if (!features.hasOwnProperty('all_parsed_imports')) features.all_parsed_imports = true;
 

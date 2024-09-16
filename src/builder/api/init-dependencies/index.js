@@ -40,7 +40,9 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^5" });
   packageDevDependencies.push({ package: "rollup", version: "^4" });
   packageDevDependencies.push({ package: "rollup-plugin-delete", version: "^2" });
-  packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6" });
+  if(atom.doc.features.dts_enabled){
+    packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6" });
+  }
   packageDevDependencies.push({ package: "rollup-plugin-peer-deps-external", version: "^2" });
   packageDevDependencies.push({ package: "@rollup/plugin-alias", version: "^5" });
   // packageDevDependencies.push({ package: "@rollup/plugin-esm-shim", version: "^0.1" });

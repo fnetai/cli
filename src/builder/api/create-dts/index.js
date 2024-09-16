@@ -1,7 +1,9 @@
 const shell = require('shelljs');
 
-module.exports = async ({ setInProgress, context }) => {
+module.exports = async ({atom, setInProgress, context }) => {
 
+    if(!atom.doc.features.dts_enabled) return;
+    
     const projectDir = context.projectDir;
 
     await setInProgress({ message: "Creating .d.ts" });
