@@ -237,6 +237,8 @@ module.exports = async ({ atom, context }) => {
       replace: true,
       terser: true,
       string: true,
+      input: "./src/app/index.js",
+      output_dir : `./dist/app/webos`,
       babel_options: {
         targets: {
           chrome: "79"
