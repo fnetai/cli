@@ -29,7 +29,7 @@
     "@flownet/lib-to-gitlab": "^0.1.21",
     "@flownet/lib-to-ios-app": "^0.2.6",
     "@flownet/lib-to-macos-app": "^0.2.4",
-    "@flownet/lib-to-nextjs": "^0.2.1",
+    "@flownet/lib-to-nextjs": "^0.2.2",
     "@flownet/lib-to-webos": "^0.2.13",
     "@fnet/cli-project-common": "^0.1.26",
     "@fnet/cli-project-flow": "^0.1.9",
