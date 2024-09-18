@@ -1,29 +1,45 @@
-const fnetToElectron = require('@flownet/lib-to-electron');
 const fnetConfig = require('@fnet/config');
+const fnetToElectron = require('@flownet/lib-to-electron');
 
-module.exports = async ({ atom, setInProgress, context, deploymentProject, deploymentProjectTarget: target, buildId }) => {
+const cloneDeep = require("lodash.clonedeep");
+const semver = require('semver');
 
-  await setInProgress({ message: "Deploying it as electron package." });
+module.exports = async ({
+  atom,
+  target,
+  onProgress,
+  projectDir,
+  dependencies
+}) => {
 
-  const projectDir = context.projectDir;
+  const deployerName = 'electron';
 
-  if (target.dryRun === true) return;
+  if (onProgress) await onProgress({ message: `Deploying it as ${deployerName} package.` });
 
-  const config =target?.config? await fnetConfig({
+  const config = target?.config ? await fnetConfig({
     name: target.config,
-    dir: context.projectDir,
+    dir: projectDir,
     optional: true
-  }):undefined;
+  }) : undefined;
+
+  const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");
+  target.params.version = nextVersion;
+
+  const params = cloneDeep(target.params);
+
+  params.dependencies = cloneDeep(dependencies);
 
   const args = {
-    atom: atom,
-    params: target.params,
-    config:config?.config,
+    atom,
+    params,
+    config: config?.config,
     src: projectDir,
     dest: projectDir,
   }
 
-  await fnetToElectron(args);
+  const result = await fnetToElectron(args);
 
-  deploymentProject.isDirty = true;
+  return {
+    deployer: result,
+  };
 }

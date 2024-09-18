@@ -215,12 +215,13 @@ class Builder {
   }
 
   #recursiveDelete(filePath) {
+    console.log('filePath', filePath);  
     if (fs.statSync(filePath).isDirectory()) {
       fs.readdirSync(filePath).forEach(file => {
         const curPath = path.join(filePath, file);
         this.#recursiveDelete(curPath);
       });
-      fs.rmdirSync(filePath);
+      fs.rmSync(filePath);
     } else {
       fs.unlinkSync(filePath);
     }
@@ -249,7 +250,7 @@ class Builder {
       for (const file of files) {
         if (!exclude.includes(file)) {
           const filePath = path.join(projectDir, file);
-          this.#recursiveDelete(filePath);
+          fs.rmSync(filePath, { recursive: true });
         }
       }
     }

@@ -1,9 +1,8 @@
-const fnetDeployer = require('@flownet/lib-to-docker');
-const cloneDeep = require("lodash.clonedeep");
-const merge = require('lodash.merge');
-const semver = require('semver');
-const path = require('node:path');
 const fnetConfig = require('@fnet/config');
+const fnetDeployer = require('@flownet/lib-to-docker');
+
+const cloneDeep = require("lodash.clonedeep");
+const semver = require('semver');
 
 module.exports = async ({
   atom,
@@ -23,24 +22,19 @@ module.exports = async ({
     optional: true
   }) : undefined;
 
-  const deployerTargetDefault = {
-  }
-
-  target.params = merge(deployerTargetDefault, target.params);
-
-  const nextVersion = semver.inc(target.params.version, "patch");
+  const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");
   target.params.version = nextVersion;
 
-  const deployerTarget = cloneDeep(target);
+  const params = cloneDeep(target.params);
 
-  deployerTarget.params.dependencies = cloneDeep(dependencies);
+  params.dependencies = cloneDeep(dependencies);
 
   const args = {
     atom,
-    target: deployerTarget.params,
+    params,
     config: config?.config,
-    projectDir,
-    renderDir: path.resolve(projectDir, target.dir || 'docker')
+    src: projectDir,
+    dest: projectDir,
   }
 
   const result = await fnetDeployer(args);

@@ -16,7 +16,7 @@ const deployToFnetNode = require('../fnet-node');
 
 module.exports = async (apiContext) => {
 
-  const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress } = apiContext;
+  const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress, deploymentProject } = apiContext;
 
   if (deploymentProjectTarget.enabled !== true) return;
 
@@ -34,10 +34,6 @@ module.exports = async (apiContext) => {
     await deployToMacOSApp({ ...apiContext });
   else if (deploymentProjectTarget.name === "ios-app")
     await deployToIosApp({ ...apiContext });
-  else if (deploymentProjectTarget.name === "electron")
-    await deployToElectron({ ...apiContext });
-  else if (deploymentProjectTarget.name === "webos")
-    await deployToWebos({ ...apiContext });
   else if (deploymentProjectTarget.name === "fnet-package")
     await deployToFnetPackage({ ...apiContext });
   else if (deploymentProjectTarget.name === "fnet-form")
@@ -50,6 +46,8 @@ module.exports = async (apiContext) => {
     let deployer;
 
     if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
+    else if (deploymentProjectTarget.name === 'webos') deployer = deployToWebos;
+    else if (deploymentProjectTarget.name === 'electron') deployer = deployToElectron;
     else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
 
     if (!deployer) return;
@@ -61,5 +59,7 @@ module.exports = async (apiContext) => {
       projectDir: context.projectDir,
       dependencies: packageDependencies
     });
+
+    deploymentProject.isDirty = true;
   }
 }

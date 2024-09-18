@@ -228,6 +228,7 @@ module.exports = async ({ atom, context }) => {
   // string default
   const string_default = {}
 
+  // webos default
   if (features.webos === true) {
     rollup_output_default.webos = {
       format: "iife",
@@ -247,6 +248,37 @@ module.exports = async ({ atom, context }) => {
     }
   }
 
+  // electron default
+  if (features.electron === true) {
+    rollup_output_default.electron = {
+      format: "iife",
+      browser: true,
+      babel: true,
+      context: "window",
+      replace: true,
+      terser: true,
+      string: true,
+      input: "./src/app/index.js",
+      output_dir : `./dist/app/electron`,
+    }
+  }
+
+  // nextsj default
+  if (features.nextjs === true) {
+    rollup_output_default.nextjs = {
+      format: "esm",
+      browser: true,
+      babel: true,
+      context: "window",
+      replace: true,
+      terser: true,
+      string: true,
+      input: "./src/app/index.js",
+      output_dir : `./dist/app/nextjs`,
+    }
+  }
+
+  // app default
   if (features.app.enabled === true) {
     features.app.dir = `./dist/app/${features.app.folder}`;
 
@@ -267,6 +299,7 @@ module.exports = async ({ atom, context }) => {
     copy_default.targets.push({ src: "./src/app/index.html", dest: features.app.dir });
   }
 
+  // cli default
   if (features.cli.enabled === true) {
     features.cli.dir = `./dist/cli/${features.cli.folder}`;
 
