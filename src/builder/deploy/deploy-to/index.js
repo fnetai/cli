@@ -30,10 +30,6 @@ module.exports = async (apiContext) => {
     await deployToGcs({ ...apiContext });
   else if (deploymentProjectTarget.name === "gitlab")
     await deployToGitlab({ ...apiContext });
-  else if (deploymentProjectTarget.name === "macos-app")
-    await deployToMacOSApp({ ...apiContext });
-  else if (deploymentProjectTarget.name === "ios-app")
-    await deployToIosApp({ ...apiContext });
   else if (deploymentProjectTarget.name === "fnet-package")
     await deployToFnetPackage({ ...apiContext });
   else if (deploymentProjectTarget.name === "fnet-form")
@@ -44,11 +40,13 @@ module.exports = async (apiContext) => {
     await deployToFnetFlow({ ...apiContext });
   else {
     let deployer;
-
+    
     if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
     else if (deploymentProjectTarget.name === 'webos') deployer = deployToWebos;
     else if (deploymentProjectTarget.name === 'electron') deployer = deployToElectron;
     else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
+    else if (deploymentProjectTarget.name === 'ios-app') deployer = deployToIosApp;
+    else if (deploymentProjectTarget.name === 'macos-app') deployer = deployToMacOSApp;
 
     if (!deployer) return;
 

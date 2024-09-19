@@ -19,7 +19,8 @@ module.exports = async ({
   const config = target?.config ? await fnetConfig({
     name: target.config,
     dir: projectDir,
-    optional: true
+    optional: true,
+    transferEnv:false
   }) : undefined;
 
   const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");

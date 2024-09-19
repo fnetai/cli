@@ -278,6 +278,36 @@ module.exports = async ({ atom, context }) => {
     }
   }
 
+  // ios default
+  if (features.ios === true) {
+    rollup_output_default.ios = {
+      format: "iife",
+      browser: true,
+      babel: true,
+      context: "window",
+      replace: true,
+      terser: true,
+      string: true,
+      input: "./src/app/index.js",
+      output_dir : `./dist/app/ios`,
+    }
+  }
+
+  // ios default
+  if (features.macos === true) {
+    rollup_output_default.macos = {
+      format: "iife",
+      browser: true,
+      babel: true,
+      context: "window",
+      replace: true,
+      terser: true,
+      string: true,
+      input: "./src/app/index.js",
+      output_dir : `./dist/app/macos`,
+    }
+  }
+
   // app default
   if (features.app.enabled === true) {
     features.app.dir = `./dist/app/${features.app.folder}`;

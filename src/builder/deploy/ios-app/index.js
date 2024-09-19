@@ -1,21 +1,47 @@
+
+const fnetConfig = require('@fnet/config');
 const fnetToIOSApp = require('@flownet/lib-to-ios-app');
 
-module.exports = async ({atom, setInProgress, context, deploymentProject, deploymentProjectTarget: target, buildId,registerToPackageManager }) => {
+const cloneDeep = require("lodash.clonedeep");
+const semver = require('semver');
 
-    await setInProgress({ message: "Deploying it as ios app package." });
+module.exports = async ({
+  atom,
+  target,
+  onProgress,
+  projectDir,
+  dependencies
+}) => {
 
-    const projectDir = context.projectDir;
+  const deployerName = 'ios-app';
 
-    if (target.dryRun === true) return;
-    
-    const args = {
-        projectDir,
-        dest: projectDir,
-        atom: atom,
-        params: target.params
-    }
+  if (onProgress) await onProgress({ message: `Deploying it as ${deployerName} package.` });
 
-    await fnetToIOSApp(args);
+  const config = target?.config ? await fnetConfig({
+    name: target.config,
+    dir: projectDir,
+    optional: true,
+    transferEnv:false
+  }) : undefined;
 
-    deploymentProject.isDirty = true;
+  const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");
+  target.params.version = nextVersion;
+
+  const params = cloneDeep(target.params);
+
+  params.dependencies = cloneDeep(dependencies);
+
+  const args = {
+    atom,
+    params,
+    config: config?.config,
+    src: projectDir,
+    dest: projectDir,
+  }
+
+  const result = await fnetToIOSApp(args);
+
+  return {
+    deployer: result,
+  };
 }
