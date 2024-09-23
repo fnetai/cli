@@ -45,8 +45,8 @@ module.exports = async (apiContext) => {
     else if (deploymentProjectTarget.name === 'webos') deployer = deployToWebos;
     else if (deploymentProjectTarget.name === 'electron') deployer = deployToElectron;
     else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
-    else if (deploymentProjectTarget.name === 'ios-app') deployer = deployToIosApp;
-    else if (deploymentProjectTarget.name === 'macos-app') deployer = deployToMacOSApp;
+    else if (deploymentProjectTarget.name === 'ios') deployer = deployToIosApp;
+    else if (deploymentProjectTarget.name === 'macos') deployer = deployToMacOSApp;
 
     if (!deployer) return;
 
