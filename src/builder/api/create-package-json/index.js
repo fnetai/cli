@@ -39,15 +39,21 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
   const checkFiles = [];
 
   if (atom.doc.features.app.enabled === true) {
-    checkFiles.push(path.resolve(context.projectDir, `src/app/index.js`));
+    checkFiles.push({
+      file: path.resolve(context.projectDir, `src/app/index.js`),
+      dev: atom.doc.features.app.dev !== false
+    });
   }
 
   if (atom.doc.features.cli.enabled === true) {
-    checkFiles.push(path.resolve(context.projectDir, `src/cli/index.js`));
+    checkFiles.push({
+      file: path.resolve(context.projectDir, `src/cli/index.js`),
+      dev: atom.doc.features.cli.dev !== false
+    });
   }
 
   for await (const checkFile of checkFiles) {
-    const srcFilePath = checkFile;
+    const srcFilePath = checkFile.file;
     if (!fs.existsSync(srcFilePath)) throw new Error(`App file not found: ${srcFilePath}`);
 
     const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
@@ -61,7 +67,8 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
       const npmVersions = await fnetListNpmVersions({ name: parsedImport.package, groupBy: { minor: true } });
       const npmVersion = npmVersions[0][0];
 
-      packageDevDependencies.push({
+      const targetDependencies = checkFile.dev === true ? packageDevDependencies : packageDependencies;
+      targetDependencies.push({
         package: parsedImport.package,
         subpath: parsedImport.subpath,
         version: `^${npmVersion}`,
@@ -69,7 +76,6 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
       })
     }
   }
-
 
   const templateContext = {
     atom: atom,
