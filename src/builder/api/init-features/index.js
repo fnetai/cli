@@ -27,9 +27,9 @@ module.exports = async ({ atom, context }) => {
   features.project = features.project || {};
   features.project.format = features.project.format || features.project_format || "esm";
   features.project_format = features.project.format;
-  
-  features.dts_enabled = features.dts === true || ( typeof features.dts!=='undefined' && features.dts!== false);
-  
+
+  features.dts_enabled = features.dts === true || (typeof features.dts !== 'undefined' && features.dts !== false);
+
   if (!features.hasOwnProperty('all_parsed_imports')) features.all_parsed_imports = true;
 
   const projectDir = path.resolve(context.project.projectDir);
@@ -128,7 +128,7 @@ module.exports = async ({ atom, context }) => {
       babel: (features.src_uses_jsx === true) || false,
       browser: false,
       replace: true,
-      terser: false,
+      terser: true,
       enabled: true,
       string: true,
     },
@@ -182,7 +182,7 @@ module.exports = async ({ atom, context }) => {
       browser: true,
       replace: true,
       enabled: false,
-      terser: false,
+      terser: true,
       string: true,
     }
   };
@@ -240,7 +240,7 @@ module.exports = async ({ atom, context }) => {
       terser: true,
       string: true,
       input: "./src/app/index.js",
-      output_dir : `./dist/app/webos`,
+      output_dir: `./dist/app/webos`,
       babel_options: {
         targets: {
           chrome: "79"
@@ -260,7 +260,7 @@ module.exports = async ({ atom, context }) => {
       terser: true,
       string: true,
       input: "./src/app/index.js",
-      output_dir : `./dist/app/electron`,
+      output_dir: `./dist/app/electron`,
     }
   }
 
@@ -275,7 +275,7 @@ module.exports = async ({ atom, context }) => {
       terser: true,
       string: true,
       input: "./src/app/index.js",
-      output_dir : `./dist/app/nextjs`,
+      output_dir: `./dist/app/nextjs`,
     }
   }
 
@@ -290,7 +290,7 @@ module.exports = async ({ atom, context }) => {
       terser: true,
       string: true,
       input: "./src/app/index.js",
-      output_dir : `./dist/app/ios`,
+      output_dir: `./dist/app/ios`,
     }
   }
 
@@ -305,7 +305,7 @@ module.exports = async ({ atom, context }) => {
       terser: true,
       string: true,
       input: "./src/app/index.js",
-      output_dir : `./dist/app/macos`,
+      output_dir: `./dist/app/macos`,
     }
   }
 
@@ -344,7 +344,7 @@ module.exports = async ({ atom, context }) => {
       input: "./src/cli/index.js",
       output_dir: features.cli.dir,
       banner: "#!/usr/bin/env node",
-      terser: false,
+      terser: true,
       output_exports: features.cli.export === false ? "none" : "auto",
       string: true
     }
@@ -424,7 +424,8 @@ module.exports = async ({ atom, context }) => {
   features.wasm_enabled = features.wasm === true || (features.wasm && features.wasm?.enabled !== false);
   features.css_enabled = features.css === true || (features.css && features.css?.enabled !== false);
   features.json_enabled = features.json === true || (features.json && features.json?.enabled !== false);
-  features.terser_enabled = features.terser === true || (features.terser && features.terser?.enabled !== false);
+  // features.terser_enabled = features.terser === true || (features.terser && features.terser?.enabled !== false);
+  features.terser_enabled = features.terser !== false;
   features.copy_enabled = features.app.enabled || features.copy_enabled || (features.copy && features.copy?.enabled !== false);
   features.image_enabled = features.image === true || (features.image && features.image?.enabled !== false);
   features.analyzer_enabled = features.analyzer === true || (features.analyzer && features.analyzer?.enabled !== false);
