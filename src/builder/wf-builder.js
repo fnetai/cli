@@ -3,7 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const yaml = require("js-yaml");
+const yaml = require("yaml");
 const shell = require('shelljs');
 const nunjucks = require("nunjucks");
 const cloneDeep = require('lodash.clonedeep');
@@ -965,7 +965,7 @@ class Builder {
 
     const { content: main, ...content } = this.#atom.doc;
 
-    const templateContext = { content: yaml.dump(content) }
+    const templateContext = { content: yaml.stringify(content) }
 
     const templateDir = this.#context.templateDir;
     const template = nunjucks.compile(
@@ -989,7 +989,7 @@ class Builder {
 
     // const { content: main, ...content } = this.#atom.doc;
 
-    const templateContext = { content: yaml.dump(this.#workflow) }
+    const templateContext = { content: yaml.stringify(this.#workflow) }
 
     const templateDir = this.#context.templateDir;
     const template = nunjucks.compile(
