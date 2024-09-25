@@ -171,7 +171,7 @@ module.exports = async ({ atom, context }) => {
       babel: true,
       browser: true,
       replace: true,
-      enabled: true,
+      enabled: features.iife !== false,
       terser: true,
       string: true,
     },
