@@ -1,11 +1,16 @@
 {
   "name": "@fnet/cli",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "files": [
     "dist"
   ],
+  "contributors": [
+    {
+      "name": "Gultekin Boyraz",
+      "email": "gultekinboyraz@gmail.com"
+    }
+  ],
   "scripts": {
-    "start": "node src/index.js",
     "build": "rollup --config --bundleConfigAsCjs",
     "deploy": "npm install && npm run build && npm publish --access public",
     "watch": "rollup --config --watch --sourcemap --bundleConfigAsCjs --environment DEVELOPMENT"
@@ -45,38 +50,26 @@
     "@node-red/util": "^4.0.2",
     "axios": "^1.5.0",
     "chalk": "^4.1.2",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "express-session": "^1.17.3",
     "form-data": "^4.0.0",
     "get-value": "^3.0.1",
-    "helmet": "^7.1.0",
     "isobject": "^4.0.0",
     "js-yaml": "^4.1.0",
-    "keycloak-connect": "^25.0.5",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
     "lodash.pick": "^3.1.0",
-    "minimist": "^1.2.8",
     "nanoid": "^3.3.6",
     "nunjucks": "^3.2.4",
     "prettier": "^3.0.3",
-    "qs": "^6.11.2",
     "redis": "^4.6.10",
-    "request-ip": "^3.3.0",
     "semver": "^7.5.4",
-    "serve": "^14.2.3",
     "set-value": "^4.1.0",
     "shelljs": "^0.8.5",
     "typescript": "^5.2.2",
-    "yaml": "^2.3.2",
     "yargs": "^17.7.2"
   },
   "bin": {
     "fnet": "dist/builder/wf-cli.js",
-    "flib": "dist/builder/lib-cli.js",
-    "fsrv": "dist/index.js",
     "fnode": "dist/builder/lib-cli.js"
   },
   "devDependencies": {
