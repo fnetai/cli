@@ -37,7 +37,6 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   packageDevDependencies.push({ package: "@rollup/plugin-node-resolve", version: "^15" });
   packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^5" });
   packageDevDependencies.push({ package: "rollup", version: "^4" });
-  packageDevDependencies.push({ package: "rollup-plugin-delete", version: "^2" });
   if(atom.doc.features.dts_enabled){
     packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6" });
   }
@@ -52,10 +51,12 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "@babel/preset-react", version: "^7" });
   }
 
-  if (atom.doc.features.browsersync_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-browsersync", version: "^1" });
-  }
+  packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
 
+  if (atom.doc.features.browsersync_enabled) {
+    packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.1" });
+  }
+  
   if (atom.doc.features.json_enabled) {
     packageDevDependencies.push({ package: "@rollup/plugin-json", version: "^6" });
   }
