@@ -1,13 +1,14 @@
 {
   "name": "@fnet/cli",
-  "version": "0.44.0",
+  "version": "0.44.1",
   "files": [
     "dist"
   ],
   "contributors": [
     {
       "name": "Gultekin Boyraz",
-      "email": "gultekinboyraz@gmail.com"
+      "email": "gultekinboyraz@gmail.com",
+      "url": "https://gitlab.com/fnetai"
     }
   ],
   "scripts": {
