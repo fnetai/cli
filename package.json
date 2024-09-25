@@ -1,10 +1,10 @@
 {
   "name": "@fnet/cli",
-  "version": "0.45.1",
+  "version": "0.45.2",
   "files": [
     "dist"
   ],
-  "contributors": [
+  "maintainers": [
     {
       "name": "Gultekin Boyraz",
       "email": "gultekinboyraz@gmail.com",
