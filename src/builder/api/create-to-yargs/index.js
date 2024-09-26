@@ -24,16 +24,19 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
       if (input.import) imports.push(input);
 
       const option = {};
-      if (input.type) option.type = input.type;
-      if (input.default) option.default = input.default;
-      if (input.choices) option.choices = input.choices;
-      if (input.describe || input.description) option.describe = input.describe || input.description;
-      if (input.alias) option.alias = input.alias;
-      if (input.required === true) option.required = true;
-      if (input.hidden === true) option.hidden = true;
-      if (input.array === true) option.array = true;
-      if (input.normalize === true) option.normalize = true;
-      if (input.nargs) option.nargs = input.nargs;
+
+      if (Reflect.has(input, 'type')) option.type = input.type;
+      if (Reflect.has(input, 'default')) option.default = input.default;
+      if (Reflect.has(input, 'choices')) option.choices = input.choices;
+      if (Reflect.has(input, 'describe') || Reflect.has(input, 'description')) {
+        option.describe = input.describe || input.description;
+      }
+      if (Reflect.has(input, 'alias')) option.alias = input.alias;
+      if (Reflect.has(input, 'required') && input.required === true) option.required = true;
+      if (Reflect.has(input, 'hidden') && input.hidden === true) option.hidden = true;
+      if (Reflect.has(input, 'array') && input.array === true) option.array = true;
+      if (Reflect.has(input, 'normalize') && input.normalize === true) option.normalize = true;
+      if (Reflect.has(input, 'nargs')) option.nargs = input.nargs;
 
       options[input.name] = option;
     });
