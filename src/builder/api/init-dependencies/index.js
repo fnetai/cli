@@ -49,6 +49,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "@rollup/plugin-babel", version: "^6" });
     packageDevDependencies.push({ package: "@babel/preset-env", version: "^7" });
     packageDevDependencies.push({ package: "@babel/preset-react", version: "^7" });
+    packageDevDependencies.push({ package: "@babel/plugin-proposal-decorators", version: "^7" });
   }
 
   packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
@@ -109,6 +110,10 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
           break;
       }
     });
+  }
+
+  if(atom.doc.features.polyfill_enabled){
+    packageDevDependencies.push({ package: "rollup-plugin-node-polyfills", version: "^0.2" });
   }
 
   if (atom.doc.features.copy_enabled) {

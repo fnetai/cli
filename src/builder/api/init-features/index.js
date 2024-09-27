@@ -434,4 +434,5 @@ module.exports = async ({ atom, context }) => {
   features.dependency_auto_enabled = features.dependency_auto !== false && features.dependency_auto?.enabled !== false;
   features.npm_install_flags = features.npm_install_flags || '';
   features.react_version = features.react_version || features.react?.version || 18;
+  features.polyfill_enabled = features.polyfill === true || (features.polyfill && features.polyfill?.enabled !== false);
 }

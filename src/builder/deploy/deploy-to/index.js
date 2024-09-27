@@ -13,6 +13,7 @@ const deployToFnetPackage = require('../fnet-package');
 const deployToFnetForm = require('../fnet-form');
 const deployToFnetFlow = require('../fnet-flow');
 const deployToFnetNode = require('../fnet-node');
+const deployToRust = require('../rust');
 
 module.exports = async (apiContext) => {
 
@@ -47,6 +48,7 @@ module.exports = async (apiContext) => {
     else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
     else if (deploymentProjectTarget.name === 'ios') deployer = deployToIosApp;
     else if (deploymentProjectTarget.name === 'macos') deployer = deployToMacOSApp;
+    else if (deploymentProjectTarget.name === 'rust') deployer = deployToRust;
 
     if (!deployer) return;
 

@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.45.4",
+  "version": "0.46.0",
   "files": [
     "dist"
   ],
@@ -41,6 +41,7 @@
     "@fnet/files-to-gcs": "^0.3.6",
     "@fnet/object-from-schema": "^0.1.2",
     "@fnet/shell": "^0.1.13",
+    "@fnet/to-rust": "^0.1.1",
     "@fnet/yaml": "^0.1.12",
     "@fnet/yargs-options-from-schema": "^0.1.1",
     "@node-red/util": "^4.0.2",
