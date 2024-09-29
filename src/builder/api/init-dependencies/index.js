@@ -59,7 +59,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   }
 
   if (atom.doc.features.browsersync_enabled) {
-    packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.1" });
+    packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.4" });
   }
   
   if (atom.doc.features.json_enabled) {
