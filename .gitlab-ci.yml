@@ -6,7 +6,7 @@ stages:
 # Configuration for Linux platform
 build_linux:
   stage: build
-  image: node:latest  # Using the official Docker image that includes Node.js
+  image: node:22-alpine  # Using the official Docker image that includes Node.js
   script:
     - echo "Building project on Linux..."
     - node -v  # Verifying that Node.js is installed
