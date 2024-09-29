@@ -17,20 +17,20 @@ build_linux:
   only:
     - main  # This job runs only when committing to the main branch
 
-# # Configuration for Windows platform
-# build_windows:
-#   stage: build
-#   tags:
-#     - windows  # Using a Windows runner
-#   script:
-#     - echo "Building project on Windows..."
-#     - powershell "curl -sL https://deb.nodesource.com/setup_16.x | bash -"  # Node.js installation
-#     - powershell "Install-Module -Name NPM -Force"  # npm installation
-#     - node -v  # Verifying that Node.js is installed
-#     - npm install  # Installing Node.js dependencies
-#     - npm run build  # Running the build command for the project
-#   only:
-#     - main  # This job runs only when committing to the main branch
+# Configuration for Windows platform
+build_windows:
+  stage: build
+  tags:
+    - windows  # Using a Windows runner
+  script:
+    - echo "Building project on Windows..."
+    # - powershell "curl -sL https://deb.nodesource.com/setup_16.x | bash -"  # Node.js installation
+    # - powershell "Install-Module -Name NPM -Force"  # npm installation
+    - node -v  # Verifying that Node.js is installed
+    - npm install  # Installing Node.js dependencies
+    - npm run build  # Running the build command for the project
+  only:
+    - main  # This job runs only when committing to the main branch
 
 # Configuration for macOS platform
 build_macos:
