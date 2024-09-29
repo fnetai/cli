@@ -7,8 +7,6 @@ stages:
 build_linux:
   stage: build
   image: node:22-alpine  # Using the official Docker image that includes Node.js
-  before_script:
-    - docker login
   script:
     - echo "Building project on Linux..."
     - node -v  # Verifying that Node.js is installed
