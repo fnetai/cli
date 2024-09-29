@@ -76,8 +76,11 @@ module.exports = async ({ atom, context }) => {
     }
   }
 
-  const isAppReact = features.app_has_entry === true || features.src_uses_jsx === true;
-  const isCliReact = features.cli_has_entry === true || features.src_uses_jsx === true;
+  // const isAppReact = features.app_has_entry === true && features.src_uses_jsx === true;
+  // const isCliReact = features.cli_has_entry === true && features.src_uses_jsx === true;
+
+  const isAppReact = features.src_uses_jsx === true;
+  const isCliReact = features.src_uses_jsx === true;
 
   features.form_enabled = atom.doc.form === true || atom.doc.form?.enabled === true || features.form === true || features.form?.enabled === true;
   features.multiple_enabled = features.multiple_enabled || features.multiple === true || features.multiple?.enabled === true;
@@ -363,7 +366,7 @@ module.exports = async ({ atom, context }) => {
     open: false,
   }
 
-  features.babel_options = (features.babel_options || features.babel?.options || babel_default);
+  features.babel_options = merge(babel_default, features.babel_options || features.babel?.options);
   features.browsersync_options = merge(browsersync_default, features.browsersync_options || features.browsersync?.options || {});
   features.replace_options = merge(replace_default, features.replace_options || features.replace?.options || {});
   features.terser_options = merge(terser_default, features.terser_options || features.terser?.options || {});

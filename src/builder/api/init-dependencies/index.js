@@ -30,14 +30,14 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "yargs", version: "^17" });
   }
-  
+
   // DEV DEPENDENCIES
   packageDevDependencies.push({ package: "@babel/core", version: "^7" });
   packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^26" });
   packageDevDependencies.push({ package: "@rollup/plugin-node-resolve", version: "^15" });
   packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^5" });
   packageDevDependencies.push({ package: "rollup", version: "^4" });
-  if(atom.doc.features.dts_enabled){
+  if (atom.doc.features.dts_enabled) {
     packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6" });
   }
   packageDevDependencies.push({ package: "rollup-plugin-peer-deps-external", version: "^2" });
@@ -48,20 +48,31 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "@rollup/plugin-babel", version: "^6" });
     packageDevDependencies.push({ package: "@babel/preset-env", version: "^7" });
     packageDevDependencies.push({ package: "@babel/preset-react", version: "^7" });
-    packageDevDependencies.push({ package: "@babel/plugin-proposal-decorators", version: "^7" });
-    packageDevDependencies.push({ package: "@babel/plugin-proposal-class-properties", version: "^7" });
+
+    atom.doc.features.babel?.plugins?.forEach(plugin => {
+      const pluginName = plugin[0];
+      switch (pluginName) {
+        case 'proposal-decorators':
+          packageDevDependencies.push({ package: "@babel/plugin-proposal-decorators", version: "^7" });
+          break;
+        case 'proposal-class-properties':
+          packageDevDependencies.push({ package: "@babel/plugin-proposal-class-properties", version: "^7" });
+          break;
+      }
+    });
   }
 
+  // 
   packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
 
   if (atom.doc.features.nunjucks_enabled) {
-    packageDevDependencies.push({ package: "@fnet/rollup-plugin-nunjucks", version: "0.1.3" });    
+    packageDevDependencies.push({ package: "@fnet/rollup-plugin-nunjucks", version: "0.1.3" });
   }
 
   if (atom.doc.features.browsersync_enabled) {
     packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.4" });
   }
-  
+
   if (atom.doc.features.json_enabled) {
     packageDevDependencies.push({ package: "@rollup/plugin-json", version: "^6" });
   }
@@ -116,7 +127,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     });
   }
 
-  if(atom.doc.features.polyfill_enabled){
+  if (atom.doc.features.polyfill_enabled) {
     packageDevDependencies.push({ package: "rollup-plugin-node-polyfills", version: "^0.2" });
   }
 
