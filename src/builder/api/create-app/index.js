@@ -8,8 +8,6 @@ module.exports = async ({ atom, setInProgress, context, packageDependencies }) =
     await setInProgress({ message: "Creating index.html." });
 
     const templateContext = {
-        workflowAtom: atom, // TODO: REMOVE
-        libraryAtom: atom, // TODO: REMOVE
         atom: atom,
         packageDependencies: packageDependencies,
         ts: Date.now()

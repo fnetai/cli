@@ -423,7 +423,6 @@ class Builder {
   async build() {
     try {
       if (this.#fileMode) {
-
         await this.createAtomLibFiles({ libs: this.#libs });
         await this.createEngine();
         await this.createProjectYaml();
@@ -449,7 +448,6 @@ class Builder {
           if (this.#deployMode)
             await this.deploy();  
         }
-
       }
 
       await this._cache_set(this.#buildKey, { status: "COMPLETED" });

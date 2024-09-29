@@ -37,9 +37,9 @@ build_macos:
   stage: build
   tags:
     - macos  # Using a macOS runner
-  before_script:
-    - echo "Installing Node.js on macOS..."
-    - brew install node  # Installing Node.js using Homebrew
+  # before_script:
+  #   - echo "Installing Node.js on macOS..."
+  #   - brew install node  # Installing Node.js using Homebrew
   script:
     - echo "Building project on macOS..."
     - node -v  # Verifying that Node.js is installed
