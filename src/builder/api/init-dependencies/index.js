@@ -42,7 +42,6 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   }
   packageDevDependencies.push({ package: "rollup-plugin-peer-deps-external", version: "^2" });
   packageDevDependencies.push({ package: "@rollup/plugin-alias", version: "^5" });
-  // packageDevDependencies.push({ package: "@rollup/plugin-esm-shim", version: "^0.1" });
   packageDevDependencies.push({ package: "fs-extra", version: "^11" });
 
   if (atom.doc.features.babel_enabled) {
@@ -50,9 +49,14 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "@babel/preset-env", version: "^7" });
     packageDevDependencies.push({ package: "@babel/preset-react", version: "^7" });
     packageDevDependencies.push({ package: "@babel/plugin-proposal-decorators", version: "^7" });
+    packageDevDependencies.push({ package: "@babel/plugin-proposal-class-properties", version: "^7" });
   }
 
   packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
+
+  if (atom.doc.features.nunjucks_enabled) {
+    packageDevDependencies.push({ package: "@fnet/rollup-plugin-nunjucks", version: "0.1.3" });    
+  }
 
   if (atom.doc.features.browsersync_enabled) {
     packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.1" });

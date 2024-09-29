@@ -229,6 +229,10 @@ module.exports = async ({ atom, context }) => {
   // string default
   const string_default = {}
 
+  // nunjucks default
+  const nunjucks_default = {
+  }
+
   // webos default
   if (features.webos === true) {
     rollup_output_default.webos = {
@@ -371,6 +375,11 @@ module.exports = async ({ atom, context }) => {
   features.analyzer_options = merge(analyzer_default, features.analyzer_options || features.analyzer?.options || {});
   features.visualizer_options = merge(visualizer_default, features.visualizer_options || features.visualizer?.options || {});
   features.string_options = merge(string_default, features.string_options || features.string?.options || {});
+  features.nunjucks_options = merge(nunjucks_default, features.nunjucks_options || features.nunjucks?.options || {});
+
+  if (Reflect.has(features.browsersync_options, 'proxy')) {
+    delete features.browsersync_options.server;
+  }
 
   features.rollup = features.rollup || {};
   features.rollup_output = merge(rollup_output_default, features.rollup_output || features.rollup?.output || {});
@@ -404,6 +413,7 @@ module.exports = async ({ atom, context }) => {
     output.visualizer_options = merge(features.visualizer_options, output.visualizer_options);
     output.string_options = merge(features.string_options, output.string_options);
     output.string = features.string_enabled && output.string;
+    output.nunjucks_options = merge(features.nunjucks_options, output.nunjucks_options);
 
     if (features.preact_enabled) {
       output.alias_enabled = true;
@@ -424,7 +434,6 @@ module.exports = async ({ atom, context }) => {
   features.wasm_enabled = features.wasm === true || (features.wasm && features.wasm?.enabled !== false);
   features.css_enabled = features.css === true || (features.css && features.css?.enabled !== false);
   features.json_enabled = features.json === true || (features.json && features.json?.enabled !== false);
-  // features.terser_enabled = features.terser === true || (features.terser && features.terser?.enabled !== false);
   features.terser_enabled = features.terser !== false;
   features.copy_enabled = features.app.enabled || features.copy_enabled || (features.copy && features.copy?.enabled !== false);
   features.image_enabled = features.image === true || (features.image && features.image?.enabled !== false);
@@ -435,4 +444,5 @@ module.exports = async ({ atom, context }) => {
   features.npm_install_flags = features.npm_install_flags || '';
   features.react_version = features.react_version || features.react?.version || 18;
   features.polyfill_enabled = features.polyfill === true || (features.polyfill && features.polyfill?.enabled !== false);
+  features.nunjucks_enabled = features.nunjucks === true || (features.nunjucks && features.nunjucks?.enabled !== false);
 }
