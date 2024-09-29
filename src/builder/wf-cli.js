@@ -49,7 +49,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
       if (shellResult.code !== 0) throw new Error('Failed to build project.');
 
       if (shell.which('git')) {
-        shellResult = shell.exec(`git init`, { cwd: outDir });
+        shellResult = shell.exec(`git init --initial-branch=main`, { cwd: outDir });
         if (shellResult.code !== 0) throw new Error('Failed to initialize git.');
       }
 
