@@ -8,7 +8,7 @@ build_linux:
   stage: build
   image: node:22-alpine  # Using the official Docker image that includes Node.js
   before_script:
-    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"  
+    - docker login -u "fnetai" -p "$DOCKER_PASSWORD"  
   script:
     - echo "Building project on Linux..."
     - node -v  # Verifying that Node.js is installed
