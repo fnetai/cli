@@ -147,7 +147,7 @@ class Builder {
     this.#protocol = this.#context.protocol;
     this.#buildKey = "BUILD:" + this.#buildId;
 
-    this.#atomConfig = (await fnetConfig({ optional: true, name: "atom", dir: this.#context.projectDir }))?.data;
+    this.#atomConfig = (await fnetConfig({ optional: true, name: "atom", dir: this.#context.projectDir, tags: this.#context.tags }))?.data;
 
     try {
       await this.setInProgress({ message: "Initialization started." });
@@ -215,7 +215,7 @@ class Builder {
   }
 
   #recursiveDelete(filePath) {
-    console.log('filePath', filePath);  
+    console.log('filePath', filePath);
     if (fs.statSync(filePath).isDirectory()) {
       fs.readdirSync(filePath).forEach(file => {
         const curPath = path.join(filePath, file);
@@ -1114,16 +1114,16 @@ class Builder {
         await createPackageJson(this.#apiContext);
 
         await formatFiles(this.#apiContext);
-        
+
         await createDts(this.#apiContext);
 
         if (this.#buildMode) {
-          
+
           await installNpmPackages(this.#apiContext);
           await runNpmBuild(this.#apiContext);
 
           if (this.#deployMode)
-            await this.deploy();  
+            await this.deploy();
         }
       }
 

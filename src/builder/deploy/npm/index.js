@@ -38,7 +38,7 @@ module.exports = async ({atom, setInProgress, context, deploymentProject, deploy
 
     fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, "\t"));
 
-    const npmConfig = (await fnetConfig({ name: context.npmConfig || "npm", dir: context.projectDir }))?.data;
+    const npmConfig = (await fnetConfig({ name: context.npmConfig || "npm", dir: context.projectDir,tags:context.tags }))?.data;
 
     fs.writeFileSync(path.resolve(projectDir, '.npmrc'), `//registry.npmjs.org/:_authToken=${npmConfig.env.NPM_TOKEN}`);
 

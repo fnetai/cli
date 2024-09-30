@@ -41,7 +41,7 @@ module.exports = async (apiContext) => {
     await deployToFnetFlow({ ...apiContext });
   else {
     let deployer;
-    
+
     if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
     else if (deploymentProjectTarget.name === 'webos') deployer = deployToWebos;
     else if (deploymentProjectTarget.name === 'electron') deployer = deployToElectron;
@@ -57,7 +57,8 @@ module.exports = async (apiContext) => {
       target: deploymentProjectTarget,
       onProgress: setInProgress,
       projectDir: context.projectDir,
-      dependencies: packageDependencies
+      dependencies: packageDependencies,
+      context: context,
     });
 
     deploymentProject.isDirty = true;

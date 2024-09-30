@@ -28,7 +28,8 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-package",
-    dir: context.projectDir
+    dir: context.projectDir,
+    tags: context.tags
   });
 
 

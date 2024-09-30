@@ -10,7 +10,8 @@ module.exports = async ({
   target,
   onProgress,
   projectDir,
-  dependencies
+  dependencies,
+  context,
 }) => {
 
   const deployerName = 'macos-app';
@@ -21,7 +22,8 @@ module.exports = async ({
     name: target.config,
     dir: projectDir,
     optional: true,
-    transferEnv:false
+    transferEnv:false,
+    tags: context.tags
   }) : undefined;
 
   const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");

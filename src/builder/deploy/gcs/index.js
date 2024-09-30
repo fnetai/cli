@@ -26,7 +26,8 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   const { file: pmFile, data: gcsConfig } = await fnetConfig({
     name: target.config || "gcs",
-    dir: context.projectDir
+    dir: context.projectDir,
+    tags: context.tags
   });
   
   let command = `fnet-files-to-gcs`;

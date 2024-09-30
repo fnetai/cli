@@ -13,7 +13,8 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-flow",
-    dir: context.project.projectDir
+    dir: context.project.projectDir,
+    tags: context.tags
   });
 
   if (!config.env.ATOM_API_URL) throw new Error(`ATOM_API_URL is required in ${configFile}`);

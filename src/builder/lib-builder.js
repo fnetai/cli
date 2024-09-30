@@ -100,7 +100,7 @@ class Builder {
     this.#protocol = this.#context.protocol;
     this.#buildKey = "BUILD:" + this.#buildId;
 
-    this.#atomConfig = (await fnetConfig({ optional: true, name: this.#context.atomConfig || "atom", dir: this.#context.projectDir }))?.data;
+    this.#atomConfig = (await fnetConfig({ optional: true, name: this.#context.atomConfig || "atom", dir: this.#context.projectDir, tags: this.#context.tags }))?.data;
 
     try {
       await this.setInProgress({ message: "Initialization started." });
@@ -437,7 +437,7 @@ class Builder {
         await createPackageJson(this.#apiContext);
 
         await formatFiles(this.#apiContext);
-                
+
         await createDts(this.#apiContext);
 
         if (this.#buildMode) {
@@ -446,7 +446,7 @@ class Builder {
           await runNpmBuild(this.#apiContext);
 
           if (this.#deployMode)
-            await this.deploy();  
+            await this.deploy();
         }
       }
 

@@ -128,7 +128,7 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
 
     deploymentProject.isDirty = true;
 
-    const redConfig = (await fnetConfig({ name: context.redConfig || "red", dir: context.projectDir }))?.data;
+    const redConfig = (await fnetConfig({ name: context.redConfig || "red", dir: context.projectDir,tags:context.tags }))?.data;
 
     const redUrl = target.deploy.url || redConfig.env.RED_URL;
     

@@ -13,7 +13,8 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
     const config = await fnetConfig({
         name: configKey,
-        dir: context.projectDir
+        dir: context.projectDir,
+        tags: context.tags
     });
 
     if (!config) throw new Error(`Couldnt load config ${configKey}`);
