@@ -272,11 +272,11 @@ function bindConfigCreateCommand(builder) {
         const schema = projectFileParsed.config;
         if (!schema) throw new Error('Config schema not found in project file.');
 
-        const result = await fnetObjectFromSchema({ schema });
+        const result = await fnetObjectFromSchema({ schema, format: "yaml" });
         const dotFnetDir = path.resolve(projectDir, '.fnet');
         if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
         const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
-        fs.writeFileSync(configFilePath, YAML.stringify(result));
+        fs.writeFileSync(configFilePath, result);
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -339,7 +339,7 @@ async function loadLocalProject({ tags }) {
   const devopsFilePath = path.resolve(projectDir, 'node.devops.yaml');
   if (fs.existsSync(devopsFilePath)) {
 
-    const { raw:devopsFileContent, parsed: devopsFileParsed } = await fnetYaml({ file: devopsFilePath, tags });
+    const { raw: devopsFileContent, parsed: devopsFileParsed } = await fnetYaml({ file: devopsFilePath, tags });
 
     result.devops = {
       filePath: devopsFilePath,

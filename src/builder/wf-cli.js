@@ -267,11 +267,11 @@ function bindConfigCreateCommand(builder) {
         const schema = projectFileParsed.config;
         if (!schema) throw new Error('Config schema not found in project file.');
 
-        const result = await fnetObjectFromSchema({ schema });
+        const result = await fnetObjectFromSchema({ schema, format: 'yaml' });
         const dotFnetDir = path.resolve(projectDir, '.fnet');
         if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
         const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
-        fs.writeFileSync(configFilePath, YAML.stringify(result));
+        fs.writeFileSync(configFilePath, result);
       } catch (error) {
         console.error(error.message);
         process.exit(1);
