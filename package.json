@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.49.3",
+  "version": "0.49.4",
   "files": [
     "dist"
   ],
@@ -40,6 +40,7 @@
     "@fnet/expression": "^0.1.16",
     "@fnet/files-to-gcs": "^0.3.6",
     "@fnet/object-from-schema": "^0.1.2",
+    "@fnet/prompt": "^0.2.10",
     "@fnet/shell": "^0.1.13",
     "@fnet/to-rust": "^0.1.2",
     "@fnet/yaml": "^0.1.12",
