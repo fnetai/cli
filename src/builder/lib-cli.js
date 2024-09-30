@@ -102,7 +102,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
       .option('mode', { type: 'string', alias: 'm', default: "build", choices: ['all', 'file', 'build', 'deploy', 'bpmn'] })
-      .option('tags', { type: 'array', alias: ['t','tag'] })
+      .option('tags', { type: 'array', alias: ['t', 'tag'] })
       ;
   }, async (argv) => {
     try {
@@ -122,7 +122,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('tags', { type: 'array', alias: ['t','tag'] })
+      .option('tags', { type: 'array', alias: ['t', 'tag'] })
       ;
   }, async (argv) => {
     try {
@@ -142,7 +142,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('tags', { type: 'array', alias: ['t','tag'] })
+      .option('tags', { type: 'array', alias: ['t', 'tag'] })
       ;
   }, async (argv) => {
     try {
@@ -226,7 +226,7 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
 
         // config name
         const configName = argv.config;
-        const config = await fnetConfig({ name: configName, dir: projectDir, transferEnv: false, optional: true });
+        const config = await fnetConfig({ name: configName, dir: projectDir, transferEnv: false, optional: true, tags: context.tags });
         const env = config?.data?.env || undefined;
 
         // command name
@@ -295,10 +295,10 @@ async function createContext(argv) {
       templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
       templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-      tags: argv.tags || [],
+      tags: argv.tags,
     };
   } else {
-    const project = await loadLocalProject();
+    const project = await loadLocalProject({ tags: argv.tags });
     return {
       buildId: argv.buildId,
       mode: argv.mode,
@@ -308,18 +308,16 @@ async function createContext(argv) {
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,
-      tags: argv.tags || [],
+      tags: argv.tags,
     };
   }
 }
 
-async function loadLocalProject() {
+async function loadLocalProject({ tags }) {
   const projectFilePath = path.resolve(cwd, 'node.yaml');
   if (!fs.existsSync(projectFilePath)) throw new Error('node.yaml file not found in current directory.');
 
-  const projectFileContent = fs.readFileSync(projectFilePath, 'utf8');
-  // const projectFileParsed = YAML.parse(projectFileContent);
-  const { parsed: projectFileParsed } = await fnetYaml({ content: projectFileContent });
+  const { raw, parsed: projectFileParsed } = await fnetYaml({ file: projectFilePath, tags });
   const projectDir = path.dirname(projectFilePath);
 
   const libraryAtom = {
@@ -333,15 +331,16 @@ async function loadLocalProject() {
     libraryAtom,
     projectDir,
     projectFilePath,
-    projectFileContent,
+    projectFileContent: raw,
     projectFileParsed
   };
 
   // Load devops file
   const devopsFilePath = path.resolve(projectDir, 'node.devops.yaml');
   if (fs.existsSync(devopsFilePath)) {
-    const devopsFileContent = fs.readFileSync(devopsFilePath, 'utf8');
-    const devopsFileParsed = YAML.parse(devopsFileContent);
+
+    const { raw:devopsFileContent, parsed: devopsFileParsed } = await fnetYaml({ file: devopsFilePath, tags });
+
     result.devops = {
       filePath: devopsFilePath,
       fileContent: devopsFileContent,
