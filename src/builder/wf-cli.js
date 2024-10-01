@@ -253,7 +253,7 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
 
 function bindConfigCreateCommand(builder) {
   return builder.command(
-    `config create <name>`, `Create a config file`,
+    `config-create <name>`, `Create a config file`,
     (yargs) => {
       return yargs
         .positional('name', { type: 'string' })
@@ -283,7 +283,7 @@ function bindConfigCreateCommand(builder) {
 
 function bindConfigUpdateCommand(builder) {
   return builder.command(
-    `config update <name>`, `Update a config file`,
+    `config-update <name>`, `Update a config file`,
     (yargs) => {
       return yargs
         .positional('name', { type: 'string' })
