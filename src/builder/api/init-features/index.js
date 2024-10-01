@@ -76,11 +76,8 @@ module.exports = async ({ atom, context }) => {
     }
   }
 
-  // const isAppReact = features.app_has_entry === true && features.src_uses_jsx === true;
-  // const isCliReact = features.cli_has_entry === true && features.src_uses_jsx === true;
-
-  const isAppReact = features.src_uses_jsx === true;
-  const isCliReact = features.src_uses_jsx === true;
+  const isAppReact = features.app_entry_uses_jsx === true;
+  const isCliReact = features.cli_entry_uses_jsx === true;
 
   features.form_enabled = atom.doc.form === true || atom.doc.form?.enabled === true || features.form === true || features.form?.enabled === true;
   features.multiple_enabled = features.multiple_enabled || features.multiple === true || features.multiple?.enabled === true;
@@ -103,7 +100,6 @@ module.exports = async ({ atom, context }) => {
   features.app.enabled = features.app.enabled === true && (atom.doc.features.form_enabled === true || features.app.extend === true || features.app.enabled === true);
   features.app.format = features.app.format || "esm";
   features.app.folder = features.app.folder || features.app.format || "default";
-
 
   // CLI PROPS
   if (features.cli === false) {
