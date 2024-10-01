@@ -155,6 +155,7 @@ let cmdBuilder = yargs(hideBin(process.argv))
   });
 
 cmdBuilder = bindConfigCreateCommand(cmdBuilder);
+cmdBuilder = bindConfigUpdateCommand(cmdBuilder);
 
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
@@ -271,6 +272,36 @@ function bindConfigCreateCommand(builder) {
         const dotFnetDir = path.resolve(projectDir, '.fnet');
         if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
         const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
+        fs.writeFileSync(configFilePath, result);
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+function bindConfigUpdateCommand(builder) {
+  return builder.command(
+    `config update <name>`, `Update a config file`,
+    (yargs) => {
+      return yargs
+        .positional('name', { type: 'string' })
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { project } = context;
+        const { projectDir, projectFileParsed } = project;
+        const schema = projectFileParsed.config;
+        if (!schema) throw new Error('Config schema not found in project file.');
+
+        const dotFnetDir = path.resolve(projectDir, '.fnet');
+        const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
+        const result = await fnetObjectFromSchema({ schema, format: "yaml", ref: configFilePath });
+        if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
         fs.writeFileSync(configFilePath, result);
       } catch (error) {
         console.error(error.message);
