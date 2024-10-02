@@ -101,7 +101,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
       .option('mode', { type: 'string', alias: 'm', default: "build", choices: ['all', 'file', 'build', 'deploy', 'bpmn'] })
-      .option('tags', { type: 'array', alias: ['t', 'tag'] })
+      .option('ftag', { type: 'array', alias: ['t', 'tag'] })
       ;
   }, async (argv) => {
     try {
@@ -121,7 +121,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('tags', { type: 'array', alias: ['t', 'tag'] })
+      .option('ftag', { type: 'array', alias: ['t', 'tag'] })
       ;
   }, async (argv) => {
     try {
@@ -141,7 +141,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('tags', { type: 'array', alias: ['t', 'tag'] })
+      .option('ftag', { type: 'array', alias: ['t', 'tag'] })
       ;
   }, async (argv) => {
     try {
@@ -326,7 +326,7 @@ async function createContext(argv) {
       templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
       templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-      tags: argv.tags,
+      tags: argv.ftag,
     };
   } else {
     const project = await loadLocalProject({ tags: argv.tags });
@@ -339,7 +339,7 @@ async function createContext(argv) {
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,
-      tags: argv.tags,
+      tags: argv.ftag,
     };
   }
 }

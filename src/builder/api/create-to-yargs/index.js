@@ -46,14 +46,14 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     const fargsOptions = atom.doc.features.cli.fargs;
 
     const fargs = { type: "string", describe: "Config name to load args", hidden: false };
-    const ftags = { type: "array", describe: "Tags to filter the config", alias: "ftag", hidden: false };
+    const ftag = { type: "array", describe: "Tags to filter the config", hidden: false };
 
     if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
     if (Reflect.has(fargsOptions, 'describe') || Reflect.has(fargsOptions, 'description')) fargs.describe = fargsOptions.describe || fargsOptions.description;
     if (Reflect.has(fargsOptions, 'choices')) fargs.choices = fargsOptions.choices;
     
     options["fargs"] = fargs;
-    options["ftags"] = ftags;
+    options["ftag"] = ftag;
   }
 
   const templateContext = { options, imports, atom: atom }
