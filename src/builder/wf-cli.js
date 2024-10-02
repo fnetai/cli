@@ -98,8 +98,8 @@ let cmdBuilder = yargs(process.argv.slice(2))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('mode', { type: 'string', alias: 'm', default: "build", choices: ['all', 'file', 'build', 'deploy', 'bpmn'] })
-      .option('ftag', { type: 'array', alias: ['t', 'tag'] })
+      .option('mode', { type: 'string', default: "build", choices: ['all', 'file', 'build', 'deploy', 'bpmn'] })
+      .option('ftag', { type: 'array' })
       ;
   }, async (argv) => {
     try {
@@ -118,7 +118,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('ftag', { type: 'array', alias: ['t', 'tag'] })
+      .option('ftag', { type: 'array' })
       ;
   }, async (argv) => {
     try {
@@ -137,7 +137,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     return yargs
       .option('id', { type: 'string' })
       .option('buildId', { type: 'string', alias: 'bid' })
-      .option('ftag', { type: 'array', alias: ['t', 'tag'] })
+      .option('ftag', { type: 'array' })
       ;
   }, async (argv) => {
     try {
@@ -326,7 +326,7 @@ async function createContext(argv) {
 
     return context;
   } else {
-    const project = await loadLocalProject({ tags: argv.tags });
+    const project = await loadLocalProject({ tags: argv.ftag });
 
     const context = {
       buildId: argv.buildId,
