@@ -11,6 +11,7 @@ module.exports = async ({
   projectDir,
   dependencies,
   context,
+  yamlTarget
 }) => {
 
   const deployerName = 'docker';
@@ -27,6 +28,7 @@ module.exports = async ({
 
   const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");
   target.params.version = nextVersion;
+  yamlTarget.get('params').set('version', nextVersion);
 
   const params = cloneDeep(target.params);
 

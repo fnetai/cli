@@ -7,7 +7,7 @@ const fnetConfig = require('@fnet/config');
 
 const axios = require('axios').default;
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target, registerToPackageManager }) => {
+module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
 
   await setInProgress({ message: "Deploying it as fnet package." });
 
@@ -79,6 +79,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   deploymentProject.isDirty = true;
   target.params.version = packageJSON.version;
+  yamlTarget.get('params').set('version', packageJSON.version);
 
   const url = `${config.env.ATOM_API_URL}/v1/service/fnet-package/publish`;
   response = await axios({

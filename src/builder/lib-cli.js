@@ -11,7 +11,6 @@ require('@fnet/config')({
 
 const path = require('path');
 const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
 const fs = require('fs');
 const YAML = require('yaml');
 const shell = require('shelljs');
@@ -28,7 +27,7 @@ process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${proce
 
 //console.log(`${path.join(nodeModulesDir,'/.bin')}`);
 
-let cmdBuilder = yargs(hideBin(process.argv))
+let cmdBuilder = yargs(process.argv.slice(2))
   .command('create', 'Create flow node project', (yargs) => {
     return yargs
       .option('name', { type: 'Project name', demandOption: true })
@@ -372,16 +371,19 @@ async function loadLocalProject({ tags }) {
   if (fs.existsSync(devopsFilePath)) {
 
     const { raw: devopsFileContent, parsed: devopsFileParsed } = await fnetYaml({ file: devopsFilePath, tags });
+    const yamlDocument = YAML.parseDocument(devopsFileContent);
 
     result.devops = {
       filePath: devopsFilePath,
       fileContent: devopsFileContent,
+      yamlDocument,
       doc: {
         ...devopsFileParsed,
       },
       type: "library.deploy",
       save: async () => {
-        fs.writeFileSync(result.devops.filePath, YAML.stringify(result.devops.doc));
+        fs.writeFileSync(result.devops.filePath, yamlDocument.toString());
+        // fs.writeFileSync(result.devops.filePath, YAML.stringify(result.devops.doc));
       }
     };
   }

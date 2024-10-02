@@ -380,10 +380,14 @@ class Builder {
 
   async deployProject(context) {
     const { deploymentProject } = context;
+    const { yamlDocument } = deploymentProject;
+
+    const yamlTargets = yamlDocument.get('targets') || [];
     const targets = deploymentProject.doc.targets || [];
     for (let i = 0; i < targets.length; i++) {
       const deploymentProjectTarget = targets[i];
-      await deployTo({ ...this.#apiContext, deploymentProject, deploymentProjectTarget });
+      const yamlTarget = yamlTargets.items[i];
+      await deployTo({ ...this.#apiContext, deploymentProject, deploymentProjectTarget, yamlTarget });
     }
   }
 

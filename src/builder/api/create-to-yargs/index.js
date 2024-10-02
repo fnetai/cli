@@ -41,18 +41,33 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
       options[input.name] = option;
     });
 
+  if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
+
+    const fargsOptions = atom.doc.features.cli.fargs;
+
+    const fargs = { type: "string", describe: "Config name to load args", hidden: false };
+    const ftags = { type: "array", describe: "Tags to filter the config", alias: "ftag", hidden: false };
+
+    if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
+    if (Reflect.has(fargsOptions, 'describe') || Reflect.has(fargsOptions, 'description')) fargs.describe = fargsOptions.describe || fargsOptions.description;
+    if (Reflect.has(fargsOptions, 'choices')) fargs.choices = fargsOptions.choices;
+    
+    options["fargs"] = fargs;
+    options["ftags"] = ftags;
+  }
+
   const templateContext = { options, imports, atom: atom }
 
   const templateDir = context.templateDir;
   const template = nunjucks.compile(
-    fs.readFileSync(path.resolve(templateDir, `src/default/to.yargs.js.njk`), "utf8"),
+    fs.readFileSync(path.resolve(templateDir, `src/default/to.args.js.njk`), "utf8"),
     njEnv
   );
 
   const templateRender = template.render(templateContext);
 
   const projectDir = context.projectDir;
-  const filePath = path.resolve(projectDir, `src/default/to.yargs.js`);
+  const filePath = path.resolve(projectDir, `src/default/to.args.js`);
   fs.writeFileSync(filePath, templateRender, 'utf8');
 
 }

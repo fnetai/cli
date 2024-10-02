@@ -5,7 +5,7 @@ const fs = require('fs');
 const fnetShell = require('@fnet/shell');
 const FormData = require('form-data');
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target }) => {
+module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
 
   await setInProgress({ message: "Deploying it as fnet node." });
 
@@ -43,7 +43,8 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   deploymentProject.isDirty = true;
   target.params.version = newVersion;
-
+  yamlTarget.get('params').set('version', newVersion);
+  
   const url = `${config.env.ATOM_API_URL}/v1/service/fnet-node/publish`;
 
   response = await axios({

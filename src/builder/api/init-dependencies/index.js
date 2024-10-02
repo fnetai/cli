@@ -29,6 +29,10 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
 
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "yargs", version: "^17" });
+
+    if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
+      packageDependencies.push({ package: "@fnet/config", version: "0.2.19" });
+    }
   }
 
   // DEV DEPENDENCIES

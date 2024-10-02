@@ -17,7 +17,7 @@ const deployToRust = require('../rust');
 
 module.exports = async (apiContext) => {
 
-  const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress, deploymentProject } = apiContext;
+  const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress, deploymentProject, yamlTarget } = apiContext;
 
   if (deploymentProjectTarget.enabled !== true) return;
 
@@ -59,6 +59,7 @@ module.exports = async (apiContext) => {
       projectDir: context.projectDir,
       dependencies: packageDependencies,
       context: context,
+      yamlTarget: yamlTarget,
     });
 
     deploymentProject.isDirty = true;

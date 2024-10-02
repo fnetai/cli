@@ -2,7 +2,7 @@ const semver = require('semver');
 const fnetConfig = require('@fnet/config');
 const axios = require('axios').default;
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target }) => {
+module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
 
   await setInProgress({ message: "Deploying it as fnet form." });
 
@@ -40,6 +40,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   deploymentProject.isDirty = true;
   target.params.version = newVersion;
+  yamlTarget.get('params').set('version', newVersion);
 
   const url = `${config.env.ATOM_API_URL}/v1/service/fnet-form/publish`;
 

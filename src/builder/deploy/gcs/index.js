@@ -5,7 +5,7 @@ const semver = require('semver');
 const fnetShell = require('@fnet/shell');
 const fnetConfig = require('@fnet/config');
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target, registerToPackageManager }) => {
+module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target, registerToPackageManager,yamlTarget }) => {
 
   await setInProgress({ message: "Deploying it as gcs package." });
 
@@ -53,6 +53,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   deploymentProject.isDirty = true;
   target.params.version = packageJSON.version;
+  yamlTarget.get('params').set('version', packageJSON.version);
 
   await registerToPackageManager({ target, packageJSON });
 }
