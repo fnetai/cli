@@ -35,6 +35,10 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     }
   }
 
+  if (atom.doc.features.render && atom.doc.features.render.enabled !== false) {
+    packageDependencies.push({ package: "@flownet/lib-render-templates-dir", version: "0.1.17" });
+  }
+  
   // DEV DEPENDENCIES
   packageDevDependencies.push({ package: "@babel/core", version: "^7" });
   packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^26" });
@@ -66,7 +70,6 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     });
   }
 
-  // 
   packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
 
   if (atom.doc.features.nunjucks_enabled) {

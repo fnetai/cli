@@ -158,8 +158,8 @@ let cmdBuilder = yargs(process.argv.slice(2))
     }
   });
 
-cmdBuilder = bindConfigCreateCommand(cmdBuilder);
-cmdBuilder = bindConfigUpdateCommand(cmdBuilder);
+cmdBuilder = bindCreateInputCommand(cmdBuilder);
+cmdBuilder = bindUpdateInputCommand(cmdBuilder);
 
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
@@ -256,9 +256,9 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
   );
 }
 
-function bindConfigCreateCommand(builder) {
+function bindCreateInputCommand(builder) {
   return builder.command(
-    `config-create <name>`, `Create a config file`,
+    `create-input <name>`, `Create an input config file`,
     (yargs) => {
       return yargs
         .positional('name', { type: 'string' })
@@ -270,7 +270,7 @@ function bindConfigCreateCommand(builder) {
         const context = await createContext(argv);
         const { project } = context;
         const { projectDir, projectFileParsed } = project;
-        const schema = projectFileParsed.config;
+        const schema = projectFileParsed.input;
         if (!schema) throw new Error('Config schema not found in project file.');
 
         const result = await fnetObjectFromSchema({ schema, format: "yaml" });
@@ -286,9 +286,9 @@ function bindConfigCreateCommand(builder) {
   );
 }
 
-function bindConfigUpdateCommand(builder) {
+function bindUpdateInputCommand(builder) {
   return builder.command(
-    `config-update <name>`, `Update a config file`,
+    `update-input <name>`, `Update an input config file`,
     (yargs) => {
       return yargs
         .positional('name', { type: 'string' })
@@ -300,7 +300,7 @@ function bindConfigUpdateCommand(builder) {
         const context = await createContext(argv);
         const { project } = context;
         const { projectDir, projectFileParsed } = project;
-        const schema = projectFileParsed.config;
+        const schema = projectFileParsed.input;
         if (!schema) throw new Error('Config schema not found in project file.');
 
         const dotFnetDir = path.resolve(projectDir, '.fnet');
