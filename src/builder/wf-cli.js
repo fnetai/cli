@@ -387,10 +387,23 @@ async function loadLocalProject({ tags }) {
   }
 
   // Project devops file
-  const devopsFilePath = path.resolve(projectDir, 'flow.devops.yaml');
+  // Load devops file
+  let devopsFilePath = path.resolve(projectDir, 'fnet/targets.yaml');
+  if (!fs.existsSync(devopsFilePath)) {
+    // migrate legacy devops file
+    devopsFilePath = path.resolve(projectDir, 'fnet.devops.yaml');
+    if (fs.existsSync(devopsFilePath)) {
+      const fnetDir = path.resolve(projectDir, 'fnet');
+      if (!fs.existsSync(fnetDir)) fs.mkdirSync(fnetDir);
+      fs.copyFileSync(devopsFilePath, path.resolve(projectDir, 'fnet/targets.yaml'));
+      // delete legacy devops file
+      fs.unlinkSync(devopsFilePath);
+    }
+  }
+
   if (fs.existsSync(devopsFilePath)) {
     const { raw: devopsFileContent, parsed: devopsFileParsed } = await fnetYaml({ file: devopsFilePath, tags });
-    const yamlDocument=YAML.parseDocument(devopsFileContent);
+    const yamlDocument = YAML.parseDocument(devopsFileContent);
     result.devops = {
       filePath: devopsFilePath,
       fileContent: devopsFileContent,
