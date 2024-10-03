@@ -391,7 +391,7 @@ async function loadLocalProject({ tags }) {
   let devopsFilePath = path.resolve(projectDir, 'fnet/targets.yaml');
   if (!fs.existsSync(devopsFilePath)) {
     // migrate legacy devops file
-    devopsFilePath = path.resolve(projectDir, 'fnet.devops.yaml');
+    devopsFilePath = path.resolve(projectDir, 'flow.devops.yaml');
     if (fs.existsSync(devopsFilePath)) {
       const fnetDir = path.resolve(projectDir, 'fnet');
       if (!fs.existsSync(fnetDir)) fs.mkdirSync(fnetDir);

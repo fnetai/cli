@@ -1099,7 +1099,7 @@ class Builder {
 
         if (this.#bpmnMode) {
           const bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
-          fs.writeFileSync(path.resolve(bpmnDir, './flow.bpmn'), network.diagramXML, 'utf8');
+          fs.writeFileSync(path.resolve(bpmnDir, './fnet/flow.bpmn'), network.diagramXML, 'utf8');
         }
 
         await this.createAtomLibFiles({ root: this.#root });
