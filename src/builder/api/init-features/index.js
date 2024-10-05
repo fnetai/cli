@@ -3,6 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 
+
+const workboxFeatures = require('./workbox');
+
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
 
@@ -18,7 +21,7 @@ function findEntryFile({ dir, name = 'index' }) {
   return { file, ext, ts, name };
 }
 
-module.exports = async ({ atom, context }) => {
+module.exports = async ({ atom, context, packageDevDependencies }) => {
 
   atom.doc.features = atom.doc.features || {};
   const features = atom.doc.features;
@@ -137,16 +140,16 @@ module.exports = async ({ atom, context }) => {
       enabled: true,
       string: true,
     },
-    cjsx: {
-      format: "cjs",
-      context: features.form_enabled ? "window" : "global",
-      babel: (features.src_uses_jsx === true) || false,
-      browser: true,
-      replace: true,
-      enabled: false,
-      terser: true,
-      string: true,
-    },
+    // cjsx: {
+    //   format: "cjs",
+    //   context: features.form_enabled ? "window" : "global",
+    //   babel: (features.src_uses_jsx === true) || false,
+    //   browser: true,
+    //   replace: true,
+    //   enabled: false,
+    //   terser: true,
+    //   string: true,
+    // },
     esm: {
       format: "esm",
       context: features.form_enabled ? "window" : "global",
@@ -159,17 +162,17 @@ module.exports = async ({ atom, context }) => {
       copy: true,
       string: true,
     },
-    esmx: {
-      format: "esm",
-      browser: true,
-      babel: true,
-      context: features.form_enabled ? "window" : "global",
-      replace: true,
-      browsersync: false,
-      enabled: false,
-      terser: true,
-      string: true,
-    },
+    // esmx: {
+    //   format: "esm",
+    //   browser: true,
+    //   babel: true,
+    //   context: features.form_enabled ? "window" : "global",
+    //   replace: true,
+    //   browsersync: false,
+    //   enabled: false,
+    //   terser: true,
+    //   string: true,
+    // },
     iife: {
       format: "iife",
       context: features.form_enabled ? "window" : "global",
@@ -180,16 +183,16 @@ module.exports = async ({ atom, context }) => {
       terser: true,
       string: true,
     },
-    umd: {
-      format: "umd",
-      context: features.form_enabled ? "window" : "global",
-      babel: true,
-      browser: true,
-      replace: true,
-      enabled: false,
-      terser: true,
-      string: true,
-    }
+    // umd: {
+    //   format: "umd",
+    //   context: features.form_enabled ? "window" : "global",
+    //   babel: true,
+    //   browser: true,
+    //   replace: true,
+    //   enabled: false,
+    //   terser: true,
+    //   string: true,
+    // }
   };
 
   // babel targets default
@@ -199,7 +202,6 @@ module.exports = async ({ atom, context }) => {
       node: "18"
     }
   }
-
 
   // replace default
   const replace_default = {}
@@ -303,7 +305,7 @@ module.exports = async ({ atom, context }) => {
     }
   }
 
-  // ios default
+  // macos default
   if (features.macos === true) {
     rollup_output_default.macos = {
       format: "iife",
@@ -392,18 +394,19 @@ module.exports = async ({ atom, context }) => {
   features.string_enabled = features.string === true || (features.string && features.string?.enabled !== false);
   features.preact_enabled = features.preact === true || (features.preact && features.preact?.enabled !== false);
 
-  const rollup_output_keys = Object.keys(rollup_output_default);
+  // rollup outputs
+  let rollup_output_keys = Object.keys(rollup_output_default);
   for (const key of rollup_output_keys) {
     const output = rollup_output_default[key];
 
     if (!output) continue;
 
     if (features.rollup[key] === false) {
-      output.enabled = false;
+      // output.enabled = false;
+      // remove from rollup_output
+      delete features.rollup_output[key];
       continue;
     };
-
-    if (features.rollup[key] === true) output.enabled = true;
 
     output.babel_options = output.babel_options || features.babel_options;
     output.browsersync_options = merge(features.browsersync_options, output.browsersync_options);
@@ -431,6 +434,8 @@ module.exports = async ({ atom, context }) => {
     if (features.form_enabled) output.babel = true;
   }
 
+  rollup_output_keys = Object.keys(features.rollup_output);
+
   features.babel_enabled = rollup_output_keys.some(w => features.rollup_output[w].babel === true);
   features.browser_enabled = rollup_output_keys.some(w => features.rollup_output[w].babel === true);
   features.browsersync_enabled = features.browsersync !== false && rollup_output_keys.some(w => features.rollup_output[w].browsersync === true);
@@ -450,4 +455,6 @@ module.exports = async ({ atom, context }) => {
   features.react_version = features.react_version || features.react?.version || 18;
   features.polyfill_enabled = features.polyfill === true || (features.polyfill && features.polyfill?.enabled !== false);
   features.nunjucks_enabled = features.nunjucks === true || (features.nunjucks && features.nunjucks?.enabled !== false);
+
+  workboxFeatures({ features, packageDevDependencies });
 }

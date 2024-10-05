@@ -38,7 +38,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   if (atom.doc.features.render && atom.doc.features.render.enabled !== false) {
     packageDependencies.push({ package: "@flownet/lib-render-templates-dir", version: "0.1.17" });
   }
-  
+
   // DEV DEPENDENCIES
   packageDevDependencies.push({ package: "@babel/core", version: "^7" });
   packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^26" });
@@ -57,14 +57,23 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "@babel/preset-env", version: "^7" });
     packageDevDependencies.push({ package: "@babel/preset-react", version: "^7" });
 
-    atom.doc.features.babel?.plugins?.forEach(plugin => {
+    atom.doc.features.babel?.options?.plugins?.forEach(plugin => {
       const pluginName = plugin[0];
       switch (pluginName) {
-        case 'proposal-decorators':
+        case '@babel/plugin-proposal-decorators':
           packageDevDependencies.push({ package: "@babel/plugin-proposal-decorators", version: "^7" });
           break;
-        case 'proposal-class-properties':
+        case '@babel/plugin-proposal-class-properties':
           packageDevDependencies.push({ package: "@babel/plugin-proposal-class-properties", version: "^7" });
+          break;
+        case '@babel/plugin-proposal-private-methods':
+          packageDevDependencies.push({ package: "@babel/plugin-proposal-private-methods", version: "^7" });
+          break;
+        case '@babel/plugin-proposal-private-property-in-object':
+          packageDevDependencies.push({ package: "@babel/plugin-proposal-private-property-in-object", version: "^7" });
+          break;
+        case '@babel/plugin-proposal-optional-chaining':
+          packageDevDependencies.push({ package: "@babel/plugin-proposal-optional-chaining", version: "^7" });
           break;
       }
     });
