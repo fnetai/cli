@@ -5,6 +5,7 @@ const fnetParseImports = require('@flownet/lib-parse-imports-js');
 
 
 const workboxFeatures = require('./workbox');
+const gzipFeatures = require('./gzip');
 
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
@@ -457,4 +458,5 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
   features.nunjucks_enabled = features.nunjucks === true || (features.nunjucks && features.nunjucks?.enabled !== false);
 
   workboxFeatures({ features, packageDevDependencies });
+  gzipFeatures({ features, packageDevDependencies });
 }
