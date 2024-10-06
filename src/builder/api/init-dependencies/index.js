@@ -81,42 +81,11 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
 
   packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
 
-  if (atom.doc.features.nunjucks_enabled) {
-    packageDevDependencies.push({ package: "@fnet/rollup-plugin-nunjucks", version: "0.1.3" });
-  }
 
   if (atom.doc.features.browsersync_enabled) {
     packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.4" });
   }
-
-  if (atom.doc.features.json_enabled) {
-    packageDevDependencies.push({ package: "@rollup/plugin-json", version: "^6" });
-  }
-
-  if (atom.doc.features.terser_enabled) {
-    packageDevDependencies.push({ package: "@rollup/plugin-terser", version: "^0.4" });
-  }
-
-  if (atom.doc.features.wasm_enabled) {
-    packageDevDependencies.push({ package: "@rollup/plugin-wasm", version: "^6" });
-  }
-
-  if (atom.doc.features.image_enabled) {
-    packageDevDependencies.push({ package: "@rollup/plugin-image", version: "^3" });
-  }
-
-  if (atom.doc.features.analyzer_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-analyzer", version: "^3" });
-  }
-
-  if (atom.doc.features.visualizer_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-visualizer", version: "^5" });
-  }
-
-  if (atom.doc.features.string_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-string", version: "^3" });
-  }
-
+  
   if (atom.doc.features.css_enabled) {
     packageDevDependencies.push({ package: "rollup-plugin-postcss", version: "^4" });
     packageDevDependencies.push({ package: "sass", version: "^1.66" });
@@ -143,9 +112,6 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     });
   }
 
-  if (atom.doc.features.polyfill_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-node-polyfills", version: "^0.2" });
-  }
 
   if (atom.doc.features.copy_enabled) {
     packageDevDependencies.push({ package: "rollup-plugin-copy", version: "^3" });

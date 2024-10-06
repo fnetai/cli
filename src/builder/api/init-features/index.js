@@ -6,6 +6,15 @@ const fnetParseImports = require('@flownet/lib-parse-imports-js');
 
 const workboxFeatures = require('./workbox');
 const gzipFeatures = require('./gzip');
+const nunjucksFeatures = require('./nunjucks');
+const polyfillFeatures = require('./polyfill');
+const visualizerFeatures = require('./visualizer');
+const analyzerFeatures = require('./analyzer');
+const stringFeatures = require('./string');
+const imageFeatures = require('./image');
+const jsonFeatures = require('./json');
+const terserFeatures = require('./terser');
+const wasmFeatures = require('./wasm');
 
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
@@ -22,7 +31,8 @@ function findEntryFile({ dir, name = 'index' }) {
   return { file, ext, ts, name };
 }
 
-module.exports = async ({ atom, context, packageDevDependencies }) => {
+module.exports = async (apiContext) => {
+  const { atom, context, packageDevDependencies } = apiContext;
 
   atom.doc.features = atom.doc.features || {};
   const features = atom.doc.features;
@@ -139,18 +149,7 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       replace: true,
       terser: true,
       enabled: true,
-      string: true,
     },
-    // cjsx: {
-    //   format: "cjs",
-    //   context: features.form_enabled ? "window" : "global",
-    //   babel: (features.src_uses_jsx === true) || false,
-    //   browser: true,
-    //   replace: true,
-    //   enabled: false,
-    //   terser: true,
-    //   string: true,
-    // },
     esm: {
       format: "esm",
       context: features.form_enabled ? "window" : "global",
@@ -161,19 +160,7 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       terser: false,
       enabled: true,
       copy: true,
-      string: true,
     },
-    // esmx: {
-    //   format: "esm",
-    //   browser: true,
-    //   babel: true,
-    //   context: features.form_enabled ? "window" : "global",
-    //   replace: true,
-    //   browsersync: false,
-    //   enabled: false,
-    //   terser: true,
-    //   string: true,
-    // },
     iife: {
       format: "iife",
       context: features.form_enabled ? "window" : "global",
@@ -182,7 +169,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       replace: true,
       enabled: features.iife !== false,
       terser: true,
-      string: true,
     },
     // umd: {
     //   format: "umd",
@@ -192,7 +178,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
     //   replace: true,
     //   enabled: false,
     //   terser: true,
-    //   string: true,
     // }
   };
 
@@ -207,39 +192,11 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
   // replace default
   const replace_default = {}
 
-  // terser default
-  const terser_default = {}
-
   // css default
   const css_default = {}
 
-  // wasm default
-  const wasm_default = {}
-
   // copy default
   const copy_default = {}
-
-  // json default
-  const json_default = {}
-
-  // image default
-  const image_default = {}
-
-  // analyzer default
-  const analyzer_default = {
-    summaryOnly: true,
-    limit: 12
-  }
-
-  // visualizer default
-  const visualizer_default = {}
-
-  // string default
-  const string_default = {}
-
-  // nunjucks default
-  const nunjucks_default = {
-  }
 
   // webos default
   if (features.webos === true) {
@@ -250,7 +207,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       context: "window",
       replace: true,
       terser: true,
-      string: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/webos`,
       babel_options: {
@@ -270,7 +226,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       context: "window",
       replace: true,
       terser: true,
-      string: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/electron`,
     }
@@ -285,7 +240,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       context: "window",
       replace: true,
       terser: true,
-      string: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/nextjs`,
     }
@@ -300,7 +254,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       context: "window",
       replace: true,
       terser: true,
-      string: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/ios`,
     }
@@ -315,7 +268,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       context: "window",
       replace: true,
       terser: true,
-      string: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/macos`,
     }
@@ -335,7 +287,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       output_dir: features.app.dir,
       terser: true,
       output_exports: features.app.export === false ? "none" : "auto",
-      string: true,
     }
 
     copy_default.targets = copy_default.targets || [];
@@ -358,7 +309,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
       banner: "#!/usr/bin/env node",
       terser: true,
       output_exports: features.cli.export === false ? "none" : "auto",
-      string: true
     }
   }
 
@@ -374,16 +324,8 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
   features.babel_options = merge(babel_default, features.babel_options || features.babel?.options);
   features.browsersync_options = merge(browsersync_default, features.browsersync_options || features.browsersync?.options || {});
   features.replace_options = merge(replace_default, features.replace_options || features.replace?.options || {});
-  features.terser_options = merge(terser_default, features.terser_options || features.terser?.options || {});
   features.css_options = merge(css_default, features.css_options || features.css?.options || {});
-  features.wasm_options = merge(wasm_default, features.wasm_options || features.wasm?.options || {});
   features.copy_options = merge(copy_default, features.copy_options || features.copy?.options || {});
-  features.json_options = merge(json_default, features.json_options || features.json?.options || {});
-  features.image_options = merge(image_default, features.image_options || features.image?.options || {});
-  features.analyzer_options = merge(analyzer_default, features.analyzer_options || features.analyzer?.options || {});
-  features.visualizer_options = merge(visualizer_default, features.visualizer_options || features.visualizer?.options || {});
-  features.string_options = merge(string_default, features.string_options || features.string?.options || {});
-  features.nunjucks_options = merge(nunjucks_default, features.nunjucks_options || features.nunjucks?.options || {});
 
   if (Reflect.has(features.browsersync_options, 'proxy')) {
     delete features.browsersync_options.server;
@@ -392,7 +334,6 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
   features.rollup = features.rollup || {};
   features.rollup_output = merge(rollup_output_default, features.rollup_output || features.rollup?.output || {});
 
-  features.string_enabled = features.string === true || (features.string && features.string?.enabled !== false);
   features.preact_enabled = features.preact === true || (features.preact && features.preact?.enabled !== false);
 
   // rollup outputs
@@ -412,16 +353,8 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
     output.babel_options = output.babel_options || features.babel_options;
     output.browsersync_options = merge(features.browsersync_options, output.browsersync_options);
     output.replace_options = merge(features.replace_options, output.replace_options);
-    output.terser_options = merge(features.terser_options, output.terser_options);
     output.css_options = merge(features.css_options, output.css_options);
-    output.wasm_options = merge(features.wasm_options, output.wasm_options);
     output.copy_options = merge(features.copy_options, output.copy_options);
-    output.json_options = merge(features.json_options, output.json_options);
-    output.image_options = merge(features.image_options, output.image_options);
-    output.analyzer_options = merge(features.analyzer_options, output.analyzer_options);
-    output.visualizer_options = merge(features.visualizer_options, output.visualizer_options);
-    output.string_options = merge(features.string_options, output.string_options);
-    output.string = features.string_enabled && output.string;
     output.nunjucks_options = merge(features.nunjucks_options, output.nunjucks_options);
 
     if (features.preact_enabled) {
@@ -442,21 +375,22 @@ module.exports = async ({ atom, context, packageDevDependencies }) => {
   features.browsersync_enabled = features.browsersync !== false && rollup_output_keys.some(w => features.rollup_output[w].browsersync === true);
   features.browsersync_enabled = features.browsersync_enabled && features.app.enabled;
 
-  features.wasm_enabled = features.wasm === true || (features.wasm && features.wasm?.enabled !== false);
   features.css_enabled = features.css === true || (features.css && features.css?.enabled !== false);
-  features.json_enabled = features.json === true || (features.json && features.json?.enabled !== false);
-  features.terser_enabled = features.terser !== false;
   features.copy_enabled = features.app.enabled || features.copy_enabled || (features.copy && features.copy?.enabled !== false);
-  features.image_enabled = features.image === true || (features.image && features.image?.enabled !== false);
-  features.analyzer_enabled = features.analyzer === true || (features.analyzer && features.analyzer?.enabled !== false);
-  features.visualizer_enabled = features.visualizer === true || (features.visualizer && features.visualizer?.enabled !== false);
 
   features.dependency_auto_enabled = features.dependency_auto !== false && features.dependency_auto?.enabled !== false;
   features.npm_install_flags = features.npm_install_flags || '';
   features.react_version = features.react_version || features.react?.version || 18;
-  features.polyfill_enabled = features.polyfill === true || (features.polyfill && features.polyfill?.enabled !== false);
-  features.nunjucks_enabled = features.nunjucks === true || (features.nunjucks && features.nunjucks?.enabled !== false);
 
-  workboxFeatures({ features, packageDevDependencies });
-  gzipFeatures({ features, packageDevDependencies });
+  wasmFeatures(apiContext);
+  terserFeatures(apiContext);
+  jsonFeatures(apiContext);
+  stringFeatures(apiContext);
+  imageFeatures(apiContext);
+  analyzerFeatures(apiContext);
+  visualizerFeatures(apiContext);
+  polyfillFeatures(apiContext);
+  nunjucksFeatures(apiContext);
+  workboxFeatures(apiContext);
+  gzipFeatures(apiContext);
 }

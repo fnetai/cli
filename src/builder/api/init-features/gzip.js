@@ -1,4 +1,7 @@
-module.exports = ({ features, packageDevDependencies }) => {
+module.exports = (apiContext) => {
+
+  const { atom, packageDevDependencies } = apiContext;
+  const features = atom.doc.features;
 
   const rollup_output = features.rollup_output || {};
 
