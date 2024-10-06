@@ -355,7 +355,6 @@ module.exports = async (apiContext) => {
     output.replace_options = merge(features.replace_options, output.replace_options);
     output.css_options = merge(features.css_options, output.css_options);
     output.copy_options = merge(features.copy_options, output.copy_options);
-    output.nunjucks_options = merge(features.nunjucks_options, output.nunjucks_options);
 
     if (features.preact_enabled) {
       output.alias_enabled = true;
