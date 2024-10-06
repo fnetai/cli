@@ -7,8 +7,8 @@ module.exports = (apiContext) => {
 
   featureTemplate({
     feature: {
-      name: "image",
-      packages: [["@rollup/plugin-image", "^3"]],
+      name: "string",
+      packages: [["rollup-plugin-string", "^3"]],
     }, features, packageDevDependencies
   });
 };

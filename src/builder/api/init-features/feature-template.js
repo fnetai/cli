@@ -13,19 +13,29 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
   allKeys.forEach(key => {
     const output = features.rollup_output[key];
 
-    if (!output?.[name] || output?.[name]?.enabled === false) {
-      delete output[name];
-      return;
-    };
-
-    if (output[name] === true) {
-      output[name] = {
-        enabled: true,
-        options: defaultOptions
+    // Output has the feature
+    if (Reflect.has(output, name)) {
+      if (!output[name] || output[name]?.enabled === false) {
+        delete output[name];
+        return;
       };
-    }
 
-    output[name].options = output[name].options || {};
+      if (output[name] === true) {
+        output[name] = {
+          enabled: true,
+          options: defaultOptions
+        };
+      }
+    } else {
+      // Output hasn't the feature
+      if (features[name] && features[keyEnabled] !== false) {
+        output[name] = {
+          enabled: true,
+        }
+      }
+      else return;
+    }
+    output[name] = output[name] || {};
     output[name].options = {
       ...defaultOptions,
       ...output[name].options
