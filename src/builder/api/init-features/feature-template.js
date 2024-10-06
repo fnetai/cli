@@ -13,6 +13,8 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
   allKeys.forEach(key => {
     const output = features.rollup_output[key];
 
+    if(!output) return;
+
     // Output has the feature
     if (Reflect.has(output, name)) {
       if (!output[name] || output[name]?.enabled === false) {
