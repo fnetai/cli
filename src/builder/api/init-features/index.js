@@ -92,8 +92,8 @@ module.exports = async (apiContext) => {
     }
   }
 
-  const isAppReact = features.app_entry_uses_jsx === true;
-  const isCliReact = features.cli_entry_uses_jsx === true;
+  const isAppReact = Reflect.has(features, 'app_entry_uses_jsx') ? features.app_entry_uses_jsx === true : features.src_entry_uses_jsx === true;
+  const isCliReact = Reflect.has(features, 'cli_entry_uses_jsx') ? features.cli_entry_uses_jsx === true : features.src_entry_uses_jsx === true;
 
   features.form_enabled = atom.doc.form === true || atom.doc.form?.enabled === true || features.form === true || features.form?.enabled === true;
   features.multiple_enabled = features.multiple_enabled || features.multiple === true || features.multiple?.enabled === true;
@@ -151,7 +151,7 @@ module.exports = async (apiContext) => {
       replace: true,
       terser: true,
       enabled: features.cjs !== false,
-      copy:false,
+      copy: false,
     },
     esm: {
       format: "esm",
@@ -172,7 +172,7 @@ module.exports = async (apiContext) => {
       replace: true,
       enabled: features.iife !== false,
       terser: true,
-      copy:false,
+      copy: false,
     }
   };
 
@@ -198,7 +198,7 @@ module.exports = async (apiContext) => {
       terser: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/webos`,
-      copy:false,
+      copy: false,
       babel_options: {
         targets: {
           chrome: "79"
@@ -216,7 +216,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
-      copy:false,
+      copy: false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/electron`,
     }
@@ -231,7 +231,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
-      copy:false,
+      copy: false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/nextjs`,
     }
@@ -246,7 +246,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
-      copy:false,
+      copy: false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/ios`,
     }
@@ -261,7 +261,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
-      copy:false,
+      copy: false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/macos`,
     }
