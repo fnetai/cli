@@ -16,6 +16,7 @@ const jsonFeatures = require('./json');
 const terserFeatures = require('./terser');
 const wasmFeatures = require('./wasm');
 const copyFeatures = require('./copy');
+const cssFeatures = require('./css');
 
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
@@ -186,9 +187,6 @@ module.exports = async (apiContext) => {
   // replace default
   const replace_default = {}
 
-  // css default
-  const css_default = {}
-
   // webos default
   if (features.webos === true) {
     rollup_output_default.webos = {
@@ -317,7 +315,6 @@ module.exports = async (apiContext) => {
   features.babel_options = merge(babel_default, features.babel_options || features.babel?.options);
   features.browsersync_options = merge(browsersync_default, features.browsersync_options || features.browsersync?.options || {});
   features.replace_options = merge(replace_default, features.replace_options || features.replace?.options || {});
-  features.css_options = merge(css_default, features.css_options || features.css?.options || {});
 
   if (Reflect.has(features.browsersync_options, 'proxy')) {
     delete features.browsersync_options.server;
@@ -343,7 +340,6 @@ module.exports = async (apiContext) => {
     output.babel_options = output.babel_options || features.babel_options;
     output.browsersync_options = merge(features.browsersync_options, output.browsersync_options);
     output.replace_options = merge(features.replace_options, output.replace_options);
-    output.css_options = merge(features.css_options, output.css_options);
 
     if (features.preact_enabled) {
       output.alias_enabled = true;
@@ -362,13 +358,11 @@ module.exports = async (apiContext) => {
   features.browser_enabled = rollup_output_keys.some(w => features.rollup_output[w].babel === true);
   features.browsersync_enabled = features.browsersync !== false && rollup_output_keys.some(w => features.rollup_output[w].browsersync === true);
   features.browsersync_enabled = features.browsersync_enabled && features.app.enabled;
-
-  features.css_enabled = features.css === true || (features.css && features.css?.enabled !== false);
-
   features.dependency_auto_enabled = features.dependency_auto !== false && features.dependency_auto?.enabled !== false;
   features.npm_install_flags = features.npm_install_flags || '';
   features.react_version = features.react_version || features.react?.version || 18;
 
+  cssFeatures(apiContext);
   copyFeatures(apiContext);
   wasmFeatures(apiContext);
   terserFeatures(apiContext);

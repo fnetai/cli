@@ -81,34 +81,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
 
   packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
 
-
   if (atom.doc.features.browsersync_enabled) {
     packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.4" });
-  }
-  
-  if (atom.doc.features.css_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-postcss", version: "^4" });
-    packageDevDependencies.push({ package: "sass", version: "^1.66" });
-
-    const plugins = atom.doc.features.css_options?.plugins || [];
-    plugins.forEach(plugin => {
-      switch (plugin.name) {
-        case 'postcss-import':
-          packageDevDependencies.push({ package: "postcss-import", version: "^15" });
-          break;
-        case 'postcss-url':
-          packageDevDependencies.push({ package: "postcss-url", version: "^10" });
-          break;
-        case 'postcss-preset-env':
-          packageDevDependencies.push({ package: "postcss-preset-env", version: "^9" });
-          break;
-        case 'autoprefixer':
-          packageDevDependencies.push({ package: "autoprefixer", version: "^10" });
-          break;
-        case 'cssnano':
-          packageDevDependencies.push({ package: "cssnano", version: "^6" });
-          break;
-      }
-    });
   }
 }
