@@ -9,9 +9,12 @@ module.exports = (apiContext) => {
 
   // TODO: remove it later
   // app specific
-  if (features.app_enabled) {
+  if (features.app?.enabled === true) {
     options.targets = options.targets || [];
     options.targets.push({ src: "./src/app/index.html", dest: features.app.dir });
+    if (!Reflect.has(features.app, "copy")) {
+      features.copy = true;
+    }
   }
 
   // const extraCheck = () => {
