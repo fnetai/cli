@@ -1,6 +1,8 @@
+const merge = require('lodash.merge');
+
 module.exports = ({ feature, features, packageDevDependencies }) => {
 
-  const { name, packages, options } = feature;
+  const { name, packages, options, extraCheck } = feature;
 
   const keyEnabled = `${name}_enabled`;
 
@@ -8,12 +10,17 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
 
   const allKeys = Object.keys(rollup_output);
 
-  const defaultOptions = options || {};
+  let defaultOptions = options || {};
+
+  const featureOptions= features[name]?.options;
+
+  if(featureOptions) 
+    defaultOptions = merge(defaultOptions, featureOptions);
 
   allKeys.forEach(key => {
     const output = features.rollup_output[key];
 
-    if(!output) return;
+    if (!output) return;
 
     // Output has the feature
     if (Reflect.has(output, name)) {
@@ -44,7 +51,9 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
     };
   });
 
-  const exists = allKeys.some(w => features.rollup_output[w][name]?.enabled === true);
+  let exists = allKeys.some(w => features.rollup_output[w][name]?.enabled === true);
+
+  if (extraCheck) exists = extraCheck() && exists;
 
   features[keyEnabled] = exists;
 

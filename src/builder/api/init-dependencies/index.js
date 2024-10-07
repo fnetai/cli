@@ -111,10 +111,4 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
       }
     });
   }
-
-
-  if (atom.doc.features.copy_enabled) {
-    packageDevDependencies.push({ package: "rollup-plugin-copy", version: "^3" });
-    packageDevDependencies.push({ package: "chokidar", version: "^3" });
-  }
 }

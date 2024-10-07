@@ -15,6 +15,7 @@ const imageFeatures = require('./image');
 const jsonFeatures = require('./json');
 const terserFeatures = require('./terser');
 const wasmFeatures = require('./wasm');
+const copyFeatures = require('./copy');
 
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
@@ -149,6 +150,7 @@ module.exports = async (apiContext) => {
       replace: true,
       terser: true,
       enabled: true,
+      copy:false,
     },
     esm: {
       format: "esm",
@@ -169,16 +171,8 @@ module.exports = async (apiContext) => {
       replace: true,
       enabled: features.iife !== false,
       terser: true,
-    },
-    // umd: {
-    //   format: "umd",
-    //   context: features.form_enabled ? "window" : "global",
-    //   babel: true,
-    //   browser: true,
-    //   replace: true,
-    //   enabled: false,
-    //   terser: true,
-    // }
+      copy:false,
+    }
   };
 
   // babel targets default
@@ -195,9 +189,6 @@ module.exports = async (apiContext) => {
   // css default
   const css_default = {}
 
-  // copy default
-  const copy_default = {}
-
   // webos default
   if (features.webos === true) {
     rollup_output_default.webos = {
@@ -209,6 +200,7 @@ module.exports = async (apiContext) => {
       terser: true,
       input: "./src/app/index.js",
       output_dir: `./dist/app/webos`,
+      copy:false,
       babel_options: {
         targets: {
           chrome: "79"
@@ -226,6 +218,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
+      copy:false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/electron`,
     }
@@ -240,6 +233,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
+      copy:false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/nextjs`,
     }
@@ -254,6 +248,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
+      copy:false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/ios`,
     }
@@ -268,6 +263,7 @@ module.exports = async (apiContext) => {
       context: "window",
       replace: true,
       terser: true,
+      copy:false,
       input: "./src/app/index.js",
       output_dir: `./dist/app/macos`,
     }
@@ -288,9 +284,6 @@ module.exports = async (apiContext) => {
       terser: true,
       output_exports: features.app.export === false ? "none" : "auto",
     }
-
-    copy_default.targets = copy_default.targets || [];
-    copy_default.targets.push({ src: "./src/app/index.html", dest: features.app.dir });
   }
 
   // cli default
@@ -325,7 +318,6 @@ module.exports = async (apiContext) => {
   features.browsersync_options = merge(browsersync_default, features.browsersync_options || features.browsersync?.options || {});
   features.replace_options = merge(replace_default, features.replace_options || features.replace?.options || {});
   features.css_options = merge(css_default, features.css_options || features.css?.options || {});
-  features.copy_options = merge(copy_default, features.copy_options || features.copy?.options || {});
 
   if (Reflect.has(features.browsersync_options, 'proxy')) {
     delete features.browsersync_options.server;
@@ -344,8 +336,6 @@ module.exports = async (apiContext) => {
     if (!output) continue;
 
     if (features.rollup[key] === false) {
-      // output.enabled = false;
-      // remove from rollup_output
       delete features.rollup_output[key];
       continue;
     };
@@ -354,7 +344,6 @@ module.exports = async (apiContext) => {
     output.browsersync_options = merge(features.browsersync_options, output.browsersync_options);
     output.replace_options = merge(features.replace_options, output.replace_options);
     output.css_options = merge(features.css_options, output.css_options);
-    output.copy_options = merge(features.copy_options, output.copy_options);
 
     if (features.preact_enabled) {
       output.alias_enabled = true;
@@ -375,12 +364,12 @@ module.exports = async (apiContext) => {
   features.browsersync_enabled = features.browsersync_enabled && features.app.enabled;
 
   features.css_enabled = features.css === true || (features.css && features.css?.enabled !== false);
-  features.copy_enabled = features.app.enabled || features.copy_enabled || (features.copy && features.copy?.enabled !== false);
 
   features.dependency_auto_enabled = features.dependency_auto !== false && features.dependency_auto?.enabled !== false;
   features.npm_install_flags = features.npm_install_flags || '';
   features.react_version = features.react_version || features.react?.version || 18;
 
+  copyFeatures(apiContext);
   wasmFeatures(apiContext);
   terserFeatures(apiContext);
   jsonFeatures(apiContext);
