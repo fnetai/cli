@@ -149,7 +149,7 @@ module.exports = async (apiContext) => {
       browser: false,
       replace: true,
       terser: true,
-      enabled: true,
+      enabled: features.cjs !== false,
       copy:false,
     },
     esm: {
@@ -160,7 +160,7 @@ module.exports = async (apiContext) => {
       replace: true,
       browsersync: true,
       terser: false,
-      enabled: true,
+      enabled: features.esm !== false,
       copy: true,
     },
     iife: {
