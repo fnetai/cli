@@ -10,12 +10,13 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
 
   const allKeys = Object.keys(rollup_output);
 
-  let defaultOptions = options || {};
+  let initialOptions = options || {};
 
-  const featureOptions= features[name]?.options;
+  const featureOptions = features[name]?.options;
 
-  if(featureOptions) 
-    defaultOptions = merge(defaultOptions, featureOptions);
+  if (featureOptions) initialOptions = merge(initialOptions, featureOptions);
+
+  const globallyDisabled = !features[name] || features[name]?.enabled === false;
 
   allKeys.forEach(key => {
     const output = features.rollup_output[key];
@@ -24,7 +25,7 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
 
     // Output has the feature
     if (Reflect.has(output, name)) {
-      if (!output[name] || output[name]?.enabled === false) {
+      if (globallyDisabled || !output[name] || output[name]?.enabled === false) {
         delete output[name];
         return;
       };
@@ -32,12 +33,12 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
       if (output[name] === true) {
         output[name] = {
           enabled: true,
-          options: defaultOptions
+          options: initialOptions
         };
       }
     } else {
       // Output hasn't the feature
-      if (features[name] && features[keyEnabled] !== false) {
+      if (!globallyDisabled && features[keyEnabled] !== false) {
         output[name] = {
           enabled: true,
         }
@@ -46,7 +47,7 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
     }
     output[name] = output[name] || {};
     output[name].options = {
-      ...defaultOptions,
+      ...initialOptions,
       ...output[name].options
     };
   });
