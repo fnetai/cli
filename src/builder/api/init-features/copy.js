@@ -13,7 +13,9 @@ module.exports = (apiContext) => {
     options.targets = options.targets || [];
     options.targets.push({ src: "./src/app/index.html", dest: features.app.dir });
     if (!Reflect.has(features.app, "copy")) {
-      features.copy = true;
+      if (!Reflect.has(features, "copy")) {
+        features.copy = true;
+      }
     }
   }
 
