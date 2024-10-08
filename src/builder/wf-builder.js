@@ -505,7 +505,8 @@ class Builder {
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||
         {
           name: callName,
-          type: "atom"
+          type: "atom",
+          definition: node.definition,
         };
 
       const foundTargetNode = libs.find(w => w.name === targetNode.name && w.type === targetNode.type);
@@ -590,7 +591,7 @@ class Builder {
     for (let i = 0; i < atomLibRefs.length; i++) {
       const atomLibRef = atomLibRefs[i];
 
-      const atomLib = await this.findAtomLibrary({ url: atomLibRef.name });
+      const atomLib = await this.findAtomLibrary({ url: atomLibRef.name, libRef: atomLibRef });
       atomLibRef.atom = atomLib;
 
       const packageDeps = atomLib.doc.dependencies?.filter(w => typeof w.repo === 'undefined' || w.repo === 'npm');
@@ -619,7 +620,7 @@ class Builder {
     packageDependencies.sort((a, b) => a.package?.localeCompare(b.package));
   }
 
-  async findAtomLibrary({ url }) {
+  async findAtomLibrary({ url, libRef }) {
     const parsedUrl = fnetParseNodeUrl({ url: url });
     if (!parsedUrl) throw new Error(`Invalid package name: ${url}`);
 
@@ -682,6 +683,7 @@ class Builder {
         name: parsedUrl.pathname,
         doc: {
           type: "workflow.lib",
+          subtype: libRef?.definition?.subtype === 'flow' ? "workflow" : null,
           "content-type": "javascript",
           language: "js",
           dependencies: [
