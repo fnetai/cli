@@ -94,4 +94,21 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
   const projectDir = context.projectDir;
   const filePath = path.resolve(projectDir, `package.json`);
   fs.writeFileSync(filePath, templateRender, 'utf8');
+
+  // copy fnet files to projectDir
+  const fnetSrcDir = path.resolve(context.project.projectDir, 'fnet');
+  if (fs.existsSync(fnetSrcDir)) {
+    const fnetDestDir = path.resolve(context.projectDir, 'fnet');
+    if (!fs.existsSync(fnetDestDir)) {
+      fs.mkdirSync(fnetDestDir);
+    }
+    
+    const fnetFiles = fs.readdirSync(fnetSrcDir);
+    for (const fnetFile of fnetFiles) {
+      const fnetFilePath = path.resolve(fnetSrcDir, fnetFile);
+      if (!fs.lstatSync(fnetFilePath).isFile()) continue;
+      const targetFilePath = path.resolve(fnetDestDir, fnetFile);
+      fs.copyFileSync(fnetFilePath, targetFilePath);
+    }
+  }
 }
