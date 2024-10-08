@@ -18,7 +18,7 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
 
   packageJSON.name = target.params.name;
 
-  packageJSON.version = semver.inc(target.params.version, "patch");
+  packageJSON.version = semver.inc(target.version, "patch");
 
   const binName = target.params.bin?.name || target.params.bin;
   const binEnabled = target.params.bin?.enabled !== false;
@@ -53,6 +53,6 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
 
   deploymentProject.isDirty = true;
 
-  target.params.version = packageJSON.version;
-  yamlTarget.get('params').set('version', packageJSON.version);
+  target.version = packageJSON.version;
+  yamlTarget.set('version', packageJSON.version);
 }

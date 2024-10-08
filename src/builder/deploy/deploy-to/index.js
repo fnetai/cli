@@ -21,34 +21,34 @@ module.exports = async (apiContext) => {
 
   if (deploymentProjectTarget.enabled !== true) return;
 
-  if (deploymentProjectTarget.name === "lib")
+  if (deploymentProjectTarget.type === "lib")
     await deployToAtom({ ...apiContext });
-  else if (deploymentProjectTarget.name === "red")
+  else if (deploymentProjectTarget.type === "red")
     await deployToNodeRed({ ...apiContext });
-  else if (deploymentProjectTarget.name === "npm")
+  else if (deploymentProjectTarget.type === "npm")
     await deployToNpm({ ...apiContext });
-  else if (deploymentProjectTarget.name === "gcs")
+  else if (deploymentProjectTarget.type === "gcs")
     await deployToGcs({ ...apiContext });
-  else if (deploymentProjectTarget.name === "gitlab")
+  else if (deploymentProjectTarget.type === "gitlab")
     await deployToGitlab({ ...apiContext });
-  else if (deploymentProjectTarget.name === "fnet-package")
+  else if (deploymentProjectTarget.type === "fnet-package")
     await deployToFnetPackage({ ...apiContext });
-  else if (deploymentProjectTarget.name === "fnet-form")
+  else if (deploymentProjectTarget.type === "fnet-form")
     await deployToFnetForm({ ...apiContext });
-  else if (deploymentProjectTarget.name === "fnet-node")
+  else if (deploymentProjectTarget.type === "fnet-node")
     await deployToFnetNode({ ...apiContext });
-  else if (deploymentProjectTarget.name === "fnet-flow")
+  else if (deploymentProjectTarget.type === "fnet-flow")
     await deployToFnetFlow({ ...apiContext });
   else {
     let deployer;
 
-    if (deploymentProjectTarget.name === 'nextjs') deployer = deployToNextjs;
-    else if (deploymentProjectTarget.name === 'webos') deployer = deployToWebos;
-    else if (deploymentProjectTarget.name === 'electron') deployer = deployToElectron;
-    else if (deploymentProjectTarget.name === 'docker') deployer = deployToDocker;
-    else if (deploymentProjectTarget.name === 'ios') deployer = deployToIosApp;
-    else if (deploymentProjectTarget.name === 'macos') deployer = deployToMacOSApp;
-    else if (deploymentProjectTarget.name === 'rust') deployer = deployToRust;
+    if (deploymentProjectTarget.type === 'nextjs') deployer = deployToNextjs;
+    else if (deploymentProjectTarget.type === 'webos') deployer = deployToWebos;
+    else if (deploymentProjectTarget.type === 'electron') deployer = deployToElectron;
+    else if (deploymentProjectTarget.type === 'docker') deployer = deployToDocker;
+    else if (deploymentProjectTarget.type === 'ios') deployer = deployToIosApp;
+    else if (deploymentProjectTarget.type === 'macos') deployer = deployToMacOSApp;
+    else if (deploymentProjectTarget.type === 'rust') deployer = deployToRust;
 
     if (!deployer) return;
 

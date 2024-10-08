@@ -17,7 +17,7 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   const packageJSON = JSON.parse(packageJSONContent);
 
   packageJSON.name = target.params.name;
-  packageJSON.version = semver.inc(target.params.version, "patch");
+  packageJSON.version = semver.inc(target.version, "patch");
 
   delete packageJSON.scripts;
   delete packageJSON.devDependencies;
@@ -52,8 +52,8 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   if (target.dryRun === true) return;
 
   deploymentProject.isDirty = true;
-  target.params.version = packageJSON.version;
-  yamlTarget.get('params').set('version', packageJSON.version);
+  target.version = packageJSON.version;
+  yamlTarget.set('version', packageJSON.version);
 
   await registerToPackageManager({ target, packageJSON });
 }

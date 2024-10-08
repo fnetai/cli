@@ -26,9 +26,10 @@ module.exports = async ({
     tags: context.tags
   }) : undefined;
 
-  const nextVersion = semver.inc(target.params.version || "0.1.0", "patch");
-  target.params.version = nextVersion;
-  yamlTarget.get('params').set('version', nextVersion);
+  const nextVersion = semver.inc(target.version || "0.1.0", "patch");
+  target.params.version = nextVersion; // remove this line
+  target.version = nextVersion;
+  yamlTarget.set('version', nextVersion);
 
   const params = cloneDeep(target.params);
 

@@ -382,11 +382,15 @@ class Builder {
     const { deploymentProject } = context;
     const { yamlDocument } = deploymentProject;
 
-    const yamlTargets = yamlDocument.get('targets') || [];
-    const targets = deploymentProject.doc.targets || [];
-    for (let i = 0; i < targets.length; i++) {
-      const deploymentProjectTarget = targets[i];
-      const yamlTarget = yamlTargets.items[i];
+    if (deploymentProject.doc.targets && Array.isArray(deploymentProject.doc.targets))
+      throw new Error("Deployment project targets are deprecated. Please update targets in the yaml file.");
+
+    const targetKeys = Object.keys(deploymentProject.doc || {});
+    const yamlTargets = yamlDocument || {};
+    for (let i = 0; i < targetKeys.length; i++) {
+      const deploymentProjectTarget = deploymentProject.doc[targetKeys[i]];
+      deploymentProjectTarget.name = targetKeys[i];
+      const yamlTarget = yamlTargets.get(targetKeys[i]);
       await deployTo({ ...this.#apiContext, deploymentProject, deploymentProjectTarget, yamlTarget });
     }
   }

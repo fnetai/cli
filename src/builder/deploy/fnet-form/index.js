@@ -6,8 +6,6 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
 
   await setInProgress({ message: "Deploying it as fnet form." });
 
-  const newVersion = semver.inc(target.params.version, "patch");
-
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-form",
     dir: context.projectDir,
@@ -39,9 +37,11 @@ module.exports = async ({ setInProgress, context, deploymentProject, deploymentP
   if (!access_token) throw new Error(`Invalid access_token from ${apiTokenUrl}`);
 
   deploymentProject.isDirty = true;
-  target.params.version = newVersion;
-  yamlTarget.get('params').set('version', newVersion);
 
+  const newVersion = semver.inc(target.version, "patch");
+  target.params.version = newVersion; // TODO: remove this line
+  target.version = newVersion;
+  yamlTarget.set('version', newVersion);
   const url = `${config.env.ATOM_API_URL}/v1/service/fnet-form/publish`;
 
   response = await axios({
