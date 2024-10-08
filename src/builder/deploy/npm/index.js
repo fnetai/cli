@@ -43,7 +43,8 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
   fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, "\t"));
 
   // TODO: improve this for all builders/deploys
-  let npmConfig = (await fnetConfig({ name: context.npmConfig || "npm", dir: context.projectDir, tags: context.tags, optional: true }))?.data;
+  const configName= target.config || "npm";
+  let npmConfig = (await fnetConfig({ name: configName, dir: context.projectDir, tags: context.tags, optional: true }))?.data;
   
   if (!npmConfig) {
     // create config from schema
@@ -54,7 +55,7 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
     const projectDir = context.project.projectDir;
     const dotFnetDir = path.resolve(projectDir, '.fnet');
     if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
-    fs.writeFileSync(path.resolve(dotFnetDir, 'npm.fnet'), yaml.stringify(newConfig));
+    fs.writeFileSync(path.resolve(dotFnetDir, `${configName}.fnet`), yaml.stringify(newConfig));
     npmConfig = newConfig;
   }
 
