@@ -4,6 +4,9 @@ const semver = require('semver');
 const shell = require('shelljs');
 
 const fnetConfig = require('@fnet/config');
+const fnetUpListFiles = require('@fnet/up-list-files');
+const fnetObjectFromSchema = require('@fnet/object-from-schema');
+const yaml = require('yaml');
 
 module.exports = async ({ atom, setInProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
 
@@ -39,7 +42,21 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
 
   fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, "\t"));
 
-  const npmConfig = (await fnetConfig({ name: context.npmConfig || "npm", dir: context.projectDir, tags: context.tags }))?.data;
+  // TODO: improve this for all builders/deploys
+  let npmConfig = (await fnetConfig({ name: context.npmConfig || "npm", dir: context.projectDir, tags: context.tags, optional: true }))?.data;
+  
+  if (!npmConfig) {
+    // create config from schema
+    const schemas = await fnetUpListFiles({ pattern: '@fnet/cli-project-schemas/dist/schemas/to-npm.yaml', absolute: true });
+    if (schemas.length === 0) throw new Error('Couldnt find schema to create npm config');
+    const newConfig = await fnetObjectFromSchema({ schema: schemas[0], tags: context.tags });
+
+    const projectDir = context.project.projectDir;
+    const dotFnetDir = path.resolve(projectDir, '.fnet');
+    if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
+    fs.writeFileSync(path.resolve(dotFnetDir, 'npm.fnet'), yaml.stringify(newConfig));
+    npmConfig = newConfig;
+  }
 
   fs.writeFileSync(path.resolve(projectDir, '.npmrc'), `//registry.npmjs.org/:_authToken=${npmConfig.env.NPM_TOKEN}`);
 

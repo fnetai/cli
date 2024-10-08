@@ -3,6 +3,7 @@ const resolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const replace = require("@rollup/plugin-replace");
 const json = require("@rollup/plugin-json");
 const terser = require("@rollup/plugin-terser");
+
 const DEVELOPMENT = process.env.DEVELOPMENT ? true : false;
 
 const commonPlugins = () => {

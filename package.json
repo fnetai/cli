@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.60.1",
+  "version": "0.61.1",
   "files": [
     "dist"
   ],
@@ -35,6 +35,7 @@
     "@fnet/cli-project-common": "^0.2.20",
     "@fnet/cli-project-flow": "^0.2.13",
     "@fnet/cli-project-node": "^0.2.8",
+    "@fnet/cli-project-schemas": "^0.1.1",
     "@fnet/config": "^0.2.8",
     "@fnet/dir-zipper": "^0.1.5",
     "@fnet/expression": "^0.1.16",
@@ -43,6 +44,7 @@
     "@fnet/prompt": "^0.2.10",
     "@fnet/shell": "^0.1.13",
     "@fnet/to-rust": "^0.1.2",
+    "@fnet/up-list-files": "^0.1.5",
     "@fnet/yaml": "^0.1.23",
     "@fnet/yargs-options-from-schema": "^0.1.1",
     "@node-red/util": "^4.0.2",
