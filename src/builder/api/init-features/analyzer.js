@@ -11,7 +11,8 @@ module.exports = (apiContext) => {
       options: {
         summaryOnly: true,
         limit: 12
-      }
+      },
+      explicit: true
     }, features, packageDevDependencies
   });
 };

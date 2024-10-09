@@ -9,6 +9,7 @@ module.exports = (apiContext) => {
     feature: {
       name: "visualizer",
       packages: [["rollup-plugin-visualizer", "^5"]],
+      expilicit: true,
     }, features, packageDevDependencies
   });
 };

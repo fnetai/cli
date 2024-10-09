@@ -9,6 +9,7 @@ module.exports = (apiContext) => {
     feature: {
       name: "gzip",
       packages: [["rollup-plugin-gzip", "^4"]],
+      explicit: true
     }, features, packageDevDependencies
   });
 };

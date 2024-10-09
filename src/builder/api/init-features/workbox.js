@@ -17,7 +17,8 @@ module.exports = (apiContext) => {
           skipWaiting: true,
           clientsClaim: true
         }
-      }
+      },
+      explicit: true
     }, features, packageDevDependencies
   });
 };

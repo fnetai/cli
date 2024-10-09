@@ -1,8 +1,8 @@
 const merge = require('lodash.merge');
 
-module.exports = ({ feature, features, packageDevDependencies }) => {
+module.exports = ({ feature, features, packageDevDependencies}) => {
 
-  const { name, packages, options, extraCheck } = feature;
+  const { name, packages, options, extraCheck,explicit } = feature;
 
   const keyEnabled = `${name}_enabled`;
 
@@ -38,7 +38,7 @@ module.exports = ({ feature, features, packageDevDependencies }) => {
       }
     } else {
       // Output hasn't the feature
-      if (!globallyDisabled && features[keyEnabled] !== false) {
+      if (!globallyDisabled && !explicit && features[keyEnabled] !== false) {
         output[name] = {
           enabled: true,
         }
