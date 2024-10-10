@@ -43,12 +43,12 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
   fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, "\t"));
 
   // TODO: improve this for all builders/deploys
-  const configName= target.config || "npm";
+  const configName = target.config || "npm";
   let npmConfig = (await fnetConfig({ name: configName, dir: context.projectDir, tags: context.tags, optional: true }))?.data;
-  
+
   if (!npmConfig) {
     // create config from schema
-    const schemas = fnetUpListFiles({ pattern: '@fnet/cli-project-schemas/dist/schemas/to-npm.yaml', absolute: true });
+    const schemas = fnetUpListFiles({ dir: __dirname, pattern: '@fnet/cli-project-schemas/dist/schemas/to-npm.yaml', absolute: true });
     if (schemas.length === 0) throw new Error('Couldnt find schema to create npm config');
     const newConfig = await fnetObjectFromSchema({ schema: schemas[0], tags: context.tags });
 
