@@ -48,7 +48,7 @@ module.exports = async ({ atom, setInProgress, context, deploymentProject, deplo
   
   if (!npmConfig) {
     // create config from schema
-    const schemas = await fnetUpListFiles({ pattern: '@fnet/cli-project-schemas/dist/schemas/to-npm.yaml', absolute: true });
+    const schemas = fnetUpListFiles({ pattern: '@fnet/cli-project-schemas/dist/schemas/to-npm.yaml', absolute: true });
     if (schemas.length === 0) throw new Error('Couldnt find schema to create npm config');
     const newConfig = await fnetObjectFromSchema({ schema: schemas[0], tags: context.tags });
 
