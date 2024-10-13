@@ -140,6 +140,7 @@ module.exports = async (apiContext) => {
   features.cli.format = features.cli.format || "esm";
   features.cli.folder = features.cli.folder || features.cli.folder || "esm";
   features.cli.node_options = features.cli.node?.options || features.cli.node_options || '';
+  features.json = features.cli.enabled || features.json;
 
   // rollup output default
   const rollup_output_default = {
