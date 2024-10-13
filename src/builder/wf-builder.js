@@ -209,7 +209,7 @@ class Builder {
       this.#packageDependencies.push({ package: "@flownet/react-app", version: "^0.1" });
       this.#packageDependencies.push({ package: "@flownet/react-app-state", version: "^0.1" });
     } else {
-      this.#packageDependencies.push({ package: "yargs", version: "^17" });
+      this.#packageDependencies.push({ package: "@fnet/args", version: "^0.1" });
     }
     this.#packageDependencies.push({ package: "chalk", version: "^4" });
   }

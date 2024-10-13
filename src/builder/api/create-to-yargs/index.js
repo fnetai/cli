@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const nunjucks = require("nunjucks");
 const fnetYargsOptionsFromSchema = require("@fnet/yargs-options-from-schema");
+// const fnetYaml = require("@fnet/yaml");
 
 module.exports = async ({ atom, setInProgress, context, njEnv }) => {
 
@@ -16,7 +17,8 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
 
   const input = atom.doc.input;
   if (input) {
-    options = await fnetYargsOptionsFromSchema({ schema: input });
+    // options = await fnetYargsOptionsFromSchema({ schema: input });
+    options = atom.doc.input;
   }
   else
     inputs.forEach(input => {
@@ -51,7 +53,7 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
     if (Reflect.has(fargsOptions, 'describe') || Reflect.has(fargsOptions, 'description')) fargs.describe = fargsOptions.describe || fargsOptions.description;
     if (Reflect.has(fargsOptions, 'choices')) fargs.choices = fargsOptions.choices;
-    
+
     options["fargs"] = fargs;
     options["ftag"] = ftag;
   }
