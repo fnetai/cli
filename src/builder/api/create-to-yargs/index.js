@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const nunjucks = require("nunjucks");
-const fnetYargsOptionsFromSchema = require("@fnet/yargs-options-from-schema");
+// const fnetYargsOptionsFromSchema = require("@fnet/yargs-options-from-schema");
 // const fnetYaml = require("@fnet/yaml");
 
 module.exports = async ({ atom, setInProgress, context, njEnv }) => {
@@ -12,7 +12,7 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
   await setInProgress({ message: "Creating yargs." });
 
   let options = {};
-  const inputs = atom.doc.inputs || [];
+  // const inputs = atom.doc.inputs || [];
   const imports = [];
 
   const input = atom.doc.input;
@@ -20,42 +20,49 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     // options = await fnetYargsOptionsFromSchema({ schema: input });
     options = atom.doc.input;
   }
-  else
-    inputs.forEach(input => {
-      if (input.cli === false || !input.name) return;
-      if (input.import) imports.push(input);
+  else {
+    console.log("No input found in the atom doc.");
+    return
+  };
+  
+  // else
+  //   inputs.forEach(input => {
+  //     if (input.cli === false || !input.name) return;
+  //     if (input.import) imports.push(input);
 
-      const option = {};
+  //     const option = {};
 
-      if (Reflect.has(input, 'type')) option.type = input.type;
-      if (Reflect.has(input, 'default')) option.default = input.default;
-      if (Reflect.has(input, 'choices')) option.choices = input.choices;
-      if (Reflect.has(input, 'describe') || Reflect.has(input, 'description')) {
-        option.describe = input.describe || input.description;
-      }
-      if (Reflect.has(input, 'alias')) option.alias = input.alias;
-      if (Reflect.has(input, 'required') && input.required === true) option.required = true;
-      if (Reflect.has(input, 'hidden') && input.hidden === true) option.hidden = true;
-      if (Reflect.has(input, 'array') && input.array === true) option.array = true;
-      if (Reflect.has(input, 'normalize') && input.normalize === true) option.normalize = true;
-      if (Reflect.has(input, 'nargs')) option.nargs = input.nargs;
+  //     if (Reflect.has(input, 'type')) option.type = input.type;
+  //     if (Reflect.has(input, 'default')) option.default = input.default;
+  //     if (Reflect.has(input, 'choices')) option.choices = input.choices;
+  //     if (Reflect.has(input, 'describe') || Reflect.has(input, 'description')) {
+  //       option.describe = input.describe || input.description;
+  //     }
+  //     if (Reflect.has(input, 'alias')) option.alias = input.alias;
+  //     if (Reflect.has(input, 'required') && input.required === true) option.required = true;
+  //     if (Reflect.has(input, 'hidden') && input.hidden === true) option.hidden = true;
+  //     if (Reflect.has(input, 'array') && input.array === true) option.array = true;
+  //     if (Reflect.has(input, 'normalize') && input.normalize === true) option.normalize = true;
+  //     if (Reflect.has(input, 'nargs')) option.nargs = input.nargs;
 
-      options[input.name] = option;
-    });
+  //     options[input.name] = option;
+  //   });
 
   if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
 
     const fargsOptions = atom.doc.features.cli.fargs;
 
-    const fargs = { type: "string", describe: "Config name to load args", hidden: false };
-    const ftag = { type: "array", describe: "Tags to filter the config", hidden: false };
+    const fargs = { type: "string", description: "Config name to load args", hidden: false };
+    const ftag = { type: "array", description: "Tags to filter the config", hidden: false };
 
     if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
-    if (Reflect.has(fargsOptions, 'describe') || Reflect.has(fargsOptions, 'description')) fargs.describe = fargsOptions.describe || fargsOptions.description;
-    if (Reflect.has(fargsOptions, 'choices')) fargs.choices = fargsOptions.choices;
+    // if (Reflect.has(fargsOptions, 'describe') || Reflect.has(fargsOptions, 'description')) fargs.describe = fargsOptions.describe || fargsOptions.description;
+    // if (Reflect.has(fargsOptions, 'choices')) fargs.choices = fargsOptions.choices;
 
-    options["fargs"] = fargs;
-    options["ftag"] = ftag;
+    if (options.properties) {
+      options.properties["fargs"] = fargs;
+      options.properties["ftag"] = ftag;
+    }
   }
 
   const templateContext = { options, imports, atom: atom }
