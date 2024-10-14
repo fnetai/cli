@@ -4,6 +4,7 @@ const nunjucks = require("nunjucks");
 // const fnetYargsOptionsFromSchema = require("@fnet/yargs-options-from-schema");
 // const fnetYaml = require("@fnet/yaml");
 const Ajv = require('ajv/dist/2020');
+const standaloneCode = require('ajv/dist/standalone');
 
 module.exports = async ({ atom, setInProgress, context, njEnv }) => {
 
@@ -97,12 +98,7 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
   });
 
   const validate = ajv.compile(atom.doc.input);
-
-  const validateFunctionCode = `
-  ${validate.toString()};
-  validate20.evaluated={}; // TODO: solve this
-  export default validate20;
-`;
-
-  fs.writeFileSync(path.resolve(projectDir, `src/default/validate_input.js`), validateFunctionCode, 'utf8');
+  const validateCode = standaloneCode(ajv, validate);
+  
+  fs.writeFileSync(path.resolve(projectDir, `src/default/validate_input.js`), validateCode, 'utf8');
 }
