@@ -90,8 +90,8 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     strict: false,
     code: {
       esm: true,
-      lines: true,
-      optimize: false
+      // lines: true,
+      // optimize: false
     },
   });
 
