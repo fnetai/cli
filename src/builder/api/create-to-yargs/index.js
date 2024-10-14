@@ -90,14 +90,19 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     strict: false,
     code: {
       esm: true,
-      // lines: true,
-      // optimize: false
+      lines: true,
+      optimize: false,
+      source: true
     },
   });
 
   const validate = ajv.compile(atom.doc.input);
 
-  const validateFunctionCode = `export default ${validate.toString()};`;
+  const validateFunctionCode = `
+  ${validate.toString()};
+  validate20.evaluated={}; // TODO: solve this
+  export default validate20;
+`;
 
   fs.writeFileSync(path.resolve(projectDir, `src/default/validate_input.js`), validateFunctionCode, 'utf8');
 }
