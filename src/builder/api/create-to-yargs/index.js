@@ -3,9 +3,9 @@ const path = require("node:path");
 const nunjucks = require("nunjucks");
 // const fnetYargsOptionsFromSchema = require("@fnet/yargs-options-from-schema");
 // const fnetYaml = require("@fnet/yaml");
+const Ajv = require('ajv/dist/2020');
 
 module.exports = async ({ atom, setInProgress, context, njEnv }) => {
-
 
   if (atom.doc.features.cli.enabled !== true) return;
 
@@ -21,10 +21,14 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     options = atom.doc.input;
   }
   else {
-    console.log("No input found in the atom doc.");
-    return
+    // define basic schema
+    options = {
+      type: "object",
+      properties: {},
+      required: []
+    };
   };
-  
+
   // else
   //   inputs.forEach(input => {
   //     if (input.cli === false || !input.name) return;
@@ -79,4 +83,21 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
   const filePath = path.resolve(projectDir, `src/default/to.args.js`);
   fs.writeFileSync(filePath, templateRender, 'utf8');
 
+  const ajv = new Ajv({
+    allErrors: true,
+    useDefaults: true,
+    // formats: { email: true },
+    strict: false,
+    code: {
+      esm: true,
+      lines: true,
+      optimize: false
+    },
+  });
+
+  const validate = ajv.compile(atom.doc.input);
+
+  const validateFunctionCode = `export default ${validate.toString()};`;
+
+  fs.writeFileSync(path.resolve(projectDir, `src/default/validate_input.js`), validateFunctionCode, 'utf8');
 }

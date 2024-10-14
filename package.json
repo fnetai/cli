@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.63.2",
+  "version": "0.63.3",
   "files": [
     "dist"
   ],
@@ -48,6 +48,7 @@
     "@fnet/yaml": "^0.1.23",
     "@fnet/yargs-options-from-schema": "^0.1.1",
     "@node-red/util": "^4.0.2",
+    "ajv": "^8.17.1",
     "axios": "^1.5.0",
     "chalk": "^4.1.2",
     "form-data": "^4.0.0",
