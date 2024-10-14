@@ -3,6 +3,7 @@ const path = require("node:path");
 const nunjucks = require("nunjucks");
 const Ajv = require('ajv/dist/2020');
 const standaloneCode = require('ajv/dist/standalone');
+const addFormats = require('ajv-formats');
 
 module.exports = async ({ atom, setInProgress, context, njEnv }) => {
 
@@ -59,7 +60,7 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
   const ajv = new Ajv({
     allErrors: true,
     useDefaults: true,
-    // formats: { email: true },
+    formats: { email: true },
     strict: false,
     code: {
       esm: true,
@@ -69,6 +70,7 @@ module.exports = async ({ atom, setInProgress, context, njEnv }) => {
     },
   });
 
+  addFormats(ajv);
   const validate = ajv.compile(schema);
   const validateCode = standaloneCode(ajv, validate);
   
