@@ -32,7 +32,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     packageDevDependencies.push({ package: "ajv", version: "^8" });
     
     if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
-      packageDependencies.push({ package: "@fnet/config", version: "0.2.19" });
+      packageDependencies.push({ package: "@fnet/config", version: "0.2.21" });
     }
   }
 
@@ -42,9 +42,9 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
 
   // DEV DEPENDENCIES
   packageDevDependencies.push({ package: "@babel/core", version: "^7" });
-  packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^26" });
+  packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^28" });
   packageDevDependencies.push({ package: "@rollup/plugin-node-resolve", version: "^15" });
-  packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^5" });
+  packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^6" });
   packageDevDependencies.push({ package: "rollup", version: "^4" });
   if (atom.doc.features.dts_enabled) {
     packageDevDependencies.push({ package: "rollup-plugin-dts", version: "^6" });
