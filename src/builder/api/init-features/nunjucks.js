@@ -8,7 +8,7 @@ module.exports = (apiContext) => {
   featureTemplate({
     feature: {
       name: "nunjucks",
-      packages: [["@fnet/rollup-plugin-nunjucks", "0.1.3"]],
+      packages: [["@fnet/rollup-plugin-nunjucks", "0.1.8"]],
     }, features, packageDevDependencies
   });
 };

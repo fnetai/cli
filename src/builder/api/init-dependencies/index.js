@@ -80,7 +80,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
     });
   }
 
-  packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.3" });
+  packageDevDependencies.push({ package: "@fnet/rollup-plugin-delete", version: "0.1.10" });
 
   if (atom.doc.features.browsersync_enabled) {
     packageDevDependencies.push({ package: "@fnet/rollup-plugin-browsersync", version: "0.1.11" });
