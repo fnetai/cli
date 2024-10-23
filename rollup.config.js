@@ -19,7 +19,7 @@ const commonPlugins = () => {
       preferBuiltins: true,
     }),
     commonjs({
-      // ignoreDynamicRequires: true,
+      ignoreDynamicRequires: true,
     }),
   ];
 
