@@ -37,7 +37,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   }
 
   if (atom.doc.features.render && atom.doc.features.render.enabled !== false) {
-    packageDependencies.push({ package: "@flownet/lib-render-templates-dir", version: "0.1.17" });
+    packageDevDependencies.push({ package: "@flownet/lib-render-templates-dir", version: "0.1.17" });
   }
 
   // DEV DEPENDENCIES
