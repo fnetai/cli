@@ -18,6 +18,7 @@ const shell = require('shelljs');
 const fnetYaml = require('@fnet/yaml');
 const fnetConfig = require('@fnet/config');
 const fnetObjectFromSchema = require('@fnet/object-from-schema');
+const fnetShellFlow = require('@fnet/shell-flow');
 
 const flownetRenderTemplatesDir = require('@flownet/lib-render-templates-dir');
 const Builder = require('./wf-builder');
@@ -166,6 +167,7 @@ cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
 cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with' });
+cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run' });
 
 cmdBuilder
   .demandCommand(1, 'You need at least one command before moving on')
@@ -242,6 +244,35 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
         subprocess.on('close', (code) => {
           process.exit(code);
         });
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+function bindRunContextCommand(builder, { name, preArgs = [] }) {
+  return builder.command(
+    `${name} group [options..]`, `Run a command group.`,
+    (yargs) => {
+      return yargs
+        .positional('group', { type: 'string' })
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { project } = context;
+        const { projectFileParsed } = project;
+        const commands = projectFileParsed.commands;
+        if (!commands) throw new Error('Commands not found in project file.');
+
+        const group = commands[argv.group];
+        if (!group) throw new Error(`Command group '${argv.group}' not found in project file.`);
+
+        await fnetShellFlow({ commands: group });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
