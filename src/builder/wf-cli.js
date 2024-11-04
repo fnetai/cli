@@ -258,6 +258,7 @@ function bindRunContextCommand(builder, { name, preArgs = [] }) {
     (yargs) => {
       return yargs
         .positional('group', { type: 'string' })
+        .option('ftag', { type: 'array' })
         .help(false)
         .version(false);
     },
