@@ -4,8 +4,9 @@ const path = require('node:path');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 const fnetListNpmVersions = require('@flownet/lib-list-npm-versions');
 
-module.exports = async ({ atom, context, packageDependencies, packageDevDependencies, setInProgress }) => {
-  await setInProgress({ message: "Creating package.json." });
+module.exports = async ({ atom, context, packageDependencies, packageDevDependencies, setProgress }) => {
+  
+  await setProgress({ message: "Creating package.json." });
 
   // move dev dependencies in packageDependencies to packageDevDependencies
   const devPackages = packageDependencies.filter(w => w.dev === true);

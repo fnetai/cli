@@ -34,7 +34,10 @@ function findEntryFile({ dir, name = 'index' }) {
 }
 
 module.exports = async (apiContext) => {
-  const { atom, context, packageDevDependencies } = apiContext;
+
+  const { atom, context, setProgress } = apiContext;
+
+  setProgress('Initializing features...');
 
   atom.doc.features = atom.doc.features || {};
   const features = atom.doc.features;
@@ -52,6 +55,8 @@ module.exports = async (apiContext) => {
 
   const appEntry = findEntryFile({ dir: path.resolve(projectDir, './app') });
   if (appEntry.file) {
+    setProgress('Parsing app entry imports...');
+
     let parsed = await fnetParseImports({ file: appEntry.file, recursive: true });
     let usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.app_uses_jsx = usesJSX;
@@ -65,6 +70,8 @@ module.exports = async (apiContext) => {
 
   const cliEntry = findEntryFile({ dir: path.resolve(projectDir, './cli') });
   if (cliEntry.file) {
+    setProgress('Parsing cli entry imports...');
+
     let parsed = await fnetParseImports({ file: cliEntry.file, recursive: true });
     let usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
     features.cli_uses_jsx = usesJSX;
@@ -80,6 +87,8 @@ module.exports = async (apiContext) => {
     const srcEntry = findEntryFile({ dir: path.resolve(projectDir, './src') });
 
     if (srcEntry.file) {
+      setProgress('Parsing src entry imports...');
+
       let parsed = await fnetParseImports({ file: srcEntry.file, recursive: true });
       let usesJSX = parsed.all.some(w => w.usesJSX === true && w.type === 'local');
       features.src_uses_jsx = usesJSX;

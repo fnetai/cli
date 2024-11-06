@@ -17,7 +17,7 @@ const deployToRust = require('../rust');
 
 module.exports = async (apiContext) => {
 
-  const { atom, packageDependencies, context, deploymentProjectTarget, setInProgress, deploymentProject, yamlTarget } = apiContext;
+  const { atom, packageDependencies, context, deploymentProjectTarget, setProgress, deploymentProject, yamlTarget } = apiContext;
 
   if (deploymentProjectTarget.enabled !== true) return;
 
@@ -55,7 +55,7 @@ module.exports = async (apiContext) => {
     await deployer({
       atom: atom,
       target: deploymentProjectTarget,
-      onProgress: setInProgress,
+      onProgress: setProgress,
       projectDir: context.projectDir,
       dependencies: packageDependencies,
       context: context,

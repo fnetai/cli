@@ -1,11 +1,11 @@
 const shell = require('shelljs');
 const path=require("path");
 
-module.exports = async ({ setInProgress, context }) => {
+module.exports = async ({ setProgress, context }) => {
 
     const projectDir = context.projectDir;
 
-    await setInProgress({ message: "Prettifiying source files." });
+    await setProgress({ message: "Prettifiying source files." });
 
     let srcDir=path.join("src","**","*");
 

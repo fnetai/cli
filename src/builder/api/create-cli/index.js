@@ -3,11 +3,11 @@ const path = require("node:path");
 const shell = require('shelljs');
 const fnetRenderTemplateDir = require('@flownet/lib-render-templates-dir');
 
-module.exports = async ({ atom, setInProgress, context, packageDependencies }) => {
+module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
 
     if (atom.doc.features.cli.enabled !== true) return;
 
-    await setInProgress({ message: "Creating cli." });
+    await setProgress({ message: "Creating cli." });
 
     const templateContext = {
         atom: atom,

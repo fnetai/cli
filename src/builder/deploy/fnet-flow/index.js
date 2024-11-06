@@ -5,9 +5,9 @@ const fs = require('fs');
 const fnetShell = require('@fnet/shell');
 const FormData = require('form-data');
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
+module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
 
-  await setInProgress({ message: "Deploying it as fnet flow." });
+  await setProgress({ message: "Deploying it as fnet flow." });
 
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-flow",

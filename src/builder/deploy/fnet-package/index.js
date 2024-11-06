@@ -7,9 +7,9 @@ const fnetConfig = require('@fnet/config');
 
 const axios = require('axios').default;
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
+module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
 
-  await setInProgress({ message: "Deploying it as fnet package." });
+  await setProgress({ message: "Deploying it as fnet package." });
 
   const projectDir = context.projectDir;
   const packageJSONPath = path.resolve(projectDir, 'package.json');

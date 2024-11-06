@@ -1,6 +1,8 @@
 const fnetListNpmVersions = require('@flownet/lib-list-npm-versions');
 
-module.exports = async ({ atom, packageDependencies, packageDevDependencies }) => {
+module.exports = async ({ atom, packageDependencies, packageDevDependencies, setProgress }) => {
+
+  setProgress('Initializing dependencies');
 
   if (atom.type === 'workflow') {
     packageDependencies.push({ package: "get-value", version: "^3" });
@@ -10,6 +12,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   if (atom.doc.features.form_enabled) {
     if (atom.doc.features.dependency_auto_enabled) {
       let reactVersion = '^18.2';
+      setProgress('Fetching React versions');
       const versions = await fnetListNpmVersions({ name: "react", groupBy: { major: true } });
       const found = versions.find(w => w[0] === atom.doc.features.react_version.toString());
       reactVersion = `^${found[0]}`;
@@ -30,7 +33,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies }) =
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "@fnet/args", version: "^0.1" });
     packageDevDependencies.push({ package: "ajv", version: "^8" });
-    
+
     if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
       packageDependencies.push({ package: "@fnet/config", version: "0.2.21" });
     }

@@ -8,9 +8,9 @@ const fnetUpListFiles = require('@fnet/up-list-files');
 const fnetObjectFromSchema = require('@fnet/object-from-schema');
 const yaml = require('yaml');
 
-module.exports = async ({ atom, setInProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
+module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
 
-  await setInProgress({ message: "Deploying it as npm package." });
+  await setProgress({ message: "Deploying it as npm package." });
 
   const projectDir = context.projectDir;
   const packageJSONPath = path.resolve(projectDir, 'package.json');

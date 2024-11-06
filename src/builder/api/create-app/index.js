@@ -1,11 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const fnetRenderTemplateDir = require('@flownet/lib-render-templates-dir');
-module.exports = async ({ atom, setInProgress, context, packageDependencies }) => {
+module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
 
   if (atom.doc.features.app.enabled !== true) return;
 
-  await setInProgress({ message: "Creating app folder" });
+  await setProgress({ message: "Creating app folder" });
 
   const templateContext = {
     atom: atom,

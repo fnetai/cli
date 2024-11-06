@@ -2,9 +2,9 @@ const semver = require('semver');
 const fnetConfig = require('@fnet/config');
 const axios = require('axios').default;
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
+module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
 
-  await setInProgress({ message: "Deploying it as fnet form." });
+  await setProgress({ message: "Deploying it as fnet form." });
 
   const { file: configFile, data: config } = await fnetConfig({
     name: target.config || "fnet-form",

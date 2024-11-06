@@ -5,11 +5,11 @@ const Ajv = require('ajv/dist/2020');
 const standaloneCode = require('ajv/dist/standalone');
 const addFormats = require('ajv-formats');
 
-module.exports = async ({ atom, setInProgress, context, njEnv }) => {
+module.exports = async ({ atom, setProgress, context, njEnv }) => {
 
   if (atom.doc.features.cli.enabled !== true) return;
 
-  await setInProgress({ message: "Creating yargs." });
+  await setProgress({ message: "Creating yargs." });
 
   let schema = {};
   const imports = [];

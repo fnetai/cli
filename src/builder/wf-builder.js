@@ -105,7 +105,7 @@ class Builder {
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
       packageDevDependencies: this.#packageDevDependencies,
-      setInProgress: this.setInProgress.bind(this),
+      setProgress: this.setProgress.bind(this),
       context: this.#context,
       Atom,
       registerToPackageManager: this.registerToPackageManager.bind(this)
@@ -150,7 +150,7 @@ class Builder {
     this.#atomConfig = (await fnetConfig({ optional: true, name: "atom", dir: this.#context.projectDir, tags: this.#context.tags }))?.data;
 
     try {
-      await this.setInProgress({ message: "Initialization started." });
+      await this.setProgress({ message: "Initialization started." });
 
       await this.initAuth();
       await this.initWorkflow();
@@ -758,7 +758,7 @@ class Builder {
 
   // CREATE
   async createAtomLibFiles({ root }) {
-    await this.setInProgress({ message: "Creating external lib files." });
+    await this.setProgress({ message: "Creating external lib files." });
 
     this.#atom.typesDir = './types';
 
@@ -798,7 +798,7 @@ class Builder {
 
   async createEngine({ root }) {
 
-    await this.setInProgress({ message: "Creating engine file." });
+    await this.setProgress({ message: "Creating engine file." });
 
     const templateDir = this.#context.templateDir;
     const template = nunjucks.compile(
@@ -814,7 +814,7 @@ class Builder {
   }
 
   async createNodeTree({ root }) {
-    await this.setInProgress({ message: "Creating block files." });
+    await this.setProgress({ message: "Creating block files." });
 
     for await (const node of root.childs) {
       await this.createTypeWorkflow({ node });
@@ -963,7 +963,7 @@ class Builder {
     const fileBase = `flow.yaml`;
     const message = `Creating ${fileBase}`;
 
-    await this.setInProgress({ message: message });
+    await this.setProgress({ message: message });
 
     const { content: main, ...content } = this.#atom.doc;
 
@@ -987,7 +987,7 @@ class Builder {
     const fileBase = `flow.main.yaml`;
     const message = `Creating ${fileBase}`;
 
-    await this.setInProgress({ message: message });
+    await this.setProgress({ message: message });
 
     // const { content: main, ...content } = this.#atom.doc;
 
@@ -1015,7 +1015,7 @@ class Builder {
 
   async deploy() {
 
-    await this.setInProgress({ message: "Deploying." });
+    await this.setProgress({ message: "Deploying." });
 
     if (this.#context.project?.devops) {
       const devopsProjects = [this.#context.project?.devops];
@@ -1085,7 +1085,9 @@ class Builder {
     }
   }
 
-  async setInProgress({ message }) {
+  async setProgress(args) {
+
+    const message = typeof args === 'string' ? args : args?.message;
 
     console.log(chalk.blue(message));
 

@@ -4,9 +4,9 @@ const path = require("node:path");
 const nunjucks = require("nunjucks");
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 
-module.exports = async ({ atom, setInProgress, context, packageDependencies }) => {
+module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
 
-  await setInProgress({ message: "Creating rollup file." });
+  await setProgress({ message: "Creating rollup file." });
 
   const templateContext = {
     atom,

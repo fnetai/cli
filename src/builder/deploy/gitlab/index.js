@@ -1,9 +1,9 @@
 const fnetShell = require('@fnet/shell');
 const fnetConfig = require('@fnet/config');
 
-module.exports = async ({ setInProgress, context, deploymentProject, deploymentProjectTarget, buildId }) => {
+module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget, buildId }) => {
 
-    await setInProgress({ message: "Deploying it as gitlab project." });
+    await setProgress({ message: "Deploying it as gitlab project." });
 
     const projectDir = context.projectDir;
 

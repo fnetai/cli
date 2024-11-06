@@ -3,12 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const fnetYaml = require("@fnet/yaml");
 
-module.exports = async ({ atom, context, setInProgress, Atom }) => {
+module.exports = async ({ atom, context, setProgress, Atom }) => {
 
   const fileBase = `readme.md`;
   const message = `Creating ${fileBase}`;
 
-  await setInProgress({ message: message });
+  await setProgress({ message: message });
 
   if (context.project?.readme) {
 

@@ -32,7 +32,7 @@ const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
 const fnetConfig = require('@fnet/config');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 const fnetPickNpmVersions = require('@flownet/lib-pick-npm-versions');
-
+const fnetListFiles = require('@fnet/list-files');
 const chalk = require('chalk');
 
 class Builder {
@@ -68,7 +68,7 @@ class Builder {
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
       packageDevDependencies: this.#packageDevDependencies,
-      setInProgress: this.setInProgress.bind(this),
+      setProgress: this.setProgress.bind(this),
       context: this.#context,
       Atom,
       registerToPackageManager: this.registerToPackageManager.bind(this)
@@ -103,7 +103,7 @@ class Builder {
     this.#atomConfig = (await fnetConfig({ optional: true, name: this.#context.atomConfig || "atom", dir: this.#context.projectDir, tags: this.#context.tags }))?.data;
 
     try {
-      await this.setInProgress({ message: "Initialization started." });
+      await this.setProgress({ message: "Initialization started." });
 
       await this.initAuth();
       await this.initLibrary();
@@ -136,18 +136,20 @@ class Builder {
   }
 
   async initLibraryDir() {
+
+    this.setProgress({ message: "Initializing library directory." });
+
     const projectDir = this.#context.projectDir;
 
     let result;
 
-    const exclude = ['node_modules'];  // List of directories to exclude from deletion.
+    this.setProgress({ message: "Cleaning project directory." });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['node_modules'], absolute: true });
+    for (const asset of assets) {
+      fs.rmSync(asset, { recursive: true, force: true });
+    }
 
-    // Delete all files and directories in projectDir except those in the exclude list.
-    fs.existsSync(projectDir) && fs.readdirSync(projectDir).forEach(file => {
-      if (!exclude.includes(file)) {
-        result = shell.rm('-rf', path.join(projectDir, file));
-      }
-    });
+    this.setProgress({ message: "Creating project directory." });
 
     // .
     let target = projectDir;
@@ -173,12 +175,16 @@ class Builder {
   }
 
   async initNunjucks() {
+    this.setProgress({ message: "Initializing nunjucks." });
+
     const templateDir = this.#context.templateDir;
     this.#njEnv = nunjucks.configure(templateDir, { watch: false, dev: true });
     this.#apiContext.njEnv = this.#njEnv;
   }
 
   async initLibs() {
+    this.setProgress({ message: "Initializing external libs." });
+
     const libs = [{
       name: this.#atom.doc.name,
       type: "atom",
@@ -256,6 +262,8 @@ class Builder {
 
         if (dependencies.find(w => w.package === parsedImport.package)) continue;
 
+        this.setProgress({ message: `Checking npm version for ${parsedImport.package}` });
+
         const npmVersions = await fnetPickNpmVersions({ name: parsedImport.package, count: 1 });
 
         dependencies.push({
@@ -271,7 +279,7 @@ class Builder {
   }
 
   async createAtomLibFiles({ libs }) {
-    await this.setInProgress({ message: "Creating external lib files." });
+    await this.setProgress({ message: "Creating external lib files." });
 
     this.#atom.typesDir = './types';
 
@@ -306,7 +314,7 @@ class Builder {
 
   async createEngine() {
 
-    await this.setInProgress({ message: "Creating engine file." });
+    await this.setProgress({ message: "Creating engine file." });
 
     const libs = this.#libs.filter(w => w.type === 'atom');
 
@@ -330,7 +338,7 @@ class Builder {
     const fileBase = `node.yaml`;
     const message = `Creating ${fileBase}`;
 
-    await this.setInProgress({ message: message });
+    await this.setProgress({ message: message });
 
     const { content: main, ...content } = this.#atom.doc;
 
@@ -351,7 +359,7 @@ class Builder {
 
   async deploy() {
 
-    await this.setInProgress({ message: "Deploying." });
+    await this.setProgress({ message: "Deploying." });
 
     if (this.#context.project?.devops) {
       const devopsProjects = [this.#context.project?.devops];
@@ -422,7 +430,10 @@ class Builder {
     }
   }
 
-  async setInProgress({ message }) {
+  async setProgress(args) {
+
+    const message = typeof args === 'string' ? args : args?.message;
+
     console.log(chalk.blue(message));
 
     await this._cache_set(this.#buildKey, { status: "IN_PROGRESS", message });

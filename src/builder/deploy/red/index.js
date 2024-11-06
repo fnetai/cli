@@ -6,9 +6,9 @@ const Red = require('@node-red/util');
 
 const fnetConfig = require('@fnet/config');
 
-module.exports = async ({ atom, setInProgress, context, deploymentProject, deploymentProjectTarget: target, buildId,packageDependencies,njEnv }) => {
+module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, buildId,packageDependencies,njEnv }) => {
 
-    await setInProgress({ message: "Deploying it as node-red flow." });
+    await setProgress({ message: "Deploying it as node-red flow." });
     
     const projectDir = context.projectDir;
     const templateDir = context.templateDir;
