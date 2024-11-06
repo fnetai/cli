@@ -31,9 +31,10 @@ const { Atom } = require("@flownet/lib-atom-api-js");
 const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
 const fnetConfig = require('@fnet/config');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
-const fnetPickNpmVersions = require('@flownet/lib-pick-npm-versions');
+const fnetPickNpmVersions = require('@fnet/npm-pick-versions');
 const fnetListFiles = require('@fnet/list-files');
 const chalk = require('chalk');
+const hash = require('object-hash');
 
 class Builder {
 
@@ -144,7 +145,7 @@ class Builder {
     let result;
 
     this.setProgress({ message: "Cleaning project directory." });
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['node_modules'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['node_modules', '.cache'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -264,7 +265,20 @@ class Builder {
 
         this.setProgress({ message: `Checking npm version for ${parsedImport.package}` });
 
-        const npmVersions = await fnetPickNpmVersions({ name: parsedImport.package, count: 1 });
+        let npmVersions;
+        const key = ['npm-pick-versions', parsedImport.package, 1];
+        const cacheKey = hash(key);
+        const cacheDir = path.join(this.#context.projectDir, '.cache');
+        const cacheFile = path.join(cacheDir, cacheKey + '.json');
+
+        if (fs.existsSync(cacheFile)) {
+          npmVersions = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+        }
+        else {
+          npmVersions = await fnetPickNpmVersions({ name: parsedImport.package, count: 1 });
+          fs.mkdirSync(cacheDir, { recursive: true });
+          fs.writeFileSync(cacheFile, JSON.stringify(npmVersions), 'utf8');
+        }
 
         dependencies.push({
           package: parsedImport.package,

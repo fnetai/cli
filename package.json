@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.67.2",
+  "version": "0.68.0",
   "files": [
     "dist"
   ],
@@ -23,7 +23,6 @@
     "@flownet/lib-list-npm-versions": "^0.1.31",
     "@flownet/lib-parse-imports-js": "^0.3.1",
     "@flownet/lib-parse-node-url": "^0.1.16",
-    "@flownet/lib-pick-npm-versions": "^0.1.12",
     "@flownet/lib-render-templates-dir": "^0.1.12",
     "@flownet/lib-to-docker": "^0.3.14",
     "@flownet/lib-to-electron": "^0.3.1",
@@ -40,6 +39,7 @@
     "@fnet/dir-zipper": "^0.1.5",
     "@fnet/expression": "^0.1.16",
     "@fnet/files-to-gcs": "^0.3.6",
+    "@fnet/npm-pick-versions": "^0.1.14",
     "@fnet/object-from-schema": "^0.1.2",
     "@fnet/prompt": "^0.2.10",
     "@fnet/shell": "^0.1.13",
@@ -62,6 +62,7 @@
     "lodash.pick": "^3.1.0",
     "nanoid": "^3.3.6",
     "nunjucks": "^3.2.4",
+    "object-hash": "^3.0.0",
     "prettier": "^3.0.3",
     "redis": "^4.6.10",
     "semver": "^7.5.4",
