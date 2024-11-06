@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.68.0",
+  "version": "0.68.1",
   "files": [
     "dist"
   ],
@@ -20,7 +20,6 @@
     "@flownet/lib-atom-api-js": "^0.1.10",
     "@flownet/lib-bpmn-from-flow": "^0.1.8",
     "@flownet/lib-is-redis-online": "^0.1.13",
-    "@flownet/lib-list-npm-versions": "^0.1.31",
     "@flownet/lib-parse-imports-js": "^0.3.1",
     "@flownet/lib-parse-node-url": "^0.1.16",
     "@flownet/lib-render-templates-dir": "^0.1.12",
@@ -39,6 +38,7 @@
     "@fnet/dir-zipper": "^0.1.5",
     "@fnet/expression": "^0.1.16",
     "@fnet/files-to-gcs": "^0.3.6",
+    "@fnet/npm-list-versions": "^0.1.34",
     "@fnet/npm-pick-versions": "^0.1.14",
     "@fnet/object-from-schema": "^0.1.2",
     "@fnet/prompt": "^0.2.10",

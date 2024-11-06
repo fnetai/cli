@@ -32,7 +32,7 @@ const deployTo = require('./deploy/deploy-to');
 
 const { Atom } = require("@flownet/lib-atom-api-js");
 const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
-const fnetListNpmVersions = require('@flownet/lib-list-npm-versions');
+const fnetListNpmVersions = require('@fnet/npm-list-versions');
 const fnetBpmnFromFlow = require('@flownet/lib-bpmn-from-flow');
 const fnetConfig = require('@fnet/config');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');

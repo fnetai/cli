@@ -2,7 +2,7 @@ const nunjucks = require("nunjucks");
 const fs = require('node:fs');
 const path = require('node:path');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
-const fnetListNpmVersions = require('@flownet/lib-list-npm-versions');
+const fnetListNpmVersions = require('@fnet/npm-list-versions');
 
 module.exports = async ({ atom, context, packageDependencies, packageDevDependencies, setProgress }) => {
   
