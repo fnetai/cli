@@ -2,10 +2,10 @@ const nunjucks = require("nunjucks");
 const fs = require('node:fs');
 const path = require('node:path');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
-const fnetListNpmVersions = require('@fnet/npm-list-versions');
+const pickNpmVersions = require('../common/pick-npm-versions');
 
 module.exports = async ({ atom, context, packageDependencies, packageDevDependencies, setProgress }) => {
-  
+
   await setProgress({ message: "Creating package.json." });
 
   // move dev dependencies in packageDependencies to packageDevDependencies
@@ -65,14 +65,17 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
       if (packageDependencies.find(w => w.package === parsedImport.package)) continue;
       if (packageDevDependencies.find(w => w.package === parsedImport.package)) continue;
 
-      const npmVersions = await fnetListNpmVersions({ name: parsedImport.package, groupBy: { minor: true } });
-      const npmVersion = npmVersions[0][0];
+      const npmVersions = await pickNpmVersions({
+        name: parsedImport.package,
+        projectDir: context.projectDir,
+        setProgress
+      });
 
       const targetDependencies = checkFile.dev === true ? packageDevDependencies : packageDependencies;
       targetDependencies.push({
         package: parsedImport.package,
         subpath: parsedImport.subpath,
-        version: `^${npmVersion}`,
+        version: npmVersions.minorRange,
         type: "npm"
       })
     }
@@ -103,7 +106,7 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
     if (!fs.existsSync(fnetDestDir)) {
       fs.mkdirSync(fnetDestDir);
     }
-    
+
     const fnetFiles = fs.readdirSync(fnetSrcDir);
     for (const fnetFile of fnetFiles) {
       const fnetFilePath = path.resolve(fnetSrcDir, fnetFile);

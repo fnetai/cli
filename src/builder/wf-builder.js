@@ -27,12 +27,12 @@ const formatFiles = require('./api/format-files');
 const createDts = require('./api/create-dts');
 const installNpmPackages = require('./api/install-npm-packages');
 const runNpmBuild = require('./api/run-npm-build');
+const pickNpmVersions = require('./api/common/pick-npm-versions');
 
 const deployTo = require('./deploy/deploy-to');
 
 const { Atom } = require("@flownet/lib-atom-api-js");
 const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
-const fnetListNpmVersions = require('@fnet/npm-list-versions');
 const fnetBpmnFromFlow = require('@flownet/lib-bpmn-from-flow');
 const fnetConfig = require('@fnet/config');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
@@ -41,6 +41,8 @@ const fnetExpression = require('@fnet/expression');
 const fnetYaml = require('@fnet/yaml');
 
 const chalk = require('chalk');
+
+const fnetListFiles = require('@fnet/list-files');
 
 // BLOCKS
 const ifBlock = require('./block/if');
@@ -240,20 +242,19 @@ class Builder {
     }
   }
   async initWorkflowDir() {
+
+    this.setProgress({ message: "Initializing library directory." });
+
     const projectDir = this.#context.projectDir;
     const coreDir = this.#context.coreDir;
 
-    // Delete all files and directories in projectDir except those in the exclude list.
-    const exclude = ['node_modules']; // List of directories to exclude from deletion.
-    if (fs.existsSync(projectDir)) {
-      const files = fs.readdirSync(projectDir);
-      for (const file of files) {
-        if (!exclude.includes(file)) {
-          const filePath = path.join(projectDir, file);
-          fs.rmSync(filePath, { recursive: true });
-        }
-      }
+    this.setProgress({ message: "Cleaning project directory." });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['node_modules', '.cache'], absolute: true });
+    for (const asset of assets) {
+      fs.rmSync(asset, { recursive: true, force: true });
     }
+
+    this.setProgress({ message: "Creating project directory." });
 
     // Create projectDir if it doesn't exist.
     if (!fs.existsSync(projectDir)) {
@@ -310,6 +311,8 @@ class Builder {
   // }
 
   async initNunjucks() {
+    this.setProgress({ message: "Initializing nunjucks." });
+
     const templateDir = this.#context.templateDir;
     this.#njEnv = nunjucks.configure(templateDir, { watch: false, dev: true });
     this.#apiContext.njEnv = this.#njEnv;
@@ -650,13 +653,16 @@ class Builder {
 
         if (dependencies.find(w => w.package === parsedImport.package)) continue;
 
-        const npmVersions = await fnetListNpmVersions({ name: parsedImport.package, groupBy: { minor: true } });
-        const npmVersion = npmVersions[0][0];
+        const npmVersions = await pickNpmVersions({
+          name: parsedImport.package,
+          projectDir: this.#context.projectDir,
+          setProgress: this.#apiContext.setProgress
+        });
 
         dependencies.push({
           package: parsedImport.package,
           subpath: parsedImport.subpath,
-          version: `^${npmVersion}`,
+          version: npmVersions.minorRange,
           type: "npm"
         })
       }
@@ -675,9 +681,11 @@ class Builder {
     }
     else if (parsedUrl.protocol === 'npm:') {
 
-      const npmVersions = await fnetListNpmVersions({ name: parsedUrl.pathname, groupBy: { minor: true } });
-
-      const npmVersion = npmVersions[0][0];
+      const npmVersions = await pickNpmVersions({
+        name: parsedUrl.pathname,
+        projectDir: this.#context.projectDir,
+        setProgress: this.#apiContext.setProgress
+      });
 
       const atom = {
         name: parsedUrl.pathname,
@@ -689,7 +697,7 @@ class Builder {
           dependencies: [
             {
               package: parsedUrl.pathname,
-              version: `^${npmVersion}`,
+              version: npmVersions.minorRange,
               type: "npm"
             }
           ],
