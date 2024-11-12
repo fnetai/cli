@@ -2,8 +2,6 @@ const fnetListNpmVersions = require('@fnet/npm-list-versions');
 
 module.exports = async ({ atom, packageDependencies, packageDevDependencies, setProgress }) => {
 
-  if (atom.doc.features.runtime.type !== 'node') return;
-
   setProgress('Initializing dependencies');
 
   if (atom.type === 'workflow') {

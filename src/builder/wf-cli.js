@@ -31,7 +31,9 @@ let cmdBuilder = yargs(process.argv.slice(2))
   .command('create', 'Initialize flow node project', (yargs) => {
     return yargs
       .option('name', { type: 'string' })
-      .option('vscode', { type: 'boolean', default: true, alias: 'vs' });
+      .option('vscode', { type: 'boolean', default: true, alias: 'vs' })
+      .option('runtime', { type: 'string', default: 'node', choices: ['node'] });
+    ;
   }, async (argv) => {
     try {
       const templateDir = path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/project');
@@ -73,13 +75,17 @@ let cmdBuilder = yargs(process.argv.slice(2))
     try {
       const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-flow/dist/template/project');
       const outDir = process.cwd();
-      argv.name = path.basename(outDir);
+
+      const context = await createContext(argv);
 
       if (argv.update) {
         await flownetRenderTemplatesDir({
           dir: templateDir,
           outDir,
-          context: argv,
+          context: {
+            name: context.project.projectFileParsed.name,
+            runtime: 'node'
+          },
           copyUnmatchedAlso: true
         });
 
@@ -88,7 +94,6 @@ let cmdBuilder = yargs(process.argv.slice(2))
 
         console.log('Updating project succeeded!');
       }
-
       process.exit(0);
     } catch (error) {
       console.error('Project failed.', error.message);

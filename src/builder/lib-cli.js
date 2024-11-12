@@ -32,7 +32,8 @@ let cmdBuilder = yargs(process.argv.slice(2))
   .command('create', 'Create flow node project', (yargs) => {
     return yargs
       .option('name', { type: 'Project name', demandOption: true })
-      .option('vscode', { type: 'boolean', default: true, alias: 'vs' });
+      .option('vscode', { type: 'boolean', default: true, alias: 'vs' })
+      .option('runtime', { type: 'string', default: 'node', choices: ['node', 'python'] });
   }, async (argv) => {
     try {
       const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-node/dist/template/project');
@@ -75,13 +76,17 @@ let cmdBuilder = yargs(process.argv.slice(2))
     try {
       const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-node/dist/template/project');
       const outDir = process.cwd();
-      argv.name = path.basename(outDir);
+
+      const context = await createContext(argv);
 
       if (argv.update) {
         await flownetRenderTemplatesDir({
           dir: templateDir,
           outDir,
-          context: argv,
+          context: {
+            name: context.project.projectFileParsed.name,
+            runtime: context.project.runtime.type
+          },
           copyUnmatchedAlso: true
         });
 
@@ -366,8 +371,8 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "local:",
-      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-node/dist/template/default'),
-      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
+      templateDir: path.resolve(nodeModulesDir, `./@fnet/cli-project-node/dist/template/${project.runtime.template}`),
+      templateCommonDir: path.resolve(nodeModulesDir, `./@fnet/cli-project-common/dist/template/${project.runtime.template}`),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,
@@ -383,6 +388,15 @@ async function loadLocalProject({ tags }) {
   const { raw, parsed: projectFileParsed } = await fnetYaml({ file: projectFilePath, tags });
   const projectDir = path.dirname(projectFilePath);
 
+  projectFileParsed.features = projectFileParsed.features || {};
+
+  const features = projectFileParsed.features;
+  features.runtime = features.runtime || {};
+  features.runtime.type = features.runtime.type || "node";
+
+  if (features.runtime.type === "python") features.runtime.template = features.runtime.template || "python";
+  else features.runtime.template = features.runtime.template || "default";
+
   const libraryAtom = {
     doc: {
       ...projectFileParsed,
@@ -395,7 +409,8 @@ async function loadLocalProject({ tags }) {
     projectDir,
     projectFilePath,
     projectFileContent: raw,
-    projectFileParsed
+    projectFileParsed,
+    runtime: features.runtime
   };
 
   // Load devops file

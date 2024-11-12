@@ -8,7 +8,7 @@ module.exports = async ({ setProgress, context }) => {
 
   await setProgress({ message: "Prettifiying source files." });
 
-  let srcDir = path.join("src", "**", "*");
+  let srcDir = path.join("src","**", "*");
 
   await fnetShellFlow({
     commands: {
@@ -16,7 +16,4 @@ module.exports = async ({ setProgress, context }) => {
       wdir: projectDir,
     }
   });
-  
-  // const result = shell.exec(`prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
-  // if (result.code !== 0) throw new Error('Couldnt format files.');
 }

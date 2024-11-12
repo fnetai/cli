@@ -41,13 +41,6 @@ module.exports = async (apiContext) => {
 
   atom.doc.features = atom.doc.features || {};
   const features = atom.doc.features;
-
-  // Runtime
-  features.runtime = features.runtime || {};
-  features.runtime.type = features.runtime.type || 'node';
-  if (features.runtime.type !== 'node') return;
-  
-  features.runtime.version = features.runtime.version || '22';
   
   // project format
   features.project = features.project || {};

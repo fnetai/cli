@@ -11,10 +11,17 @@ const { nanoid } = require('nanoid');
 const Auth = require('./auth');
 
 const initFeatures = require("./api/init-features");
+const initFeaturesPython = require("./api/init-features/python");
+
 const initDependencies = require("./api/init-dependencies");
+const initDependenciesPython = require("./api/init-dependencies/python");
+
 const createApp = require("./api/create-app");
 const createPackageJson = require("./api/create-package-json");
+
 const createCli = require("./api/create-cli");
+const createCliPython = require("./api/create-cli/python");
+
 const createRollup = require("./api/create-rollup");
 const createToYargs = require("./api/create-to-yargs");
 const createGitIgnore = require("./api/create-git-ignore");
@@ -105,8 +112,6 @@ class Builder {
 
   async initLibraryDir() {
 
-    if (this.#atom.doc.features.runtime.type !== 'node') return;
-
     this.setProgress({ message: "Initializing library directory." });
 
     const projectDir = this.#context.projectDir;
@@ -144,9 +149,35 @@ class Builder {
     }
   }
 
-  async initNunjucks() {
-    if (this.#atom.doc.features.runtime.type !== 'node') return;
+  async initLibraryDirPython() {
 
+    this.setProgress({ message: "Initializing library directory." });
+
+    const projectDir = this.#context.projectDir;
+
+    let result;
+
+    this.setProgress({ message: "Cleaning project directory." });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'src'], absolute: true });
+    for (const asset of assets) {
+      fs.rmSync(asset, { recursive: true, force: true });
+    }
+
+    this.setProgress({ message: "Creating project directory." });
+
+    let target = projectDir;
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
+    }
+
+    target = path.join(projectDir, "src");
+    if (!fs.existsSync(target)) {
+      result = shell.exec(`ln -s "${this.#context.projectSrcDir}" "${target}" `);
+      if (result.code !== 0) throw new Error('Couldnt link src.');
+    }
+  }
+
+  async initNunjucks() {
     this.setProgress({ message: "Initializing nunjucks." });
 
     const templateDir = this.#context.templateDir;
@@ -155,7 +186,6 @@ class Builder {
   }
 
   async initLibs() {
-    if (this.#atom.doc.features.runtime.type !== 'node') return;
 
     this.setProgress({ message: "Initializing external libs." });
 
@@ -168,6 +198,25 @@ class Builder {
     this.#libs = libs;
 
     await this.initAtomLibsAndDeps({ libs, packageDependencies: this.#packageDependencies });
+  }
+
+  async initLibsPython() {
+
+    this.setProgress({ message: "Initializing external libs." });
+
+    const atom = this.#atom;
+    atom.protocol = "local:";
+    atom.doc.dependencies = atom.doc.dependencies || [];
+    atom.name = atom.doc.name;
+
+    const libs = [{
+      name: this.#atom.doc.name,
+      type: "atom",
+      parent_id: this.#atom.parent_id,
+      atom
+    }];
+
+    this.#libs = libs;
   }
 
   async initAtomLibsAndDeps({ libs, packageDependencies }) {
@@ -284,6 +333,26 @@ class Builder {
         const atomLibPath = path.join(projectDir, 'src', 'libs', `${atomLib.id}.js`);
         const content = atomLib.doc.contents?.find(w => w.format === 'esm') || atomLib.doc;
         fs.writeFileSync(atomLibPath, content.content, 'utf8');
+      }
+    }
+  }
+
+  async createAtomLibFilesPython({ libs }) {
+    await this.setProgress({ message: "Creating external lib files." });
+
+    const atomLibRefs = libs.filter(w => w.type === 'atom');
+    for (let i = 0; i < atomLibRefs.length; i++) {
+      const atomLibRef = atomLibRefs[i];
+
+      const atomLib = atomLibRef.atom;
+      if (atomLib.protocol === 'local:') {
+        const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.py`);
+        if (!fs.existsSync(srcFilePath)) {
+          fs.mkdirSync(path.dirname(srcFilePath), { recursive: true });
+          let template = 'def default():\n';
+          template += '  print("Hello world!")\n';
+          fs.writeFileSync(srcFilePath, template, 'utf8');
+        }
       }
     }
   }
@@ -415,52 +484,20 @@ class Builder {
     await this._cache_set(this.#buildKey, { status: "IN_PROGRESS", message });
   }
 
-  async init() {
-
-    this._redis_client = await createRedisClient();
-
-    this.#buildId = this.#context.buildId || nanoid(24);
-    this.#apiContext.buildId = this.#buildId;
-
-    this.#mode = this.#context.mode;
-    this.#fileMode = ['all', 'deploy', 'build', 'file'].includes(this.#mode);
-    this.#buildMode = ['all', 'deploy', 'build'].includes(this.#mode);
-    this.#deployMode = ['all', 'deploy'].includes(this.#mode);
-
-    this.#protocol = this.#context.protocol;
-    this.#buildKey = "BUILD:" + this.#buildId;
-
-    this.#atomConfig = (await fnetConfig({ optional: true, name: this.#context.atomConfig || "atom", dir: this.#context.projectDir, tags: this.#context.tags }))?.data;
-
-    try {
-      await this.setProgress({ message: "Initialization started." });
-
-      await this.initAuth();
-      await this.initLibrary();
-      await initFeatures(this.#apiContext);
-      await initDependencies(this.#apiContext);
-      await this.initLibraryDir();
-      await this.initNunjucks();
-      await this.initLibs();
-    }
-    catch (error) {
-      await this._cache_set(this.#buildKey, { status: "FAILED", message: error?.message || error });
-      throw error;
-    }
+  async initNode() {
+    await initFeatures(this.#apiContext);
+    await initDependencies(this.#apiContext);
+    await this.initLibraryDir();
+    await this.initNunjucks();
+    await this.initLibs();
   }
 
-  async build() {
-    try {
-      if (this.#atom.doc.features.runtime.type === 'node')
-        await this.nodeBuild();
-
-      await this._cache_set(this.#buildKey, { status: "COMPLETED" });
-    }
-    catch (error) {
-      await this._cache_set(this.#buildKey, { status: "FAILED", message: error.message || error });
-      console.log(error);
-      throw error;
-    }
+  async initPython() {
+    await initFeaturesPython(this.#apiContext);
+    await initDependenciesPython(this.#apiContext);
+    await this.initLibraryDirPython();
+    await this.initNunjucks();
+    await this.initLibsPython();
   }
 
   async nodeBuild() {
@@ -490,6 +527,84 @@ class Builder {
         if (this.#deployMode)
           await this.deploy();
       }
+    }
+  }
+
+  async pythonBuild() {
+    if (this.#fileMode) {
+      await this.createAtomLibFilesPython({ libs: this.#libs });
+      // await this.createEngine();
+      await this.createProjectYaml();
+
+      await createProjectReadme(this.#apiContext);
+      // await createTsConfig(this.#apiContext);
+      await createGitIgnore(this.#apiContext);
+      // await createToYargs(this.#apiContext);
+      await createCliPython(this.#apiContext);
+      // await createApp(this.#apiContext);
+      // await createRollup(this.#apiContext);
+      // await createPackageJson(this.#apiContext);
+
+      // await formatFiles(this.#apiContext);
+
+      // await createDts(this.#apiContext);
+
+      if (this.#buildMode) {
+        // await installNpmPackages(this.#apiContext);
+        // await runNpmBuild(this.#apiContext);
+
+        // if (this.#deployMode)
+        //   await this.deploy();
+      }
+    }
+  }
+
+  async init() {
+
+    this._redis_client = await createRedisClient();
+
+    this.#buildId = this.#context.buildId || nanoid(24);
+    this.#apiContext.buildId = this.#buildId;
+
+    this.#mode = this.#context.mode;
+    this.#fileMode = ['all', 'deploy', 'build', 'file'].includes(this.#mode);
+    this.#buildMode = ['all', 'deploy', 'build'].includes(this.#mode);
+    this.#deployMode = ['all', 'deploy'].includes(this.#mode);
+
+    this.#protocol = this.#context.protocol;
+    this.#buildKey = "BUILD:" + this.#buildId;
+
+    this.#atomConfig = (await fnetConfig({ optional: true, name: this.#context.atomConfig || "atom", dir: this.#context.projectDir, tags: this.#context.tags }))?.data;
+
+    try {
+      await this.setProgress({ message: "Initialization started." });
+
+      await this.initAuth();
+      await this.initLibrary();
+      if (this.#atom.doc.features.runtime.type === 'node')
+        await this.initNode();
+      else if (this.#atom.doc.features.runtime.type === 'python')
+        await this.initPython();
+    }
+    catch (error) {
+      await this._cache_set(this.#buildKey, { status: "FAILED", message: error?.message || error });
+      throw error;
+    }
+  }
+
+  async build() {
+    try {
+      if (this.#atom.doc.features.runtime.type === 'node')
+        await this.nodeBuild();
+      else if (this.#atom.doc.features.runtime.type === 'python')
+        await this.pythonBuild();
+
+      await this._cache_set(this.#buildKey, { status: "COMPLETED" });
+    }
+    catch (error) {
+      await this._cache_set(this.#buildKey, { status: "FAILED", message: error.message || error });
+      console.log(error);
+      throw error;
     }
   }
 }
