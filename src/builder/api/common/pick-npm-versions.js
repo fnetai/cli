@@ -4,7 +4,7 @@ const hash = require('object-hash');
 const fs = require('node:fs');
 const path = require('node:path');
 
-export default async ({ projectDir, name, setProgress, count = 1 }) => {
+module.exports = async ({ projectDir, name, setProgress, count = 1 }) => {
 
   let npmVersions;
 
