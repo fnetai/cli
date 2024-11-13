@@ -29,9 +29,13 @@ const createTsConfig = require("./api/create-ts-config");
 const createProjectReadme = require("./api/create-project-readme");
 const formatFiles = require('./api/format-files');
 const createDts = require('./api/create-dts');
+
 const installNpmPackages = require('./api/install-npm-packages');
+const installPythonPackages = require('./api/install-python-packages');
+
 const runNpmBuild = require('./api/run-npm-build');
 const pickNpmVersions = require('./api/common/pick-npm-versions');
+
 
 const deployTo = require('./deploy/deploy-to');
 
@@ -158,7 +162,7 @@ class Builder {
     let result;
 
     this.setProgress({ message: "Cleaning project directory." });
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'src'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', '.conda', 'src'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -550,7 +554,7 @@ class Builder {
       // await createDts(this.#apiContext);
 
       if (this.#buildMode) {
-        // await installNpmPackages(this.#apiContext);
+        await installPythonPackages(this.#apiContext);
         // await runNpmBuild(this.#apiContext);
 
         // if (this.#deployMode)
