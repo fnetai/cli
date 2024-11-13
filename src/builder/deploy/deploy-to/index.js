@@ -14,6 +14,7 @@ const deployToFnetForm = require('../fnet-form');
 const deployToFnetFlow = require('../fnet-flow');
 const deployToFnetNode = require('../fnet-node');
 const deployToRust = require('../rust');
+const deployToPyip = require('../pyip');
 
 module.exports = async (apiContext) => {
 
@@ -49,6 +50,7 @@ module.exports = async (apiContext) => {
     else if (deploymentProjectTarget.type === 'ios') deployer = deployToIosApp;
     else if (deploymentProjectTarget.type === 'macos') deployer = deployToMacOSApp;
     else if (deploymentProjectTarget.type === 'rust') deployer = deployToRust;
+    else if (deploymentProjectTarget.type === 'pyip') deployer = deployToPyip;
 
     if (!deployer) return;
 

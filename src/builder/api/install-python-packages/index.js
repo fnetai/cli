@@ -3,7 +3,9 @@ const path = require('node:path');
 const fnetAutoCondaEnv = require('@fnet/auto-conda-env');
 const fnetRender = require('@flownet/lib-render-templates-dir');
 
-module.exports = async ({ setProgress, atom, context }) => {
+module.exports = async (args) => {
+
+  const { setProgress, atom, context } = args;
 
   setProgress({ message: 'Installing Python packages' });
 
@@ -48,6 +50,8 @@ module.exports = async ({ setProgress, atom, context }) => {
   });
 
   context.pythonEnv = pythonEnv;
+
+  args.packageDependencies = userDependencies;
 
   // TODO: move to a separate plugin
   const dirs = atom.doc.features.render?.dirs || [];

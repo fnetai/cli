@@ -557,8 +557,8 @@ class Builder {
         await installPythonPackages(this.#apiContext);
         // await runNpmBuild(this.#apiContext);
 
-        // if (this.#deployMode)
-        //   await this.deploy();
+        if (this.#deployMode)
+          await this.deploy();
       }
     }
   }
