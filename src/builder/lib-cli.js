@@ -178,6 +178,10 @@ cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
 cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with' });
 cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run' });
+cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python' });
+cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python3' });
+cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip' });
+cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip3' });
 
 cmdBuilder
   .demandCommand(1, 'You need at least one command before moving on')
@@ -203,6 +207,44 @@ function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
           cwd: projectDir,
           stdio: 'inherit',
           shell: true
+        });
+
+        subprocess.on('close', (code) => {
+          process.exit(code);
+        });
+
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+function bindCondaContextCommand(builder, { name, bin, preArgs = [] }) {
+  return builder.command(
+    `${name || bin} [commands..]`, `${bin} ${preArgs.join(' ')}`,
+    (yargs) => {
+      return yargs
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { projectDir } = context;
+
+        const rawArgs = process.argv.slice(3);
+
+        bin = path.join(projectDir, '.conda', 'bin', bin || name);
+
+        const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
+          cwd: projectDir,
+          stdio: 'inherit',
+          shell: true,
+          env: {
+            "PYTHONPATH": projectDir
+          }
         });
 
         subprocess.on('close', (code) => {
