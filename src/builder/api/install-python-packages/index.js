@@ -1,5 +1,6 @@
+const path = require('node:path');
+
 const fnetAutoCondaEnv = require('@fnet/auto-conda-env');
-const path = require('path');
 const fnetRender = require('@flownet/lib-render-templates-dir');
 
 module.exports = async ({ setProgress, atom, context }) => {
@@ -8,13 +9,33 @@ module.exports = async ({ setProgress, atom, context }) => {
 
   const projectDir = context.projectDir;
 
-  const dirs = atom.doc.features.render?.dirs || [];
+  const parserEnv = await fnetAutoCondaEnv({
+    pythonVersion: "3.12",
+    packages: [{ package: "fnet-import-parser", version: "^0.1" }]
+  });
 
-  for (const dir of dirs) {
-    dir.dir = path.resolve(projectDir, dir.dir);
-    dir.outDir = path.resolve(projectDir, dir.outDir);
-    console.log(dir);
-    await fnetRender(dir);
+  const { result } = await parserEnv.runBin('fnet-import-parser', [
+    "--entry_file", path.join(projectDir, 'src', 'index.py')
+  ], { captureName: 'result' });
+
+  const parsedImports = JSON.parse(result.items[0].stdout);
+  const detectedDependencies = parsedImports.required['third-party']?.map(pkg => {
+    return {
+      package: pkg.metadata?.package || pkg.path,
+      version: pkg.metadata?.version || undefined,
+      channel: pkg.metadata?.channel || undefined
+    }
+  }) || [];
+
+  // console.log(detectedDependencies);
+
+  const userDependencies = atom.doc.dependencies || [];
+
+  // expand userDependencies with detectedDependencies if not already present
+  for (const dep of detectedDependencies) {
+    if (!userDependencies.some(userDep => userDep.package === dep.package)) {
+      userDependencies.push(dep);
+    }
   }
 
   // project workspace
@@ -23,8 +44,17 @@ module.exports = async ({ setProgress, atom, context }) => {
   const pythonEnv = await fnetAutoCondaEnv({
     envDir: condaDir,
     pythonVersion: atom.doc.features.runtime.version || "3.12",
-    packages: atom.doc.dependencies
+    packages: userDependencies
   });
 
   context.pythonEnv = pythonEnv;
+
+  // TODO: move to a separate plugin
+  const dirs = atom.doc.features.render?.dirs || [];
+
+  for (const dir of dirs) {
+    dir.dir = path.resolve(projectDir, dir.dir);
+    dir.outDir = path.resolve(projectDir, dir.outDir);
+    await fnetRender(dir);
+  }
 }
