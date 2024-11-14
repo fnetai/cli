@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const shell = require('shelljs');
-const fnetRenderTemplateDir = require('@flownet/lib-render-templates-dir');
+const fnetRender = require('@flownet/lib-render-templates-dir');
 
 module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
 
@@ -19,7 +19,7 @@ module.exports = async ({ atom, setProgress, context, packageDependencies }) => 
   const outDir = path.join(context.projectDir, 'src', 'cli');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  await fnetRenderTemplateDir({
+  await fnetRender({
     pattern: ["index.py.njk", "__init__.py.njk"],
     dir: path.join(templateDir, 'src', 'cli'),
     outDir,

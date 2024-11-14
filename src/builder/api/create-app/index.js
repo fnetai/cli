@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const fnetRenderTemplateDir = require('@flownet/lib-render-templates-dir');
+const fnetRender = require('@flownet/lib-render-templates-dir');
 module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
 
   if (atom.doc.features.app.enabled !== true) return;
@@ -19,7 +19,7 @@ module.exports = async ({ atom, setProgress, context, packageDependencies }) => 
 
   let pattern = ["index.js.njk"];
   if (atom.doc.features.app.html !== false) pattern.push("index.html.njk");
-  await fnetRenderTemplateDir({
+  await fnetRender({
     pattern: pattern,
     dir: path.resolve(templateDir, `src/app`),
     outDir,

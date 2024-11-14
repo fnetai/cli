@@ -20,7 +20,7 @@ const fnetConfig = require('@fnet/config');
 const fnetObjectFromSchema = require('@fnet/object-from-schema');
 const fnetShellFlow = require('@fnet/shell-flow');
 
-const flownetRenderTemplatesDir = require('@flownet/lib-render-templates-dir');
+const fnetRender = require('@flownet/lib-render-templates-dir');
 const Builder = require('./lib-builder');
 const nodeModulesDir = require('./find-node-modules')({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
@@ -40,7 +40,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       const outDir = path.resolve(cwd, argv.name);
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
-      await flownetRenderTemplatesDir({
+      await fnetRender({
         dir: templateDir,
         outDir,
         context: argv,
@@ -80,7 +80,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       const context = await createContext(argv);
 
       if (argv.update) {
-        await flownetRenderTemplatesDir({
+        await fnetRender({
           dir: templateDir,
           outDir,
           context: {
