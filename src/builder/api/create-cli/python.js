@@ -16,12 +16,12 @@ module.exports = async ({ atom, setProgress, context, packageDependencies }) => 
 
   const templateDir = context.templateDir;
 
-  const outDir = path.resolve(context.projectDir, `cli`);
+  const outDir = path.join(context.projectDir, 'src', 'cli');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
   await fnetRenderTemplateDir({
     pattern: ["index.py.njk", "__init__.py.njk"],
-    dir: path.resolve(templateDir, `cli`),
+    dir: path.join(templateDir, 'src', 'cli'),
     outDir,
     context: templateContext,
   });

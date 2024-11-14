@@ -123,7 +123,8 @@ class Builder {
     let result;
 
     this.setProgress({ message: "Cleaning project directory." });
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['node_modules', '.cache'], absolute: true });
+
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -162,7 +163,8 @@ class Builder {
     let result;
 
     this.setProgress({ message: "Cleaning project directory." });
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', '.conda', 'src'], absolute: true });
+
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -174,7 +176,12 @@ class Builder {
       fs.mkdirSync(target, { recursive: true });
     }
 
-    target = path.join(projectDir, "src");
+    target = path.join(projectDir, 'src');
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
+    }
+
+    target = path.join(projectDir, 'src', 'default');
     if (!fs.existsSync(target)) {
       result = shell.exec(`ln -s "${this.#context.projectSrcDir}" "${target}" `);
       if (result.code !== 0) throw new Error('Couldnt link src.');

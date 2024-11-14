@@ -19,7 +19,7 @@ module.exports = async (args) => {
   // await parserEnv.runBin('pip', ["show", "-f", "fnet-import-parser"]);
 
   const { result } = await parserEnv.runBin('fnet_import_parser', [
-    "--entry_file", path.join(projectDir, 'src', 'index.py')
+    "--entry_file", path.join(projectDir, 'src', 'default', 'index.py')
   ], { captureName: 'result' });
 
   const parsedImports = JSON.parse(result.items[0].stdout);
