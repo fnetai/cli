@@ -16,7 +16,7 @@ module.exports = async (args) => {
     packages: [{ package: "fnet-import-parser", version: "0.1.9" }]
   });
 
-  await parserEnv.runBin('pip', ["show", "-f", "fnet-import-parser"]);
+  // await parserEnv.runBin('pip', ["show", "-f", "fnet-import-parser"]);
 
   const { result } = await parserEnv.runBin('fnet_import_parser', [
     "--entry_file", path.join(projectDir, 'src', 'index.py')
