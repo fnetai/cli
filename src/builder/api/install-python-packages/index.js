@@ -13,7 +13,7 @@ module.exports = async (args) => {
 
   const parserEnv = await fnetAutoCondaEnv({
     pythonVersion: "3.12",
-    packages: [{ package: "fnet-import-parser", version: "^0.1" }]
+    packages: [{ package: "fnet-import-parser", version: "0.1.0" }]
   });
 
   const { result } = await parserEnv.runBin('fnet-import-parser', [
