@@ -1,8 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const os = require('node:os');
 
 const yaml = require("yaml");
-const shell = require('shelljs');
 const nunjucks = require("nunjucks");
 const createRedisClient = require('../redisClient');
 
@@ -134,60 +134,66 @@ class Builder {
     // .
     let target = projectDir;
     if (!fs.existsSync(target)) {
-      result = shell.exec(`mkdir "${projectDir}"`);
-      if (result.code !== 0) throw new Error('Couldnt create workflow dir.');
+      fs.mkdirSync(target, { recursive: true });    
     }
 
     // src
     target = path.join(projectDir, "src");
 
     if (!fs.existsSync(target)) {
-      result = shell.exec(`mkdir "${target}"`);
-      if (result.code !== 0) throw new Error('Couldnt create library/src dir.');
+      fs.mkdirSync(target, { recursive: true });
     }
 
     // default
     target = path.join(projectDir, "src", "default");
     if (!fs.existsSync()) {
-      result = shell.exec(`mkdir "${target}"`);
-      if (result.code !== 0) throw new Error('Couldnt create library/src/default dir.');
+      fs.mkdirSync(target, { recursive: true });    
     }
   }
 
+
   async initLibraryDirPython() {
-
     this.setProgress({ message: "Initializing library directory." });
-
+  
     const projectDir = this.#context.projectDir;
-
-    let result;
-
+  
     this.setProgress({ message: "Cleaning project directory." });
-
+  
     const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
-
+  
     this.setProgress({ message: "Creating project directory." });
-
+  
     let target = projectDir;
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
-
+  
     target = path.join(projectDir, 'src');
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
-
+  
     target = path.join(projectDir, 'src', 'default');
+    const source = this.#context.projectSrcDir;
+  
     if (!fs.existsSync(target)) {
-      result = shell.exec(`ln -s "${this.#context.projectSrcDir}" "${target}" `);
-      if (result.code !== 0) throw new Error('Couldnt link src.');
+      try {
+        if (os.platform() === 'win32') {
+          // Windows requires special handling
+          fs.symlinkSync(source, target, 'junction');
+        } else {
+          // For Unix-like systems
+          fs.symlinkSync(source, target, 'dir');
+        }
+      } catch (err) {
+        throw new Error(`Couldn't create symlink. Error: ${err.message}`);
+      }
     }
   }
-
+  
   async initNunjucks() {
     this.setProgress({ message: "Initializing nunjucks." });
 
