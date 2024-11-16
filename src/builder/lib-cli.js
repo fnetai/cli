@@ -14,6 +14,7 @@ const yargs = require('yargs/yargs');
 const fs = require('fs');
 const YAML = require('yaml');
 const shell = require('shelljs');
+const os=require('os');
 
 const fnetYaml = require('@fnet/yaml');
 const fnetConfig = require('@fnet/config');
@@ -40,10 +41,15 @@ let cmdBuilder = yargs(process.argv.slice(2))
       const outDir = path.resolve(cwd, argv.name);
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
+
       await fnetRender({
         dir: templateDir,
         outDir,
-        context: argv,
+        context: {
+          name: argv.name,
+          runtime: argv.runtime,
+          platform: os.platform(),
+        },
         copyUnmatchedAlso: true
       });
 
@@ -85,7 +91,8 @@ let cmdBuilder = yargs(process.argv.slice(2))
           outDir,
           context: {
             name: context.project.projectFileParsed.name,
-            runtime: context.project.runtime.type
+            runtime: context.project.runtime.type,
+            platform: os.platform(),
           },
           copyUnmatchedAlso: true
         });
