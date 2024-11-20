@@ -1,6 +1,7 @@
 // #!/usr/bin/env node
 const cwd = process.cwd();
 const { spawn } = require('child_process');
+const prompt = require('@fnet/prompt');
 
 // fnet env
 require('@fnet/config')({
@@ -14,7 +15,7 @@ const yargs = require('yargs/yargs');
 const fs = require('fs');
 const YAML = require('yaml');
 const shell = require('shelljs');
-const os=require('os');
+const os = require('os');
 
 const fnetYaml = require('@fnet/yaml');
 const fnetConfig = require('@fnet/config');
@@ -55,7 +56,6 @@ let cmdBuilder = yargs(process.argv.slice(2))
 
       let shellResult = shell.exec(`fnode build`, { cwd: outDir });
       if (shellResult.code !== 0) throw new Error('Failed to build project.');
-
 
       if (shell.which('git')) {
         shellResult = shell.exec(`git init --initial-branch=main`, { cwd: outDir });
@@ -171,8 +171,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     }
   });
 
-cmdBuilder = bindCreateInputCommand(cmdBuilder);
-cmdBuilder = bindUpdateInputCommand(cmdBuilder);
+cmdBuilder = bindInputCommand(cmdBuilder);
 
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
@@ -342,12 +341,12 @@ function bindRunContextCommand(builder, { name, preArgs = [] }) {
   );
 }
 
-function bindCreateInputCommand(builder) {
+function bindInputCommand(builder) {
   return builder.command(
-    `create-input <name>`, `Create an input config file`,
+    `input [name]`, `Create or modify an input config file`,
     (yargs) => {
       return yargs
-        .positional('name', { type: 'string' })
+        .positional('name', { type: 'string', demandOption: false })
         .help(false)
         .version(false);
     },
@@ -359,40 +358,18 @@ function bindCreateInputCommand(builder) {
         const schema = projectFileParsed.input;
         if (!schema) throw new Error('Config schema not found in project file.');
 
-        const result = await fnetObjectFromSchema({ schema, format: "yaml" });
-        const dotFnetDir = path.resolve(projectDir, '.fnet');
-        if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
-        const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
-        fs.writeFileSync(configFilePath, result);
-      } catch (error) {
-        console.error(error.message);
-        process.exit(1);
-      }
-    }
-  );
-}
-
-function bindUpdateInputCommand(builder) {
-  return builder.command(
-    `update-input <name>`, `Update an input config file`,
-    (yargs) => {
-      return yargs
-        .positional('name', { type: 'string' })
-        .help(false)
-        .version(false);
-    },
-    async (argv) => {
-      try {
-        const context = await createContext(argv);
-        const { project } = context;
-        const { projectDir, projectFileParsed } = project;
-        const schema = projectFileParsed.input;
-        if (!schema) throw new Error('Config schema not found in project file.');
+        if (!Reflect.has(argv, 'name')) {
+          const { inputName } = await prompt({ type: 'input', name: 'inputName', message: 'Input name:', initial: 'dev' });
+          argv.name = inputName;
+        }
 
         const dotFnetDir = path.resolve(projectDir, '.fnet');
-        const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
-        const result = await fnetObjectFromSchema({ schema, format: "yaml", ref: configFilePath });
         if (!fs.existsSync(dotFnetDir)) fs.mkdirSync(dotFnetDir);
+
+        const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
+        const exists = fs.existsSync(configFilePath);
+
+        const result = await fnetObjectFromSchema({ schema, format: "yaml", ref: exists ? configFilePath : undefined });
         fs.writeFileSync(configFilePath, result);
       } catch (error) {
         console.error(error.message);
