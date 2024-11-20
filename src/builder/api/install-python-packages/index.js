@@ -16,11 +16,11 @@ module.exports = async (args) => {
     packages: [{ package: "fnet-import-parser", version: "0.1.9" }]
   });
 
-  // await parserEnv.runBin('pip', ["show", "-f", "fnet-import-parser"]);
-
-  const { result } = await parserEnv.runBin('fnet_import_parser', [
+  const { errors, result } = await parserEnv.runBin('fnet_import_parser', [
     "--entry_file", path.join(projectDir, 'src', 'default', 'index.py')
   ], { captureName: 'result' });
+
+  if (errors) throw new Error(errors.format());
 
   const parsedImports = JSON.parse(result.items[0].stdout);
   const detectedDependencies = parsedImports.required['third-party']?.map(pkg => {
