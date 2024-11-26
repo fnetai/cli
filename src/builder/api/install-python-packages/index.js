@@ -46,6 +46,7 @@ module.exports = async (args) => {
   const condaDir = path.join(projectDir, '.conda');
 
   const pythonEnv = await fnetAutoCondaEnv({
+    // name: atom.doc.name,
     envDir: condaDir,
     pythonVersion: atom.doc.features.runtime.version || "3.12",
     packages: userDependencies
@@ -63,4 +64,24 @@ module.exports = async (args) => {
     dir.outDir = path.resolve(projectDir, dir.outDir);
     await fnetRender(dir);
   }
+
+  // TODO: move to a separate plugin
+  let tmplCtx = { params: {} };
+  tmplCtx.params.package_name = atom.doc.name;
+  tmplCtx.params.version = "0.1.0";
+  tmplCtx.params.bin_name = atom.doc.name;
+  tmplCtx.params.python_requires = atom.doc.features.runtime.version || ">=3.12";
+  tmplCtx.params.dependencies = userDependencies;
+  tmplCtx.params.scripts = JSON.stringify({
+    "cli": `'${path.relative(context.projectDir, pythonEnv.pythonBin)}' '${path.join('.', 'src', 'cli', 'index.py')}'`
+  });
+
+  await fnetRender({
+    pattern: ["setup.py.njk", "package.json.njk", "pyproject.toml.njk"],
+    dir: context.templateDir,
+    outDir: context.projectDir,
+    context: tmplCtx,
+  });
+
+  // await pythonEnv.runPip(["install", "-e", '.'], { wdir: context.projectDir });
 }
