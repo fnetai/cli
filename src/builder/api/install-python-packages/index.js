@@ -73,7 +73,7 @@ module.exports = async (args) => {
   tmplCtx.params.python_requires = atom.doc.features.runtime.version || ">=3.12";
   tmplCtx.params.dependencies = userDependencies;
   tmplCtx.params.scripts = JSON.stringify({
-    "cli": `'${path.relative(context.projectDir, pythonEnv.pythonBin)}' '${path.join('.', 'src', 'cli', 'index.py')}'`
+    "cli": `PYTHONPATH='${path.join('src')}' '${path.relative(context.projectDir, pythonEnv.pythonBin)}' '${path.join('src', 'cli', 'index.py')}'`
   });
 
   await fnetRender({

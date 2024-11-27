@@ -6,62 +6,73 @@ const fnetExpression = require('@fnet/expression');
 const switchBlock = require('../switch');
 
 async function hits({ node }) {
-    const keys = Object.keys(node.definition);
-    const parsedKeys = await Promise.all(keys.map(key => fnetExpression({ expression: key })));
+  const keys = Object.keys(node.definition);
+  const parsedKeys = await Promise.all(keys.map(key => fnetExpression({ expression: key })));
 
-    const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
-    if (ifProcessors.length !== 1) return false;
+  const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
+  if (ifProcessors.length !== 1) return false;
 
-    return true;
+  return true;
 }
 
 async function init(api) {
-    const { node } = api;
+  const { node } = api;
 
-    const keys = Object.keys(node.definition);
-    const parsedKeys = await Promise.all(keys.map(key => fnetExpression({ expression: key })));
+  const keys = Object.keys(node.definition);
+  const parsedKeys = await Promise.all(keys.map(key => fnetExpression({ expression: key })));
 
-    const blocks = [];
+  const blocks = [];
 
-    // if
-    const ifProcessor = parsedKeys.find(key => key?.processor === 'if');
+  // if
+  const ifProcessor = parsedKeys.find(key => key?.processor === 'if');
 
-    const ifDefinition = node.definition[ifProcessor.expression];
+  const ifDefinition = node.definition[ifProcessor.expression];
+
+  blocks.push({
+    name: `${node.name}_if`,
+    definition: ifDefinition,
+    processor: ifProcessor,
+  });
+  delete node.definition[ifProcessor.expression];
+
+  // else if
+  const elseifProcessors = parsedKeys.filter(key => key?.processor === 'elseif');
+  let elseIfIndex = 0;
+  for (const elseifProcessor of elseifProcessors) {
+    const elseifDefinition = node.definition[elseifProcessor.expression];
 
     blocks.push({
-        name: `${node.name}_if`,
-        definition: ifDefinition,
-        processor: ifProcessor,
+      name: `${node.name}_elseif_${elseIfIndex++}`,
+      definition: elseifDefinition,
+      processor: elseifProcessor,
     });
-    delete node.definition[ifProcessor.expression];
+    delete node.definition[elseifProcessor.expression];
+  }
 
-    // else if
-    const elseifProcessors = parsedKeys.filter(key => key?.processor === 'elseif');
-    let elseIfIndex = 0;
-    for (const elseifProcessor of elseifProcessors) {
-        const elseifDefinition = node.definition[elseifProcessor.expression];
+  node.definition.switch = [];
 
-        blocks.push({
-            name: `${node.name}_elseif_${elseIfIndex++}`,
-            definition: elseifDefinition,
-            processor: elseifProcessor,
-        });
-        delete node.definition[elseifProcessor.expression];
-    }
+  for (const block of blocks) {
+    node.definition.switch.push({
+      condition: block.processor.statement,
+      ...block.definition
+    });
+  }
 
-    node.definition.switch = [];
+  // else
+  if (node.definition?.else) {
+    const elseDefinition = node.definition.else;
 
-    for (const block of blocks) {
-        node.definition.switch.push({
-            condition: block.processor.statement,
-            ...block.definition
-        });
-    }
-    
-    await switchBlock.init(api);
+    node.definition.switch.push({
+      default: elseDefinition,
+    });
+
+    delete node.definition['else'];
+  }
+
+  await switchBlock.init(api);
 }
 
 module.exports = {
-    hits,
-    init
+  hits,
+  init
 }
