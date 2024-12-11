@@ -107,7 +107,8 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'html-script', npm: '@flownet/lib-load-browser-script-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'http-server', npm: '@fnet/node-express', master: "server_port" }));
     this.#npmBlocks.push(npmBlock({ key: 'shell', npm: '@fnet/shell', master: "cmd" }));
-
+    this.#npmBlocks.push(npmBlock({ key: 'shell-flow', npm: '@fnet/shell-flow', master: "commands" }));
+    
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
       packageDevDependencies: this.#packageDevDependencies,
