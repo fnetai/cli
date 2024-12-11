@@ -54,19 +54,14 @@ const parralelBlock = require('./block/parallel');
 const raiseBlock = require('./block/raise');
 const returnBlock = require('./block/return');
 const callBlock = require('./block/call');
-const shellBlock = require('./block/shell');
-const configBlock = require('./block/config');
-const yamlBlock = require('./block/yaml');
 const stepsBlock = require('./block/steps');
 const formBlock = require('./block/form');
 const operationBlock = require('./block/operation');
 const jumpBlock = require('./block/jump');
-const promptBlock = require('./block/prompt');
-
-const htmlScriptBlock = require('./block/html-script');
-const htmlLinkBlock = require('./block/html-link');
 
 const resolveNextBlock = require('./block-api/resolve-next-block');
+
+const npmBlock = require('./block/npm-block');
 
 class Builder {
 
@@ -92,6 +87,7 @@ class Builder {
   #bpmnMode;
   #apiContext;
   #blockBuilderContext;
+  #npmBlocks = []
 
   constructor(context) {
 
@@ -103,6 +99,14 @@ class Builder {
 
     this._expire_ttl = 3600; // 1-hour
     this._expire_ttl_short = 300; // 5-minutes
+
+    this.#npmBlocks.push(npmBlock({ key: 'config', npm: '@fnet/config',master:"name" }));
+    this.#npmBlocks.push(npmBlock({ key: 'yaml', npm: '@fnet/yaml',master:"file" }));
+    this.#npmBlocks.push(npmBlock({ key: 'prompt', npm: '@fnet/prompt',master:"message" }));
+    this.#npmBlocks.push(npmBlock({ key: 'html-link', npm: '@flownet/lib-load-browser-link-url', master: "src" }));
+    this.#npmBlocks.push(npmBlock({ key: 'html-script', npm: '@flownet/lib-load-browser-script-url', master: "src" }));
+    this.#npmBlocks.push(npmBlock({ key: 'http-server', npm: '@fnet/node-express', master: "server_port" }));
+    this.#npmBlocks.push(npmBlock({ key: 'shell', npm: '@fnet/shell', master: "cmd" }));
 
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
@@ -429,14 +433,13 @@ class Builder {
 
     // CALL GROUP
     else if (await callBlock.hits(api)) await callBlock.init(api);
-    else if (await shellBlock.hits(api)) await shellBlock.init(api);
-    else if (await configBlock.hits(api)) await configBlock.init(api);
-    else if (await yamlBlock.hits(api)) await yamlBlock.init(api);
-    else if (await htmlScriptBlock.hits(api)) await htmlScriptBlock.init(api);
-    else if (await htmlLinkBlock.hits(api)) await htmlLinkBlock.init(api);
+    else if (this.#npmBlocks.find(w => w.hits(api))) {
+      console.log('npm-block', api.node.definition);
+      const npmBlock = this.#npmBlocks.find(w => w.hits(api));
+      await npmBlock.init(api);
+    }
     else if (await formBlock.hits(api)) await formBlock.init(api);
     else if (await operationBlock.hits(api)) await operationBlock.init(api);
-    else if (await promptBlock.hits(api)) await promptBlock.init(api);
 
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
