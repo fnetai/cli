@@ -100,15 +100,18 @@ class Builder {
     this._expire_ttl = 3600; // 1-hour
     this._expire_ttl_short = 300; // 5-minutes
 
-    this.#npmBlocks.push(npmBlock({ key: 'config', npm: '@fnet/config',master:"name" }));
-    this.#npmBlocks.push(npmBlock({ key: 'yaml', npm: '@fnet/yaml',master:"file" }));
-    this.#npmBlocks.push(npmBlock({ key: 'prompt', npm: '@fnet/prompt',master:"message" }));
+    this.#npmBlocks.push(npmBlock({ key: 'config', npm: '@fnet/config', master: "name" }));
+    this.#npmBlocks.push(npmBlock({ key: 'yaml', npm: '@fnet/yaml', master: "file" }));
+    this.#npmBlocks.push(npmBlock({ key: 'prompt', npm: '@fnet/prompt', master: "message" }));
     this.#npmBlocks.push(npmBlock({ key: 'html-link', npm: '@flownet/lib-load-browser-link-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'html-script', npm: '@flownet/lib-load-browser-script-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'http-server', npm: '@fnet/node-express', master: "server_port" }));
     this.#npmBlocks.push(npmBlock({ key: 'shell', npm: '@fnet/shell', master: "cmd" }));
     this.#npmBlocks.push(npmBlock({ key: 'shell-flow', npm: '@fnet/shell-flow', master: "commands" }));
-    
+    this.#npmBlocks.push(npmBlock({ key: 'list-files', npm: '@fnet/list-files', master: "pattern" }));
+    this.#npmBlocks.push(npmBlock({ key: 'up-list-files', npm: '@fnet/up-list-files', master: "pattern" }));
+    this.#npmBlocks.push(npmBlock({ key: 'auto-conda-env', npm: '@fnet/auto-conda-env', master: "envDir" }));
+
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
       packageDevDependencies: this.#packageDevDependencies,
@@ -254,7 +257,9 @@ class Builder {
     const coreDir = this.#context.coreDir;
 
     this.setProgress({ message: "Cleaning project directory." });
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['node_modules', '.cache'], absolute: true });
+    
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -891,19 +896,19 @@ class Builder {
     else if (isObject(value)) {
       const keys = Object.keys(value);
       for (let i = 0; i < keys.length; i++) {
-        const key=keys[i];
-        const exp=await fnetExpression({expression:key});
-        if(exp){
-          if(exp.processor==='e'){
-            const transformedValue=value[key].replace(/(\r\n|\n|\r)/g, "");
-            value[exp.statement]=`$::${transformedValue}::`;
+        const key = keys[i];
+        const exp = await fnetExpression({ expression: key });
+        if (exp) {
+          if (exp.processor === 'e') {
+            const transformedValue = value[key].replace(/(\r\n|\n|\r)/g, "");
+            value[exp.statement] = `$::${transformedValue}::`;
             delete value[key];
           }
           else value[key] = await this.transformValue(value[key]);
         }
         else {
           value[key] = await this.transformValue(value[key]);
-        }        
+        }
       }
     }
     else if (typeof value === 'string') {
@@ -940,7 +945,7 @@ class Builder {
 
   replaceSpecialPattern(text) {
     const pattern1 = /"\$::(.*?)::"/g;
-    let temp= text.replace(pattern1, "$1");
+    let temp = text.replace(pattern1, "$1");
     // remove new lines
     // temp = temp.replace(/(\r\n|\n|\r)/g, "");
     return temp;
