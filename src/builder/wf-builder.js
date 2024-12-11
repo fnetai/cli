@@ -434,7 +434,6 @@ class Builder {
     // CALL GROUP
     else if (await callBlock.hits(api)) await callBlock.init(api);
     else if (this.#npmBlocks.find(w => w.hits(api))) {
-      console.log('npm-block', api.node.definition);
       const npmBlock = this.#npmBlocks.find(w => w.hits(api));
       await npmBlock.init(api);
     }

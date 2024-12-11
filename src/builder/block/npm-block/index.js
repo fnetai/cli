@@ -28,6 +28,7 @@ class NpmWrapper {
     else definition.args = definition[name];
     delete definition[name];
 
+    console.log(`[npm-block] ${this.#key} --> ${this.#npm}`);
     await callBlock.init(api);
   }
 }
