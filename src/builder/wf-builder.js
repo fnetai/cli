@@ -282,38 +282,6 @@ class Builder {
     }
   }
 
-  // async initWorkflowDir() {
-  //     const projectDir = this.#context.projectDir;
-  //     const coreDir = this.#context.coreDir;
-  //     // let result = shell.exec(`rm -rf ${projectDir}`);
-  //     let result;
-
-  //     const exclude = ['node_modules'];  // List of directories to exclude from deletion.
-
-  //     // Delete all files and directories in projectDir except those in the exclude list.
-  //     fs.existsSync(projectDir) && fs.readdirSync(projectDir).forEach(file => {
-  //         if (!exclude.includes(file)) {
-  //             result = shell.rm('-rf', path.join(projectDir, file));
-  //         }
-  //     });
-
-  //     // .
-  //     result = shell.exec(`mkdir ${projectDir}`);
-  //     if (result.code !== 0) throw new Error('Couldnt create workflow dir.');
-
-  //     // src
-  //     result = shell.exec(`mkdir ${projectDir}/src`);
-  //     if (result.code !== 0) throw new Error('Couldnt create workflow/src dir.');
-
-  //     // src/core
-  //     result = shell.exec(`cp -a ${coreDir} ${projectDir}/src`);
-  //     if (result.code !== 0) throw new Error('Couldnt create workflow/src/core dir.');
-
-  //     // src/default/blocks
-  //     result = shell.exec(`mkdir -p ${projectDir}/src/default/blocks`);
-  //     if (result.code !== 0) throw new Error('Couldnt create workflow/src/default/blocks dir.');
-  // }
-
   async initNunjucks() {
     this.setProgress({ message: "Initializing nunjucks." });
 
@@ -922,7 +890,19 @@ class Builder {
     else if (isObject(value)) {
       const keys = Object.keys(value);
       for (let i = 0; i < keys.length; i++) {
-        value[keys[i]] = await this.transformValue(value[keys[i]]);
+        const key=keys[i];
+        const exp=await fnetExpression({expression:key});
+        if(exp){
+          if(exp.processor==='e'){
+            const transformedValue=value[key].replace(/(\r\n|\n|\r)/g, "");
+            value[exp.statement]=`$::${transformedValue}::`;
+            delete value[key];
+          }
+          else value[key] = await this.transformValue(value[key]);
+        }
+        else {
+          value[key] = await this.transformValue(value[key]);
+        }        
       }
     }
     else if (typeof value === 'string') {
@@ -958,8 +938,11 @@ class Builder {
   }
 
   replaceSpecialPattern(text) {
-    const pattern = /"\$::(.*?)::"/g;
-    return text.replace(pattern, "$1");
+    const pattern1 = /"\$::(.*?)::"/g;
+    let temp= text.replace(pattern1, "$1");
+    // remove new lines
+    // temp = temp.replace(/(\r\n|\n|\r)/g, "");
+    return temp;
   }
 
   replaceExpressionLegacy(value) {
