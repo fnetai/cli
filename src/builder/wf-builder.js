@@ -111,6 +111,7 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'list-files', npm: '@fnet/list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'up-list-files', npm: '@fnet/up-list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'auto-conda-env', npm: '@fnet/auto-conda-env', master: "envDir" }));
+    this.#npmBlocks.push(npmBlock({ key: 'ollama-chat', npm: '@fnet/ollama-chat', master: "model" }));
 
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
@@ -257,9 +258,9 @@ class Builder {
     const coreDir = this.#context.coreDir;
 
     this.setProgress({ message: "Cleaning project directory." });
-    
+
     const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
-    
+
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
