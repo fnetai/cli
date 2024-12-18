@@ -106,9 +106,7 @@ function createVirtualNodes(context) {
 
         if (isProcess || isSubProcess) {
 
-            const firstNode = node.childs[0];
-
-            const hasFork = node.childs.some(w => w.definition?.fork === true);
+            const firstNode = node.childs.filter(w=>w.module!==true)[0];
 
             // Modules intermediate catch event
             const childModules = node.childs.filter(w => w.module === true);
@@ -128,7 +126,7 @@ function createVirtualNodes(context) {
                 });
             }
 
-            if (!hasFork && firstNode) {
+            if (firstNode) {
                 if (node.bpmn.starts.length > 1) {
 
                     const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
