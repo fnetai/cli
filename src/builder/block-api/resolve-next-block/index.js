@@ -21,6 +21,12 @@ module.exports = ({ node }) => {
     }
   }
   else {
+
+    // AUTO NEXT BLOCK IS DISABLED FOR MODULE ROOT
+    if (node.module === true) {
+      return;
+    }
+
     // AUTO FINDING NEXT BLOCK
     let parent = node.parent;
     let targetIndex = node.index + 1;
@@ -30,7 +36,7 @@ module.exports = ({ node }) => {
       // NEITHER JUMP TO PARENT NOR SIBLING ENABLED
       if (parent.blockAutoJumpToParent && parent.blockAutoJumpToSibling)
         break;
-      else if (typeof parent.blockAutoJumpToParent === 'undefined' && typeof parent.blockAutoJumpToSibling === 'undefined') {
+      else if (!Reflect.has(parent, 'blockAutoJumpToParent') && !Reflect.has(parent, 'blockAutoJumpToSibling')) {
 
         const found = parent.childs.find(w => w.index === targetIndex);
         if (found) {
