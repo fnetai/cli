@@ -1,0 +1,28 @@
+{
+    "name": "ATOM",
+    "uri": "http://atom.org/bpmn",
+    "prefix": "atom",
+    "types": [
+      {
+        "name": "AtomExtension",
+        "extends": ["bpmn:BaseElement"],
+        "properties": [
+          {
+            "name": "atom",
+            "type": "atom:Atom",
+            "isMany": false
+          }
+        ]
+      },
+      {
+        "name": "Atom",
+        "properties": [
+          {
+            "name": "type",
+            "type": "String",
+            "isAttr": true
+          }
+        ]
+      }
+    ]
+  }

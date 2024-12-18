@@ -18,7 +18,6 @@
   "license": "MIT",
   "dependencies": {
     "@flownet/lib-atom-api-js": "^0.1.10",
-    "@flownet/lib-bpmn-from-flow": "^0.1.8",
     "@flownet/lib-is-redis-online": "^0.1.13",
     "@flownet/lib-parse-imports-js": "^0.3.1",
     "@flownet/lib-parse-node-url": "^0.1.16",
@@ -54,7 +53,9 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "axios": "^1.5.0",
+    "bpmn-moddle": "^9.0.1",
     "chalk": "^4.1.2",
+    "dagre": "^0.8.5",
     "form-data": "^4.0.0",
     "get-value": "^3.0.1",
     "isobject": "^4.0.0",

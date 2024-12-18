@@ -33,7 +33,7 @@ const deployTo = require('./deploy/deploy-to');
 
 const { Atom } = require("@flownet/lib-atom-api-js");
 const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
-const fnetBpmnFromFlow = require('@flownet/lib-bpmn-from-flow');
+const fnetBpmnFromFlow = require('./bpmn');
 const fnetConfig = require('@fnet/config');
 const fnetParseImports = require('@flownet/lib-parse-imports-js');
 const fnetExpression = require('@fnet/expression');
@@ -1108,6 +1108,7 @@ class Builder {
         if (this.#bpmnMode) {
           const bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
           fs.writeFileSync(path.resolve(bpmnDir, './fnet/flow.bpmn'), network.diagramXML, 'utf8');
+          // fs.writeFileSync(path.resolve(bpmnDir, './fnet/flow.yaml'), yaml.stringify(this.#root));
         }
 
         await this.createAtomLibFiles({ root: this.#root });
