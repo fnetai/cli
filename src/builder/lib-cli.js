@@ -124,6 +124,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       await builder.build();
 
       console.log('Building library succeeded!');
+      
       process.exit(0);
     } catch (error) {
       console.error('Building library failed!', error.message);

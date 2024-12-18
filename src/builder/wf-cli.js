@@ -114,7 +114,9 @@ let cmdBuilder = yargs(process.argv.slice(2))
       const builder = new Builder(context);
       await builder.init();
       await builder.build();
+
       console.log('Building workflow succeeded!');
+      
       process.exit(0);
     } catch (error) {
       console.error('Building workflow failed!', error.message);
