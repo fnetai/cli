@@ -27,7 +27,7 @@ async function init({ node, initNode }) {
 
         await initNode({ node: childNode });
     }
-
+        
     node.resolve = resolve;
 }
 
@@ -46,6 +46,11 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
     node.context.lib = root.context.libs.find(w => w.name === transform.call);
 
+    if (Reflect.has(transform, 'return')){
+      node.returns = true;
+      transform.return = await transformExpression(transform.return);
+    } 
+  
     await resolveTypeCommon({ node });
 
     resolveNextBlock({ node });

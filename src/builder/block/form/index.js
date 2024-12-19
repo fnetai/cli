@@ -42,6 +42,11 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
     node.context.lib = root.context.libs.find(w => w.name === transform.form);
 
+    if (Reflect.has(transform, 'return')){
+      node.returns = true;
+      transform.return = await transformExpression(transform.return);
+    } 
+          
     await resolveTypeCommon({ node });
     resolveNextBlock({ node });
 }

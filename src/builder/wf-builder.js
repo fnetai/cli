@@ -404,7 +404,6 @@ class Builder {
     else if (await assignBlock.hits(api)) await assignBlock.init(api);
 
     else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
-    else if (await returnBlock.hits(api)) await returnBlock.init(api);
 
     // CALL GROUP
     else if (await callBlock.hits(api)) await callBlock.init(api);
@@ -417,6 +416,8 @@ class Builder {
 
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
+
+    else if (await returnBlock.hits(api)) await returnBlock.init(api);
 
     else throw new Error('Undefined step type.');
   }

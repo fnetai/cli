@@ -1,5 +1,7 @@
 module.exports = ({ node }) => {
   const definition = node.definition;
+  
+  if(node.returns) return;
 
   if (definition.next === 'end') { }
   else if (definition.next === 'stop') { }
