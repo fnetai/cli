@@ -58,6 +58,7 @@ const stepsBlock = require('./block/steps');
 const formBlock = require('./block/form');
 const operationBlock = require('./block/operation');
 const jumpBlock = require('./block/jump');
+const modulesBlock = require('./block/modules');
 
 const resolveNextBlock = require('./block-api/resolve-next-block');
 
@@ -416,6 +417,8 @@ class Builder {
 
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
+
+    else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
 
     else if (await returnBlock.hits(api)) await returnBlock.init(api);
 
@@ -839,6 +842,7 @@ class Builder {
       case "tryexcept":
       case "for":
       case "operation":
+      case "modules":
         this.createBlockFromTemplate({ node });
         break;
       default:

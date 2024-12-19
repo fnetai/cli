@@ -20,6 +20,14 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
     transform.next = await transformExpression(transform.next);
 
+    if (transform.export)
+      transform.export = await transformExpression(transform.export);
+    
+    if (Reflect.has(transform, 'return')){
+      node.returns = true;
+      transform.return = await transformExpression(transform.return);
+    } 
+  
     await resolveTypeCommon({ node });
     resolveNextBlock({ node });    
 }

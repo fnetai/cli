@@ -1,43 +1,14 @@
 const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
-
-const fnetExpression = require('@fnet/expression');
 
 async function hits({ node }) {
-    return node.definition.hasOwnProperty('for');
+    return node.definition.hasOwnProperty('modules');
 }
 
 async function init({ node, initNode }) {
+    node.type = "modules"
 
-    node.type = "for";
-
-    node.blockAutoJumpToParent = true;
-    node.blockAutoJumpToSibling = false;
-    
-    // No steps property
-    if (!node.definition.for.hasOwnProperty('steps')) {
-        const reserved = ['value', 'in'];
-        const [self, child] = [pick(node.definition.for, reserved), omit(node.definition.for, reserved)];
-        node.definition.for = self;
-        node.definition.for.steps = [
-            {
-                [`${node.name}_step`]: child
-            }
-        ];
-    }
-
-    if (!Array.isArray(node.definition.for.steps)) {
-        node.definition.for.steps = [
-            {
-                [`${node.name}_step`]: node.definition.for.steps
-            }
-        ];
-    }
-
-    for (let i = 0; i < node.definition.for.steps.length; i++) {
-
-        const temp = node.definition.for.steps[i];
+    for (let i = 0; i < node.definition.modules?.length; i++) {
+        const temp = node.definition.modules[i];
         const key = Object.keys(temp)[0];
 
         const childNode = {
@@ -45,6 +16,9 @@ async function init({ node, initNode }) {
             childs: [],
             parent: node,
             definition: temp[key],
+            module: true,
+            blockAutoJumpToParent: true,
+            blockAutoJumpToSibling: false,
             index: node.childs.length,
             context: {}
         }
@@ -53,15 +27,14 @@ async function init({ node, initNode }) {
 
         await initNode({ node: childNode });
     }
-
+        
     node.resolve = resolve;
 }
 
 async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExpression }) {
+
     node.context.transform = node.context.transform || cloneDeep(node.definition);
     const transform = node.context.transform;
-
-    transform.for.in = await transformExpression(node.definition.for.in);
 
     if (transform.export)
       transform.export = await transformExpression(transform.export);
@@ -70,8 +43,9 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
       node.returns = true;
       transform.return = await transformExpression(transform.return);
     } 
-  
+
     await resolveTypeCommon({ node });
+
     resolveNextBlock({ node });
 }
 

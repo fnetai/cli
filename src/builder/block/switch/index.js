@@ -1,8 +1,4 @@
 const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
-
-const fnetExpression = require('@fnet/expression');
 
 async function hits({ node }) {
     const hit = node.definition.hasOwnProperty('switch');
@@ -60,6 +56,8 @@ async function init({ node, initNode }) {
 async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExpression }) {
     node.context.transform = node.context.transform || cloneDeep(node.definition);
 
+    const transform = node.context.transform;
+
     for (const child of node.childs) {
         child.context.transform = child.context.transform || cloneDeep(child.definition);
 
@@ -67,6 +65,14 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
             child.context.transform.condition = await transformExpression(child.definition.condition);
     }
 
+    if (transform.export)
+      transform.export = await transformExpression(transform.export);
+
+    if (Reflect.has(transform, 'return')){
+      node.returns = true;
+      transform.return = await transformExpression(transform.return);
+    } 
+  
     await resolveTypeCommon({ node });
 
     resolveNextBlock({ node });

@@ -1,3 +1,5 @@
+const cloneDeep = require('lodash.clonedeep');
+
 async function hits({ node }) {
     return node.definition.hasOwnProperty('steps');
 }
@@ -26,8 +28,20 @@ async function init({ node, initNode }) {
     node.resolve = resolve;
 }
 
-async function resolve({ node }) {
+async function resolve({ node, transformExpression  }) {
     node.context.next = node.childs[0];
+
+    node.context.transform = node.context.transform || cloneDeep(node.definition);
+
+    const transform = node.context.transform;
+
+    if (transform.export)
+      transform.export = await transformExpression(transform.export);
+
+    if (Reflect.has(transform, 'return')){
+      node.returns = true;
+      transform.return = await transformExpression(transform.return);
+    }
 }
 
 module.exports = {

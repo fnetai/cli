@@ -41,10 +41,13 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
     if (transform.result)
         transform.result = await transformExpression(transform.result);
-
+  
     const root = node.workflow.parent;
 
     node.context.lib = root.context.libs.find(w => w.name === transform.call);
+
+    if (transform.export)
+      transform.export = await transformExpression(transform.export);
 
     if (Reflect.has(transform, 'return')){
       node.returns = true;

@@ -29,6 +29,9 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   }
   //>
 
+  if (transform.export)
+    transform.export = await transformExpression(transform.export);
+
   if (Reflect.has(transform, 'return')){
     node.returns = true;
     transform.return = await transformExpression(transform.return);
