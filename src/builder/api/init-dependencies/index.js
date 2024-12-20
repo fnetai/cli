@@ -4,6 +4,10 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies, set
 
   setProgress('Initializing dependencies');
 
+  const userDependencies = atom.doc.dependencies || [];
+  userDependencies.filter(w => !w.dev).forEach(dep => packageDependencies.push(dep));
+  userDependencies.filter(w => w.dev).forEach(dep => packageDevDependencies.push(dep));
+
   if (atom.type === 'workflow') {
     packageDependencies.push({ package: "get-value", version: "^3" });
     packageDependencies.push({ package: "set-value", version: "^4" });
