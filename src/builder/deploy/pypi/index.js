@@ -14,7 +14,7 @@ module.exports = async ({
   yamlTarget
 }) => {
 
-  const deployerName = 'pyip';
+  const deployerName = 'pypi';
 
   if (onProgress) await onProgress({ message: `Deploying it as ${deployerName} package.` });
 
