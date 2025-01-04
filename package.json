@@ -47,7 +47,7 @@
     "@fnet/to-pyip": "^0.1.4",
     "@fnet/to-rust": "^0.1.2",
     "@fnet/up-list-files": "^0.1.9",
-    "@fnet/yaml": "^0.1.23",
+    "@fnet/yaml": "^0.1.29",
     "@fnet/yargs-options-from-schema": "^0.1.1",
     "@node-red/util": "^4.0.2",
     "ajv": "^8.17.1",
