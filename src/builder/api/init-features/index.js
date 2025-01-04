@@ -41,7 +41,7 @@ module.exports = async (apiContext) => {
 
   atom.doc.features = atom.doc.features || {};
   const features = atom.doc.features;
-  
+
   // project format
   features.project = features.project || {};
   features.project.format = features.project.format || features.project_format || "esm";
@@ -180,7 +180,7 @@ module.exports = async (apiContext) => {
       babel: true,
       browser: true,
       replace: true,
-      enabled: features.iife !== false,
+      enabled: features.iife === true,
       terser: true,
       copy: false,
     }
@@ -359,7 +359,7 @@ module.exports = async (apiContext) => {
       output.alias.entries['react-dom'] = 'preact/compat';
     }
 
-    if (features.form_enabled) output.babel = true;
+    if (features.form_enabled || features.babel) output.babel = true;
   }
 
   rollup_output_keys = Object.keys(features.rollup_output);

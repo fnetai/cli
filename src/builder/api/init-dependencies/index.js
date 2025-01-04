@@ -50,7 +50,7 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies, set
   // DEV DEPENDENCIES
   packageDevDependencies.push({ package: "@babel/core", version: "^7" });
   packageDevDependencies.push({ package: "@rollup/plugin-commonjs", version: "^28" });
-  packageDevDependencies.push({ package: "@rollup/plugin-node-resolve", version: "^15" });
+  packageDevDependencies.push({ package: "@rollup/plugin-node-resolve", version: "^16" });
   packageDevDependencies.push({ package: "@rollup/plugin-replace", version: "^6" });
   packageDevDependencies.push({ package: "rollup", version: "^4" });
   if (atom.doc.features.dts_enabled) {

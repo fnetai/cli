@@ -169,8 +169,7 @@ class Builder {
       await initFeatures(this.#apiContext);
       await initDependencies(this.#apiContext);
 
-      // REFACTORING
-      await this.transformWorkflow({ workflow: this.#workflow });
+      this.transformWorkflow({ workflow: this.#workflow });
 
       const root = await this.initNodeTree({ workflow: this.#workflow });
       await this.initNodeTreeIndex({ root });
@@ -483,7 +482,7 @@ class Builder {
     const calls = root.context.calls;
 
     for await (const node of calls) {
-      const callName = node.definition.call;
+      const callName = node.definition.import || node.definition.call;
 
       const targetNode =
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||
@@ -538,7 +537,7 @@ class Builder {
     const forms = root.context.forms;
 
     for await (const node of forms) {
-      const formName = node.definition.form;
+      const formName = node.definition.import || node.definition.form;
 
       const targetNode =
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||
