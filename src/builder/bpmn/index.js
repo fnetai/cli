@@ -126,6 +126,13 @@ function createVirtualNodes(context) {
                 });
             }
 
+            // raiseNode
+            const raiseNode = node.childs.find(w => w.type === "raise");
+            if (raiseNode) {
+              const vEndNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:EndEvent", type: "end", name: `ERROR`,definitions: [{ type: "bpmn:ErrorEventDefinition" }] });
+              raiseNode.bpmn.edges = [{ from: raiseNode.indexKey, to: vEndNode.indexKey, type: "bpmn:SequenceFlow" }];
+            }
+
             if (firstNode) {
                 if (node.bpmn.starts.length > 1) {
 

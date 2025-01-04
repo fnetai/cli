@@ -28,8 +28,7 @@ module.exports = async ({ atom, setProgress, context, deploymentProject, deploym
 
   if (binEnabled && binName && typeof binName === 'string') {
     packageJSON.bin = {
-      [binName]: 'dist/cli/esm/index.js',
-      [atom.doc.name]: 'dist/cli/esm/index.js'
+      [binName]: 'dist/cli/esm/index.js'
     }
   }
 

@@ -387,8 +387,7 @@ async function loadLocalProject({ tags }) {
   const workflowAtom = {
     doc: {
       ...projectFileParsed,
-      "content-type": "yaml",
-      content: projectMainFileContent
+      content: projectMainFileParsed
     }
   }
 

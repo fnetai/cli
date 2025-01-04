@@ -201,7 +201,7 @@ class Builder {
   async initWorkflow() {
     const workflowId = this.#context.id;
     this.#atom = this.#context.project?.workflowAtom || await Atom.get({ id: workflowId });
-    this.#workflow = typeof this.#atom.doc.content === 'string' ? (await fnetYaml({ content: this.#atom.doc.content })).parsed : this.#atom.doc.content;
+    this.#workflow = typeof this.#atom.doc.content === 'string' ? (await fnetYaml({ content: this.#atom.doc.content,tags:this.#context.tags })).parsed : this.#atom.doc.content;
     let bundleName = this.#atom.doc.bundleName;
     bundleName = bundleName || (this.#atom.doc.name || "").toUpperCase().replace(/[^A-Z0-9]/g, "_");
     this.#atom.doc.bundleName = bundleName;
@@ -305,6 +305,7 @@ class Builder {
     for (const flow of Object.values(workflow)) {
       // Ensure steps exist as an array.
       flow.steps = flow.steps || [];
+      flow.steps= flow.steps.filter(w=>Object.keys(w).length>0);
 
       // Transform each step.
       flow.steps = flow.steps.map(step => this.transformStep({ step }));
@@ -695,7 +696,7 @@ class Builder {
   }
 
   async resolveTypeWorkflow({ node }) {
-    node.context.transform = cloneDeep(node.definition);
+    node.context.transform = node.context.transform || cloneDeep(node.definition);
     const transform = node.context.transform;
 
     for (let i = 0; i < transform.params?.length; i++) {
