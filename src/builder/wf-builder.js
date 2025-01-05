@@ -704,7 +704,7 @@ class Builder {
       if (typeof param === 'string') transform.params[i] = { key: param, hasDefault: false };
       else {
         const paramKey = Object.keys(param)[0];
-        transform.params[i] = { key: paramKey, hasDefault: true, default: param[paramKey] };
+        transform.params[i] = { key: paramKey, hasDefault: true, default: param[paramKey], type: typeof param[paramKey] };
       }
     }
 

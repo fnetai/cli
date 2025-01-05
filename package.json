@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.83.3",
+  "version": "0.83.4",
   "files": [
     "dist"
   ],
@@ -31,7 +31,7 @@
     "@flownet/lib-to-webos": "^0.3.1",
     "@fnet/auto-conda-env": "^0.1.23",
     "@fnet/cli-project-common": "^0.3.1",
-    "@fnet/cli-project-flow": "^0.6.19",
+    "@fnet/cli-project-flow": "^0.6.20",
     "@fnet/cli-project-node": "^0.3.19",
     "@fnet/cli-project-schemas": "^0.1.1",
     "@fnet/config": "^0.2.8",
