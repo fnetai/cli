@@ -113,7 +113,8 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'up-list-files', npm: '@fnet/up-list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'auto-conda-env', npm: '@fnet/auto-conda-env', master: "envDir" }));
     this.#npmBlocks.push(npmBlock({ key: 'ollama-chat', npm: '@fnet/ollama-chat', master: "model" }));
-
+    this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt" }));
+    
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
       packageDevDependencies: this.#packageDevDependencies,
