@@ -1,4 +1,5 @@
 const cloneDeep = require('lodash.clonedeep');
+const initModules= require('../common/init-modules');
 
 async function hits({ node }) {
     return node.definition.hasOwnProperty('form');
@@ -7,26 +8,7 @@ async function hits({ node }) {
 async function init({ node, initNode }) {
     node.type = "form";
 
-    for (let i = 0; i < node.definition.modules?.length; i++) {
-        const temp = node.definition.modules[i];
-        const key = Object.keys(temp)[0];
-
-        const childNode = {
-            name: key,
-            childs: [],
-            parent: node,
-            definition: temp[key],
-            module: true,
-            blockAutoJumpToParent: true,
-            blockAutoJumpToSibling: false,
-            index: node.childs.length,
-            context: {}
-        }
-
-        node.childs.push(childNode);
-
-        await initNode({ node: childNode });
-    }
+    await initModules({ node, initNode });
 
     node.resolve = resolve;
 }

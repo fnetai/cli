@@ -1,4 +1,5 @@
 const cloneDeep = require('lodash.clonedeep');
+const initModules= require('../common/init-modules');
 
 async function hits({ node }) {
     return node.definition.hasOwnProperty('try') && node.definition.hasOwnProperty('except');
@@ -7,6 +8,8 @@ async function hits({ node }) {
 async function init({ node, initNode }) {
     node.type = "tryexcept";
 
+    await initModules({ node, initNode });
+    
     node.blockAutoJumpToParent = false;
     node.blockAutoJumpToSibling = true;
     

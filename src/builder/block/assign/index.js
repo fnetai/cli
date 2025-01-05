@@ -1,4 +1,5 @@
 const cloneDeep = require('lodash.clonedeep');
+const initModules= require('../common/init-modules');
 
 async function hits({ node }) {
   return node.definition.hasOwnProperty('assign');
@@ -6,6 +7,8 @@ async function hits({ node }) {
 
 async function init({ node, initNode }) {
   node.type = "assign";
+
+  await initModules({ node, initNode });
 
   node.resolve = resolve;
 }

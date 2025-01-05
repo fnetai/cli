@@ -2,7 +2,7 @@ const cloneDeep = require('lodash.clonedeep');
 const pick = require('lodash.pick');
 const omit = require('lodash.omit');
 
-const fnetExpression = require('@fnet/expression');
+const initModules= require('../common/init-modules');
 
 async function hits({ node }) {
     return node.definition.hasOwnProperty('for');
@@ -12,6 +12,8 @@ async function init({ node, initNode }) {
 
     node.type = "for";
 
+    await initModules({ node, initNode });
+    
     node.blockAutoJumpToParent = true;
     node.blockAutoJumpToSibling = false;
     

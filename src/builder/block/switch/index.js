@@ -1,4 +1,5 @@
 const cloneDeep = require('lodash.clonedeep');
+const initModules= require('../common/init-modules');
 
 async function hits({ node }) {
     const hit = node.definition.hasOwnProperty('switch');
@@ -24,6 +25,8 @@ async function hits({ node }) {
 async function init({ node, initNode }) {
     node.type = "switch";
 
+    await initModules({ node, initNode });
+    
     node.blockAutoJumpToParent = false;
     node.blockAutoJumpToSibling = true;
 
