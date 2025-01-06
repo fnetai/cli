@@ -17,7 +17,6 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
-  //<
   for (let i = 0; i < transform.assign?.length; i++) {
     let assign = transform.assign[i];
     let assignKey = Object.keys(assign)[0];
@@ -30,7 +29,6 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
     transform.assign[i] = assignTransform;
   }
-  //>
 
   if (transform.export)
     transform.export = await transformExpression(transform.export);

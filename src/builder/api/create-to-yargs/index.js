@@ -60,7 +60,7 @@ module.exports = async ({ atom, setProgress, context, njEnv }) => {
   const ajv = new Ajv({
     allErrors: true,
     useDefaults: true,
-    formats: { email: true },
+    formats: { },
     strict: false,
     code: {
       esm: true,
@@ -69,7 +69,7 @@ module.exports = async ({ atom, setProgress, context, njEnv }) => {
       source: true
     },
   });
-
+  
   addFormats(ajv);
   const validate = ajv.compile(schema);
   const validateCode = standaloneCode(ajv, validate);

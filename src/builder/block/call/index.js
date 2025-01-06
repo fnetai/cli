@@ -1,5 +1,5 @@
 const cloneDeep = require('lodash.clonedeep');
-const initModules= require('../common/init-modules');
+const initModules = require('../common/init-modules');
 
 async function hits({ node }) {
   return node.definition.hasOwnProperty('call');
@@ -9,7 +9,7 @@ async function init({ node, initNode }) {
   node.type = "call"
 
   await initModules({ node, initNode });
-  
+
   node.resolve = resolve;
 }
 
@@ -21,9 +21,26 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   if (transform.args)
     transform.args = await transformExpression(transform.args);
 
-  if (transform.result)
-    transform.result = await transformExpression(transform.result);
+  if (transform.result) {
+    if (typeof transform.result === 'string') {
+      transform.result = [{ [transform.result]: "e::result" }];
+    }
 
+    for (let i = 0; i < transform.result?.length; i++) {
+      let assign = transform.result[i];
+      let assignKey = Object.keys(assign)[0];
+      let assingValue = assign[assignKey];
+  
+      let assignTransform = {
+        key: await transformExpression(assignKey),
+        value: await transformExpression(assingValue)
+      }
+  
+      transform.result[i] = assignTransform;
+    }
+  
+    // transform.result = await transformExpression(transform.result);
+  }
   const root = node.workflow.parent;
 
   if (transform.import)
