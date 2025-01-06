@@ -124,7 +124,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       await builder.build();
 
       console.log('Building library succeeded!');
-      
+
       process.exit(0);
     } catch (error) {
       console.error('Building library failed!', error.message);
@@ -208,7 +208,17 @@ function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
         const context = await createContext(argv);
         const { projectDir } = context;
 
-        const rawArgs = process.argv.slice(3);
+        const escapeArg = (arg) => {
+          if (!arg.includes(' ')) return arg;
+
+          if (process.platform === 'win32') {
+            return `"${arg.replace(/(["^])/g, '^$1')}"`;
+          } else {
+            return `"${arg.replace(/(["\\$`])/g, '\\$1')}"`;
+          }
+        };
+
+        const rawArgs = process.argv.slice(3).map(escapeArg);
 
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
@@ -241,7 +251,17 @@ function bindCondaContextCommand(builder, { name, bin, preArgs = [] }) {
         const context = await createContext(argv);
         const { projectDir } = context;
 
-        const rawArgs = process.argv.slice(3);
+        const escapeArg = (arg) => {
+          if (!arg.includes(' ')) return arg;
+
+          if (process.platform === 'win32') {
+            return `"${arg.replace(/(["^])/g, '^$1')}"`;
+          } else {
+            return `"${arg.replace(/(["\\$`])/g, '\\$1')}"`;
+          }
+        };
+
+        const rawArgs = process.argv.slice(3).map(escapeArg);
 
         bin = path.join(projectDir, '.conda', 'bin', bin || name);
 
