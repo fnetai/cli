@@ -1,15 +1,16 @@
 const callBlock = require('../call');
 
 class NpmWrapper {
-
   #key;
   #npm;
   #master;
+  #extras;
 
-  constructor({ key, npm, master }) {
+  constructor({ key, npm, master, extras }) {
     this.#key = key;
     this.#npm = npm;
     this.#master = master;
+    this.#extras = extras;
   }
 
   hits({ node }) {
@@ -27,6 +28,12 @@ class NpmWrapper {
     if (valueType !== 'object') definition.args = { ...definition.args, [`${this.#master}`]: definition[name] };
     else definition.args = definition[name];
     delete definition[name];
+
+    if (this.#extras) {
+      for (const extra in this.#extras) {
+        definition[extra] = this.#extras[extra];
+      }
+    }
 
     console.log(`[npm-block] ${this.#key} --> ${this.#npm}`);
     await callBlock.init(api);

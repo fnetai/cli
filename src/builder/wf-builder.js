@@ -113,8 +113,8 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'up-list-files', npm: '@fnet/up-list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'auto-conda-env', npm: '@fnet/auto-conda-env', master: "envDir" }));
     this.#npmBlocks.push(npmBlock({ key: 'ollama-chat', npm: '@fnet/ollama-chat', master: "model" }));
-    this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt" }));
-    
+    this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt", extras: { subtype: "flow" } }));
+
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
       packageDevDependencies: this.#packageDevDependencies,
@@ -202,7 +202,7 @@ class Builder {
   async initWorkflow() {
     const workflowId = this.#context.id;
     this.#atom = this.#context.project?.workflowAtom || await Atom.get({ id: workflowId });
-    this.#workflow = typeof this.#atom.doc.content === 'string' ? (await fnetYaml({ content: this.#atom.doc.content,tags:this.#context.tags })).parsed : this.#atom.doc.content;
+    this.#workflow = typeof this.#atom.doc.content === 'string' ? (await fnetYaml({ content: this.#atom.doc.content, tags: this.#context.tags })).parsed : this.#atom.doc.content;
     let bundleName = this.#atom.doc.bundleName;
     bundleName = bundleName || (this.#atom.doc.name || "").toUpperCase().replace(/[^A-Z0-9]/g, "_");
     this.#atom.doc.bundleName = bundleName;
@@ -306,7 +306,7 @@ class Builder {
     for (const flow of Object.values(workflow)) {
       // Ensure steps exist as an array.
       flow.steps = flow.steps || [];
-      flow.steps= flow.steps.filter(w=>Object.keys(w).length>0);
+      flow.steps = flow.steps.filter(w => Object.keys(w).length > 0);
 
       // Transform each step.
       flow.steps = flow.steps.map(step => this.transformStep({ step }));
