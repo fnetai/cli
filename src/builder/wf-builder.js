@@ -59,9 +59,7 @@ const formBlock = require('./block/form');
 const operationBlock = require('./block/operation');
 const jumpBlock = require('./block/jump');
 const modulesBlock = require('./block/modules');
-
 const resolveNextBlock = require('./block-api/resolve-next-block');
-
 const npmBlock = require('./block/npm-block');
 
 class Builder {
