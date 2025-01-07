@@ -686,6 +686,17 @@ class Builder {
       }
       return atom;
     }
+    else if (parsedUrl.protocol === 'use:') {
+      const atom = {
+        name: parsedUrl.pathname,
+        doc: {
+          type: "function",
+          dependencies:[]
+        },
+        protocol: parsedUrl.protocol,
+      }
+      return atom;      
+    }
   }
 
   async resolveNodeTree({ root }) {
@@ -775,6 +786,9 @@ class Builder {
       else if (atomLib.protocol === 'npm:') {
         // nothing
         atomLib.relativePath = atomLib.name;
+      }
+      else if (atomLib.protocol === 'use:') {
+        // nothing
       }
       else {
         const atomLibPath = `${projectDir}/src/libs/${atomLib.id}.js`;

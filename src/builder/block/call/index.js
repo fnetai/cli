@@ -18,6 +18,10 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
+  if (node.target?.atom?.doc?.type === 'function') {
+    transform.call = await transformExpression(node.target.atom.name);
+  }
+
   if (transform.args)
     transform.args = await transformExpression(transform.args);
 
@@ -30,15 +34,15 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
       let assign = transform.result[i];
       let assignKey = Object.keys(assign)[0];
       let assingValue = assign[assignKey];
-  
+
       let assignTransform = {
         key: await transformExpression(assignKey),
         value: await transformExpression(assingValue)
       }
-  
+
       transform.result[i] = assignTransform;
     }
-  
+
     // transform.result = await transformExpression(transform.result);
   }
   const root = node.workflow.parent;
