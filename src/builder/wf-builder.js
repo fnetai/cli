@@ -165,8 +165,9 @@ class Builder {
 
       await this.initAuth();
       await this.initWorkflow();
-      await initFeatures(this.#apiContext);
-      await initDependencies(this.#apiContext);
+
+      // await initFeatures(this.#apiContext);
+      // await initDependencies(this.#apiContext);
 
       this.transformWorkflow({ workflow: this.#workflow });
 
@@ -178,6 +179,11 @@ class Builder {
 
       await this.initNodeForms({ root });
       await this.initNodeFormLibs({ root });
+
+      await this.initFeaturesFromNodes({ childs: root.childs, features: this.#atom.doc.features });
+
+      await initFeatures(this.#apiContext);
+      await initDependencies(this.#apiContext);
 
       await this.initAtomLibsAndDeps({ libs: root.context.libs, packageDependencies: this.#packageDependencies });
 
@@ -207,23 +213,10 @@ class Builder {
     this.#atom.type = this.#atom.type || "workflow";
 
     this.#apiContext.atom = this.#atom;
+
+    this.#atom.doc.features = this.#atom.doc.features || {};
   }
-
-  async initDependencies() {
-    this.#packageDependencies.push({ package: "get-value", version: "^3.0" });
-    this.#packageDependencies.push({ package: "set-value", version: "^4.1" });
-
-    if (this.#atom.doc.features.form_enabled) {
-      this.#packageDependencies.push({ package: "react", version: "^18.2" });
-      this.#packageDependencies.push({ package: "react-dom", version: "^18.2" });
-      this.#packageDependencies.push({ package: "@flownet/react-app", version: "^0.1" });
-      this.#packageDependencies.push({ package: "@flownet/react-app-state", version: "^0.1" });
-    } else {
-      this.#packageDependencies.push({ package: "@fnet/args", version: "^0.1" });
-    }
-    this.#packageDependencies.push({ package: "chalk", version: "^4" });
-  }
-
+  
   #recursiveDelete(filePath) {
     console.log('filePath', filePath);
     if (fs.statSync(filePath).isDirectory()) {
@@ -395,17 +388,11 @@ class Builder {
 
     if (await tryExceptBlock.hits(api)) await tryExceptBlock.init(api);
     else if (await forBlock.hits(api)) await forBlock.init(api);
-
     else if (await switchBlock.hits(api)) await switchBlock.init(api);
     else if (await ifBlock.hits(api)) await ifBlock.init(api);
-
     else if (await parralelBlock.hits(api)) await parralelBlock.init(api);
-
     else if (await assignBlock.hits(api)) await assignBlock.init(api);
-
     else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
-
-    // CALL GROUP
     else if (await callBlock.hits(api)) await callBlock.init(api);
     else if (this.#npmBlocks.find(w => w.hits(api))) {
       const npmBlock = this.#npmBlocks.find(w => w.hits(api));
@@ -413,14 +400,10 @@ class Builder {
     }
     else if (await formBlock.hits(api)) await formBlock.init(api);
     else if (await operationBlock.hits(api)) await operationBlock.init(api);
-
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
-
     else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
-
     else if (await returnBlock.hits(api)) await returnBlock.init(api);
-
     else throw new Error('Undefined step type.');
   }
 
@@ -558,6 +541,16 @@ class Builder {
     return libs;
   }
 
+  async initFeaturesFromNodes({ childs, features }) {
+
+    for await (const child of childs) {
+
+      if (child.type === 'form' && !Reflect.has(features, 'form')) features.form = true;
+
+      await this.initFeaturesFromNodes({ childs: child.childs, features });
+    }
+  }
+
   async findNodeFormTarget({ refNode, curNode }) {
     if (!curNode) return;
 
@@ -626,7 +619,7 @@ class Builder {
       const dependencies = [];
 
       const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
-      const targetImports = this.#atom.doc.features.all_parsed_imports === true ? parsedImports.all : parsedImports.required;
+      const targetImports = parsedImports.all;
 
       for await (const parsedImport of targetImports) {
         if (parsedImport.type !== 'npm') continue;
@@ -691,11 +684,11 @@ class Builder {
         name: parsedUrl.pathname,
         doc: {
           type: "function",
-          dependencies:[]
+          dependencies: []
         },
         protocol: parsedUrl.protocol,
       }
-      return atom;      
+      return atom;
     }
   }
 

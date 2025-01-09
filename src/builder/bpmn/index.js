@@ -94,7 +94,8 @@ function createVirtualNodes(context) {
     const targetNodes = context.targetNodes || root.childs;
 
     targetNodes.forEach(node => {
-        const isProcess = node.type === 'workflow' || node.type === 'subworkflow';
+
+      const isProcess = node.type === 'workflow' || node.type === 'subworkflow';
 
         const isSubProcess = !isProcess
             && node.childs.filter(w => !w.virtual).length > 0

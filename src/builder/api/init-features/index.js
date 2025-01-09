@@ -49,8 +49,6 @@ module.exports = async (apiContext) => {
 
   features.dts_enabled = features.dts === true || (typeof features.dts !== 'undefined' && features.dts !== false);
 
-  if (!features.hasOwnProperty('all_parsed_imports')) features.all_parsed_imports = true;
-
   const projectDir = path.resolve(context.project.projectDir);
 
   const appEntry = findEntryFile({ dir: path.resolve(projectDir, './app') });
@@ -104,7 +102,7 @@ module.exports = async (apiContext) => {
   const isAppReact = Reflect.has(features, 'app_entry_uses_jsx') ? features.app_entry_uses_jsx === true : features.src_entry_uses_jsx === true;
   const isCliReact = Reflect.has(features, 'cli_entry_uses_jsx') ? features.cli_entry_uses_jsx === true : features.src_entry_uses_jsx === true;
 
-  features.form_enabled = atom.doc.form === true || atom.doc.form?.enabled === true || features.form === true || features.form?.enabled === true;
+  features.form_enabled = (isAppReact || isCliReact) || features.form === true || features.form?.enabled === true;
   features.multiple_enabled = features.multiple_enabled || features.multiple === true || features.multiple?.enabled === true;
 
   // APP PROPS

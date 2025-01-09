@@ -58,7 +58,8 @@ module.exports = async ({ atom, context, packageDependencies, packageDevDependen
     if (!fs.existsSync(srcFilePath)) throw new Error(`App file not found: ${srcFilePath}`);
 
     const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
-    const targetImports = atom.doc.features.all_parsed_imports === true ? parsedImports.all : parsedImports.required;
+    const targetImports = parsedImports.all;
+    
     for await (const parsedImport of targetImports) {
       if (parsedImport.type !== 'npm') continue;
 

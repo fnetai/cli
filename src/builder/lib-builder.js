@@ -296,7 +296,8 @@ class Builder {
       const srcFilePath = path.resolve(this.#context.projectSrcDir, `${'index'}.js`);
       const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
       const dependencies = atom.doc.dependencies;
-      const targetImports = this.#atom.doc.features.all_parsed_imports === true ? parsedImports.all : parsedImports.required;
+      const targetImports = parsedImports.all;
+
       for await (const parsedImport of targetImports) {
         if (parsedImport.type !== 'npm') continue;
 
