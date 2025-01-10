@@ -112,6 +112,7 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'auto-conda-env', npm: '@fnet/auto-conda-env', master: "envDir" }));
     this.#npmBlocks.push(npmBlock({ key: 'ollama-chat', npm: '@fnet/ollama-chat', master: "model" }));
     this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt", extras: { subtype: "flow" } }));
+    this.#npmBlocks.push(npmBlock({ key: 'invoke', npm: '@fnet/invoke', master: "method", extras: {} }));
 
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
