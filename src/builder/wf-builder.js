@@ -180,6 +180,7 @@ class Builder {
       await this.initNodeForms({ root });
       await this.initNodeFormLibs({ root });
 
+      await this.initEntryFiles({ root, features: this.#atom.doc.features });
       await this.initFeaturesFromNodes({ childs: root.childs, features: this.#atom.doc.features });
 
       await initFeatures(this.#apiContext);
@@ -216,7 +217,7 @@ class Builder {
 
     this.#atom.doc.features = this.#atom.doc.features || {};
   }
-  
+
   #recursiveDelete(filePath) {
     console.log('filePath', filePath);
     if (fs.statSync(filePath).isDirectory()) {
@@ -551,6 +552,24 @@ class Builder {
     }
   }
 
+  async initEntryFiles({ root, features }) {
+
+    for await (const flow of root.childs) {
+
+      let fileName;
+
+      if (flow.name === 'main') fileName = `index.js`;
+      else if (flow.name === 'cli') fileName = `cli.js`;
+      else if (flow.name === 'app') fileName = `app.js`;
+      else if (flow.name === 'api') fileName = `api.js`;
+      else continue;
+
+      features[`${flow.name}_default_entry_file`] = fileName;
+
+      flow.entryFile = fileName;
+    }
+  }
+
   async findNodeFormTarget({ refNode, curNode }) {
     if (!curNode) return;
 
@@ -801,11 +820,16 @@ class Builder {
       this.#njEnv
     );
 
-    const templateRender = template.render({ ...root, ui: { package: "@flownet/react-app" } });
+    for (let i = 0; i < root.childs.length; i++) {
+      const flow = root.childs[i];
 
-    const projectDir = this.#context.projectDir;
-    const filePath = path.resolve(projectDir, `src/default/index.js`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');
+      if (!flow.entryFile) continue;
+      const templateRender = template.render({ flow, ui: { package: "@flownet/react-app" } });
+
+      const projectDir = this.#context.projectDir;
+      const filePath = path.resolve(projectDir, `src/default/${flow.entryFile}`);
+      fs.writeFileSync(filePath, templateRender, 'utf8');
+    }
   }
 
   async createNodeTree({ root }) {
