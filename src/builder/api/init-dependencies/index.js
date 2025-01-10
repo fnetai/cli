@@ -24,8 +24,8 @@ module.exports = async ({ atom, packageDependencies, packageDevDependencies, set
       packageDependencies.push({ package: "react-dom", version: reactVersion });
 
       if (atom.type === 'workflow') {
-        packageDependencies.push({ package: "@flownet/react-app", version: "^0.1" });
-        packageDependencies.push({ package: "@flownet/react-app-state", version: "^0.1" });
+        packageDependencies.push({ package: "@fnet/react-app", version: "^0.1" });
+        packageDependencies.push({ package: "@fnet/react-app-state", version: "^0.1" });
       }
     }
   }

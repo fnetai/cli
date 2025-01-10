@@ -825,7 +825,7 @@ class Builder {
       const flow = root.childs[i];
 
       if (!flow.entryFile) continue;
-      const templateRender = template.render({ flow, ui: { package: "@flownet/react-app" } });
+      const templateRender = template.render({ flow, ui: { package: "@fnet/react-app" } });
 
       const projectDir = this.#context.projectDir;
       const filePath = path.resolve(projectDir, `src/default/${flow.entryFile}`);
