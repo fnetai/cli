@@ -113,6 +113,7 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'ollama-chat', npm: '@fnet/ollama-chat', master: "model" }));
     this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt", extras: { subtype: "flow" } }));
     this.#npmBlocks.push(npmBlock({ key: 'invoke', npm: '@fnet/invoke', master: "method", extras: {} }));
+    this.#npmBlocks.push(npmBlock({ key: 'fetch', npm: '@fnet/fetch', master: "url", extras: {} }));
 
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
@@ -934,7 +935,7 @@ class Builder {
       const keys = Object.keys(value);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        const exp = await fnetExpression({ expression: key });
+        const exp = fnetExpression({ expression: key });
         if (exp) {
           if (exp.processor === 'e') {
             const transformedValue = value[key].replace(/(\r\n|\n|\r)/g, "");
@@ -949,7 +950,7 @@ class Builder {
       }
     }
     else if (typeof value === 'string') {
-      const exp = await fnetExpression({ expression: value });
+      const exp = fnetExpression({ expression: value });
       if (exp) {
         const { processor, statement } = exp;
         switch (processor) {

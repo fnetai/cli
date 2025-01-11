@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.88.0",
+  "version": "0.89.0",
   "files": [
     "dist"
   ],
@@ -36,8 +36,9 @@
     "@fnet/cli-project-schemas": "^0.1.1",
     "@fnet/config": "^0.2.8",
     "@fnet/dir-zipper": "^0.1.5",
-    "@fnet/expression": "^0.1.16",
+    "@fnet/expression": "^0.1.25",
     "@fnet/files-to-gcs": "^0.3.6",
+    "@fnet/key-value-transformer": "^0.1.4",
     "@fnet/npm-list-versions": "^0.1.34",
     "@fnet/npm-pick-versions": "^0.1.14",
     "@fnet/object-from-schema": "^0.1.2",

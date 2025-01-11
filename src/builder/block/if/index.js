@@ -1,13 +1,9 @@
-const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
-
 const fnetExpression = require('@fnet/expression');
 const switchBlock = require('../switch');
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);
-  const parsedKeys = await Promise.all(keys.map(key => fnetExpression({ expression: key })));
+  const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
 
   const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
   if (ifProcessors.length !== 1) return false;
@@ -19,7 +15,7 @@ async function init(api) {
   const { node } = api;
 
   const keys = Object.keys(node.definition);
-  const parsedKeys = await Promise.all(keys.map(key => fnetExpression({ expression: key })));
+  const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
 
   const blocks = [];
 
