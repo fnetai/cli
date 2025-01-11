@@ -1,35 +1,31 @@
 const cloneDeep = require('lodash.clonedeep');
 
+const initCommonResolve = require('../common/init-common-resolve');
+
 async function hits({ node }) {
-    return node.definition.hasOwnProperty('next');
+  return node.definition.hasOwnProperty('next');
 }
 
 async function init({ node, initNode }) {
-    node.type = "jump";
+  node.type = "jump";
 
-    node.resolve = resolve;    
+  node.resolve = resolve;
 }
 
 async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExpression }) {
-    node.context.transform = node.context.transform || cloneDeep(node.definition);
-    const transform = node.context.transform;
+  node.context.transform = node.context.transform || cloneDeep(node.definition);
+  const transform = node.context.transform;
 
-    transform.next = await transformExpression(transform.next);
+  transform.next = await transformExpression(transform.next);
 
-    if (transform.export)
-      transform.export = await transformExpression(transform.export);
-    
-    if (Reflect.has(transform, 'return')){
-      node.returns = true;
-      transform.return = await transformExpression(transform.return);
-    } 
-  
-    await resolveTypeCommon({ node });
-    resolveNextBlock({ node });    
+  await initCommonResolve({ node, transformExpression });
+
+  await resolveTypeCommon({ node });
+  resolveNextBlock({ node });
 }
 
 module.exports = {
-    hits,
-    init,
-    resolve
+  hits,
+  init,
+  resolve
 }

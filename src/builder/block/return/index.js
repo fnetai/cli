@@ -13,7 +13,7 @@ async function init({ node, initNode }) {
 async function resolve({ node, resolveTypeCommon, transformExpression }) {
     node.context.transform = node.context.transform || cloneDeep(node.definition);
     const transform = node.context.transform;
-    node.returns = true;
+    node.hasReturn = true;
     transform.return = await transformExpression(transform.return);
     await resolveTypeCommon({ node });
 }
