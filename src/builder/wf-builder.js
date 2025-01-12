@@ -968,6 +968,9 @@ class Builder {
           case 'm':
             value = `$::c.module['${statement}']::`;
             break;
+          case 'fm':
+            value = `$::flow.getModule('${statement}')::`;
+            break;
           case 'f':
             value = `$::c.form.${statement}::`;
             break;
