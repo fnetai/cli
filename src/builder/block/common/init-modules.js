@@ -14,7 +14,7 @@ module.exports = async ({ node, initNode }) => {
       }
 
       if (node.type === 'modules') {
-        transformed.export = transformed.export || `mod.${key}`;
+        transformed.export = transformed.export || key;
       }
 
       node.definition.modules.push({

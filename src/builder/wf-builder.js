@@ -966,10 +966,10 @@ class Builder {
             value = `$::${statement}::`;
             break;
           case 'm':
-            value = `$::closure.module['${statement}']::`;
+            value = `$::c.module['${statement}']::`;
             break;
           case 'f':
-            value = `$::closure.form.${statement}::`;
+            value = `$::c.form.${statement}::`;
             break;
           case 'for':
             value = `$::caller.for.${statement}::`;
