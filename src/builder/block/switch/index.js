@@ -6,6 +6,12 @@ async function hits({ node }) {
   const hit = node.definition.hasOwnProperty('switch');
   if (!hit) return false;
 
+  return true;
+}
+
+async function init({ node, initNode }) {
+  node.type = "switch";
+
   const switchChilds = node.definition.switch || [];
 
   const check = switchChilds.every(w => w.hasOwnProperty('condition') || w.hasOwnProperty('default'));
@@ -20,11 +26,8 @@ async function hits({ node }) {
   if (defaultChilds.length === 1 && !switchChilds[switchChilds.length - 1].hasOwnProperty('default'))
     throw new Error(`Switch default must be the last child`);
 
-  return true;
-}
 
-async function init({ node, initNode }) {
-  node.type = "switch";
+  node.hasDefaultCondition = defaultChilds.length === 1;
 
   await initModules({ node, initNode });
 
