@@ -381,23 +381,31 @@ async function loadLocalProject({ tags }) {
   const { raw: projectFileContent, parsed: projectFileParsed } = await fnetYaml({ file: projectFilePath, tags });
   const projectDir = path.dirname(projectFilePath);
 
-  // Project main file
-  const mainFileName = projectFileParsed.main || 'flow.main.yaml';
+  let flowsContent;
 
-  let projectMainFilePath = path.resolve(projectDir, mainFileName);
-
-  if (!fs.existsSync(projectMainFilePath)) {
-    projectMainFilePath = path.resolve(projectDir, mainFileName + ".yaml");
-    if (!fs.existsSync(projectMainFilePath))
-      throw new Error(`${mainFileName} file not found in ${projectMainFilePath}.`);
+  if (typeof projectFileParsed.flows === 'object') {
+    flowsContent = projectFileParsed.flows;
   }
+  else {
+    // Project main file
+    const mainFileName = projectFileParsed.main || 'flow.main.yaml';
 
-  const { raw: projectMainFileContent, parsed: projectMainFileParsed } = await fnetYaml({ file: projectMainFilePath, tags });
+    let projectMainFilePath = path.resolve(projectDir, mainFileName);
+
+    if (!fs.existsSync(projectMainFilePath)) {
+      projectMainFilePath = path.resolve(projectDir, mainFileName + ".yaml");
+      if (!fs.existsSync(projectMainFilePath))
+        throw new Error(`${mainFileName} file not found in ${projectMainFilePath}.`);
+    }
+
+    const { parsed: projectMainFileParsed } = await fnetYaml({ file: projectMainFilePath, tags });
+    flowsContent = projectMainFileParsed;
+  }
 
   const workflowAtom = {
     doc: {
       ...projectFileParsed,
-      content: projectMainFileParsed
+      content: flowsContent
     }
   }
 
@@ -407,9 +415,6 @@ async function loadLocalProject({ tags }) {
     projectFilePath,
     projectFileContent,
     projectFileParsed,
-    projectMainFilePath,
-    projectMainFileContent,
-    projectMainFileParsed
   }
 
   // Project devops file
