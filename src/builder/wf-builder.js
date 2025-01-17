@@ -397,10 +397,7 @@ class Builder {
     else if (await assignBlock.hits(api)) await assignBlock.init(api);
     else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
     else if (await callBlock.hits(api)) await callBlock.init(api);
-    else if (this.#npmBlocks.find(w => w.hits(api))) {
-      const npmBlock = this.#npmBlocks.find(w => w.hits(api));
-      await npmBlock.init(api);
-    }
+    else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
     else if (await formBlock.hits(api)) await formBlock.init(api);
     else if (await operationBlock.hits(api)) await operationBlock.init(api);
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);

@@ -9,6 +9,7 @@ async function init({ node, initNode }) {
   if (!node.type) node.type = 'steps';
 
   const steps = node.definition.steps || [];
+  
   for await (const step of steps) {
     const key = Object.keys(step)[0];
     const childNode = {
