@@ -30,7 +30,7 @@
     "@flownet/lib-to-nextjs": "^0.3.1",
     "@flownet/lib-to-webos": "^0.3.1",
     "@fnet/auto-conda-env": "^0.1.23",
-    "@fnet/cli-project-common": "^0.3.2",
+    "@fnet/cli-project-common": "^0.3.5",
     "@fnet/cli-project-flow": "^0.11.1",
     "@fnet/cli-project-node": "^0.4.1",
     "@fnet/cli-project-schemas": "^0.1.1",
