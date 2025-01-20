@@ -22,7 +22,7 @@
     "@flownet/lib-parse-imports-js": "^0.3.1",
     "@flownet/lib-parse-node-url": "^0.1.16",
     "@flownet/lib-render-templates-dir": "^0.1.12",
-    "@flownet/lib-to-docker": "^0.3.16",
+    "@flownet/lib-to-docker": "^0.3.17",
     "@flownet/lib-to-electron": "^0.3.1",
     "@flownet/lib-to-gitlab": "^0.1.21",
     "@flownet/lib-to-ios-app": "^0.3.1",
