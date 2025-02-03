@@ -311,8 +311,9 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
 
         const rawArgs = process.argv.slice(5);
 
+
         const subprocess = spawn(commandName, [...preArgs, ...rawArgs], {
-          cwd: projectDir,
+          cwd: fs.existsSync(projectDir) ? projectDir : cwd,
           stdio: 'inherit',
           shell: true,
           env: {
