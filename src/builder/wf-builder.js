@@ -105,8 +105,8 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'html-link', npm: '@flownet/lib-load-browser-link-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'html-script', npm: '@flownet/lib-load-browser-script-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'http-server', npm: '@fnet/node-express', master: "server_port" }));
-    this.#npmBlocks.push(npmBlock({ key: 'shell', npm: '@fnet/shell', master: "cmd" }));
-    this.#npmBlocks.push(npmBlock({ key: 'shell-flow', npm: '@fnet/shell-flow', master: "commands" }));
+    this.#npmBlocks.push(npmBlock({ key: 'command', npm: '@fnet/shell', master: "cmd" }));
+    this.#npmBlocks.push(npmBlock({ key: 'shell', npm: '@fnet/shell-flow', master: "commands" }));
     this.#npmBlocks.push(npmBlock({ key: 'list-files', npm: '@fnet/list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'up-list-files', npm: '@fnet/up-list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'auto-conda-env', npm: '@fnet/auto-conda-env', master: "envDir" }));
@@ -114,7 +114,7 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt", extras: { subtype: "flow" } }));
     this.#npmBlocks.push(npmBlock({ key: 'invoke', npm: '@fnet/invoke', master: "method", extras: {} }));
     this.#npmBlocks.push(npmBlock({ key: 'fetch', npm: '@fnet/fetch', master: "url", extras: {} }));
-    this.#npmBlocks.push(npmBlock({ key: 'filemap', npm: '@fnet/filemap', target: "url", extras: {} }));
+    this.#npmBlocks.push(npmBlock({ key: 'filemap', npm: '@fnet/filemap', master: "target", extras: {} }));
 
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
