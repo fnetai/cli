@@ -114,6 +114,7 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'ai', npm: '@fnet/ai', master: "prompt", extras: { subtype: "flow" } }));
     this.#npmBlocks.push(npmBlock({ key: 'invoke', npm: '@fnet/invoke', master: "method", extras: {} }));
     this.#npmBlocks.push(npmBlock({ key: 'fetch', npm: '@fnet/fetch', master: "url", extras: {} }));
+    this.#npmBlocks.push(npmBlock({ key: 'filemap', npm: '@fnet/filemap', target: "url", extras: {} }));
 
     this.#apiContext = {
       packageDependencies: this.#packageDependencies,
