@@ -167,7 +167,6 @@ module.exports = async (apiContext) => {
       babel: (features.src_uses_jsx === true) || false,
       browser: false,
       replace: true,
-      browsersync: true,
       terser: false,
       enabled: features.esm !== false,
       copy: true,
@@ -289,9 +288,10 @@ module.exports = async (apiContext) => {
       output_dir: features.app.dir,
       terser: true,
       output_exports: features.app.export === false ? "none" : "auto",
+      browsersync: true,
     }
   }
-
+  
   // cli default
   if (features.cli.enabled === true) {
     features.cli.dir = `./dist/cli/${features.cli.folder}`;
