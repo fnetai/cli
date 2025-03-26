@@ -1146,9 +1146,9 @@ class Builder {
         if (this.#bpmnMode) {
           let bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
           bpmnDir = path.resolve(bpmnDir, 'fnet');
-          if (!fs.existsSync(bpmnDir))
-            fs.mkdirSync(bpmnDir, { recursive: true });
-          fs.writeFileSync(path.resolve(bpmnDir, 'flow.bpmn'), network.diagramXML, 'utf8');
+          if (fs.existsSync(bpmnDir)) {
+            fs.writeFileSync(path.resolve(bpmnDir, 'flow.bpmn'), network.diagramXML, 'utf8');
+          }
         }
 
         await this.createAtomLibFiles({ root: this.#root });
