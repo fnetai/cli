@@ -375,8 +375,8 @@ async function createContext(argv) {
 async function loadLocalProject({ tags }) {
 
   // Project file
-  const projectFilePath = path.resolve(cwd, 'flow.yaml');
-  if (!fs.existsSync(projectFilePath)) throw new Error('flow.yaml file not found in current directory.');
+  const projectFilePath = path.resolve(cwd, 'fnet.yaml');
+  if (!fs.existsSync(projectFilePath)) throw new Error('fnet.yaml file not found in current directory.');
 
   const { raw: projectFileContent, parsed: projectFileParsed } = await fnetYaml({ file: projectFilePath, tags });
   const projectDir = path.dirname(projectFilePath);

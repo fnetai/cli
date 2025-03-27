@@ -998,7 +998,7 @@ class Builder {
 
   async createProjectYaml() {
 
-    const fileBase = `flow.yaml`;
+    const fileBase = `fnet.yaml`;
     const message = `Creating ${fileBase}`;
 
     await this.setProgress({ message: message });
@@ -1155,7 +1155,7 @@ class Builder {
         await this.createEngine({ root: this.#root });
         await this.createNodeTree({ root: this.#root });
         await this.createProjectYaml();
-        await this.createProjectMainYaml();
+        // await this.createProjectMainYaml();
 
         await createProjectReadme(this.#apiContext);
         await createTsConfig(this.#apiContext);

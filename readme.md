@@ -21,7 +21,7 @@ Upon installation, two binary commands become available: `fnet` (for flow projec
 ## Identifying Project Type
 
 - Flow Node Project: Presence of `node.yaml`. Use `fnode` commands.
-- Flow Project: Presence of `flow.yaml`. Use `fnet` commands.
+- Flow Project: Presence of `fnet.yaml`. Use `fnet` commands.
 
 ## Building the Project
 
