@@ -3,8 +3,8 @@ name: cli
 commands:
   compile:
     - npm run build
-    - bun build ./dist/builder/lib-cli.js --compile --outfile=dist/bin/fnode --target=bun
+    - bun build ./dist/builder/lib-cli.js --compile --outfile=.temp/bin/fnode --target=bun
     # - bun build ./src/builder/lib-cli.js --compile --outfile=dist/bin/fnode --target=bun
-    - chmod +x dist/bin/fnode
-    - du -h dist/bin/fnode
-    - dist/bin/fnode --version
+    - chmod +x .temp/bin/fnode
+    - du -h .temp/bin/fnode
+    - .temp/bin/fnode --version

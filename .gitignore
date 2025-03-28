@@ -7,7 +7,7 @@ secrets
 keycloak.json
 dist
 .output
-temp
+.temp
 .fnet
 .vscode
 .npmrc
