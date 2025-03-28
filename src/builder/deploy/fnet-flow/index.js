@@ -68,13 +68,8 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
 
   let command = `fnet-dir-zipper`;
   command += ` --sourceDir='${context.project.projectDir}'`;
-  command += ` -p=**/*`;
-  command += ` -g`;
-  // command += ` -p=flow.yaml`;
-  // command += ` -p=flow.main.yaml`;
-  // command += ` -p=flow.bpmn`;
+  command += ` --pattern=**/*`;
   command += ` --stdout_format=json`;
-  // command += ` --outputDir='${context.projectDir}'`;
   
   const shResult = await fnetShellJs(command );
   if (shResult.code !== 0) throw new Error(shResult.stderr);

@@ -29,8 +29,6 @@ const nodeModulesDir = require('./find-node-modules')({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
 process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 
-//console.log(`${path.join(nodeModulesDir,'/.bin')}`);
-
 let cmdBuilder = yargs(process.argv.slice(2))
   .command('create', 'Create flow node project', (yargs) => {
     return yargs
