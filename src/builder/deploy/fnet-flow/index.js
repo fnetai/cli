@@ -2,7 +2,7 @@ const semver = require('semver');
 const fnetConfig = require('@fnet/config');
 const axios = require('axios').default;
 const fs = require('fs');
-const fnetShell = require('@fnet/shell');
+const fnetShellJs = require('@fnet/shelljs');
 const FormData = require('form-data');
 
 module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
@@ -76,7 +76,7 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
   command += ` --stdout_format=json`;
   // command += ` --outputDir='${context.projectDir}'`;
   
-  const shResult = await fnetShell({ cmd: command });
+  const shResult = await fnetShellJs(command );
   if (shResult.code !== 0) throw new Error(shResult.stderr);
 
   const zipData = JSON.parse(shResult.stdout);

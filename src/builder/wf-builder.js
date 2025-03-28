@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const yaml = require("yaml");
-const shell = require('shelljs');
+const fnetShellJs = require('@fnet/shelljs');
 const nunjucks = require("nunjucks");
 const cloneDeep = require('lodash.clonedeep');
 const isObject = require('isobject');
@@ -105,7 +105,6 @@ class Builder {
     this.#npmBlocks.push(npmBlock({ key: 'html-link', npm: '@flownet/lib-load-browser-link-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'html-script', npm: '@flownet/lib-load-browser-script-url', master: "src" }));
     this.#npmBlocks.push(npmBlock({ key: 'http-server', npm: '@fnet/node-express', master: "server_port" }));
-    this.#npmBlocks.push(npmBlock({ key: 'command', npm: '@fnet/shell', master: "cmd" }));
     this.#npmBlocks.push(npmBlock({ key: 'shell', npm: '@fnet/shell-flow', master: "commands" }));
     this.#npmBlocks.push(npmBlock({ key: 'list-files', npm: '@fnet/list-files', master: "pattern" }));
     this.#npmBlocks.push(npmBlock({ key: 'up-list-files', npm: '@fnet/up-list-files', master: "pattern" }));
@@ -1047,7 +1046,7 @@ class Builder {
   async runPrettifier() {
     const projectDir = this.#context.projectDir;
 
-    const result = shell.exec(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
+    const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
     if (result.code !== 0) throw new Error(result.stderr);
   }
 

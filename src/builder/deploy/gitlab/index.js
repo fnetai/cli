@@ -1,4 +1,4 @@
-const fnetShell = require('@fnet/shell');
+const fnetShellJs = require('@fnet/shelljs');
 const fnetConfig = require('@fnet/config');
 
 module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget, buildId }) => {
@@ -33,7 +33,7 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
 
     if (deploymentProjectTarget.dryRun === true) return;
 
-    await fnetShell({ cmd: command });
+    await fnetShellJs(command);
 
     deploymentProject.isDirty = true;
 }

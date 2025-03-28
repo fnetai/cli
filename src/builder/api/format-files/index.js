@@ -1,4 +1,4 @@
-// const shell = require('shelljs');
+// const fnetShellJs = require('@fnet/shelljs');
 const path = require("path");
 const fnetShellFlow = require("@fnet/shell-flow");
 

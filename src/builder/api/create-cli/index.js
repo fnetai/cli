@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const shell = require('shelljs');
+const fnetShellJs = require('@fnet/shelljs');
 const fnetRender = require('@flownet/lib-render-templates-dir');
 
 module.exports = async ({ atom, setProgress, context, packageDependencies }) => {

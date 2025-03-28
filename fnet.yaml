@@ -1,0 +1,8 @@
+name: cli
+
+commands:
+  compile:
+    - bun build ./src/builder/lib-cli.js --compile --outfile=dist/bin/fnode --target=bun
+    - chmod +x dist/bin/fnode
+    - du -h dist/bin/fnode
+    - dist/bin/fnode --version

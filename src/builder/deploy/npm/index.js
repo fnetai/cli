@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const semver = require('semver');
-const shell = require('shelljs');
+const fnetShellJs = require('@fnet/shelljs');
 
 const fnetConfig = require('@fnet/config');
 const fnetUpListFiles = require('@fnet/up-list-files');
@@ -62,7 +62,7 @@ module.exports = async ({ atom, setProgress, context, deploymentProject, deploym
 
   if (target.dryRun === true) return;
 
-  let result = shell.exec(`npm publish --access public`, { cwd: projectDir });
+  let result = await fnetShellJs(`npm publish --access public`, { cwd: projectDir });
   if (result.code !== 0) throw new Error('Couldnt publish to npm');
 
   // restore

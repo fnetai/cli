@@ -2,6 +2,7 @@
 const cwd = process.cwd();
 const { spawn } = require('child_process');
 const prompt = require('@fnet/prompt');
+const which = require('./which');
 
 // fnet env
 require('@fnet/config')({
@@ -14,7 +15,7 @@ const path = require('path');
 const yargs = require('yargs/yargs');
 const fs = require('fs');
 const YAML = require('yaml');
-const shell = require('shelljs');
+const fnetShellJs = require('@fnet/shelljs');
 
 const fnetYaml = require('@fnet/yaml');
 const fnetConfig = require('@fnet/config');
@@ -48,16 +49,16 @@ let cmdBuilder = yargs(process.argv.slice(2))
         copyUnmatchedAlso: true
       });
 
-      let shellResult = shell.exec(`fnet build`, { cwd: outDir });
+      let shellResult = await fnetShellJs(`fnet build`, { cwd: outDir });
       if (shellResult.code !== 0) throw new Error('Failed to build project.');
 
-      if (shell.which('git')) {
-        shellResult = shell.exec(`git init --initial-branch=main`, { cwd: outDir });
+      if (which('git')) {
+        shellResult = await fnetShellJs(`git init --initial-branch=main`, { cwd: outDir });
         if (shellResult.code !== 0) throw new Error('Failed to initialize git.');
       }
 
-      if (shell.which('code') && argv.vscode) {
-        shellResult = shell.exec(`cd ${outDir} && code .`);
+      if (which('code') && argv.vscode) {
+        shellResult = await fnetShellJs(`cd ${outDir} && code .`);
         if (shellResult.code !== 0) throw new Error('Failed to open vscode.');
       }
 
@@ -90,7 +91,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
           copyUnmatchedAlso: true
         });
 
-        let shellResult = shell.exec(`fnet build`, { cwd: outDir });
+        let shellResult = await fnetShellJs(`fnet build`, { cwd: outDir });
         if (shellResult.code !== 0) throw new Error('Failed to build project.');
 
         console.log('Updating project succeeded!');

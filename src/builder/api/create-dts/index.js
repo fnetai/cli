@@ -1,4 +1,4 @@
-const shell = require('shelljs');
+const fnetShellJs = require('@fnet/shelljs');
 
 module.exports = async ({atom, setProgress, context }) => {
 
@@ -7,6 +7,6 @@ module.exports = async ({atom, setProgress, context }) => {
     const projectDir = context.projectDir;
 
     await setProgress({ message: "Creating .d.ts" });
-    const result = shell.exec(`tsc`, { cwd: projectDir });
+    const result = await fnetShellJs(`tsc`, { cwd: projectDir });
     if (result.code !== 0) throw new Error('Couldnt create .d.ts files.');
 }

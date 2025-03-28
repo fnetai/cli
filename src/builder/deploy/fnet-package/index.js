@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const semver = require('semver');
 
-const fnetShell = require('@fnet/shell');
+const fnetShellJs = require('@fnet/shelljs');
 const fnetConfig = require('@fnet/config');
 
 const axios = require('axios').default;
@@ -70,7 +70,7 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
 
   if (target.dry_run === true || target.params.dry_run === true) command += ` --dryRun`;
 
-  await fnetShell({ cmd: command });
+  await fnetShellJs(command);
 
   // restore
   fs.writeFileSync(packageJSONPath, packageJSONContent);
