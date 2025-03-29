@@ -1,10 +1,9 @@
-const fnetConfig = require('@fnet/config');
-const fnetToElectron = require('@flownet/lib-to-electron');
+import fnetConfig from '@fnet/config';
+import fnetToElectron from '@flownet/lib-to-electron';
+import cloneDeep from "lodash.clonedeep";
+import semver from 'semver';
 
-const cloneDeep = require("lodash.clonedeep");
-const semver = require('semver');
-
-module.exports = async ({
+export default async function deployToElectron({
   atom,
   target,
   onProgress,
@@ -12,7 +11,7 @@ module.exports = async ({
   dependencies,
   context,
   yamlTarget
-}) => {
+}) {
 
   const deployerName = 'electron';
 
@@ -27,7 +26,6 @@ module.exports = async ({
   }) : undefined;
 
   const nextVersion = semver.inc(target.version || "0.1.0", "patch");
-  target.params.version = nextVersion; // remove this line
   target.version = nextVersion;
   yamlTarget.set('version', nextVersion);
 

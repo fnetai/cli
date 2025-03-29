@@ -20,10 +20,10 @@ const commonPlugins = () => {
     }),
     resolve({
       extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
-      // preferBuiltins: true, // 'preferBuiltins: true' is nodeResolve default, can be omitted unless needed false
+      preferBuiltins: true, // 'preferBuiltins: true' is nodeResolve default, can be omitted unless needed false
     }),
     commonjs({
-      ignoreDynamicRequires: true, // Keep this if necessary for your CJS dependencies
+      ignoreDynamicRequires: false, // Keep this if necessary for your CJS dependencies
     }),
   ];
 
@@ -39,24 +39,31 @@ const commonPlugins = () => {
 // The export default syntax is already ESM compliant
 export default [
   {
-    input: `src/builder/wf-cli.js`,
+    input: `src/builder/wf-cli.mjs`,
     output: {
-      file: 'dist/builder/wf-cli.js',
-      format: "cjs", // Output format remains CJS as per original config
+      // file: 'dist/builder/wf-cli.js',
+      format: "esm", // Output format remains CJS as per original config
       exports: "auto",
       banner: '#!/usr/bin/env node',
+      dir: 'dist/builder',
+      entryFileNames: '[name].mjs', // Output file name pattern
+      chunkFileNames: '[name].[hash].mjs', // Output file name pattern for chunks
+
     },
     plugins: commonPlugins(),
     // External function remains the same
     external: id => /node_modules/.test(id) || id.startsWith('node:') // Also consider excluding node built-ins explicitly
   },
   {
-    input: `src/builder/lib-cli.js`,
+    input: `src/builder/lib-cli.mjs`,
     output: {
-      file: 'dist/builder/lib-cli.js',
-      format: "cjs", // Output format remains CJS as per original config
+      // file: 'dist/builder/lib-cli.js',
+      format: "esm", // Output format remains CJS as per original config
       exports: "auto",
       banner: '#!/usr/bin/env node',
+      dir: 'dist/builder',
+      entryFileNames: '[name].mjs', // Output file name pattern
+      chunkFileNames: '[name].[hash].mjs', // Output file name pattern for chunks
     },
     plugins: commonPlugins(),
     // External function remains the same

@@ -1,18 +1,26 @@
 name: cli
 
 commands:
-  test: 
+  test:
     - bun run build
-    - node ./dist/builder/lib-cli.js --help
-    - node ./dist/builder/wf-cli.js --help
-    
+    - node ./dist/builder/lib-cli.mjs --help
+    - node ./dist/builder/wf-cli.mjs --help
+
   compile:
     steps:
       - bun run build
-      - bun build ./dist/builder/lib-cli.js --format=cjs --compile --outfile=.temp/bin/fnode
-      - chmod +x .temp/bin/fnode
-      - du -h .temp/bin/fnode
-      - .temp/bin/fnode --version
-      - .temp/bin/fnode --help
-    env:
-      DEVELOPMENT: true
+      - bun build ./dist/builder/lib-cli.mjs --format=cjs --compile --outfile=.bin/fnode
+      - bun build ./dist/builder/wf-cli.mjs --format=cjs --compile --outfile=.bin/fnet
+      - chmod +x .bin/fnode && chmod +x .bin/fnet
+      - du -h .bin/fnode && du -h .bin/fnet
+      - .bin/fnode --version && .bin/fnet --version
+      - .bin/fnode --help && .bin/fnet --help
+      - otool -L .bin/fnode && otool -L .bin/fnet
+      - file .bin/fnode && file .bin/fnet
+      - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet
+      - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet
+      - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet
+      
+
+    # env:
+    #   DEVELOPMENT: true

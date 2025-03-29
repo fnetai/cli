@@ -1,7 +1,7 @@
-const redis = require('redis');
-const fnetIsRedisOnline = require('@flownet/lib-is-redis-online');
+import redis from 'redis';
+import fnetIsRedisOnline from '@flownet/lib-is-redis-online';
 
-module.exports = async () => {
+export default async function createRedisClient() {
     const isOnline = await fnetIsRedisOnline({ host: process.env.REDIS_HOST, port: process.env.REDIS_PORT });
     if (!isOnline) return;
 

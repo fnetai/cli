@@ -1,15 +1,17 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const semver = require('semver');
-const fnetShellJs = require('@fnet/shelljs');
+import fs from 'node:fs';
+import path from 'node:path';
+import semver from 'semver';
+import fnetShellJs from '@fnet/shelljs';
+import fnetConfig from '@fnet/config';
+import fnetUpListFiles from '@fnet/up-list-files';
+import fnetObjectFromSchema from '@fnet/object-from-schema';
+import yaml from 'yaml';
+import which from '../../which';
+import { fileURLToPath } from 'url';
 
-const fnetConfig = require('@fnet/config');
-const fnetUpListFiles = require('@fnet/up-list-files');
-const fnetObjectFromSchema = require('@fnet/object-from-schema');
-const yaml = require('yaml');
-const which = require('../../which');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
+export default async function deployToNpm({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) {
 
   await setProgress({ message: "Deploying it as npm package." });
 

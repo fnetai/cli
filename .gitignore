@@ -12,3 +12,4 @@ dist
 .vscode
 .npmrc
 .package-lock.json
+.bin

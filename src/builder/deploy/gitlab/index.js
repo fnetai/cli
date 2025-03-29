@@ -1,7 +1,7 @@
-const fnetShellJs = require('@fnet/shelljs');
-const fnetConfig = require('@fnet/config');
+import fnetShellJs from '@fnet/shelljs';
+import fnetConfig from '@fnet/config';
 
-module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget, buildId }) => {
+export default async function deployToGitlab({ setProgress, context, deploymentProject, deploymentProjectTarget, buildId }) {
 
     await setProgress({ message: "Deploying it as gitlab project." });
 

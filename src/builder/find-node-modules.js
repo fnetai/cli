@@ -1,5 +1,8 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function findNodeModules({ baseDir = __dirname }) {
     let currentDir = baseDir;
@@ -17,4 +20,4 @@ function findNodeModules({ baseDir = __dirname }) {
     return null;
 }
 
-module.exports = findNodeModules;
+export default findNodeModules;

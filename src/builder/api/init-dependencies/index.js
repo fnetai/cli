@@ -1,6 +1,6 @@
-const fnetListNpmVersions = require('@fnet/npm-list-versions');
+import fnetListNpmVersions from '@fnet/npm-list-versions';
 
-module.exports = async ({ atom, packageDependencies, packageDevDependencies, setProgress }) => {
+export default async function initDependencies({ atom, packageDependencies, packageDevDependencies, setProgress }) {
 
   setProgress('Initializing dependencies');
 

@@ -1,11 +1,10 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const semver = require('semver');
+import fs from 'node:fs';
+import path from 'node:path';
+import semver from 'semver';
+import fnetShellJs from '@fnet/shelljs';
+import fnetConfig from '@fnet/config';
 
-const fnetShellJs = require('@fnet/shelljs');
-const fnetConfig = require('@fnet/config');
-
-module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target, registerToPackageManager,yamlTarget }) => {
+export default async function deployToGcs({ setProgress, context, deploymentProject, deploymentProjectTarget: target, registerToPackageManager, yamlTarget }) {
 
   await setProgress({ message: "Deploying it as gcs package." });
 

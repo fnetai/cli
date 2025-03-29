@@ -1,51 +1,49 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const os = require('node:os');
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
 
-const yaml = require("yaml");
-const nunjucks = require("nunjucks");
-const createRedisClient = require('../redisClient');
+import yaml from "yaml";
+import nunjucks from "nunjucks";
+import createRedisClient from '../redisClient';
 
-const { randomUUID } = require('node:crypto');
+import { randomUUID } from 'node:crypto';
 
+import Auth from './auth';
 
-const Auth = require('./auth');
+import initFeatures from "./api/init-features";
+import initFeaturesPython from "./api/init-features/python";
 
-const initFeatures = require("./api/init-features");
-const initFeaturesPython = require("./api/init-features/python");
+import initDependencies from "./api/init-dependencies";
+import initDependenciesPython from "./api/init-dependencies/python";
 
-const initDependencies = require("./api/init-dependencies");
-const initDependenciesPython = require("./api/init-dependencies/python");
+import createApp from "./api/create-app";
+import createPackageJson from "./api/create-package-json";
 
-const createApp = require("./api/create-app");
-const createPackageJson = require("./api/create-package-json");
+import createCli from "./api/create-cli";
+import createCliPython from "./api/create-cli/python";
 
-const createCli = require("./api/create-cli");
-const createCliPython = require("./api/create-cli/python");
+import createRollup from "./api/create-rollup";
+import createToYargs from "./api/create-to-yargs";
+import createGitIgnore from "./api/create-git-ignore";
+import createTsConfig from "./api/create-ts-config";
+import createProjectReadme from "./api/create-project-readme";
+import formatFiles from './api/format-files';
+import createDts from './api/create-dts';
 
-const createRollup = require("./api/create-rollup");
-const createToYargs = require("./api/create-to-yargs");
-const createGitIgnore = require("./api/create-git-ignore");
-const createTsConfig = require("./api/create-ts-config");
-const createProjectReadme = require("./api/create-project-readme");
-const formatFiles = require('./api/format-files');
-const createDts = require('./api/create-dts');
+import installNpmPackages from './api/install-npm-packages';
+import installPythonPackages from './api/install-python-packages';
 
-const installNpmPackages = require('./api/install-npm-packages');
-const installPythonPackages = require('./api/install-python-packages');
+import runNpmBuild from './api/run-npm-build';
+import pickNpmVersions from './api/common/pick-npm-versions';
 
-const runNpmBuild = require('./api/run-npm-build');
-const pickNpmVersions = require('./api/common/pick-npm-versions');
+import deployTo from './deploy/deploy-to';
 
-
-const deployTo = require('./deploy/deploy-to');
-
-const { Atom } = require("@flownet/lib-atom-api-js");
-const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
-const fnetConfig = require('@fnet/config');
-const fnetParseImports = require('@flownet/lib-parse-imports-js');
-const fnetListFiles = require('@fnet/list-files');
-const chalk = require('chalk');
+import { Atom } from "@flownet/lib-atom-api-js";
+import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
+import fnetConfig from '@fnet/config';
+import fnetParseImports from '@flownet/lib-parse-imports-js';
+import fnetListFiles from '@fnet/list-files';
+import chalk from 'chalk';
 
 class Builder {
 
@@ -628,4 +626,4 @@ class Builder {
   }
 }
 
-module.exports = Builder;
+export default Builder;

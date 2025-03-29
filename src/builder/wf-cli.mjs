@@ -1,31 +1,37 @@
+import { spawn } from 'child_process';
+import prompt from '@fnet/prompt';
+import which from './which';
+import pkg from '../../package.json';
+
+import fnetConfig from '@fnet/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.cwd();
-const { spawn } = require('child_process');
-const prompt = require('@fnet/prompt');
-const which = require('./which');
-const pkg = require('../../package.json');
 
 // fnet env
-require('@fnet/config')({
+fnetConfig({
   name: ["redis"],
   dir: cwd,
   optional: true
 });
 
-const path = require('path');
-const { Command, Option } = require('commander'); // Import Commander
-const fs = require('fs');
-const YAML = require('yaml');
-const fnetShellJs = require('@fnet/shelljs');
 
-const fnetYaml = require('@fnet/yaml');
-const fnetConfig = require('@fnet/config');
-const fnetObjectFromSchema = require('@fnet/object-from-schema');
-const fnetShellFlow = require('@fnet/shell-flow');
+import { Command, Option } from 'commander'; // Import Commander
+import fs from 'fs';
+import YAML from 'yaml';
+import fnetShellJs from '@fnet/shelljs';
 
-const fnetRender = require('@flownet/lib-render-templates-dir');
-const Builder = require('./wf-builder'); // Specific builder for workflows
+import fnetYaml from '@fnet/yaml';
+import fnetObjectFromSchema from '@fnet/object-from-schema';
+import fnetShellFlow from '@fnet/shell-flow';
 
-const nodeModulesDir = require('./find-node-modules')({ baseDir: __dirname });
+import fnetRender from '@flownet/lib-render-templates-dir';
+import Builder from './wf-builder'; // Specific builder for workflows
+
+import findNodeModules from './find-node-modules';
+const nodeModulesDir = findNodeModules({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
 process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 

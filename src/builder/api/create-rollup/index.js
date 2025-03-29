@@ -1,10 +1,9 @@
+import fs from "node:fs";
+import path from "node:path";
+import nunjucks from "nunjucks";
+import fnetParseImports from '@flownet/lib-parse-imports-js';
 
-const fs = require("node:fs");
-const path = require("node:path");
-const nunjucks = require("nunjucks");
-const fnetParseImports = require('@flownet/lib-parse-imports-js');
-
-module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
+export default async function createRollup({ atom, setProgress, context, packageDependencies }) {
 
   await setProgress({ message: "Creating rollup file." });
 

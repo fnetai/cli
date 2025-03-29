@@ -1,8 +1,16 @@
-const fs = require("fs");
-const path = require("path");
-const fnetConfig = require('@fnet/config');
+import fs from "fs";
+import path from "path";
+import fnetConfig from "@fnet/config";
 
-module.exports = async ({ atom, Atom, setProgress, context, packageDependencies, deploymentProject, deploymentProjectTarget: target }) => {
+export default async function deployApp({
+  atom,
+  Atom,
+  setProgress,
+  context,
+  packageDependencies,
+  deploymentProject,
+  deploymentProjectTarget: target
+}) {
   await setProgress({ message: "Deploying it as workflow lib." });
 
   const atomConfig = (await fnetConfig({ name: "atom", dir: context.projectDir, tags: context.tags }))?.data;

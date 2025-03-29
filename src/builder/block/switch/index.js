@@ -1,6 +1,6 @@
-const cloneDeep = require('lodash.clonedeep');
-const initModules = require('../common/init-modules');
-const initCommonResolve = require('../common/init-common-resolve');
+import cloneDeep from 'lodash.clonedeep';
+import initModules from '../common/init-modules';
+import initCommonResolve from '../common/init-common-resolve';
 
 async function hits({ node }) {
   const hit = node.definition.hasOwnProperty('switch');
@@ -25,7 +25,6 @@ async function init({ node, initNode }) {
 
   if (defaultChilds.length === 1 && !switchChilds[switchChilds.length - 1].hasOwnProperty('default'))
     throw new Error(`Switch default must be the last child`);
-
 
   node.hasDefaultCondition = defaultChilds.length === 1;
 
@@ -79,8 +78,8 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   resolveNextBlock({ node });
 }
 
-module.exports = {
+export default {
   hits,
   init,
   resolve
-}
+};

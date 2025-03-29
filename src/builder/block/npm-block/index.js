@@ -1,4 +1,4 @@
-const callBlock = require('../call');
+import callBlock from '../call';
 
 class NpmWrapper {
   #key;
@@ -40,6 +40,6 @@ class NpmWrapper {
   }
 }
 
-module.exports = (args) => {
+export default function createNpmWrapper(args) {
   return new NpmWrapper(args);
 }

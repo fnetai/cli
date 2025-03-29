@@ -1,10 +1,9 @@
-const fnetConfig = require('@fnet/config');
-const fnetDeployer = require('@flownet/lib-to-docker');
+import fnetConfig from '@fnet/config';
+import fnetDeployer from '@flownet/lib-to-docker';
+import cloneDeep from "lodash.clonedeep";
+import semver from 'semver';
 
-const cloneDeep = require("lodash.clonedeep");
-const semver = require('semver');
-
-module.exports = async ({
+export default async function deployToDocker({
   atom,
   target,
   onProgress,
@@ -12,7 +11,7 @@ module.exports = async ({
   dependencies,
   context,
   yamlTarget
-}) => {
+}) {
 
   const deployerName = 'docker';
 

@@ -1,5 +1,5 @@
-const fnetExpression = require('@fnet/expression');
-const switchBlock = require('../switch');
+import fnetExpression from '@fnet/expression';
+import switchBlock from '../switch';
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);
@@ -68,7 +68,7 @@ async function init(api) {
   await switchBlock.init(api);
 }
 
-module.exports = {
+export default {
   hits,
   init
-}
+};

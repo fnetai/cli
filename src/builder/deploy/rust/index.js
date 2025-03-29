@@ -1,10 +1,9 @@
-const fnetConfig = require('@fnet/config');
-const fnetDeploy = require('@fnet/to-rust');
+import fnetConfig from '@fnet/config';
+import fnetDeploy from '@fnet/to-rust';
+import cloneDeep from "lodash.clonedeep";
+import semver from 'semver';
 
-const cloneDeep = require("lodash.clonedeep");
-const semver = require('semver');
-
-module.exports = async ({
+export default async function deployToRust({
   atom,
   target,
   onProgress,
@@ -12,7 +11,7 @@ module.exports = async ({
   dependencies,
   context,
   yamlTarget
-}) => {
+}) {
 
   const deployerName = 'Rust';
 

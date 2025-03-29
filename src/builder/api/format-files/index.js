@@ -1,8 +1,7 @@
-// const fnetShellJs = require('@fnet/shelljs');
-const path = require("path");
-const fnetShellFlow = require("@fnet/shell-flow");
+import path from "path";
+import fnetShellFlow from "@fnet/shell-flow";
 
-module.exports = async ({ setProgress, context }) => {
+export default async function formatFiles({ setProgress, context }) {
 
   const projectDir = context.projectDir;
 

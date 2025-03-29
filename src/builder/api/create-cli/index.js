@@ -1,9 +1,8 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const fnetShellJs = require('@fnet/shelljs');
-const fnetRender = require('@flownet/lib-render-templates-dir');
+import fs from "node:fs";
+import path from "node:path";
+import fnetRender from '@flownet/lib-render-templates-dir';
 
-module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
+export default async function createCli({ atom, setProgress, context, packageDependencies }) {
 
     if (atom.doc.features.cli.enabled !== true) return;
 

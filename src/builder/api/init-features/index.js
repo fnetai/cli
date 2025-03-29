@@ -1,22 +1,21 @@
-const merge = require('lodash.merge');
-const fs = require('node:fs');
-const path = require('node:path');
-const fnetParseImports = require('@flownet/lib-parse-imports-js');
+import merge from 'lodash.merge';
+import fs from 'node:fs';
+import path from 'node:path';
+import fnetParseImports from '@flownet/lib-parse-imports-js';
 
-
-const workboxFeatures = require('./workbox');
-const gzipFeatures = require('./gzip');
-const nunjucksFeatures = require('./nunjucks');
-const polyfillFeatures = require('./polyfill');
-const visualizerFeatures = require('./visualizer');
-const analyzerFeatures = require('./analyzer');
-const stringFeatures = require('./string');
-const imageFeatures = require('./image');
-const jsonFeatures = require('./json');
-const terserFeatures = require('./terser');
-const wasmFeatures = require('./wasm');
-const copyFeatures = require('./copy');
-const cssFeatures = require('./css');
+import workboxFeatures from './workbox';
+import gzipFeatures from './gzip';
+import nunjucksFeatures from './nunjucks';
+import polyfillFeatures from './polyfill';
+import visualizerFeatures from './visualizer';
+import analyzerFeatures from './analyzer';
+import stringFeatures from './string';
+import imageFeatures from './image';
+import jsonFeatures from './json';
+import terserFeatures from './terser';
+import wasmFeatures from './wasm';
+import copyFeatures from './copy';
+import cssFeatures from './css';
 
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
@@ -32,8 +31,7 @@ function findEntryFile({ dir, name = 'index' }) {
 
   return { file, ext, ts, name };
 }
-
-module.exports = async (apiContext) => {
+export default async function initFeatures(apiContext) {
 
   const { atom, context, setProgress } = apiContext;
 

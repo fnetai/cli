@@ -1,11 +1,11 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const nunjucks = require("nunjucks");
-const Ajv = require('ajv/dist/2020.js');
-const standaloneCode = require('ajv/dist/standalone/index.js');
-const addFormats = require('ajv-formats');
+import fs from "node:fs";
+import path from "node:path";
+import nunjucks from "nunjucks";
+import Ajv from 'ajv/dist/2020.js';
+import standaloneCode from 'ajv/dist/standalone/index.js';
+import addFormats from 'ajv-formats';
 
-module.exports = async ({ atom, setProgress, context, njEnv }) => {
+export default async function createToYargs({ atom, setProgress, context, njEnv }) {
 
   if (atom.doc.features.cli.enabled !== true) return;
 

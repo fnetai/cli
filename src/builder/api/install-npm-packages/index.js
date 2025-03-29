@@ -1,7 +1,7 @@
-const fnetShellJs = require('@fnet/shelljs');
-const which = require('../../which')
+import fnetShellJs from '@fnet/shelljs';
+import which from '../../which';
 
-module.exports = async ({ setProgress, atom, context }) => {
+export default async function installNpmPackages({ setProgress, atom, context }) {
 
   const projectDir = context.projectDir;
 

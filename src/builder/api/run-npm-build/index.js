@@ -1,6 +1,6 @@
-const fnetShellJs = require('@fnet/shelljs');
+import fnetShellJs from '@fnet/shelljs';
 
-module.exports = async ({ setProgress, context }) => {
+export default async function runNpmBuild({ setProgress, context }) {
 
     const projectDir = context.projectDir;
 

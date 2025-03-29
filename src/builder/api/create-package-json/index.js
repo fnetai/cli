@@ -1,10 +1,10 @@
-const nunjucks = require("nunjucks");
-const fs = require('node:fs');
-const path = require('node:path');
-const fnetParseImports = require('@flownet/lib-parse-imports-js');
-const pickNpmVersions = require('../common/pick-npm-versions');
+import nunjucks from "nunjucks";
+import fs from 'node:fs';
+import path from 'node:path';
+import fnetParseImports from '@flownet/lib-parse-imports-js';
+import pickNpmVersions from '../common/pick-npm-versions';
 
-module.exports = async ({ atom, context, packageDependencies, packageDevDependencies, setProgress }) => {
+export default async function createPackageJson({ atom, context, packageDependencies, packageDevDependencies, setProgress }) {
 
   await setProgress({ message: "Creating package.json." });
 

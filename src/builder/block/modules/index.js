@@ -1,6 +1,6 @@
-const cloneDeep = require('lodash.clonedeep');
-const initModules = require('../common/init-modules');
-const initCommonResolve = require('../common/init-common-resolve');
+import cloneDeep from 'lodash.clonedeep';
+import initModules from '../common/init-modules';
+import initCommonResolve from '../common/init-common-resolve';
 
 async function hits({ node }) {
   return node.definition.hasOwnProperty('modules');
@@ -26,8 +26,8 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   resolveNextBlock({ node });
 }
 
-module.exports = {
+export default {
   hits,
   init,
   resolve
-}
+};

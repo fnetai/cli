@@ -4,6 +4,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "description": "CLI for Flownet",
   "scripts": {
     "build": "rollup --config",
@@ -71,8 +72,8 @@
     "yaml": "^2.5.1"
   },
   "bin": {
-    "fnet": "dist/builder/wf-cli.js",
-    "fnode": "dist/builder/lib-cli.js"
+    "fnet": "dist/builder/wf-cli.mjs",
+    "fnode": "dist/builder/lib-cli.mjs"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",

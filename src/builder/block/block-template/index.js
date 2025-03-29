@@ -1,8 +1,8 @@
-const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
+import cloneDeep from 'lodash.clonedeep';
+import pick from 'lodash.pick';
+import omit from 'lodash.omit';
 
-const fnetExpression = require('@fnet/expression');
+import fnetExpression from '@fnet/expression';
 
 async function hits({ node }) {
     return node.definition.hasOwnProperty('template');
@@ -14,8 +14,8 @@ async function init({ node, initNode }) {
 async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExpression, transformValue }) {
 }
 
-module.exports = {
+export default {
     hits,
     init,
     resolve
-}
+};
