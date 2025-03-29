@@ -175,6 +175,7 @@ cmdBuilder = bindInputCommand(cmdBuilder);
 
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'npm', preArgs: ['run', 'serve', '--'] });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'npm', preArgs: ['run', 'watch', '--'] });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'npm', preArgs: ['run', 'app', '--'] });
