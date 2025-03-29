@@ -1,9 +1,9 @@
-const cloneDeep = require('lodash.clonedeep');
-const pick = require('lodash.pick');
-const omit = require('lodash.omit');
+import cloneDeep from 'lodash.clonedeep';
+import pick from 'lodash.pick';
+import omit from 'lodash.omit';
 
-const initModules = require('../common/init-modules');
-const initCommonResolve = require('../common/init-common-resolve');
+import initModules from '../common/init-modules';
+import initCommonResolve from '../common/init-common-resolve';
 
 async function hits({ node }) {
   return node.definition.hasOwnProperty('for');
@@ -72,8 +72,8 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   resolveNextBlock({ node });
 }
 
-module.exports = {
+export default {
   hits,
   init,
   resolve
-}
+};

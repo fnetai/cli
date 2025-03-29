@@ -1,66 +1,54 @@
-"use strict";
-
-const fs = require('node:fs');
-const path = require('node:path');
-
-const yaml = require("yaml");
-const fnetShellJs = require('@fnet/shelljs');
-const nunjucks = require("nunjucks");
-const cloneDeep = require('lodash.clonedeep');
-const isObject = require('isobject');
-const createRedisClient = require('../redisClient');
-const { randomUUID } = require('node:crypto');
-
-const Auth = require('./auth');
-
-const initFeatures = require("./api/init-features");
-const initDependencies = require("./api/init-dependencies");
-const createApp = require("./api/create-app");
-const createPackageJson = require("./api/create-package-json");
-const createCli = require("./api/create-cli");
-const createRollup = require("./api/create-rollup");
-const createToYargs = require("./api/create-to-yargs");
-const createGitIgnore = require("./api/create-git-ignore");
-const createTsConfig = require("./api/create-ts-config");
-const createProjectReadme = require("./api/create-project-readme");
-const formatFiles = require('./api/format-files');
-const createDts = require('./api/create-dts');
-const installNpmPackages = require('./api/install-npm-packages');
-const runNpmBuild = require('./api/run-npm-build');
-const pickNpmVersions = require('./api/common/pick-npm-versions');
-
-const deployTo = require('./deploy/deploy-to');
-
-const { Atom } = require("@flownet/lib-atom-api-js");
-const fnetParseNodeUrl = require('@flownet/lib-parse-node-url');
-const fnetBpmnFromFlow = require('./bpmn');
-const fnetConfig = require('@fnet/config');
-const fnetParseImports = require('@flownet/lib-parse-imports-js');
-const fnetExpression = require('@fnet/expression');
-
-const fnetYaml = require('@fnet/yaml');
-
-const chalk = require('chalk');
-
-const fnetListFiles = require('@fnet/list-files');
-
-// BLOCKS
-const ifBlock = require('./block/if');
-const tryExceptBlock = require('./block/try-except');
-const assignBlock = require('./block/assign');
-const forBlock = require('./block/for');
-const switchBlock = require('./block/switch');
-const parralelBlock = require('./block/parallel');
-const raiseBlock = require('./block/raise');
-const returnBlock = require('./block/return');
-const callBlock = require('./block/call');
-const stepsBlock = require('./block/steps');
-const formBlock = require('./block/form');
-const operationBlock = require('./block/operation');
-const jumpBlock = require('./block/jump');
-const modulesBlock = require('./block/modules');
-const resolveNextBlock = require('./block-api/resolve-next-block');
-const npmBlock = require('./block/npm-block');
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from "yaml";
+import fnetShellJs from '@fnet/shelljs';
+import nunjucks from "nunjucks";
+import cloneDeep from 'lodash.clonedeep';
+import isObject from 'isobject';
+import createRedisClient from '../redisClient';
+import { randomUUID } from 'node:crypto';
+import Auth from './auth';
+import initFeatures from "./api/init-features";
+import initDependencies from "./api/init-dependencies";
+import createApp from "./api/create-app";
+import createPackageJson from "./api/create-package-json";
+import createCli from "./api/create-cli";
+import createRollup from "./api/create-rollup";
+import createToYargs from "./api/create-to-yargs";
+import createGitIgnore from "./api/create-git-ignore";
+import createTsConfig from "./api/create-ts-config";
+import createProjectReadme from "./api/create-project-readme";
+import formatFiles from './api/format-files';
+import createDts from './api/create-dts';
+import installNpmPackages from './api/install-npm-packages';
+import runNpmBuild from './api/run-npm-build';
+import pickNpmVersions from './api/common/pick-npm-versions';
+import deployTo from './deploy/deploy-to';
+import { Atom } from "@flownet/lib-atom-api-js";
+import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
+import fnetBpmnFromFlow from './bpmn';
+import fnetConfig from '@fnet/config';
+import fnetParseImports from '@flownet/lib-parse-imports-js';
+import fnetExpression from '@fnet/expression';
+import fnetYaml from '@fnet/yaml';
+import chalk from 'chalk';
+import fnetListFiles from '@fnet/list-files';
+import ifBlock from './block/if';
+import tryExceptBlock from './block/try-except';
+import assignBlock from './block/assign';
+import forBlock from './block/for';
+import switchBlock from './block/switch';
+import parralelBlock from './block/parallel';
+import raiseBlock from './block/raise';
+import returnBlock from './block/return';
+import callBlock from './block/call';
+import stepsBlock from './block/steps';
+import formBlock from './block/form';
+import operationBlock from './block/operation';
+import jumpBlock from './block/jump';
+import modulesBlock from './block/modules';
+import resolveNextBlock from './block-api/resolve-next-block';
+import npmBlock from './block/npm-block';
 
 class Builder {
 
@@ -1199,4 +1187,4 @@ class Builder {
     }
   }
 }
-module.exports = Builder;
+export default Builder;

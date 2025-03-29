@@ -1,9 +1,9 @@
-const nunjucks = require("nunjucks");
-const fs = require('node:fs');
-const path = require('node:path');
-const fnetYaml = require("@fnet/yaml");
+import nunjucks from "nunjucks";
+import fs from 'node:fs';
+import path from 'node:path';
+import fnetYaml from "@fnet/yaml";
 
-module.exports = async ({ atom, context, setProgress, Atom }) => {
+export default async function createProjectReadme({ atom, context, setProgress, Atom }) {
 
   const fileBase = `readme.md`;
   const message = `Creating ${fileBase}`;

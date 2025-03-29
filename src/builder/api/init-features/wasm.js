@@ -1,6 +1,6 @@
-const featureTemplate = require('./feature-template');
+import featureTemplate from './feature-template';
 
-module.exports = (apiContext) => {
+export default function initWasmFeature(apiContext) {
 
   const { atom, packageDevDependencies } = apiContext;
   const features = atom.doc.features;

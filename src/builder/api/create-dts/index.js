@@ -1,6 +1,6 @@
-const fnetShellJs = require('@fnet/shelljs');
+import fnetShellJs from '@fnet/shelljs';
 
-module.exports = async ({atom, setProgress, context }) => {
+export default async function createDts({ atom, setProgress, context }) {
 
     if(!atom.doc.features.dts_enabled) return;
     

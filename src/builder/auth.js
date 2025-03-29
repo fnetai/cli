@@ -1,6 +1,6 @@
-const { Api } = require("@flownet/lib-atom-api-js");
+import { Api } from "@flownet/lib-atom-api-js";
 
-module.exports = class {
+export default class {
     init({ config, accessToken }) {
         return new Promise((resolve, reject) => {
 

@@ -1,3 +1,3 @@
-module.exports = async ({ atom, packageDependencies, packageDevDependencies, setProgress }) => {
+export default async function initPythonDependencies({ atom, packageDependencies, packageDevDependencies, setProgress }) {
   setProgress('Initializing dependencies');
 }

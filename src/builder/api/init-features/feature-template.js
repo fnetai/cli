@@ -1,8 +1,8 @@
-const merge = require('lodash.merge');
+import merge from 'lodash.merge';
 
-module.exports = ({ feature, features, packageDevDependencies}) => {
+export default function featureTemplate({ feature, features, packageDevDependencies }) {
 
-  const { name, packages, options, extraCheck,explicit } = feature;
+  const { name, packages, options, extraCheck, explicit } = feature;
 
   const keyEnabled = `${name}_enabled`;
 

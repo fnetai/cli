@@ -1,11 +1,9 @@
+import fnetConfig from '@fnet/config';
+import fnetToMacOSApp from '@flownet/lib-to-macos-app';
+import cloneDeep from "lodash.clonedeep";
+import semver from 'semver';
 
-const fnetConfig = require('@fnet/config');
-const fnetToMacOSApp = require('@flownet/lib-to-macos-app');
-
-const cloneDeep = require("lodash.clonedeep");
-const semver = require('semver');
-
-module.exports = async ({
+export default async function deployToMacOSApp({
   atom,
   target,
   onProgress,
@@ -13,7 +11,7 @@ module.exports = async ({
   dependencies,
   context,
   yamlTarget
-}) => {
+}) {
 
   const deployerName = 'macos-app';
 

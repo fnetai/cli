@@ -1,4 +1,4 @@
-const cloneDeep = require('lodash.clonedeep');
+import cloneDeep from 'lodash.clonedeep';
 
 async function hits({ node }) {
     return node.definition.hasOwnProperty('raise');
@@ -19,8 +19,8 @@ async function resolve({ node, resolveTypeCommon, transformExpression }) {
     await resolveTypeCommon({ node });
 }
 
-module.exports = {
+export default {
     hits,
     init,
     resolve
-}
+};

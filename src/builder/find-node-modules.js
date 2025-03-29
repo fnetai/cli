@@ -1,20 +1,23 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-function findNodeModules({ baseDir = __dirname }) {
-    let currentDir = baseDir;
+function findNodeModules({ baseDir }) {
 
-    while (currentDir !== path.parse(currentDir).root) {
-        const potentialPath = path.join(currentDir, 'node_modules');
+  baseDir = baseDir || __dirname;
 
-        if (fs.existsSync(potentialPath)) {
-            return potentialPath;
-        }
+  let currentDir = baseDir;
 
-        currentDir = path.dirname(currentDir);
+  while (currentDir !== path.parse(currentDir).root) {
+    const potentialPath = path.join(currentDir, 'node_modules');
+
+    if (fs.existsSync(potentialPath)) {
+      return potentialPath;
     }
 
-    return null;
+    currentDir = path.dirname(currentDir);
+  }
+
+  return null;
 }
 
-module.exports = findNodeModules;
+export default findNodeModules;

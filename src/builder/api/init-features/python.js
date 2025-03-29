@@ -1,4 +1,4 @@
-module.exports = async (apiContext) => {
+export default async function initPythonFeature(apiContext) {
   const { atom, context, setProgress } = apiContext;
   setProgress('Initializing features...');
 

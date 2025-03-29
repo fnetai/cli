@@ -1,7 +1,7 @@
-const semver = require('semver');
-const fnetConfig = require('@fnet/config');
+import semver from 'semver';
+import fnetConfig from '@fnet/config';
 
-module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
+export default async function deployToFnetForm({ setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) {
 
   await setProgress({ message: "Deploying it as fnet form." });
 

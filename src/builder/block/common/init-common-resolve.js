@@ -1,4 +1,4 @@
-module.exports = async ({ node, transformExpression }) => {
+export default async function initCommonResolve({ node, transformExpression }) {
   const transform = node.context.transform;
 
   if (Reflect.has(transform, 'export'))

@@ -1,4 +1,4 @@
-module.exports = ({ node }) => {
+export default function resolveNextBlock({ node }) {
   const definition = node.definition;
   
   if(node.hasReturn) return;

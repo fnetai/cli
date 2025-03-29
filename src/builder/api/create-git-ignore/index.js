@@ -1,8 +1,8 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const nunjucks = require("nunjucks");
+import fs from "node:fs";
+import path from "node:path";
+import nunjucks from "nunjucks";
 
-module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
+export default async function createGitIgnore({ atom, setProgress, context, packageDependencies }) {
     await setProgress({ message: "Creating .gitignore" });
 
     const templateContext = {

@@ -1,69 +1,139 @@
-const deployToGitlab = require('../gitlab');
-const deployToGcs = require('../gcs');
-const deployToNpm = require('../npm');
-const deployToNodeRed = require('../red');
-const deployToAtom = require('../atom');
-const deployToIosApp = require('../ios-app');
-const deployToMacOSApp = require('../macos-app');
-const deployToElectron = require('../electron');
-const deployToWebos = require('../webos');
-const deployToNextjs = require('../nextjs');
-const deployToDocker = require('../docker');
-const deployToFnetPackage = require('../fnet-package');
-const deployToFnetForm = require('../fnet-form');
-const deployToFnetFlow = require('../fnet-flow');
-const deployToFnetNode = require('../fnet-node');
-const deployToRust = require('../rust');
-const deployToPyip = require('../pypi');
-
 module.exports = async (apiContext) => {
 
-  const { atom, packageDependencies, context, deploymentProjectTarget, setProgress, deploymentProject, yamlTarget } = apiContext;
+  // Destructure the apiContext to get needed variables
+  const {
+    atom,
+    packageDependencies,
+    context,
+    deploymentProjectTarget,
+    setProgress,
+    deploymentProject,
+    yamlTarget
+  } = apiContext;
 
+  // Early exit if the target is not enabled
   if (deploymentProjectTarget.enabled !== true) return;
 
-  if (deploymentProjectTarget.type === "lib")
-    await deployToAtom({ ...apiContext });
-  else if (deploymentProjectTarget.type === "red")
-    await deployToNodeRed({ ...apiContext });
-  else if (deploymentProjectTarget.type === "npm")
-    await deployToNpm({ ...apiContext });
-  else if (deploymentProjectTarget.type === "gcs")
-    await deployToGcs({ ...apiContext });
-  else if (deploymentProjectTarget.type === "gitlab")
-    await deployToGitlab({ ...apiContext });
-  else if (deploymentProjectTarget.type === "fnet-package")
-    await deployToFnetPackage({ ...apiContext });
-  else if (deploymentProjectTarget.type === "fnet-form")
-    await deployToFnetForm({ ...apiContext });
-  else if (deploymentProjectTarget.type === "fnet-node")
-    await deployToFnetNode({ ...apiContext });
-  else if (deploymentProjectTarget.type === "fnet-flow")
-    await deployToFnetFlow({ ...apiContext });
-  else {
-    let deployer;
+  const type = deploymentProjectTarget.type;
 
-    if (deploymentProjectTarget.type === 'nextjs') deployer = deployToNextjs;
-    else if (deploymentProjectTarget.type === 'webos') deployer = deployToWebos;
-    else if (deploymentProjectTarget.type === 'electron') deployer = deployToElectron;
-    else if (deploymentProjectTarget.type === 'docker') deployer = deployToDocker;
-    else if (deploymentProjectTarget.type === 'ios') deployer = deployToIosApp;
-    else if (deploymentProjectTarget.type === 'macos') deployer = deployToMacOSApp;
-    else if (deploymentProjectTarget.type === 'rust') deployer = deployToRust;
-    else if (deploymentProjectTarget.type === 'pypi') deployer = deployToPyip;
-
-    if (!deployer) return;
-
-    await deployer({
-      atom: atom,
-      target: deploymentProjectTarget,
-      onProgress: setProgress,
-      projectDir: context.projectDir,
-      dependencies: packageDependencies,
-      context: context,
-      yamlTarget: yamlTarget,
-    });
-
-    deploymentProject.isDirty = true;
+  try {
+    // Handle the first set of deployment types
+    if (type === "lib") {
+      await (await import('../atom')).default({ ...apiContext });
+    } else if (type === "red") {
+      await (await import('../red')).default({ ...apiContext });
+    } else if (type === "npm") {
+      await (await import('../npm')).default({ ...apiContext });
+    } else if (type === "gcs") {
+      await (await import('../gcs')).default({ ...apiContext });
+    } else if (type === "gitlab") {
+      await (await import('../gitlab')).default({ ...apiContext });
+    } else if (type === "fnet-package") {
+      await (await import('../fnet-package')).default({ ...apiContext });
+    } else if (type === "fnet-form") {
+      await (await import('../fnet-form')).default({ ...apiContext });
+    } else if (type === "fnet-node") {
+      await (await import('../fnet-node')).default({ ...apiContext });
+    } else if (type === "fnet-flow") {
+      await (await import('../fnet-flow')).default({ ...apiContext });
+    }
+    // Handle the second set of deployment types
+    else if (type === 'nextjs') {
+      await (await import('../nextjs')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'webos') {
+      await (await import('../webos')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'electron') {
+      await (await import('../electron')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'docker') {
+      await (await import('../docker')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'ios') {
+      await (await import('../ios-app')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'macos') {
+      await (await import('../macos-app')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'rust') {
+      await (await import('../rust')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else if (type === 'pypi') {
+      await (await import('../pypi')).default({
+        atom,
+        target: deploymentProjectTarget,
+        onProgress: setProgress,
+        projectDir: context.projectDir,
+        dependencies: packageDependencies,
+        context,
+        yamlTarget
+      });
+      deploymentProject.isDirty = true;
+    } else {
+      console.warn(`No deployer found for type: ${type}`);
+      return;
+    }
+  } catch (error) {
+    // Add error handling for require failures or execution errors
+    console.error(`Error during deployment for type "${type}":`, error);
+    // Re-throw the error or handle it as appropriate for your application
+    throw error;
   }
-}
+};

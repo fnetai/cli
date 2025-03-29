@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const fnetRender = require('@flownet/lib-render-templates-dir');
-module.exports = async ({ atom, setProgress, context, packageDependencies }) => {
+import fs from 'node:fs';
+import path from 'node:path';
+import fnetRender from '@flownet/lib-render-templates-dir';
+export default async function createApp({ atom, setProgress, context, packageDependencies }) {
 
   if (atom.doc.features.app.enabled !== true) return;
 

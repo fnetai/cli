@@ -1,9 +1,8 @@
-const path = require('node:path');
+import path from 'node:path';
+import fnetAutoCondaEnv from '@fnet/auto-conda-env';
+import fnetRender from '@flownet/lib-render-templates-dir';
 
-const fnetAutoCondaEnv = require('@fnet/auto-conda-env');
-const fnetRender = require('@flownet/lib-render-templates-dir');
-
-module.exports = async (args) => {
+export default async function installPythonPackages(args) {
 
   const { setProgress, atom, context } = args;
 

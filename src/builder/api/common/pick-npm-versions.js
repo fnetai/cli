@@ -1,10 +1,9 @@
-const fnetPickNpmVersions = require('@fnet/npm-pick-versions');
+import fnetPickNpmVersions from '@fnet/npm-pick-versions';
+import hash from 'object-hash';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const hash = require('object-hash');
-const fs = require('node:fs');
-const path = require('node:path');
-
-module.exports = async ({ projectDir, name, setProgress, count = 1 }) => {
+export default async function pickNpmVersions({ projectDir, name, setProgress, count = 1 }) {
 
   let npmVersions;
 

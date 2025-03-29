@@ -1,12 +1,11 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const os = require('node:os');
-const nunjucks = require('nunjucks');
-const Red = require('@node-red/util');
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import nunjucks from 'nunjucks';
+import Red from '@node-red/util';
+import fnetConfig from '@fnet/config';
 
-const fnetConfig = require('@fnet/config');
-
-module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, buildId, packageDependencies, njEnv }) => {
+export default async function deployToNodeRed({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, buildId, packageDependencies, njEnv }) {
 
     await setProgress({ message: "Deploying it as node-red flow." });
     

@@ -1,7 +1,7 @@
-const fnetKvTransformer = require('@fnet/key-value-transformer');
-const fnetExpression = require('@fnet/expression');
+import fnetKvTransformer from '@fnet/key-value-transformer';
+import fnetExpression from '@fnet/expression';
 
-module.exports = async ({ node, initNode }) => {
+export default async function initModules({ node, initNode }) {
 
   if (Reflect.has(node.definition, 'modules') && !Array.isArray(node.definition.modules)) {
     const modules = node.definition.modules;

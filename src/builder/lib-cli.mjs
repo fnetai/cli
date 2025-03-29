@@ -1,31 +1,31 @@
+import path from 'path';
+import { spawn } from 'child_process';
+import prompt from '@fnet/prompt';
+import which from './which.js';
+import pkg from '../../package.json' assert { type: 'json' };
+import { Command, Option } from 'commander';
+import fs from 'fs';
+import YAML from 'yaml';
+import fnetShellJs from '@fnet/shelljs';
+import os from 'os';
+import fnetYaml from '@fnet/yaml';
+import fnetConfig from '@fnet/config';
+import fnetObjectFromSchema from '@fnet/object-from-schema';
+import fnetShellFlow from '@fnet/shell-flow';
+import fnetRender from '@flownet/lib-render-templates-dir';
+import Builder from './lib-builder.js';
+import findNodeModules from './find-node-modules.js';
+
 const cwd = process.cwd();
-const { spawn } = require('child_process');
-const prompt = require('@fnet/prompt');
-const which = require('./which');
-const pkg = require('../../package.json');
 
 // fnet env (Assuming this sets up environment variables based on redis config)
-require('@fnet/config')({
+fnetConfig({
   name: ["redis"],
   dir: cwd,
   optional: true
 });
 
-const path = require('path');
-const { Command, Option } = require('commander'); // Import Commander
-const fs = require('fs');
-const YAML = require('yaml');
-const fnetShellJs = require('@fnet/shelljs');
-const os = require('os');
-
-const fnetYaml = require('@fnet/yaml');
-const fnetConfig = require('@fnet/config');
-const fnetObjectFromSchema = require('@fnet/object-from-schema');
-const fnetShellFlow = require('@fnet/shell-flow');
-
-const fnetRender = require('@flownet/lib-render-templates-dir');
-const Builder = require('./lib-builder');
-const nodeModulesDir = require('./find-node-modules')({ baseDir: __dirname });
+const nodeModulesDir = findNodeModules({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
 process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 

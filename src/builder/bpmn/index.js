@@ -1,7 +1,7 @@
-const BpmnModdle = require('bpmn-moddle');
-const dagre = require('dagre');
-const cloneDeep = require('lodash.clonedeep');
-const atomJson = require('./atom.json');
+import BpmnModdle from 'bpmn-moddle';
+import dagre from 'dagre';
+import cloneDeep from 'lodash.clonedeep';
+import atomJson from './atom.json';
 
 function initNodes(context) {
     const { nodes, nodeIndex, root } = context;
@@ -487,6 +487,6 @@ async function modelA(context) {
     }
 }
 
-module.exports = async (context = {}) => {
+export default async function generateBpmnModel(context = {}) {
   return await modelA(cloneDeep(context));
-};
+}

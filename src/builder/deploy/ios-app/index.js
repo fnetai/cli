@@ -1,11 +1,9 @@
+import fnetConfig from '@fnet/config';
+import fnetToIOSApp from '@flownet/lib-to-ios-app';
+import cloneDeep from "lodash.clonedeep";
+import semver from 'semver';
 
-const fnetConfig = require('@fnet/config');
-const fnetToIOSApp = require('@flownet/lib-to-ios-app');
-
-const cloneDeep = require("lodash.clonedeep");
-const semver = require('semver');
-
-module.exports = async ({
+export default async function deployToIOSApp({
   atom,
   target,
   onProgress,
@@ -13,7 +11,7 @@ module.exports = async ({
   dependencies,
   context,
   yamlTarget
-}) => {
+}) {
 
   const deployerName = 'ios-app';
 

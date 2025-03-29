@@ -8,8 +8,8 @@ async function init({ node, initNode }) {
 async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExpression, transformValue }) {
 }
 
-module.exports = {
+export default {
     hits,
     init,
     resolve
-}
+};
