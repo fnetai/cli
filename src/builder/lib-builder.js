@@ -6,7 +6,8 @@ const yaml = require("yaml");
 const nunjucks = require("nunjucks");
 const createRedisClient = require('../redisClient');
 
-const { nanoid } = require('nanoid');
+const { randomUUID } = require('node:crypto');
+
 
 const Auth = require('./auth');
 
@@ -134,7 +135,7 @@ class Builder {
     // .
     let target = projectDir;
     if (!fs.existsSync(target)) {
-      fs.mkdirSync(target, { recursive: true });    
+      fs.mkdirSync(target, { recursive: true });
     }
 
     // src
@@ -147,38 +148,38 @@ class Builder {
     // default
     target = path.join(projectDir, "src", "default");
     if (!fs.existsSync()) {
-      fs.mkdirSync(target, { recursive: true });    
+      fs.mkdirSync(target, { recursive: true });
     }
   }
 
 
   async initLibraryDirPython() {
     this.setProgress({ message: "Initializing library directory." });
-  
+
     const projectDir = this.#context.projectDir;
-  
+
     this.setProgress({ message: "Cleaning project directory." });
-  
+
     const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
-  
+
     this.setProgress({ message: "Creating project directory." });
-  
+
     let target = projectDir;
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
-  
+
     target = path.join(projectDir, 'src');
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
-  
+
     target = path.join(projectDir, 'src', 'default');
     const source = this.#context.projectSrcDir;
-  
+
     if (!fs.existsSync(target)) {
       try {
         if (os.platform() === 'win32') {
@@ -193,7 +194,7 @@ class Builder {
       }
     }
   }
-  
+
   async initNunjucks() {
     this.setProgress({ message: "Initializing nunjucks." });
 
@@ -581,7 +582,7 @@ class Builder {
 
     this._redis_client = await createRedisClient();
 
-    this.#buildId = this.#context.buildId || nanoid(24);
+    this.#buildId = this.#context.buildId || randomUUID();
     this.#apiContext.buildId = this.#buildId;
 
     this.#mode = this.#context.mode;

@@ -7,6 +7,7 @@ const fnetConfig = require('@fnet/config');
 const fnetUpListFiles = require('@fnet/up-list-files');
 const fnetObjectFromSchema = require('@fnet/object-from-schema');
 const yaml = require('yaml');
+const which = require('../../which');
 
 module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
 
@@ -62,7 +63,9 @@ module.exports = async ({ atom, setProgress, context, deploymentProject, deploym
 
   if (target.dryRun === true) return;
 
-  let result = await fnetShellJs(`npm publish --access public`, { cwd: projectDir });
+  const packageManager = which('bun') ? 'bun' : 'npm';
+
+  let result = await fnetShellJs(`${packageManager} publish --access public`, { cwd: projectDir });
   if (result.code !== 0) throw new Error('Couldnt publish to npm');
 
   // restore

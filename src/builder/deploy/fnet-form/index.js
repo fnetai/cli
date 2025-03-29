@@ -1,8 +1,7 @@
 const semver = require('semver');
 const fnetConfig = require('@fnet/config');
-const axios = require('axios').default;
 
-module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target,yamlTarget }) => {
+module.exports = async ({ setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) => {
 
   await setProgress({ message: "Deploying it as fnet form." });
 
@@ -20,19 +19,20 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
   const username = config.env.ATOM_API_USERNAME;
   const password = config.env.ATOM_API_PASSWORD;
 
-  let response = await axios({
+  const tokenResponse = await fetch(apiTokenUrl, {
     method: "POST",
-    url: apiTokenUrl,
-    data: {
-      username,
-      password
-    },
     headers: {
       "Content-Type": "application/json"
     },
+    body: JSON.stringify({ username, password })
   });
 
-  const access_token = response.data?.access_token;
+  if (!tokenResponse.ok) {
+    throw new Error(`Failed to fetch token: ${tokenResponse.statusText}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  const access_token = tokenData?.access_token;
 
   if (!access_token) throw new Error(`Invalid access_token from ${apiTokenUrl}`);
 
@@ -44,20 +44,25 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
   yamlTarget.set('version', newVersion);
   const url = `${config.env.ATOM_API_URL}/v1/service/fnet-form/publish`;
 
-  response = await axios({
+  const publishResponse = await fetch(url, {
     method: "POST",
-    url,
-    data: {
-      name: target.params.name,
-      version: target.params.version,
-      docs: target.params.docs,
-      configs: target.params.configs,
-    },
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${access_token}`
     },
+    body: JSON.stringify({
+      name: target.params.name,
+      version: target.params.version,
+      docs: target.params.docs,
+      configs: target.params.configs,
+    })
   });
 
-  if (response.data?.error) throw new Error('Error publishing fnet form.');
+  if (!publishResponse.ok) {
+    throw new Error(`Error publishing fnet form: ${publishResponse.statusText}`);
+  }
+
+  const publishData = await publishResponse.json();
+
+  if (publishData?.error) throw new Error('Error publishing fnet form.');
 }

@@ -1,10 +1,17 @@
 name: cli
 
 commands:
-  compile:
+  test: 
     - npm run build
-    - bun build ./dist/builder/lib-cli.js --compile --outfile=.temp/bin/fnode --target=bun
-    # - bun build ./src/builder/lib-cli.js --compile --outfile=dist/bin/fnode --target=bun
-    - chmod +x .temp/bin/fnode
-    - du -h .temp/bin/fnode
-    - .temp/bin/fnode --version
+    - node ./dist/builder/lib-cli.js --help
+    - node ./dist/builder/wf-cli.js --help
+    
+  compile:
+    steps:
+      - npm run build
+      - bun build ./dist/builder/wf-cli.js --format=cjs --compile --outfile=.temp/bin/fnode
+      - chmod +x .temp/bin/fnode
+      - du -h .temp/bin/fnode
+      - .temp/bin/fnode --version
+    env:
+      DEVELOPMENT: true

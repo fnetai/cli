@@ -6,14 +6,14 @@ const Red = require('@node-red/util');
 
 const fnetConfig = require('@fnet/config');
 
-module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, buildId,packageDependencies,njEnv }) => {
+module.exports = async ({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, buildId, packageDependencies, njEnv }) => {
 
     await setProgress({ message: "Deploying it as node-red flow." });
     
     const projectDir = context.projectDir;
     const templateDir = context.templateDir;
 
-    const PREFIX=atom.type==='workflow'?'WF':'LIB';
+    const PREFIX = atom.type === 'workflow' ? 'WF' : 'LIB';
 
     let tmpContext;
 
@@ -128,7 +128,7 @@ module.exports = async ({ atom, setProgress, context, deploymentProject, deploym
 
     deploymentProject.isDirty = true;
 
-    const redConfig = (await fnetConfig({ name: context.redConfig || "red", dir: context.projectDir,tags:context.tags }))?.data;
+    const redConfig = (await fnetConfig({ name: context.redConfig || "red", dir: context.projectDir, tags: context.tags }))?.data;
 
     const redUrl = target.deploy.url || redConfig.env.RED_URL;
     
@@ -139,35 +139,52 @@ module.exports = async ({ atom, setProgress, context, deploymentProject, deploym
 
     if (!target.deploy.id) {
         // create
-        const response = await axios({
+        const response = await fetch(`${redUrl}/flow`, {
             method: "POST",
-            url: `${redUrl}/flow`,
-            data: templateRendered,
-            headers
+            headers: {
+                ...headers,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(templateRendered)
         });
 
-        target.deploy.id = response.data.id;
+        if (!response.ok) {
+            throw new Error(`Failed to create flow: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        target.deploy.id = data.id;
     }
     else {
         if (target.actions?.delete === true) {
             // update
-            const response = await axios({
+            const response = await fetch(`${redUrl}/flow/${target.deploy.id}`, {
                 method: "DELETE",
-                url: `${redUrl}/flow/${target.deploy.id}`,
                 headers
             });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete flow: ${response.statusText}`);
+            }
+
             delete target.actions.delete;
             delete target.deploy.id;
             target.enabled = false;
         }
         else {
             // update
-            const response = await axios({
+            const response = await fetch(`${redUrl}/flow/${target.deploy.id}`, {
                 method: "PUT",
-                url: `${redUrl}/flow/${target.deploy.id}`,
-                data: templateRendered,
-                headers
+                headers: {
+                    ...headers,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(templateRendered)
             });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update flow: ${response.statusText}`);
+            }
         }
     }
 }

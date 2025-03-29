@@ -1,8 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const nunjucks = require("nunjucks");
-const Ajv = require('ajv/dist/2020');
-const standaloneCode = require('ajv/dist/standalone');
+const Ajv = require('ajv/dist/2020.js');
+const standaloneCode = require('ajv/dist/standalone/index.js');
 const addFormats = require('ajv-formats');
 
 module.exports = async ({ atom, setProgress, context, njEnv }) => {

@@ -1,6 +1,5 @@
 const semver = require('semver');
 const fnetConfig = require('@fnet/config');
-const axios = require('axios').default;
 const fs = require('fs');
 const fnetShellJs = require('@fnet/shelljs');
 const FormData = require('form-data');
@@ -23,19 +22,20 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
   const username = config.env.ATOM_API_USERNAME;
   const password = config.env.ATOM_API_PASSWORD;
 
-  let response = await axios({
+  const tokenResponse = await fetch(apiTokenUrl, {
     method: "POST",
-    url: apiTokenUrl,
-    data: {
-      username,
-      password
-    },
     headers: {
       "Content-Type": "application/json"
     },
+    body: JSON.stringify({ username, password })
   });
 
-  const access_token = response.data?.access_token;
+  if (!tokenResponse.ok) {
+    throw new Error(`Failed to fetch token: ${tokenResponse.statusText}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  const access_token = tokenData?.access_token;
 
   if (!access_token) throw new Error(`Invalid access_token from ${apiTokenUrl}`);
 
@@ -47,24 +47,29 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
   
   const url = `${config.env.ATOM_API_URL}/v1/service/fnet-node/publish`;
 
-  response = await axios({
+  const publishResponse = await fetch(url, {
     method: "POST",
-    url,
-    data: {
-      name: target.params.name,
-      version: target.params.version,
-      docs: target.params.docs,
-      configs: target.params.configs,
-    },
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${access_token}`
     },
+    body: JSON.stringify({
+      name: target.params.name,
+      version: target.params.version,
+      docs: target.params.docs,
+      configs: target.params.configs,
+    })
   });
 
-  if (response.data?.error) throw new Error('Error publishing fnet node.');
+  if (!publishResponse.ok) {
+    throw new Error(`Error publishing fnet node: ${publishResponse.statusText}`);
+  }
 
-  const upload_session_id = response.data?.upload.id;
+  const publishData = await publishResponse.json();
+
+  if (publishData?.error) throw new Error('Error publishing fnet node.');
+
+  const upload_session_id = publishData?.upload.id;
 
   let command = `fnet-dir-zipper`;
   command += ` --sourceDir='${context.project.projectDir}'`;
@@ -80,16 +85,20 @@ module.exports = async ({ setProgress, context, deploymentProject, deploymentPro
   let formData = new FormData();
   formData.append('file', fs.createReadStream(zipFilePath));
 
-  const uploadResult = await axios.request({
+  const uploadResponse = await fetch(`${config.env.ATOM_API_URL}/v1/service/upload/single/${upload_session_id}`, {
     method: 'POST',
-    maxBodyLength: Infinity,
-    url: `${config.env.ATOM_API_URL}/v1/service/upload/single/${upload_session_id}`,
     headers: {
       ...formData.getHeaders(),
       "Authorization": `Bearer ${access_token}`
     },
-    data: formData
+    body: formData
   });
 
-  if (uploadResult.data?.error) throw new Error('Error uploading fnet node.');
+  if (!uploadResponse.ok) {
+    throw new Error(`Error uploading fnet node: ${uploadResponse.statusText}`);
+  }
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult?.error) throw new Error('Error uploading fnet node.');
 }

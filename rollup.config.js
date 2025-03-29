@@ -31,17 +31,6 @@ const commonPlugins = () => {
 };
 
 export default [
-  // {
-  //   input: `src/index.js`,
-  //   output: {
-  //     file: 'dist/index.js',
-  //     format: "cjs",
-  //     exports: "auto",
-  //     banner: '#!/usr/bin/env node',
-  //   },
-  //   plugins: commonPlugins(),
-  //   external: id => /node_modules/.test(id)
-  // },
   {
     input: `src/builder/wf-cli.js`,
     output: {

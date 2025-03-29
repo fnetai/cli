@@ -1,6 +1,4 @@
 const { Api } = require("@flownet/lib-atom-api-js");
-const axios = require('axios').default;
-const qs = require('qs');
 
 module.exports = class {
     init({ config, accessToken }) {
@@ -14,20 +12,25 @@ module.exports = class {
                 return;
             }
 
-            axios({
+            fetch(`${config.data.issuer}/protocol/openid-connect/token`, {
                 method: "POST",
-                url: `${config.data.issuer}/protocol/openid-connect/token`,
-                data: qs.stringify(config.data.grant.params),
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-            }).then(response => {
-                Api.set_req_token(response.data.access_token);
-                resolve(response.data.access_token);
-            }).catch(error => {
-                Api.set_req_token();
-                reject(error);
-            });
+                body: new URLSearchParams(config.data.grant.params)
+            })
+                .then(async (response) => {
+                    if (!response.ok) throw new Error(await response.text());
+                    return response.json();
+                })
+                .then(response => {
+                    Api.set_req_token(response.access_token);
+                    resolve(response.access_token);
+                })
+                .catch(error => {
+                    Api.set_req_token();
+                    reject(error);
+                });
         });
     }
 }

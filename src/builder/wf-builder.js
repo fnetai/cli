@@ -9,7 +9,7 @@ const nunjucks = require("nunjucks");
 const cloneDeep = require('lodash.clonedeep');
 const isObject = require('isobject');
 const createRedisClient = require('../redisClient');
-const { nanoid } = require('nanoid');
+const { randomUUID } = require('node:crypto');
 
 const Auth = require('./auth');
 
@@ -148,7 +148,7 @@ class Builder {
 
     this._redis_client = await createRedisClient();
 
-    this.#buildId = this.#context.buildId || nanoid(24);
+    this.#buildId = this.#context.buildId || randomUUID();
     this.#apiContext.buildId = this.#buildId;
 
     this.#mode = this.#context.mode;
@@ -436,7 +436,7 @@ class Builder {
 
     node.codeKey = `B_${levels.join('_')}_${node.type}`;
     node.pathKey = `${levels.join('.')}`;
-    node.typeId = nanoid(24);
+    node.typeId = randomUUID();
 
     for await (const child of node.childs) {
       await this.initNodeIndex({ node: child, index });
