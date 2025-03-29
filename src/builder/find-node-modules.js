@@ -1,23 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+function findNodeModules({ baseDir }) {
 
-function findNodeModules({ baseDir = __dirname }) {
-    let currentDir = baseDir;
+  baseDir = baseDir || __dirname;
 
-    while (currentDir !== path.parse(currentDir).root) {
-        const potentialPath = path.join(currentDir, 'node_modules');
+  let currentDir = baseDir;
 
-        if (fs.existsSync(potentialPath)) {
-            return potentialPath;
-        }
+  while (currentDir !== path.parse(currentDir).root) {
+    const potentialPath = path.join(currentDir, 'node_modules');
 
-        currentDir = path.dirname(currentDir);
+    if (fs.existsSync(potentialPath)) {
+      return potentialPath;
     }
 
-    return null;
+    currentDir = path.dirname(currentDir);
+  }
+
+  return null;
 }
 
 export default findNodeModules;

@@ -1,16 +1,17 @@
 name: cli
 
 commands:
-  test:
+  build:
     - bun run build
-    - node ./dist/builder/lib-cli.mjs --help
-    - node ./dist/builder/wf-cli.mjs --help
+    - node ./dist/fnode/index.mjs --version
+    - node ./dist/fnet/index.mjs --version
+    - bun link
 
   compile:
     steps:
       - bun run build
-      - bun build ./dist/builder/lib-cli.mjs --format=cjs --compile --outfile=.bin/fnode
-      - bun build ./dist/builder/wf-cli.mjs --format=cjs --compile --outfile=.bin/fnet
+      - bun build ./dist/builder/lib-cli.mjs --compile --outfile=.bin/fnode
+      - bun build ./dist/builder/wf-cli.mjs --compile --outfile=.bin/fnet
       - chmod +x .bin/fnode && chmod +x .bin/fnet
       - du -h .bin/fnode && du -h .bin/fnet
       - .bin/fnode --version && .bin/fnet --version
@@ -21,6 +22,5 @@ commands:
       - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet
       - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet
       
-
-    # env:
-    #   DEVELOPMENT: true
+    env:
+      DEVELOPMENT: true

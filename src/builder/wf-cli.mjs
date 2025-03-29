@@ -5,9 +5,7 @@ import pkg from '../../package.json';
 
 import fnetConfig from '@fnet/config';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.cwd();
 
 // fnet env

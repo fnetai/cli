@@ -7,9 +7,6 @@ import fnetUpListFiles from '@fnet/up-list-files';
 import fnetObjectFromSchema from '@fnet/object-from-schema';
 import yaml from 'yaml';
 import which from '../../which';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default async function deployToNpm({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) {
 
