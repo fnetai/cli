@@ -2,16 +2,17 @@ name: cli
 
 commands:
   test: 
-    - npm run build
+    - bun run build
     - node ./dist/builder/lib-cli.js --help
     - node ./dist/builder/wf-cli.js --help
     
   compile:
     steps:
-      - npm run build
-      - bun build ./dist/builder/wf-cli.js --format=cjs --compile --outfile=.temp/bin/fnode
+      - bun run build
+      - bun build ./dist/builder/lib-cli.js --format=cjs --compile --outfile=.temp/bin/fnode
       - chmod +x .temp/bin/fnode
       - du -h .temp/bin/fnode
       - .temp/bin/fnode --version
+      - .temp/bin/fnode --help
     env:
       DEVELOPMENT: true
