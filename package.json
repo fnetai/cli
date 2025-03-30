@@ -50,7 +50,6 @@
     "@fnet/up-list-files": "^0.1.13",
     "@fnet/yaml": "^0.1.30",
     "@node-red/util": "^4.0.9",
-    "@rollup/plugin-esm-shim": "^0.1.8",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "bpmn-moddle": "^9.0.1",

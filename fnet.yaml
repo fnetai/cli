@@ -7,20 +7,21 @@ commands:
     - node ./dist/fnet/index.mjs --version
     - bun link
 
-  compile:
-    steps:
-      - bun run build
-      - bun build ./dist/builder/lib-cli.mjs --compile --outfile=.bin/fnode
-      - bun build ./dist/builder/wf-cli.mjs --compile --outfile=.bin/fnet
-      - chmod +x .bin/fnode && chmod +x .bin/fnet
-      - du -h .bin/fnode && du -h .bin/fnet
-      - .bin/fnode --version && .bin/fnet --version
-      - .bin/fnode --help && .bin/fnet --help
-      - otool -L .bin/fnode && otool -L .bin/fnet
-      - file .bin/fnode && file .bin/fnet
-      - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet
-      - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet
-      - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet
-      
-    env:
-      DEVELOPMENT: true
+  # compile:
+  #   steps:
+  #     - bun run build
+  #     - bun build ./dist/fnode/index.mjs --compile --outfile=.bin/fnode
+  #     - bun build ./dist/fnet/index.mjs --compile --outfile=.bin/fnet
+  #     - chmod +x .bin/fnode && chmod +x .bin/fnet
+  #     - chmod +x .bin/fnode && chmod +x .bin/fnet
+  #     - du -h .bin/fnode && du -h .bin/fnet
+  #     - .bin/fnode --version && .bin/fnet --version
+  #     - .bin/fnode --help && .bin/fnet --help
+  #     - otool -L .bin/fnode && otool -L .bin/fnet
+  #     - file .bin/fnode && file .bin/fnet
+  #     - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet
+  #     - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet
+  #     - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet
+            
+  #   env:
+  #     DEVELOPMENT: true

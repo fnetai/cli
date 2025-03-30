@@ -1,4 +1,5 @@
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 import { spawn } from 'child_process';
 import prompt from '@fnet/prompt';
 import which from './which.js';
@@ -16,6 +17,8 @@ import fnetRender from '@flownet/lib-render-templates-dir';
 import Builder from './lib-builder.js';
 import findNodeModules from './find-node-modules.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const cwd = process.cwd();
 
 // fnet env (Assuming this sets up environment variables based on redis config)
@@ -27,7 +30,9 @@ fnetConfig({
 
 const nodeModulesDir = findNodeModules({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
-process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
+
+if (nodeModulesDir)
+  process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 
 // --- Commander Setup ---
 const program = new Command();
