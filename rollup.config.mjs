@@ -20,8 +20,8 @@ const commonPlugins = () => {
       preventAssignment: true,
     }),
     resolve({
-      // extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
-      // preferBuiltins: true,
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+      preferBuiltins: true,
     }),
     commonjs({
       // ignoreDynamicRequires: false, // Keep this if necessary for your CJS dependencies

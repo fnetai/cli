@@ -34,7 +34,9 @@ import Builder from './wf-builder'; // Specific builder for workflows
 import findNodeModules from './find-node-modules';
 const nodeModulesDir = findNodeModules({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
-process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
+
+if(nodeModulesDir)
+  process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 
 // --- Commander Setup ---
 const program = new Command();
