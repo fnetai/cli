@@ -1,4 +1,5 @@
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 import { spawn } from 'child_process';
 import prompt from '@fnet/prompt';
 import which from './which.js';
@@ -15,6 +16,8 @@ import fnetShellFlow from '@fnet/shell-flow';
 import fnetRender from '@flownet/lib-render-templates-dir';
 import Builder from './lib-builder.js';
 import findNodeModules from './find-node-modules.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const cwd = process.cwd();
 

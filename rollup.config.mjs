@@ -5,7 +5,6 @@ import { nodeResolve as resolve } from "@rollup/plugin-node-resolve"; // Use nam
 import replace from "@rollup/plugin-replace";
 import json from "@rollup/plugin-json";
 import terser from "@rollup/plugin-terser";
-import esmShim from '@rollup/plugin-esm-shim';
 import fnetDelete from '@fnet/rollup-plugin-delete';
 
 // process.env access remains the same in ESM within Node.js
@@ -14,7 +13,6 @@ const DEVELOPMENT = !!process.env.DEVELOPMENT; // Simplified boolean conversion
 const commonPlugins = () => {
   const plugins = [
     json(),
-    esmShim(),
     replace({
       // Ensure values are properly stringified for replacement
       'process.env.NODE_ENV': JSON.stringify(DEVELOPMENT ? 'development' : 'production'),

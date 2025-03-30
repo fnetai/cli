@@ -4,7 +4,10 @@ import which from './which';
 import pkg from '../../package.json';
 
 import fnetConfig from '@fnet/config';
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const cwd = process.cwd();
 
