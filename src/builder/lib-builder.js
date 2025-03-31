@@ -4,39 +4,8 @@ import os from 'node:os';
 
 import yaml from "yaml";
 import nunjucks from "nunjucks";
-import createRedisClient from '../redisClient';
 
 import { randomUUID } from 'node:crypto';
-
-import Auth from './auth';
-
-import initFeatures from "./api/init-features";
-import initFeaturesPython from "./api/init-features/python";
-
-import initDependencies from "./api/init-dependencies";
-import initDependenciesPython from "./api/init-dependencies/python";
-
-import createApp from "./api/create-app";
-import createPackageJson from "./api/create-package-json";
-
-import createCli from "./api/create-cli";
-import createCliPython from "./api/create-cli/python";
-
-import createRollup from "./api/create-rollup";
-import createToYargs from "./api/create-to-yargs";
-import createGitIgnore from "./api/create-git-ignore";
-import createTsConfig from "./api/create-ts-config";
-import createProjectReadme from "./api/create-project-readme";
-import formatFiles from './api/format-files';
-import createDts from './api/create-dts';
-
-import installNpmPackages from './api/install-npm-packages';
-import installPythonPackages from './api/install-python-packages';
-
-import runNpmBuild from './api/run-npm-build';
-import pickNpmVersions from './api/common/pick-npm-versions';
-
-import deployTo from './deploy/deploy-to';
 
 import { Atom } from "@flownet/lib-atom-api-js";
 import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
@@ -44,6 +13,39 @@ import fnetConfig from '@fnet/config';
 import fnetParseImports from '@flownet/lib-parse-imports-js';
 import fnetListFiles from '@fnet/list-files';
 import chalk from 'chalk';
+
+
+import createRedisClient from '../redisClient.js';
+import Auth from './auth.js';
+
+import initFeatures from "./api/init-features/index.js";
+import initFeaturesPython from "./api/init-features/python.js";
+
+import initDependencies from "./api/init-dependencies/index.js";
+import initDependenciesPython from "./api/init-dependencies/python.js";
+
+import createApp from "./api/create-app/index.js";
+import createPackageJson from "./api/create-package-json/index.js";
+
+import createCli from "./api/create-cli/index.js";
+import createCliPython from "./api/create-cli/python.js";
+
+import createRollup from "./api/create-rollup/index.js";
+import createToYargs from "./api/create-to-yargs/index.js";
+import createGitIgnore from "./api/create-git-ignore/index.js";
+import createTsConfig from "./api/create-ts-config/index.js";
+import createProjectReadme from "./api/create-project-readme/index.js";
+import formatFiles from './api/format-files/index.js';
+import createDts from './api/create-dts/index.js';
+
+import installNpmPackages from './api/install-npm-packages/index.js';
+import installPythonPackages from './api/install-python-packages/index.js';
+
+import runNpmBuild from './api/run-npm-build/index.js';
+import pickNpmVersions from './api/common/pick-npm-versions.js';
+
+import deployTo from './deploy/deploy-to/index.js';
+
 
 class Builder {
 

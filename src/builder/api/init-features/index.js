@@ -3,19 +3,19 @@ import fs from 'node:fs';
 import path from 'node:path';
 import fnetParseImports from '@flownet/lib-parse-imports-js';
 
-import workboxFeatures from './workbox';
-import gzipFeatures from './gzip';
-import nunjucksFeatures from './nunjucks';
-import polyfillFeatures from './polyfill';
-import visualizerFeatures from './visualizer';
-import analyzerFeatures from './analyzer';
-import stringFeatures from './string';
-import imageFeatures from './image';
-import jsonFeatures from './json';
-import terserFeatures from './terser';
-import wasmFeatures from './wasm';
-import copyFeatures from './copy';
-import cssFeatures from './css';
+import workboxFeatures from './workbox.js';
+import gzipFeatures from './gzip.js';
+import nunjucksFeatures from './nunjucks.js';
+import polyfillFeatures from './polyfill.js';
+import visualizerFeatures from './visualizer.js';
+import analyzerFeatures from './analyzer.js';
+import stringFeatures from './string.js';
+import imageFeatures from './image.js';
+import jsonFeatures from './json.js';
+import terserFeatures from './terser.js';
+import wasmFeatures from './wasm.js';
+import copyFeatures from './copy.js';
+import cssFeatures from './css.js';
 
 function findEntryFile({ dir, name = 'index' }) {
   let entryFile = path.resolve(dir, `./${name}.tsx`);
@@ -289,7 +289,7 @@ export default async function initFeatures(apiContext) {
       browsersync: true,
     }
   }
-  
+
   // cli default
   if (features.cli.enabled === true) {
     features.cli.dir = `./dist/cli/${features.cli.folder}`;

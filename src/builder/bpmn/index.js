@@ -1,7 +1,7 @@
 import BpmnModdle from 'bpmn-moddle';
 import dagre from 'dagre';
 import cloneDeep from 'lodash.clonedeep';
-import atomJson from './atom.json';
+import atomJson from './atom.json' with { type: 'json' };
 
 function initNodes(context) {
     const { nodes, nodeIndex, root } = context;

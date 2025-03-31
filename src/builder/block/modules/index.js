@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
-import initModules from '../common/init-modules';
-import initCommonResolve from '../common/init-common-resolve';
+import initModules from '../common/init-modules.js';
+import initCommonResolve from '../common/init-common-resolve.js';
 
 async function hits({ node }) {
   return node.definition.hasOwnProperty('modules');

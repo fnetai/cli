@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import prompt from '@fnet/prompt';
-import which from './which';
-import pkg from '../../package.json';
+import which from './which.js';
+import pkg from '../../package.json' with {type: "json"};
 
 import fnetConfig from '@fnet/config';
 import path from 'node:path';
@@ -29,13 +29,13 @@ import fnetObjectFromSchema from '@fnet/object-from-schema';
 import fnetShellFlow from '@fnet/shell-flow';
 
 import fnetRender from '@flownet/lib-render-templates-dir';
-import Builder from './wf-builder'; // Specific builder for workflows
+import Builder from './wf-builder.js';
 
-import findNodeModules from './find-node-modules';
+import findNodeModules from './find-node-modules.js';
 const nodeModulesDir = findNodeModules({ baseDir: __dirname });
 const pathSeparator = process.platform === 'win32' ? ';' : ':';
 
-if(nodeModulesDir)
+if (nodeModulesDir)
   process.env.PATH = `${path.join(nodeModulesDir, '/.bin')}${pathSeparator}${process.env.PATH}`;
 
 // --- Commander Setup ---

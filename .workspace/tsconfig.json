@@ -1,0 +1,14 @@
+{
+  "include": ["src/**/*.js"],
+  "compilerOptions": {
+    "outDir": "./types",
+    "declaration": true,
+    "allowJs": true,
+    "emitDeclarationOnly": true,
+    "target": "es5",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx"
+  }
+}

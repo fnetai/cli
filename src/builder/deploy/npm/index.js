@@ -6,7 +6,8 @@ import fnetConfig from '@fnet/config';
 import fnetUpListFiles from '@fnet/up-list-files';
 import fnetObjectFromSchema from '@fnet/object-from-schema';
 import yaml from 'yaml';
-import which from '../../which';
+
+import which from '../../which.js';
 
 import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
