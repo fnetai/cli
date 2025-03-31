@@ -1,4 +1,4 @@
-import featureTemplate from './feature-template';
+import featureTemplate from './feature-template.js';
 
 export default function initAnalyzerFeature(apiContext) {
   const { atom, packageDevDependencies } = apiContext;

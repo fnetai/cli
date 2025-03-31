@@ -2,8 +2,6 @@ import path from 'path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'child_process';
 import prompt from '@fnet/prompt';
-import which from './which.js';
-import pkg from '../../package.json' assert { type: 'json' };
 import { Command, Option } from 'commander';
 import fs from 'fs';
 import YAML from 'yaml';
@@ -14,8 +12,11 @@ import fnetConfig from '@fnet/config';
 import fnetObjectFromSchema from '@fnet/object-from-schema';
 import fnetShellFlow from '@fnet/shell-flow';
 import fnetRender from '@flownet/lib-render-templates-dir';
+
 import Builder from './lib-builder.js';
 import findNodeModules from './find-node-modules.js';
+import which from './which.js';
+import pkg from '../../package.json' with { type: 'json' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.cwd();
@@ -268,6 +269,7 @@ function bindSimpleContextCommand(prog, { name, bin, preArgs = [] }) {
 
         // Use the captured arguments
         const rawArgs = command_args;
+        console.log(rawArgs);
 
         // Ensure bin exists? (Optional, spawn will fail anyway)
         // const binPath = which(bin);
@@ -404,6 +406,7 @@ function bindWithContextCommand(prog, { name, preArgs = [] }) { // Added prog pa
 }
 
 // --- Helper function for "run" command ---
+// Disable --version on parent command
 function bindRunContextCommand(prog, { name, preArgs = [] }) { // Added prog parameter
   prog
     .command(name)
@@ -411,6 +414,7 @@ function bindRunContextCommand(prog, { name, preArgs = [] }) { // Added prog par
     .argument('<group>', 'Name of the command group in node.yaml commands section')
     // .argument('[command_options...]', 'Options passed to the commands (not implemented in original)')
     .option('--ftag <tags...>', 'Filter tags for loading project config')
+    .version(false) // Disable version for this command
     // .allowUnknownOption() // Not needed unless passing through options
     .action(async (groupName, options) => { // Capture positional arg 'group' as groupName
       try {

@@ -1,5 +1,5 @@
 import cloneDeep from 'lodash.clonedeep';
-import initCommonResolve from '../common/init-common-resolve';
+import initCommonResolve from '../common/init-common-resolve.js';
 
 async function hits({ node }) {
   return node.definition.hasOwnProperty('steps');

@@ -1,5 +1,5 @@
 import fnetShellJs from '@fnet/shelljs';
-import which from '../../which';
+import which from '../../which.js';
 
 export default async function installNpmPackages({ setProgress, atom, context }) {
 

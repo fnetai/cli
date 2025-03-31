@@ -2,7 +2,7 @@ import nunjucks from "nunjucks";
 import fs from 'node:fs';
 import path from 'node:path';
 import fnetParseImports from '@flownet/lib-parse-imports-js';
-import pickNpmVersions from '../common/pick-npm-versions';
+import pickNpmVersions from '../common/pick-npm-versions.js';
 
 export default async function createPackageJson({ atom, context, packageDependencies, packageDevDependencies, setProgress }) {
 
