@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.100.1",
+  "version": "0.100.2",
   "files": [
     "dist"
   ],
@@ -27,7 +27,7 @@
     "@flownet/lib-to-ios-app": "^0.3.16",
     "@flownet/lib-to-macos-app": "^0.3.13",
     "@flownet/lib-to-nextjs": "^0.3.10",
-    "@flownet/lib-to-webos": "^0.3.14",
+    "@flownet/lib-to-webos": "^0.3.16",
     "@fnet/auto-conda-env": "^0.1.24",
     "@fnet/cli-project-common": "^0.3.5",
     "@fnet/cli-project-flow": "^0.12.1",
@@ -53,11 +53,12 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "bpmn-moddle": "^9.0.1",
-    "chalk": "^4.1.2",
+    "bun": "^1.2.7",
+    "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "dagre": "^0.8.5",
     "form-data": "^4.0.2",
-    "get-value": "^3.0.1",
+    "get-value": "^4.0.1",
     "isobject": "^4.0.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
