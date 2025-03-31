@@ -13,3 +13,4 @@ dist
 .npmrc
 .package-lock.json
 .bin
+.workspace
