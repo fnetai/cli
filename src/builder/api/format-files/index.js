@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import fnetShellFlow from "@fnet/shell-flow";
 
 export default async function formatFiles({ setProgress, context }) {

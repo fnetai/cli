@@ -1,5 +1,5 @@
 import fnetExpression from '@fnet/expression';
-import switchBlock from '../switch';
+import switchBlock from '../switch/index.js';
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);

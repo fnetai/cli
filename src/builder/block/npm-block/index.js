@@ -1,4 +1,4 @@
-import callBlock from '../call';
+import callBlock from '../call/index.js';
 
 class NpmWrapper {
   #key;
