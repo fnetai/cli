@@ -20,7 +20,7 @@ const commonPlugins = () => {
       preventAssignment: true,
     }),
     resolve({
-      extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+      // extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
       preferBuiltins: true,
     }),
     commonjs({
@@ -51,7 +51,7 @@ export default [
       chunkFileNames: 'index.[hash].mjs', // Output file name pattern for chunks
 
     },
-    plugins: [fnetDelete({ target: "dist/fnet" }), ...commonPlugins()],
+    plugins: [fnetDelete({ targets: ["./dist/fnet"] }), ...commonPlugins()],
     // External function remains the same
     external: id => /node_modules/.test(id)
   },
@@ -66,7 +66,7 @@ export default [
       entryFileNames: 'index.mjs', // Output file name pattern
       chunkFileNames: 'index.[hash].mjs', // Output file name pattern for chunks
     },
-    plugins: [fnetDelete({ target: "dist/fnode" }), ...commonPlugins()],
+    plugins: [fnetDelete({ targets: ["dist/fnode"] }), ...commonPlugins()],
     // External function remains the same
     external: id => /node_modules/.test(id)
   }
