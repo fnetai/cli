@@ -1,6 +1,6 @@
 import semver from 'semver';
 import fnetConfig from '@fnet/config';
-import fs from 'fs';
+import fs from 'node:fs';
 import fnetShellJs from '@fnet/shelljs';
 import FormData from 'form-data';
 
