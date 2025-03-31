@@ -1,4 +1,4 @@
-module.exports = async (apiContext) => {
+export default async (apiContext) => {
 
   // Destructure the apiContext to get needed variables
   const {

@@ -18,7 +18,6 @@ import Builder from './lib-builder.js';
 import findNodeModules from './find-node-modules.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const cwd = process.cwd();
 
 // fnet env (Assuming this sets up environment variables based on redis config)
