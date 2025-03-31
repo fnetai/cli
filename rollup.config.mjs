@@ -1,5 +1,3 @@
-// rollup.config.mjs (or rollup.config.js if "type": "module" in package.json)
-
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve as resolve } from "@rollup/plugin-node-resolve"; // Use named import 'nodeResolve' and alias it
 import replace from "@rollup/plugin-replace";
@@ -40,15 +38,15 @@ const commonPlugins = () => {
 // The export default syntax is already ESM compliant
 export default [
   {
-    input: `src/builder/wf-cli.mjs`,
+    input: `src/builder/wf-cli.js`,
     output: {
       // file: 'dist/builder/wf-cli.js',
       format: "esm", // Output format remains CJS as per original config
       exports: "auto",
       banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fnet',
-      entryFileNames: 'index.mjs', // Output file name pattern
-      chunkFileNames: 'index.[hash].mjs', // Output file name pattern for chunks
+      entryFileNames: 'index.js', // Output file name pattern
+      chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
 
     },
     plugins: [fnetDelete({ targets: ["./dist/fnet"] }), ...commonPlugins()],
@@ -56,15 +54,15 @@ export default [
     external: id => /node_modules/.test(id)
   },
   {
-    input: `src/builder/lib-cli.mjs`,
+    input: `src/builder/lib-cli.js`,
     output: {
       // file: 'dist/builder/lib-cli.js',
       format: "esm", // Output format remains CJS as per original config
       exports: "auto",
       banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fnode',
-      entryFileNames: 'index.mjs', // Output file name pattern
-      chunkFileNames: 'index.[hash].mjs', // Output file name pattern for chunks
+      entryFileNames: 'index.js', // Output file name pattern
+      chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
     },
     plugins: [fnetDelete({ targets: ["dist/fnode"] }), ...commonPlugins()],
     // External function remains the same

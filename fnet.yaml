@@ -3,15 +3,19 @@ name: cli
 commands:
   build:
     - bun run build
-    - node ./dist/fnode/index.mjs --version
-    - node ./dist/fnet/index.mjs --version
+    - node ./dist/fnode/index.js --version
+    - node ./dist/fnet/index.js --version
     - bun link
 
+  deploy:
+    - fnet build
+    - bun publish --access public
+    
   compile:
     steps:
-      - bun run build
-      - bun build ./dist/fnode/index.mjs --compile --outfile=.bin/fnode
-      - bun build ./dist/fnet/index.mjs --compile --outfile=.bin/fnet
+      - fnet run build
+      - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
+      - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
       - chmod +x .bin/fnode && chmod +x .bin/fnet
       - chmod +x .bin/fnode && chmod +x .bin/fnet
       - du -h .bin/fnode && du -h .bin/fnet
@@ -22,6 +26,6 @@ commands:
       - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet
       - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet
       - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet
-            
-    env:
-      DEVELOPMENT: true
+
+    # env:
+    #   DEVELOPMENT: true

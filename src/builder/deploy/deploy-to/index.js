@@ -19,27 +19,27 @@ export default async (apiContext) => {
   try {
     // Handle the first set of deployment types
     if (type === "lib") {
-      await (await import('../atom')).default({ ...apiContext });
+      await (await import('../atom/index.js')).default({ ...apiContext });
     } else if (type === "red") {
-      await (await import('../red')).default({ ...apiContext });
+      await (await import('../red/index.js')).default({ ...apiContext });
     } else if (type === "npm") {
-      await (await import('../npm')).default({ ...apiContext });
+      await (await import('../npm/index.js')).default({ ...apiContext });
     } else if (type === "gcs") {
-      await (await import('../gcs')).default({ ...apiContext });
+      await (await import('../gcs/index.js')).default({ ...apiContext });
     } else if (type === "gitlab") {
-      await (await import('../gitlab')).default({ ...apiContext });
+      await (await import('../gitlab/index.js')).default({ ...apiContext });
     } else if (type === "fnet-package") {
-      await (await import('../fnet-package')).default({ ...apiContext });
+      await (await import('../fnet-package/index.js')).default({ ...apiContext });
     } else if (type === "fnet-form") {
-      await (await import('../fnet-form')).default({ ...apiContext });
+      await (await import('../fnet-form/index.js')).default({ ...apiContext });
     } else if (type === "fnet-node") {
-      await (await import('../fnet-node')).default({ ...apiContext });
+      await (await import('../fnet-node/index.js')).default({ ...apiContext });
     } else if (type === "fnet-flow") {
-      await (await import('../fnet-flow')).default({ ...apiContext });
+      await (await import('../fnet-flow/index.js')).default({ ...apiContext });
     }
     // Handle the second set of deployment types
     else if (type === 'nextjs') {
-      await (await import('../nextjs')).default({
+      await (await import('../nextjs/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -50,7 +50,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'webos') {
-      await (await import('../webos')).default({
+      await (await import('../webos/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -61,7 +61,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'electron') {
-      await (await import('../electron')).default({
+      await (await import('../electron/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -72,7 +72,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'docker') {
-      await (await import('../docker')).default({
+      await (await import('../docker/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -83,7 +83,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'ios') {
-      await (await import('../ios-app')).default({
+      await (await import('../ios-app/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -94,7 +94,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'macos') {
-      await (await import('../macos-app')).default({
+      await (await import('../macos-app/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -105,7 +105,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'rust') {
-      await (await import('../rust')).default({
+      await (await import('../rust/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,
@@ -116,7 +116,7 @@ export default async (apiContext) => {
       });
       deploymentProject.isDirty = true;
     } else if (type === 'pypi') {
-      await (await import('../pypi')).default({
+      await (await import('../pypi/index.js')).default({
         atom,
         target: deploymentProjectTarget,
         onProgress: setProgress,

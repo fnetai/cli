@@ -74,8 +74,8 @@
     "yaml": "^2.7.1"
   },
   "bin": {
-    "fnet": "dist/fnet/index.mjs",
-    "fnode": "dist/fnode/index.mjs"
+    "fnet": "dist/fnet/index.js",
+    "fnode": "dist/fnode/index.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
