@@ -49,7 +49,7 @@ export default [
       chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
 
     },
-    plugins: [fnetDelete({ targets: ["./dist/fnet"] }), ...commonPlugins()],
+    plugins: [fnetDelete({ targets: ["./dist/fnet/**"] }), ...commonPlugins()],
     // External function remains the same
     external: id => /node_modules/.test(id)
   },
@@ -64,7 +64,7 @@ export default [
       entryFileNames: 'index.js', // Output file name pattern
       chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
     },
-    plugins: [fnetDelete({ targets: ["dist/fnode"] }), ...commonPlugins()],
+    plugins: [fnetDelete({ targets: ["dist/fnode/**"] }), ...commonPlugins()],
     // External function remains the same
     external: id => /node_modules/.test(id)
   }

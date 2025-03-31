@@ -1,21 +1,24 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawn } from 'child_process';
-import prompt from '@fnet/prompt';
+import { spawn } from 'node:child_process';
+import os from 'node:os';
 import fs from 'node:fs';
+
 import YAML from 'yaml';
+import yargs from 'yargs';
+
+import fnetPrompt from '@fnet/prompt';
 import fnetShellJs from '@fnet/shelljs';
 import fnetYaml from '@fnet/yaml';
 import fnetConfig from '@fnet/config';
-import fnetObjectFromSchema from '@fnet/object-from-schema';
 import fnetShellFlow from '@fnet/shell-flow';
 import fnetRender from '@flownet/lib-render-templates-dir';
-import yargs from 'yargs';
-import os from 'node:os';
 
-import Builder from './wf-builder.js';
 import findNodeModules from './find-node-modules.js';
 import which from './which.js';
+
+import Builder from './wf-builder.js';
+
 // import pkg from '../../package.json' with { type: 'json' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -326,7 +329,7 @@ function bindInputCommand(builder) {
         if (!schema) throw new Error('Config schema not found in project file.');
 
         if (!Reflect.has(argv, 'name')) {
-          const { inputName } = await prompt({ type: 'input', name: 'inputName', message: 'Input name:', initial: 'dev' });
+          const { inputName } = await fnetPrompt({ type: 'input', name: 'inputName', message: 'Input name:', initial: 'dev' });
           argv.name = inputName;
         }
 
@@ -336,6 +339,7 @@ function bindInputCommand(builder) {
         const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
         const exists = fs.existsSync(configFilePath);
 
+        const fnetObjectFromSchema = (await import('@fnet/object-from-schema')).default;
         const result = await fnetObjectFromSchema({ schema, format: "yaml", ref: exists ? configFilePath : undefined });
         fs.writeFileSync(configFilePath, result);
       } catch (error) {
