@@ -11,11 +11,11 @@ export default async function formatFiles({ setProgress, context }) {
   let srcDir = path.join("src", "**", "*");
 
   if (which('bun')) {
-    const result = await fnetShellJs(`bunx prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
+    const result = await fnetShellJs(`prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
     if (result.code !== 0) throw new Error(result.stderr);
   }
   else {
-    const result = await fnetShellJs(`npx prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
+    const result = await fnetShellJs(`prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
     if (result.code !== 0) throw new Error(result.stderr);
   }
 }
