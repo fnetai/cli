@@ -16,7 +16,7 @@
         "@flownet/lib-to-nextjs": "^0.3.10",
         "@flownet/lib-to-webos": "^0.3.16",
         "@fnet/auto-conda-env": "^0.1.24",
-        "@fnet/cli-project-common": "^0.3.5",
+        "@fnet/cli-project-common": "^0.3.6",
         "@fnet/cli-project-flow": "^0.12.1",
         "@fnet/cli-project-node": "^0.4.1",
         "@fnet/cli-project-schemas": "^0.1.2",
@@ -40,7 +40,7 @@
         "ajv": "^8.17.1",
         "ajv-formats": "^3.0.1",
         "bpmn-moddle": "^9.0.1",
-        "bun": "^1.2.7",
+        "bun": "^1.2.8",
         "chalk": "^5.4.1",
         "dagre": "^0.8.5",
         "form-data": "^4.0.2",
@@ -64,7 +64,7 @@
         "@rollup/plugin-node-resolve": "^16.0.1",
         "@rollup/plugin-replace": "^6.0.2",
         "@rollup/plugin-terser": "^0.4.4",
-        "rollup": "^4.38.0",
+        "rollup": "^4.39.0",
       },
     },
   },
@@ -123,7 +123,7 @@
 
     "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.1.24", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.1", "nanoid": "^5.0", "semver": "^7.6" } }, "sha512-rFRqVloYKSfwUnVZpPWKZbg0Mj7qHsRHC3r+2l+OLUV/DkqJDjMVZYH9N0Y/AeQ9vFalGaYoXTHDvCUULP9Ihg=="],
 
-    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.6", "", {}, "sha512-9kBhQId4Rl7SvGexuzYXn9ZFDgRXDWGPbnpsiF0tTfRHC+yCFED2RGNcZ36+pnAg4UIz0Aaazsi5GN7YcVVYUw=="],
+    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.7", "", {}, "sha512-7uNVtpvrOr70c6QD9dQBYUqOcQ/d5DM3aE/EXYoV4gA/vdD2zIChtJZJSxFbLsIOeZztxINDuazVAFx3PH3kfg=="],
 
     "@fnet/cli-project-flow": ["@fnet/cli-project-flow@0.12.1", "", {}, "sha512-XzNf4olrRnP1kYZ70dDx+zFgjZVm18p8bcZNfGBESVU5at111bz8yM4ctMZS1IAWct1BvTsZR3GOF0UvzH7zIA=="],
 
