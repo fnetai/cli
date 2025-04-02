@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.101.4",
+  "version": "0.102.0",
   "files": [
     "dist"
   ],
@@ -69,6 +69,7 @@
     "redis": "^4.7.0",
     "semver": "^7.7.1",
     "set-value": "^4.1.0",
+    "tsc": "^2.0.4",
     "typescript": "^5.8.2",
     "yaml": "^2.7.1",
     "yargs": "^17.7.2"

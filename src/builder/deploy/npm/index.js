@@ -66,10 +66,14 @@ export default async function deployToNpm({ atom, setProgress, context, deployme
 
   if (target.dryRun === true) return;
 
-  const packageManager = which('bun') ? 'bun' : 'npm';
-
-  let result = await fnetShellJs(`${packageManager} publish --access public`, { cwd: projectDir });
-  if (result.code !== 0) throw new Error('Couldnt publish to npm');
+  if (which('bun')) {
+    let result = await fnetShellJs(`bun publish --access public`, { cwd: projectDir });
+    if (result.code !== 0) throw new Error('Couldnt publish to npm');
+  }
+  else {
+    let result = await fnetShellJs(`npm publish --access public`, { cwd: projectDir });
+    if (result.code !== 0) throw new Error('Couldnt publish to npm');
+  }
 
   // restore
   fs.writeFileSync(packageJSONPath, packageJSONContent);
