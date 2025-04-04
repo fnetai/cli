@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.103.2",
+  "version": "0.103.6",
   "files": [
     "dist"
   ],
@@ -22,7 +22,7 @@
     "@flownet/lib-parse-imports-js": "^0.3.7",
     "@flownet/lib-parse-node-url": "^0.1.18",
     "@flownet/lib-render-templates-dir": "^0.1.19",
-    "@flownet/lib-to-docker": "^0.3.22",
+    "@flownet/lib-to-docker": "^0.3.26",
     "@flownet/lib-to-electron": "^0.3.9",
     "@flownet/lib-to-ios-app": "^0.3.16",
     "@flownet/lib-to-macos-app": "^0.3.13",
