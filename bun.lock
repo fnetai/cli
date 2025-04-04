@@ -108,7 +108,7 @@
 
     "@flownet/lib-render-templates-dir": ["@flownet/lib-render-templates-dir@0.1.19", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/list-files": "^0.1", "nunjucks": "^3.2" }, "bin": { "fnet-render-templates-dir": "dist/cli/esm/index.js", "lib-render-templates-dir": "dist/cli/esm/index.js" } }, "sha512-aT7YIW3+ZDeIhjoJ1qzj1ZgtIeQ5grSfhkRPEMECBK+tLwycejMwU7hAAD1ofQMNNBqW5gpFDOegDZmIOmbNKQ=="],
 
-    "@flownet/lib-to-docker": ["@flownet/lib-to-docker@0.3.21", "", { "dependencies": { "@flownet/lib-render-templates-dir": "^0.1", "@fnet/args": "^0.1", "@fnet/shelljs": "^0.2", "nanoid": "^5.0" }, "bin": { "fnet-to-docker": "dist/cli/esm/index.js" } }, "sha512-dDfpvmr0X3gNNOZeVtATKuGI2cZxr46ednA9fISDnm+3R6lt7mUoqLqcKuDpKR2+dgAqbeLYRcip//OrUqNsuQ=="],
+    "@flownet/lib-to-docker": ["@flownet/lib-to-docker@0.3.22", "", { "dependencies": { "@flownet/lib-render-templates-dir": "^0.1", "@fnet/args": "^0.1", "@fnet/shelljs": "^0.2", "nanoid": "^5.1" }, "bin": { "fnet-to-docker": "dist/cli/esm/index.js" } }, "sha512-p9X5AHabqBk4Ugf/TjBlUonmp1YUBRCPrINLB4U0KbtASvyCzCMmWYe6jksXLW2IUqltGze0V7FBxmpbU6fUZw=="],
 
     "@flownet/lib-to-electron": ["@flownet/lib-to-electron@0.3.9", "", { "dependencies": { "@flownet/lib-render-templates-dir": "^0.1", "@fnet/args": "^0.1", "@fnet/shelljs": "^0.2" }, "bin": { "fnet-to-electron": "dist/cli/esm/index.js" } }, "sha512-qSAXSHmQhiL2rfqaywWgOGaqCH5F22tzQCn04GfpxZI10uegB4fiqxQq0RHAciYZhHSBF9IxqRNdiQXMJG592A=="],
 
@@ -124,7 +124,7 @@
 
     "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.1.24", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.1", "nanoid": "^5.0", "semver": "^7.6" } }, "sha512-rFRqVloYKSfwUnVZpPWKZbg0Mj7qHsRHC3r+2l+OLUV/DkqJDjMVZYH9N0Y/AeQ9vFalGaYoXTHDvCUULP9Ihg=="],
 
-    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.7", "", {}, "sha512-7uNVtpvrOr70c6QD9dQBYUqOcQ/d5DM3aE/EXYoV4gA/vdD2zIChtJZJSxFbLsIOeZztxINDuazVAFx3PH3kfg=="],
+    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.8", "", {}, "sha512-tnoc42wS6b5/a1I/b75PxGmaHq395PHko153bNEszQ+wMV+4Wgq54XldC/1WQ2Q5K7JvG6bEp4yLwDVb0PTKmw=="],
 
     "@fnet/cli-project-flow": ["@fnet/cli-project-flow@0.12.1", "", {}, "sha512-XzNf4olrRnP1kYZ70dDx+zFgjZVm18p8bcZNfGBESVU5at111bz8yM4ctMZS1IAWct1BvTsZR3GOF0UvzH7zIA=="],
 
@@ -168,7 +168,7 @@
 
     "@fnet/xcode-cert-inspector": ["@fnet/xcode-cert-inspector@0.1.10", "", { "dependencies": { "node-forge": "^1.3" } }, "sha512-Ca2n2jJthiEGw/KZGgB6jJTHSxcy4M1BKbKBMn08qq2ra+L0tixS5k3M1FPS3MVOXcI2yFcxm22gsDaCnaOYyQ=="],
 
-    "@fnet/yaml": ["@fnet/yaml@0.1.31", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-MvXemc6sMpkI90a+g9tZ8ij+5HLtBU3E2QH6j1ALHnOe3ZKS/QUk0/COgFXvTln1ShLZtOMl65u4l0uqUVjvyw=="],
+    "@fnet/yaml": ["@fnet/yaml@0.1.34", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-/HiH1b34QLrcHifSOcZCggTHUJ8k8pbq5yTMrnYkm2sl2fuALrr91pYCcx+QzednASY4/flA0nomYBa/6FNVBQ=="],
 
     "@google-cloud/paginator": ["@google-cloud/paginator@5.0.2", "", { "dependencies": { "arrify": "^2.0.0", "extend": "^3.0.2" } }, "sha512-DJS3s0OVH4zFDB1PzjxAsHqJT6sKVbRwwML0ZBP9PbU7Yebtu/7SWMRzvO2J3nUi9pRNITCfu4LJeooM2w4pjg=="],
 
@@ -825,6 +825,10 @@
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
     "zip-stream": ["zip-stream@6.0.1", "", { "dependencies": { "archiver-utils": "^5.0.0", "compress-commons": "^6.0.2", "readable-stream": "^4.0.0" } }, "sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA=="],
+
+    "@fnet/config/@fnet/yaml": ["@fnet/yaml@0.1.31", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-MvXemc6sMpkI90a+g9tZ8ij+5HLtBU3E2QH6j1ALHnOe3ZKS/QUk0/COgFXvTln1ShLZtOMl65u4l0uqUVjvyw=="],
+
+    "@fnet/object-from-schema/@fnet/yaml": ["@fnet/yaml@0.1.31", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-MvXemc6sMpkI90a+g9tZ8ij+5HLtBU3E2QH6j1ALHnOe3ZKS/QUk0/COgFXvTln1ShLZtOMl65u4l0uqUVjvyw=="],
 
     "@isaacs/cliui/string-width": ["string-width@5.1.2", "", { "dependencies": { "eastasianwidth": "^0.2.0", "emoji-regex": "^9.2.2", "strip-ansi": "^7.0.1" } }, "sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA=="],
 
