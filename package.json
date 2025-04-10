@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.105.0",
+  "version": "0.105.1",
   "files": [
     "dist"
   ],
@@ -29,11 +29,11 @@
     "@flownet/lib-to-nextjs": "^0.3.10",
     "@flownet/lib-to-webos": "^0.3.16",
     "@fnet/auto-conda-env": "^0.1.24",
-    "@fnet/cli-project-common": "^0.3.8",
+    "@fnet/cli-project-common": "^0.3.9",
     "@fnet/cli-project-flow": "^0.12.1",
     "@fnet/cli-project-node": "^0.4.1",
     "@fnet/cli-project-schemas": "^0.1.2",
-    "@fnet/config": "^0.2.21",
+    "@fnet/config": "^0.2.23",
     "@fnet/dir-zipper": "^0.1.8",
     "@fnet/expression": "^0.1.25",
     "@fnet/files-to-gcs": "^0.3.9",
