@@ -30,6 +30,12 @@ export default async function createProjectReadme({ atom, context, setProgress, 
       templateContext.input = yaml.content;
     }
 
+    const outputSchemaPath = path.resolve(context.project.projectDir, `fnet/output.yaml`);
+    if (fs.existsSync(outputSchemaPath)) {
+      const yaml = await fnetYaml({ file: outputSchemaPath, tags: context.tags });
+      templateContext.output = yaml.content;
+    }
+
     const templateDir = context.templateCommonDir;
     const template = nunjucks.compile(
       fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),

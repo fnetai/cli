@@ -16,11 +16,11 @@
         "@flownet/lib-to-nextjs": "^0.3.10",
         "@flownet/lib-to-webos": "^0.3.16",
         "@fnet/auto-conda-env": "^0.1.24",
-        "@fnet/cli-project-common": "^0.3.13",
+        "@fnet/cli-project-common": "^0.3.14",
         "@fnet/cli-project-flow": "^0.12.1",
         "@fnet/cli-project-node": "^0.4.1",
         "@fnet/cli-project-schemas": "^0.1.2",
-        "@fnet/config": "^0.2.26",
+        "@fnet/config": "^0.2.27",
         "@fnet/dir-zipper": "^0.1.8",
         "@fnet/expression": "^0.1.29",
         "@fnet/files-to-gcs": "^0.3.9",
@@ -124,7 +124,7 @@
 
     "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.1.24", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.1", "nanoid": "^5.0", "semver": "^7.6" } }, "sha512-rFRqVloYKSfwUnVZpPWKZbg0Mj7qHsRHC3r+2l+OLUV/DkqJDjMVZYH9N0Y/AeQ9vFalGaYoXTHDvCUULP9Ihg=="],
 
-    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.13", "", {}, "sha512-P9dKiYPY41iifntQt+rgN1usOqQbs3Sps0TwTz7c3RKerxFjP4ErtN79LPHz/iiKzB8MbjvNt7zha7NO+bHPuA=="],
+    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.14", "", {}, "sha512-zGD2ke/ksk6aygtwYpLDQv9O3+/CaM/x/FxyocOyURG+3uCC1z1T5golBYuizVTEFDlDZ2RHEXlvT5Qo1u0O5g=="],
 
     "@fnet/cli-project-flow": ["@fnet/cli-project-flow@0.12.1", "", {}, "sha512-XzNf4olrRnP1kYZ70dDx+zFgjZVm18p8bcZNfGBESVU5at111bz8yM4ctMZS1IAWct1BvTsZR3GOF0UvzH7zIA=="],
 
@@ -132,7 +132,7 @@
 
     "@fnet/cli-project-schemas": ["@fnet/cli-project-schemas@0.1.2", "", {}, "sha512-m9bMpA52nU+1TlsA7mCIJLB+tBORjfcGJCJQ49RyaL+oFxdVTGB9y5H3OhXLBezkxKmvdwUNx+yB1pvcviVzSg=="],
 
-    "@fnet/config": ["@fnet/config@0.2.27", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/yaml": "^0.1" } }, "sha512-IxfHdfJiFNw/9pCapqsDdnRrXO0B+k5vNBWVegvLbdcw5VeKK3RNwucXY+gsZWLLhrt5yO3l/3omlePgtNIZFw=="],
+    "@fnet/config": ["@fnet/config@0.2.28", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/yaml": "^0.1" } }, "sha512-XMlbqleXl9V49dWAmHcUQWhy2joUVdcEkX8rPv6uvESk10k+xDXTJdzEy53CkCVr+DgIS0oRWwVEjYoksS9ScA=="],
 
     "@fnet/dir-zipper": ["@fnet/dir-zipper@0.1.8", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/list-files": "^0.1", "archiver": "^7.0", "ignore": "^7.0", "nanoid": "^5.1" }, "bin": { "fnet-dir-zipper": "dist/cli/esm/index.js" } }, "sha512-oR4QNmEjBDfa0z28DsuY5Iu8yEAuFWUwrN97e6g+wFZGgZ9V1cp/ughZOv/iOSVOpkd9iT9+C8alNGTQqlG3AQ=="],
 
@@ -168,7 +168,7 @@
 
     "@fnet/xcode-cert-inspector": ["@fnet/xcode-cert-inspector@0.1.10", "", { "dependencies": { "node-forge": "^1.3" } }, "sha512-Ca2n2jJthiEGw/KZGgB6jJTHSxcy4M1BKbKBMn08qq2ra+L0tixS5k3M1FPS3MVOXcI2yFcxm22gsDaCnaOYyQ=="],
 
-    "@fnet/yaml": ["@fnet/yaml@0.1.37", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-L1eGJvsLBSKRqgAQrzeauYpm1E/NtLrnSwF+nVi31GQyt88xfemW37ok469ilk5zE4TL+Sz0Rjq8VsVXVglomQ=="],
+    "@fnet/yaml": ["@fnet/yaml@0.1.39", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-oZ921PlPEG2rtjdJHFAWEcm44yRq4L9jAsppe5/L8s8Lp1uT9I1Xlcrh+lQnOx/r6p/t7Zoic/+NMmSEcolIYQ=="],
 
     "@google-cloud/paginator": ["@google-cloud/paginator@5.0.2", "", { "dependencies": { "arrify": "^2.0.0", "extend": "^3.0.2" } }, "sha512-DJS3s0OVH4zFDB1PzjxAsHqJT6sKVbRwwML0ZBP9PbU7Yebtu/7SWMRzvO2J3nUi9pRNITCfu4LJeooM2w4pjg=="],
 
