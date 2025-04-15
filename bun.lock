@@ -27,10 +27,10 @@
         "@fnet/key-value-transformer": "^0.1.4",
         "@fnet/npm-list-versions": "^0.1.35",
         "@fnet/npm-pick-versions": "^0.1.14",
-        "@fnet/object-from-schema": "^0.1.23",
-        "@fnet/prompt": "^0.2.15",
+        "@fnet/object-from-schema": "^0.1.25",
+        "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
-        "@fnet/shell-flow": "^0.1.25",
+        "@fnet/shell-flow": "^0.1.27",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.1.7",
         "@fnet/to-rust": "^0.1.14",
@@ -65,7 +65,7 @@
         "@rollup/plugin-node-resolve": "^16.0.1",
         "@rollup/plugin-replace": "^6.0.2",
         "@rollup/plugin-terser": "^0.4.4",
-        "rollup": "^4.39.0",
+        "rollup": "^4.40.0",
       },
     },
   },
@@ -156,7 +156,7 @@
 
     "@fnet/rollup-plugin-delete": ["@fnet/rollup-plugin-delete@0.1.10", "", { "dependencies": { "del": "^8.0" } }, "sha512-P4Ntl/QeUfkGWaDzx/oOHvRpG/mnS14ksyZBu2A5ntwaq0SsH3WkjTJ1moKUgPnRmelJsYCa2rSf+up/R73KXQ=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.27", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.1" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-EHewYUlkoZyyxFSIwrJTeqRq13MsGVZ15DXgb9UkrJ5fieLrhZGxVl73oTVAuhCApzzfTXdF0L5RTWdfaZQPAw=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.29", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.1" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-Qb/YJ+VmNSpCwTqvV2n2A+RFqiy0nYxql6koxnZOjF14Nz9zgRY/CWwkKgrB2g6EfbkbOMZlIQmqqDCsQEL6oA=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
