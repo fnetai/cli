@@ -304,7 +304,7 @@ function bindRunContextCommand(builder, { name, preArgs = [] }) {
         const group = commands[argv.group];
         if (!group) throw new Error(`Command group '${argv.group}' not found in project file.`);
 
-        await fnetShellFlow({ commands: group });
+        await fnetShellFlow({ commands: group, context: { args: argv, argv: process.argv } });
       } catch (error) {
         console.error(error.message);
         process.exit(1);

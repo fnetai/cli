@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.107.0",
+  "version": "0.107.1",
   "files": [
     "dist"
   ],
@@ -40,10 +40,10 @@
     "@fnet/key-value-transformer": "^0.1.4",
     "@fnet/npm-list-versions": "^0.1.35",
     "@fnet/npm-pick-versions": "^0.1.14",
-    "@fnet/object-from-schema": "^0.1.23",
-    "@fnet/prompt": "^0.2.15",
+    "@fnet/object-from-schema": "^0.1.25",
+    "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
-    "@fnet/shell-flow": "^0.1.25",
+    "@fnet/shell-flow": "^0.1.27",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.1.7",
     "@fnet/to-rust": "^0.1.14",
@@ -82,6 +82,6 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.39.0"
+    "rollup": "^4.40.0"
   }
 }
