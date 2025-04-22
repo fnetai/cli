@@ -30,12 +30,12 @@
         "@fnet/object-from-schema": "^0.1.25",
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
-        "@fnet/shell-flow": "^0.1.29",
+        "@fnet/shell-flow": "^0.1.30",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.1.7",
         "@fnet/to-rust": "^0.1.14",
         "@fnet/up-list-files": "^0.1.13",
-        "@fnet/yaml": "^0.1.39",
+        "@fnet/yaml": "^0.1.40",
         "@node-red/util": "^4.0.9",
         "ajv": "^8.17.1",
         "ajv-formats": "^3.0.1",
@@ -156,7 +156,7 @@
 
     "@fnet/rollup-plugin-delete": ["@fnet/rollup-plugin-delete@0.1.10", "", { "dependencies": { "del": "^8.0" } }, "sha512-P4Ntl/QeUfkGWaDzx/oOHvRpG/mnS14ksyZBu2A5ntwaq0SsH3WkjTJ1moKUgPnRmelJsYCa2rSf+up/R73KXQ=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.30", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.1" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-hMGYqBaXP+jcJd2sqIzmVD+JlUZ96RpEtxpKFxN/yFaHWOPpwcEkSYrBoCkqI0r43YQDT8YGH4u/p/qY8NveTg=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.31", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.1" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-3rqeYaQNOWcD1tRSiM7Q5Y4y1/zj7UrpolQz8azG2zBSRBC4bgE4sIxNk1Uq+DQSpVz7rxYqyhqVczMsOwSbdw=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
