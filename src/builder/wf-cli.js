@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import os from 'node:os';
 import fs from 'node:fs';
+import treeKill from 'tree-kill';
 
 import YAML from 'yaml';
 import yargs from 'yargs';
@@ -223,7 +224,22 @@ function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
           stdio: 'inherit',
-          shell: true
+          shell: true,
+          detached: true
+        });
+
+        // Handle process signals
+        ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
+          process.once(signal, () => {
+            if (!subprocess.killed && subprocess.pid) {
+              treeKill(subprocess.pid, signal, (err) => {
+                if (err) console.error(`Failed to kill process tree: ${err}`);
+                process.exit(1);
+              });
+            } else {
+              process.exit(1);
+            }
+          });
         });
 
         subprocess.on('close', (code) => {
@@ -266,10 +282,25 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
           cwd: fs.existsSync(projectDir) ? projectDir : cwd,
           stdio: 'inherit',
           shell: true,
+          detached: true,
           env: {
             ...process.env,
             ...env
           }
+        });
+
+        // Handle process signals
+        ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
+          process.once(signal, () => {
+            if (!subprocess.killed && subprocess.pid) {
+              treeKill(subprocess.pid, signal, (err) => {
+                if (err) console.error(`Failed to kill process tree: ${err}`);
+                process.exit(1);
+              });
+            } else {
+              process.exit(1);
+            }
+          });
         });
 
         subprocess.on('close', (code) => {
