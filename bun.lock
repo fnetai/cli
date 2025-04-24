@@ -157,7 +157,7 @@
 
     "@fnet/rollup-plugin-delete": ["@fnet/rollup-plugin-delete@0.1.10", "", { "dependencies": { "del": "^8.0" } }, "sha512-P4Ntl/QeUfkGWaDzx/oOHvRpG/mnS14ksyZBu2A5ntwaq0SsH3WkjTJ1moKUgPnRmelJsYCa2rSf+up/R73KXQ=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.36", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-TTt3emeDy2MxVOyDOh1DZdIA//sJzsAktivDIPn3M6M4cD6A46cy8OJ9cGpW8C5ZOMOE8AmsAtiWxikmIY6LeQ=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.37", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-2Mihrr192y1gH4JQkyPFynOvpA+FYxmQtgL7FmCXun04IDYNgU6NomgEI6gLmmFWZbQg46KTH4yhH3Indvo1Ww=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 

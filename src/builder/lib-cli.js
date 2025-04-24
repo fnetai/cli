@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 import os from 'node:os';
 import fs from 'node:fs';
 import treeKill from 'tree-kill';
+import { promisify } from 'node:util';
 
 import YAML from 'yaml';
 import yargs from 'yargs';
@@ -20,8 +21,78 @@ import which from './which.js';
 
 import Builder from './lib-builder.js';
 
+// Promisify treeKill for async/await usage
+const treeKillAsync = promisify(treeKill);
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.cwd();
+
+// Track if we're already in the process of exiting to prevent multiple cleanup attempts
+let isExiting = false;
+
+/**
+ * Gracefully terminates a subprocess and all its children
+ * @param {ChildProcess} subprocess - The subprocess to terminate
+ * @param {string} [signal] - The signal that triggered the termination
+ * @returns {Promise<void>}
+ */
+async function terminateSubprocess(subprocess, signal) {
+  // Prevent multiple termination attempts
+  if (isExiting) return;
+  isExiting = true;
+
+  console.log(`Terminating subprocess (signal: ${signal || 'none'})...`);
+
+  if (!subprocess.killed && subprocess.pid) {
+    try {
+      // First try SIGTERM for graceful shutdown
+      await treeKillAsync(subprocess.pid, 'SIGTERM').catch(() => {
+        // Ignore errors from SIGTERM - we'll try SIGKILL next if needed
+      });
+
+      // Give the process some time to terminate gracefully
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Check if the process is still running and use SIGKILL as a last resort
+      if (!subprocess.killed) {
+        console.log('Process still running, forcing termination...');
+        await treeKillAsync(subprocess.pid, 'SIGKILL').catch(() => {
+          // Ignore errors - process might already be gone
+        });
+      }
+    } catch (err) {
+      console.error(`Failed to terminate subprocess: ${err.message}`);
+    }
+  }
+
+  // Small delay to ensure all console output is flushed
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // Exit with appropriate code based on signal
+  const exitCode = signal === 'SIGINT' ? 130 : (signal === 'SIGTERM' ? 143 : 1);
+  process.exit(exitCode);
+}
+
+// Set up global error handlers to ensure all subprocesses are terminated
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception at global level:', err);
+  if (!isExiting) {
+    isExiting = true;
+    console.log('Terminating due to uncaught exception...');
+    // Force exit after a delay to allow any cleanup to complete
+    setTimeout(() => process.exit(1), 500);
+  }
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection at global level:', reason);
+  if (!isExiting) {
+    isExiting = true;
+    console.log('Terminating due to unhandled promise rejection...');
+    // Force exit after a delay to allow any cleanup to complete
+    setTimeout(() => process.exit(1), 500);
+  }
+});
 
 // fnet env
 fnetConfig({
@@ -238,20 +309,26 @@ function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
 
         // Handle process signals
         ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
-          process.once(signal, () => {
-            if (!subprocess.killed && subprocess.pid) {
-              treeKill(subprocess.pid, signal, (err) => {
-                if (err) console.error(`Failed to kill process tree: ${err}`);
-                process.exit(1);
-              });
-            } else {
-              process.exit(1);
-            }
+          process.once(signal, async () => {
+            await terminateSubprocess(subprocess, signal);
           });
         });
 
+        // Handle uncaught exceptions and unhandled promise rejections
+        process.on('uncaughtException', async (err) => {
+          console.error('Uncaught exception:', err);
+          await terminateSubprocess(subprocess);
+        });
+
+        process.on('unhandledRejection', async (reason) => {
+          console.error('Unhandled promise rejection:', reason);
+          await terminateSubprocess(subprocess);
+        });
+
         subprocess.on('close', (code) => {
-          process.exit(code);
+          if (!isExiting) {
+            process.exit(code);
+          }
         });
       } catch (error) {
         console.error(error.message);
@@ -300,20 +377,26 @@ function bindCondaContextCommand(builder, { name, bin, preArgs = [] }) {
 
         // Handle process signals
         ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
-          process.once(signal, () => {
-            if (!subprocess.killed && subprocess.pid) {
-              treeKill(subprocess.pid, signal, (err) => {
-                if (err) console.error(`Failed to kill process tree: ${err}`);
-                process.exit(1);
-              });
-            } else {
-              process.exit(1);
-            }
+          process.once(signal, async () => {
+            await terminateSubprocess(subprocess, signal);
           });
         });
 
+        // Handle uncaught exceptions and unhandled promise rejections
+        process.on('uncaughtException', async (err) => {
+          console.error('Uncaught exception:', err);
+          await terminateSubprocess(subprocess);
+        });
+
+        process.on('unhandledRejection', async (reason) => {
+          console.error('Unhandled promise rejection:', reason);
+          await terminateSubprocess(subprocess);
+        });
+
         subprocess.on('close', (code) => {
-          process.exit(code);
+          if (!isExiting) {
+            process.exit(code);
+          }
         });
 
       } catch (error) {
@@ -362,20 +445,26 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
 
         // Handle process signals
         ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
-          process.once(signal, () => {
-            if (!subprocess.killed && subprocess.pid) {
-              treeKill(subprocess.pid, signal, (err) => {
-                if (err) console.error(`Failed to kill process tree: ${err}`);
-                process.exit(1);
-              });
-            } else {
-              process.exit(1);
-            }
+          process.once(signal, async () => {
+            await terminateSubprocess(subprocess, signal);
           });
         });
 
+        // Handle uncaught exceptions and unhandled promise rejections
+        process.on('uncaughtException', async (err) => {
+          console.error('Uncaught exception:', err);
+          await terminateSubprocess(subprocess);
+        });
+
+        process.on('unhandledRejection', async (reason) => {
+          console.error('Unhandled promise rejection:', reason);
+          await terminateSubprocess(subprocess);
+        });
+
         subprocess.on('close', (code) => {
-          process.exit(code);
+          if (!isExiting) {
+            process.exit(code);
+          }
         });
       } catch (error) {
         console.error(error.message);
@@ -385,7 +474,7 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
   );
 }
 
-function bindRunContextCommand(builder, { name, preArgs = [] }) {
+function bindRunContextCommand(builder, { name }) {
   return builder.command(
     `${name} group [options..]`, `Run a command group.`,
     (yargs) => {
