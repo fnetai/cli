@@ -47,30 +47,26 @@ This flexibility allows you to keep your project file compact while still mainta
 
 ##### Multi-Language Support
 
-Flownet is evolving to support multiple programming languages simultaneously within the same fnode project. This means you can have:
+Flownet supports multiple programming languages within fnode projects. Currently, the supported languages are:
 
 ```text
 my-fnode-project/
 ├── src/
-│   ├── index.js          # JavaScript implementation
-│   ├── index.python      # Python implementation
-│   ├── index.go          # Go implementation
-│   ├── index.rs          # Rust implementation
-│   └── index.c           # C implementation
+│   ├── index.js          # JavaScript implementation (used by both Node.js and Bun)
+│   └── index.py          # Python implementation
 ├── fnode.yaml            # Project configuration file
 └── .workspace/           # Build infrastructure (managed by CLI)
 ```
 
-This polyglot approach offers several powerful advantages:
+This multi-language approach offers several powerful advantages:
 
 - **Focus on Functional Reference Code**: Write your core logic once, and migrate it to other languages as needed
 - **Language Agnostic Development**: Choose the best language for each specific use case
-- **Seamless Migration**: Start with one language (e.g., JavaScript) for rapid prototyping, then migrate performance-critical parts to more efficient languages (e.g., Rust or Go)
 - **Optimal Runtime Selection**: Use the `--ftag` parameter to select which language implementation to build and run
 
-For example, you might use JavaScript for quick development, Python for data processing, Go for high-performance services, Rust for memory-safe system components, and C for low-level hardware access - all within the same project structure.
+For example, you might use JavaScript with Node.js for quick development, Python for data processing, and JavaScript with Bun for improved performance - all within the same project structure.
 
-This vision represents the future of Flownet: a truly language-agnostic development platform where developers can focus on functional logic rather than language-specific constraints.
+This approach allows developers to focus on functional logic rather than language-specific constraints.
 
 #### fnet Project
 
@@ -305,6 +301,24 @@ commands:
       username: "developer"
       environment: "development"
       success: true
+
+  # File mapping example
+  assets:
+    - echo: "Starting file mapping"
+    - filemap:
+        target: "dist"
+        sources:
+          - source: "templates"
+            target: "."
+            symlink: false
+          - source: "assets"
+            target: "assets"
+            symlink: true
+    - echo: "File mapping completed"
+    context:
+      app:
+        name: "My App"
+        version: "1.0.0"
 ```
 
 ###### Key Features
@@ -315,6 +329,7 @@ The command system supports:
 - **Parallel Execution**: Run multiple commands simultaneously
 - **Background Tasks**: Start processes that continue running in the background
 - **Control Commands**: Special commands like `echo`, `sleep`, and `exit`
+- **File Mapping**: Copy or symlink files with the `filemap` command
 - **Template Variables**: Use `{{variable}}` syntax for dynamic values
 - **Error Handling**: Configure how errors are handled with `onError`
 - **Retry Mechanism**: Automatically retry failed commands
@@ -477,7 +492,7 @@ By leveraging tags, you can create highly adaptable applications that adjust the
 
 #### Key Differences
 
-1. **Runtime Support**: `fnode` supports three runtimes (node, python, bun), while `fnet` only supports node
+1. **Runtime Support**: `fnode` supports three runtimes (Node.js, Python, Bun), while `fnet` only supports Node.js
 2. **Project File**: `fnode` uses `fnode.yaml`, `fnet` uses `fnet.yaml`, `frun` auto-detects either file
 3. **Builder Class**: `fnode` uses `lib-builder.js`, `fnet` uses `wf-builder.js`
 4. **Template Directories**: `fnode` uses `template/fnode`, `fnet` uses `template/fnet`

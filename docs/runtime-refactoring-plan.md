@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-The goal is to refactor the codebase to better support multiple runtimes (Node.js, Python, Bun, and future runtimes like Go, Rust, and C) by splitting the code into separate runtime builders. This will make the codebase more modular, maintainable, and extensible.
+The goal is to refactor the codebase to better support multiple runtimes (Node.js, Python, and Bun) by splitting the code into separate runtime builders. This will make the codebase more modular, maintainable, and extensible.
 
 ## 2. Current Structure
 
@@ -24,7 +24,6 @@ Currently, the codebase has:
 - `lib-builder-node.js`: Node.js-specific builder
 - `lib-builder-python.js`: Python-specific builder
 - `lib-builder-bun.js`: Bun-specific builder
-- (Future) `lib-builder-go.js`, `lib-builder-rust.js`, `lib-builder-c.js`
 
 ### 3.3. Runtime Factory
 - `runtime-factory.js`: Factory to create the appropriate builder based on runtime type
@@ -195,4 +194,4 @@ Total estimated time: 7-11 days
 
 ## 11. Conclusion
 
-This refactoring will significantly improve the codebase's ability to support multiple runtimes while making it more maintainable and extensible. The modular approach will make it easier to add new runtimes in the future and will provide a clearer separation of concerns.
+This refactoring will significantly improve the codebase's ability to support multiple runtimes (Node.js, Python, and Bun) while making it more maintainable and extensible. The modular approach provides a clearer separation of concerns and makes the code more organized.

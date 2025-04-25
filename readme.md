@@ -20,7 +20,7 @@ Flownet is a revolutionary development framework that isolates non-functional co
 
 ### Key Features
 
-- **Language Agnostic**: Support for multiple programming languages (JavaScript, Python, Go, Rust, C) in the same project
+- **Language Agnostic**: Support for multiple programming languages (JavaScript, Python) in the same project
 - **Runtime Flexibility**: Choose the best runtime for each task (Node.js, Python, Bun)
 - **Unified Interface**: Consistent commands across different project types
 - **Tag-Based Configuration**: Powerful conditional configuration with `--ftag` parameter
@@ -101,16 +101,13 @@ Flownet provides three main CLI tools:
 
 ## Multi-Language Support
 
-Flownet is evolving to support multiple programming languages simultaneously within the same project:
+Flownet supports multiple programming languages simultaneously within the same project:
 
 ```text
 my-project/
 ├── src/
-│   ├── index.js          # JavaScript implementation
-│   ├── index.python      # Python implementation
-│   ├── index.go          # Go implementation
-│   ├── index.rs          # Rust implementation
-│   └── index.c           # C implementation
+│   ├── index.js          # JavaScript implementation (used by both Node.js and Bun)
+│   └── index.py          # Python implementation
 ├── fnode.yaml            # Project configuration file
 └── .workspace/           # Build infrastructure (managed by CLI)
 ```
@@ -119,7 +116,7 @@ This allows you to:
 
 - Write your core logic once and migrate it to other languages as needed
 - Choose the best language for each specific use case
-- Start with one language for rapid prototyping, then migrate performance-critical parts to more efficient languages
+- Use JavaScript with Node.js for quick development, Python for data processing, and JavaScript with Bun for improved performance
 
 ## Tag-Based Configuration
 
