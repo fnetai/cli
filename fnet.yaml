@@ -85,3 +85,21 @@ commands:
     - frun test-fnet-node
     - frun test-fnode-python
     - frun test-fnode-bun
+
+  test-examples:
+    - wdir: examples/fnode/node-1
+      steps:
+        - fnode build
+        - fnode cli
+    - wdir: examples/fnode/python-1
+      steps:
+        - fnode build
+        - fnode cli
+    - wdir: examples/fnode/bun-1
+      steps:
+        - fnode build
+        - fnode cli
+    - wdir: examples/fnet/node-1
+      steps:
+        - fnet build
+        - fnet cli
