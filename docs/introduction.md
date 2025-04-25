@@ -18,10 +18,60 @@ This means developers and AI agents can focus exclusively on writing the functio
 
 @fnet/cli supports two main project types, independent of the underlying runtime:
 
-- **Workflow Projects (`fnet`)**: Designed for workflow-oriented applications with a focus on process flows and transformations
-- **Node Projects (`fnode`)**: Used for more traditional/classic project structures (not to be confused with Node.js)
+#### fnode Project
 
-This distinction allows developers to choose the project structure that best fits their needs and use cases.
+An **fnode project** (Flow Node Project) is a classic/node-style project that focuses on creating reusable components or standalone applications. These projects:
+
+- Use `fnode.yaml` as their configuration file
+- Typically contain a single code file in the `src` directory
+- Can be built with different runtimes (Node.js, Python, Bun)
+- Are managed using the `fnode` command-line tool
+
+Thanks to `@fnet/yaml`, any field in the `fnode.yaml` file can either contain the actual configuration or reference external files:
+
+```yaml
+# Option 1: Direct configuration in fnode.yaml
+features:
+  runtime:
+    type: node
+dependencies:
+  - express
+  - lodash
+
+# Option 2: Reference external configuration
+features: g::file://./config/features.yaml...
+dependencies: g::file://./config/dependencies.yaml...
+```
+
+This flexibility allows you to keep your project file compact while still maintaining all necessary configuration.
+
+#### fnet Project
+
+An **fnet project** (Flow Network Project) is a workflow-oriented project that orchestrates processes and services. These projects:
+
+- Use `fnet.yaml` as their configuration file
+- Define workflows either:
+  - Directly embedded in the `flows` field of the `fnet.yaml` file, or
+  - Referenced from an external file (typically `fnet/flows.yaml`) using `@fnet/yaml` references
+- Can include local code in the `src/local` directory when needed
+- Are managed using the `fnet` command-line tool
+
+For example, workflows can be defined in either of these ways:
+
+```yaml
+# Option 1: Embedded directly in fnet.yaml
+flows:
+  main:
+    steps:
+      - id: step1
+        type: transform
+        # ...more step configuration
+
+# Option 2: Referenced from an external file
+flows: g::file://./fnet/flows.yaml...
+```
+
+This distinction allows developers to choose the project structure that best fits their needs and use cases. Throughout this documentation, we'll refer to these as "fnode projects" and "fnet projects" for clarity.
 
 ### Core Component and Wrappers
 
@@ -107,7 +157,9 @@ Flownet provides two main CLI tools that reflect the project types:
 - **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
 - **`fnet`**: For Workflow projects (uses `fnet.yaml`)
 
-#### Common Commands
+As a developer, you only need to know these two commands and their options. The internal implementation details (like `lib-cli.js` or `wf-cli.js`) are abstracted away, allowing you to focus solely on your project's functional code.
+
+#### Core Commands
 
 Both CLI tools share similar command structures but serve different project types:
 
@@ -119,6 +171,14 @@ fnode create --name <project-name> [--runtime <node|python|bun>] [--vscode <true
 
 # For Workflow projects
 fnet create --name <project-name> [--runtime <node>] [--vscode <true|false>]
+```
+
+##### Project Management
+
+```bash
+# Update an existing project with the latest templates
+fnode project --update
+fnet project --update
 ```
 
 ##### Building Projects
@@ -141,13 +201,31 @@ fnode deploy [--id <id>] [--buildId <build-id>] [--ftag <tags>]
 fnet deploy [--id <id>] [--buildId <build-id>] [--ftag <tags>]
 ```
 
+##### File Generation Only
+
+```bash
+# Generate files without building
+fnode file [--id <id>] [--buildId <build-id>] [--ftag <tags>]
+fnet file [--id <id>] [--buildId <build-id>] [--ftag <tags>]
+```
+
+#### Configuration Commands
+
+##### Input Configuration
+
+```bash
+# Create or modify an input configuration file
+fnode input [name]
+fnet input [name]
+```
+
+This creates a configuration file in the `.fnet` directory based on the `input` schema defined in your project file.
+
 ##### Running Commands from Project File
 
 ```bash
-# For Node/classic projects
+# Execute a command group defined in the project file
 fnode run <command-group> [--ftag <tags>]
-
-# For Workflow projects
 fnet run <command-group> [--ftag <tags>]
 ```
 
@@ -156,22 +234,69 @@ This executes command groups defined in the `commands` section of your project f
 ##### Environment-Aware Command Execution
 
 ```bash
-# For Node/classic projects
+# Run a command with environment variables from a config file
 fnode with <config> <command> [options..]
-
-# For Workflow projects
 fnet with <config> <command> [options..]
 ```
 
 This runs a command with environment variables from a specified configuration file.
+
+#### Development Commands
+
+##### Node.js Commands
+
+```bash
+# Run npm commands in the project context
+fnode npm [commands..]
+fnet npm [commands..]
+
+# Run node commands in the project context
+fnode node [commands..]
+fnet node [commands..]
+
+# Run npx commands in the project context
+fnode npx [commands..]
+fnet npx [commands..]
+```
+
+##### Bun Commands
+
+```bash
+# Run bun commands in the project context
+fnode bun [commands..]
+fnet bun [commands..]
+
+# Run specific bun scripts
+fnode serve [options..]  # Runs 'bun run serve'
+fnode watch [options..]  # Runs 'bun run watch'
+fnode app [options..]    # Runs 'bun run app'
+fnode cli [options..]    # Runs 'bun run cli'
+```
+
+The same commands are available for `fnet` as well.
+
+##### Cloud Development Commands
+
+```bash
+# Run AWS CLI commands in the project context
+fnode aws [commands..]
+fnet aws [commands..]
+
+# Run AWS CDK commands in the project context
+fnode cdk [commands..]
+fnet cdk [commands..]
+```
 
 #### Runtime-Specific Commands
 
 The `fnode` CLI supports additional commands for Python projects:
 
 ```bash
+# Run Python commands using the project's Conda environment
 fnode python [commands..]
 fnode python3 [commands..]
+
+# Run pip commands using the project's Conda environment
 fnode pip [commands..]
 fnode pip3 [commands..]
 ```
@@ -195,6 +320,31 @@ This activates sections in your project file marked with `t::dev::` or `t::local
 3. **Builder Class**: `fnode` uses `lib-builder.js`, `fnet` uses `wf-builder.js`
 4. **Template Directories**: `fnode` uses `template/fnode`, `fnet` uses `template/fnet`
 5. **Conda Commands**: Only `fnode` supports Conda commands for Python projects
+
+### Project Code Structure
+
+When thinking about Flownet projects, the `src` folder should be your primary focus. This is where all your functional code resides. Flownet recommends a flat file structure for better simplicity and maintainability.
+
+```text
+# For fnode projects (typically a single code file)
+my-fnode-project/
+├── src/
+│   └── index.js          # Your functional code in a single file
+├── fnode.yaml            # Project configuration file
+└── .workspace/           # Build infrastructure (managed by CLI)
+
+# For fnet (workflow) projects
+my-fnet-project/
+├── src/
+│   └── local/            # Optional local code used in workflows
+│       └── helpers.js    # Helper functions for workflows
+├── fnet.yaml             # Project configuration file
+├── fnet/
+│   └── flows.yaml        # Workflow definitions
+└── .workspace/           # Build infrastructure (managed by CLI)
+```
+
+As a developer, you'll spend most of your time working in the `src` directory, while the CLI tools manage everything else. The flat file structure keeps your code simple and focused on functionality.
 
 ### Isolated Workspace
 
