@@ -10,7 +10,7 @@ commands:
   deploy:
     - fnet build
     - bun publish --access public
-    
+
   compile:
     steps:
       - fnet run build
@@ -31,3 +31,33 @@ commands:
 
     # env:
     #   DEVELOPMENT: true
+
+  test-node-node:
+    - rm -rf .tests/node-node
+    - wdir: .tests
+      steps:
+        - fnode create --name node-node --runtime node
+        - wdir: .tests/node-node
+          steps:
+            # - fnode build
+            - fnode cli
+
+  test-node-flow:
+    - rm -rf .tests/node-flow
+    - wdir: .tests
+      steps:
+        - fnet create --name node-flow --runtime node
+        - wdir: .tests/node-flow
+          steps:
+            # - fnet build
+            - fnet cli
+
+  test-python-node:
+    - rm -rf .tests/python-node
+    - wdir: .tests
+      steps:
+        - fnode create --name python-node --runtime python
+        - wdir: .tests/python-node
+          steps:
+            # - fnode build
+            - fnode cli
