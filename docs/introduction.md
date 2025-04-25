@@ -39,7 +39,66 @@ Since all non-functional components are isolated, each project type needs its ow
 - **`fnet.yaml`**: Configuration file for Workflow projects (`fnet`)
 - **`fnode.yaml`**: Configuration file for Node projects (`fnode`)
 
-These configuration files contain all the project settings, dependencies, features, and other configuration details needed to manage the project.
+These configuration files are the entry declarative files for Flownet projects. They contain all the project settings, dependencies, features, and other configuration details needed to manage the project.
+
+#### Enhanced YAML with @fnet/yaml
+
+Flownet uses the `@fnet/yaml` npm package to make these configuration files more powerful and flexible than standard YAML. This package transforms YAML from a static configuration format into a dynamic, programmable configuration language with features like:
+
+- **File References**: Include content from other YAML files
+
+  ```yaml
+  # In fnet.yaml
+  flows: g::file://./fnet/flows.yaml...
+  ```
+
+- **Dynamic Runtime Configuration**: Set runtime type dynamically
+
+  ```yaml
+  # In fnode.yaml
+  features:
+    s::runtime.type: python  # or bun, node, etc.
+  ```
+
+- **Tag-Based Configuration**: Apply configurations based on environment tags
+
+  ```yaml
+  # Only applied when 'dev' tag is present
+  t::dev::database:
+    url: "mongodb://localhost:27017"
+
+  # Only applied when 'prod' tag is present
+  t::prod::database:
+    url: "mongodb://production-server:27017"
+  ```
+
+- **Multiple Content Sources**: Load content from various sources
+
+  ```yaml
+  # Load from HTTP source
+  remote_config: g::https://example.com/config.yaml...
+
+  # Load from npm package
+  package_config: g::npm:@fnet/webauth@^0.1/fnet/input.yaml...
+  ```
+
+- **Text and Binary Content**: Load raw text or binary content
+
+  ```yaml
+  # Load text content
+  readme: g::text::file://./README.md...
+
+  # Load binary content
+  image: g::binary::file://./logo.png...
+  ```
+
+- **Custom Processors**: Special prefixes for different operations
+  - `s::` (Setter): For setting properties using dot notation
+  - `g::` (Getter): For retrieving values from files or URLs
+  - `t::` (Tag): For conditional configuration based on environment tags
+  - `gtext::` and `gbinary::`: For loading raw text or binary content
+
+This powerful approach allows you to create flexible, environment-aware configurations while maintaining the simplicity and readability of YAML.
 
 ### Isolated Workspace
 
