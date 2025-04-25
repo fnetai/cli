@@ -50,7 +50,36 @@ async function buildOutput(name, config) {
     target: config.target || 'browser',
     minify: config.minify !== undefined ? config.minify : false,
     sourcemap: config.sourcemap || 'external',
-    ...(config.plugins ? { plugins: config.plugins } : {})
+
+    // Add diagnostic plugin for module resolution
+    plugins: [
+      // Diagnostic plugin to log module resolution
+      {
+        name: "module-resolution-diagnostic",
+        setup(build) {
+          // Log all module resolution attempts
+          build.onResolve({ filter: /.*/ }, (args) => {
+            console.log(`[Diagnostic] Resolving module: ${args.path} from ${args.importer || 'root'}`);
+
+            // Check if module exists in node_modules
+            try {
+              const nodeModulesPath = join(process.cwd(), 'node_modules', args.path);
+              if (fs.existsSync(nodeModulesPath)) {
+                console.log(`[Diagnostic] Module ${args.path} found in node_modules at ${nodeModulesPath}`);
+              } else {
+                console.log(`[Diagnostic] Module ${args.path} not found in node_modules`);
+              }
+            } catch (err) {
+              console.error(`[Diagnostic] Error checking module: ${err.message}`);
+            }
+
+            // Let Bun continue with normal resolution
+            return null;
+          });
+        }
+      },
+      ...(config.plugins || [])
+    ]
   });
 
   if (!result.success) {
