@@ -367,7 +367,6 @@ async function createContext(argv) {
       protocol: argv.protocol || "ac:",
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
       templateDir: resolveTemplatePath('./template/flow/node'),
-      templateCommonDir: resolveTemplatePath('./template/common/node'),
       coreDir: resolveTemplatePath('./template/flow/core'),
       tags: argv.ftag,
     }
@@ -381,7 +380,6 @@ async function createContext(argv) {
       mode: argv.mode,
       protocol: argv.protocol || "local:",
       templateDir: resolveTemplatePath('./template/flow/node'),
-      templateCommonDir: resolveTemplatePath('./template/common/node'),
       coreDir: resolveTemplatePath('./template/flow/core'),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),

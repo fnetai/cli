@@ -36,7 +36,7 @@ export default async function createProjectReadme({ atom, context, setProgress, 
       templateContext.output = yaml.content;
     }
 
-    const templateDir = context.templateCommonDir;
+    const templateDir = context.templateDir;
     const template = nunjucks.compile(
       fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
       nunjucks.configure(templateDir)
@@ -56,7 +56,7 @@ export default async function createProjectReadme({ atom, context, setProgress, 
 
     const templateContext = { content: main }
 
-    const templateDir = context.templateCommonDir;
+    const templateDir = context.templateDir;
     const template = nunjucks.compile(
       fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
       nunjucks.configure(templateDir)

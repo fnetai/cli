@@ -421,7 +421,6 @@ async function createContext(argv) {
       mode: argv.mode,
       protocol: argv.protocol || "ac:",
       templateDir: resolveTemplatePath(`./template/node/node`),
-      templateCommonDir: resolveTemplatePath(`./template/common/node`),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
       tags: argv.ftag,
     };
@@ -432,7 +431,6 @@ async function createContext(argv) {
       mode: argv.mode,
       protocol: argv.protocol || "local:",
       templateDir: resolveTemplatePath(`./template/node/${project.runtime.template}`),
-      templateCommonDir: resolveTemplatePath(`./template/common/${project.runtime.template}`),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,

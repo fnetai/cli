@@ -1,0 +1,9 @@
+{% if value.browser===true %}
+{% if value.globals.length %}
+globals: {
+    {% for global in value.globals %}
+        "{{global.key}}":"{{global.value}}" {% if not loop.last %},{% endif %}
+    {% endfor %}
+},
+{% endif %}
+{% endif %}

@@ -71,3 +71,9 @@ commands:
           steps:
             # - fnode build
             - fnode cli
+  
+  test-all:
+    - fnet run test-node-node
+    - fnet run test-node-flow
+    - fnet run test-python-node
+    - fnet run test-bun-node

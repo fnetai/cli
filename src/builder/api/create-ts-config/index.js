@@ -11,7 +11,7 @@ export default async function createTsConfig({ atom, setProgress, context, packa
             packageDependencies
     }
 
-    const templateDir = context.templateCommonDir;
+    const templateDir = context.templateDir;
     const template = nunjucks.compile(
         fs.readFileSync(path.resolve(templateDir, `tsconfig.json.njk`), "utf8"),
         nunjucks.configure(templateDir)
