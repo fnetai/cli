@@ -1,0 +1,14 @@
+// BLOCK: {{indexKey}}
+
+import Message from "../../core/message";
+{% if context.transform.print %}
+import print from "../../core/print";
+{% endif %}
+
+{% if context.transform.sleep %}
+import sleep from "../../core/sleep";
+{% endif %}
+
+{% if context.transform.assert %}
+import assert from "../../core/assert";
+{% endif %}

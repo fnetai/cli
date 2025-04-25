@@ -1,0 +1,65 @@
+
+{% include "src/default/macros/block-header.js.njk" %}
+
+{# {% include "src/default/macros/block-next-header.js.njk" %} #}
+
+{% include "src/default/macros/block-modules-header.js.njk" %}
+
+{% for child in childs %}
+  {% if not child.definition.dynamic %}
+    // CHILD: {{child.indexKey}}
+    import {{child.codeKey}} from "./{{child.codeKey}}";
+  {% endif %}
+{% endfor%}
+
+export default function Block(context) {
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+
+  this.run= function (){
+      
+    const args=Array.from(arguments);
+
+    return new Promise(async (resolve,reject)=>{
+        
+        {% include "src/default/macros/block-run-header.js.njk" %}
+
+        {% include "src/default/macros/page.js.njk" %}
+
+        {% include "src/default/macros/block-modules.js.njk" %}
+        
+        try{
+            
+          {% if context.try.definition.dynamic %}
+              const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}");
+          {% endif %}
+          
+          const current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c });
+
+          {% if workflow.parent.context.atom.doc.features.print_runners %}
+            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+          {% endif %}
+
+          return resolve(await current.run.apply(current,args));
+        }
+        catch({{context.except.context.transform.as | safe}}){
+            
+          {% if context.except.definition.dynamic %}
+              const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
+          {% endif %}
+
+          const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c });
+
+          {% if workflow.parent.context.atom.doc.features.print_runners %}
+            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+          {% endif %}
+
+          return resolve(await current.run.apply(current,args));
+        }
+    });
+  }
+
+  Object.freeze(this);
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}

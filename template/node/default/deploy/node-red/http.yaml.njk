@@ -1,0 +1,80 @@
+id: {{red.tab.id}}
+label: {{red.tab.label}}
+configs: []
+nodes:
+  - id: {{red.function.id}}
+    type: function
+    z: {{red.tab.id}}
+    name: {{red.function.name}}
+    func: |-
+      const defaultLibFunction = context.get('Library');
+      const params = msg.payload;
+
+      defaultLibFunction(params)
+        .then(response=>{
+            node.send({
+                ...msg,
+                payload: response
+            }, false);
+        })
+        .catch(error=>{
+            node.send({
+                ...msg,
+                payload: error.message,
+                statusCode:501,
+            }, false);
+        });
+
+    outputs: 1
+    noerr: 0
+    initialize: |      
+        {{ red.function.initialize.content | safe  | indent(8)}}
+        context.set('Library', {{red.function.initialize.var | safe}});
+    finalize: ""
+    {% if atom.doc.features.browser_enabled===false %}
+    libs:
+      {% for dep in packageDependencies %}
+      - module: "{{dep.package}}"
+        var: Global{{loop.index}}
+      {% endfor%}
+    {% endif %}
+    x: 480
+    y: 200
+    wires:
+      - - {{red.debug.id}}
+        - {{red.httpout.id}}
+  - id: {{red.httpin.id}}
+    type: http in
+    z: {{red.tab.id}}
+    name: ""
+    url: /lib/{{red.httpin.url}}
+    method: {{red.httpin.method}}
+    upload: false
+    swaggerDoc: ""
+    x: 280
+    y: 200
+    wires:
+      - - {{red.function.id}}
+  - id: {{red.httpout.id}}
+    type: http response
+    z: {{red.tab.id}}
+    name: ""
+    statusCode: ""
+    headers: {}
+    x: 690
+    y: 300
+    wires: []      
+  - id: {{red.debug.id}}
+    type: debug
+    z: {{red.tab.id}}
+    name: ""
+    active: false
+    tosidebar: true
+    console: false
+    tostatus: false
+    complete: "false"
+    statusVal: ""
+    statusType: auto
+    x: 690
+    y: 200
+    wires: []

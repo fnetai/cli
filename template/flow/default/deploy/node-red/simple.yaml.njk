@@ -1,0 +1,68 @@
+id: {{red.tab.id}}
+label: {{red.tab.label}}
+configs: []
+nodes:
+  - id: {{red.function.id}}
+    type: function
+    z: {{red.tab.id}}
+    name: {{red.function.name}}
+    func: |-
+      const Workflow = context.get('Workflow');
+      const workflow=new Workflow();
+      const params = msg.payload;
+      const result = await workflow.run(params);
+
+      node.send({
+          ...msg,
+          payload: result
+      }, false);
+    outputs: 1
+    noerr: 0
+    initialize: |      
+        {{ red.function.initialize.content | safe  | indent(8)}}
+        context.set('Workflow', {{red.function.initialize.var | safe}});
+    finalize: ""
+    {% if atom.doc.features.browser_enabled===false %}
+    libs:
+      {% for dep in packageDependencies %}
+      - module: "{{dep.package}}"
+        var: Global{{loop.index}}
+      {% endfor%}
+    {% endif %}
+    x: 480
+    y: 200
+    wires:
+      - - {{red.debug.id}}
+  - id: {{red.inject.id}}
+    type: inject
+    z: {{red.tab.id}}
+    name: ""
+    props:
+      - p: payload
+      - p: topic
+        vt: str
+    repeat: ""
+    crontab: ""
+    once: false
+    onceDelay: 0.1
+    topic: ""
+    payloadType: {{red.inject.payloadType if red.inject.payloadType else 'default'}}
+    payload: {{red.inject.payload | safe}}
+    x: 280
+    y: 200
+    wires:
+      - - {{red.function.id}}
+  - id: {{red.debug.id}}
+    type: debug
+    z: {{red.tab.id}}
+    name: ""
+    active: false
+    tosidebar: true
+    console: false
+    tostatus: false
+    complete: "false"
+    statusVal: ""
+    statusType: auto
+    x: 690
+    y: 200
+    wires: []

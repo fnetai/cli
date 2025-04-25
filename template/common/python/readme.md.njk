@@ -1,0 +1,12 @@
+{{content | safe}}
+
+{% if howto %}
+{{howto | safe}}
+{% endif %}
+
+{% if input %}
+# Input Schema
+```yaml
+{{ input | safe}}
+```
+{% endif %}

@@ -1,0 +1,9 @@
+onwarn(warning, warn) {
+    switch (warning.code) {
+    case 'MODULE_LEVEL_DIRECTIVE':
+    case 'CIRCULAR_DEPENDENCY':
+        return;
+    default:
+        warn(warning);
+    }
+},

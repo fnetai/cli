@@ -1,0 +1,74 @@
+id: {{red.tab.id}}
+label: {{red.tab.label}}
+configs: []
+nodes:
+  - id: {{red.function.id}}
+    type: function
+    z: {{red.tab.id}}
+    name: {{red.function.name}}
+    func: |-
+      const defaultLibFunction = context.get('Library');
+      const params = msg.payload;
+      const result = await defaultLibFunction(params);
+
+      node.send({
+          ...msg,
+          payload: result
+      }, false);
+    outputs: 1
+    noerr: 0
+    initialize: |      
+        {{ red.function.initialize.content | safe  | indent(8)}}
+        context.set('Library', {{red.function.initialize.var | safe}});
+    finalize: ""
+    {% if atom.doc.features.browser_enabled===false %}
+    libs:
+      {% for dep in packageDependencies %}
+      - module: "{{dep.package}}"
+        var: Global{{loop.index}}
+      {% endfor%}
+    {% endif %}
+    x: 480
+    y: 200
+    wires:
+      - - {{red.debug.id}}
+  - id: {{red.cronjob.id}}
+    type: cronplus
+    z: {{red.tab.id}}
+    name: ""
+    outputField: payload
+    timeZone: ''
+    persistDynamic: false
+    commandResponseMsgOutput: output1
+    outputs: 1
+    options:
+      {% for schedule in red.cronjob.schedules %}
+      - name: Schedule{{loop.index}}
+        topic: Topic{{loop.index}}
+        payloadType: {{schedule.payloadType if schedule.payloadType else 'default'}}
+        payload: {{schedule.payload | safe}}
+        expressionType: cron
+        expression: {{schedule.expression}}
+        location: ''
+        offset: '0'
+        solarType: all
+        solarEvents: sunrise,sunset
+      {% endfor%}
+    x: 280
+    y: 200
+    wires:
+      - - {{red.function.id}}
+  - id: {{red.debug.id}}
+    type: debug
+    z: {{red.tab.id}}
+    name: ""
+    active: false
+    tosidebar: true
+    console: false
+    tostatus: false
+    complete: "false"
+    statusVal: ""
+    statusType: auto
+    x: 690
+    y: 200
+    wires: []

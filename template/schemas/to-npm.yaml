@@ -1,0 +1,14 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+properties:
+  env:
+    type: object
+    description: "Environment configuration"
+    properties:
+      NPM_TOKEN:
+        type: string
+        description: "A secure authentication token used by npm to authenticate and publish packages. Ensure that this token has the appropriate permissions for your project and repository."
+    required:
+      - NPM_TOKEN
+required:
+  - env

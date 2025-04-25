@@ -1,0 +1,17 @@
+{% if runtime ==='node' %}
+npm-default:
+  type: npm
+  enabled: false
+  version: "{{npm.version or "0.1.0"}}"  
+  params:
+    # bin: some-bin-name
+    name: "{{npm.name or "@fnet/"+name}}"
+{% elif runtime==='python' %}
+pypi-default:
+  type: pypi
+  enabled: false
+  version: "{{pip.version or "0.1.0"}}"  
+  params:
+    # bin: some-bin-name
+    name: "{{pip.name or "@fnet/"+name}}"
+{% endif %}
