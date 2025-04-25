@@ -420,8 +420,8 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "ac:",
-      templateDir: resolveTemplatePath(`./template/node/default`),
-      templateCommonDir: resolveTemplatePath(`./template/common/default`),
+      templateDir: resolveTemplatePath(`./template/node/node`),
+      templateCommonDir: resolveTemplatePath(`./template/common/node`),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
       tags: argv.ftag,
     };
@@ -455,7 +455,7 @@ async function loadLocalProject({ tags }) {
   features.runtime.type = features.runtime.type || "node";
 
   if (features.runtime.type === "python") features.runtime.template = features.runtime.template || "python";
-  else features.runtime.template = features.runtime.template || "default";
+  else features.runtime.template = features.runtime.template || "node";
 
   const libraryAtom = {
     doc: {
