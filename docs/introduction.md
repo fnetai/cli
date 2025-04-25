@@ -184,11 +184,17 @@ Flownet provides two main CLI tools that reflect the project types:
 - **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
 - **`fnet`**: For Workflow projects (uses `fnet.yaml`)
 
-As a developer, you only need to know these two commands and their options. The internal implementation details (like `lib-cli.js` or `wf-cli.js`) are abstracted away, allowing you to focus solely on your project's functional code.
+As a developer, you only need to know these commands and their options. The internal implementation details (like `lib-cli.js`, `wf-cli.js`, or `run-cli.js`) are abstracted away, allowing you to focus solely on your project's functional code.
 
 #### Core Commands
 
-Both CLI tools share similar command structures but serve different project types:
+Flownet provides three main CLI tools:
+
+- **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
+- **`fnet`**: For Workflow projects (uses `fnet.yaml`)
+- **`frun`**: Unified interface that works with both project types (auto-detects project file)
+
+These CLI tools share similar command structures but serve different purposes:
 
 ##### Project Creation
 
@@ -252,11 +258,14 @@ This creates a configuration file in the `.fnet` directory based on the `input` 
 
 ```bash
 # Execute a command group defined in the project file
-fnode run <command-group> [--ftag <tags>]
-fnet run <command-group> [--ftag <tags>]
+fnode run <command-group> [--ftag <tags>]  # Only looks for fnode.yaml
+fnet run <command-group> [--ftag <tags>]   # Only looks for fnet.yaml
+frun <command-group> [--ftag <tags>]       # Auto-detects project type
 ```
 
 This executes command groups defined in the `commands` section of your project file. Flownet uses the powerful `@fnet/shell-flow` package to provide a flexible command execution system.
+
+The `frun` command is a unified interface that works with both project types. It automatically detects whether you're in a `fnode` or `fnet` project and runs the appropriate command group. This is especially useful when you're working with multiple project types and want a consistent interface.
 
 ###### Command Group Structure
 
@@ -469,10 +478,11 @@ By leveraging tags, you can create highly adaptable applications that adjust the
 #### Key Differences
 
 1. **Runtime Support**: `fnode` supports three runtimes (node, python, bun), while `fnet` only supports node
-2. **Project File**: `fnode` uses `fnode.yaml`, `fnet` uses `fnet.yaml`
+2. **Project File**: `fnode` uses `fnode.yaml`, `fnet` uses `fnet.yaml`, `frun` auto-detects either file
 3. **Builder Class**: `fnode` uses `lib-builder.js`, `fnet` uses `wf-builder.js`
 4. **Template Directories**: `fnode` uses `template/fnode`, `fnet` uses `template/fnet`
 5. **Conda Commands**: Only `fnode` supports Conda commands for Python projects
+6. **Command Scope**: `fnode` and `fnet` are project-specific, while `frun` works with both project types
 
 ### Project Code Structure
 

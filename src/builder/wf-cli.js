@@ -301,16 +301,17 @@ function bindRunContextCommand(builder, { name }) {
     },
     async (argv) => {
       try {
-        const context = await createContext(argv);
-        const { project } = context;
-        const { projectFileParsed } = project;
-        const commands = projectFileParsed.commands;
-        if (!commands) throw new Error('Commands not found in project file.');
+        // Import the common run utility
+        const { runCommandGroup } = await import('../utils/common-run.js');
 
-        const group = commands[argv.group];
-        if (!group) throw new Error(`Command group '${argv.group}' not found in project file.`);
-
-        await fnetShellFlow({ commands: group, context: { args: argv, argv: process.argv } });
+        // Run command group using the common utility
+        await runCommandGroup({
+          projectType: 'fnet', // Only look for fnet.yaml
+          group: argv.group,
+          tags: argv.ftag,
+          args: argv,
+          argv: process.argv
+        });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
