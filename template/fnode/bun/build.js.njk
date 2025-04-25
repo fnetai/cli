@@ -50,25 +50,7 @@ async function buildOutput(name, config) {
     target: config.target || 'browser',
     minify: config.minify !== undefined ? config.minify : false,
     sourcemap: config.sourcemap || 'external',
-    {% if atom.doc.features.repos and atom.doc.features.repos.length > 0 %}
-    // Custom module resolution for repositories
-    plugins: [
-      {
-        name: "custom-resolver",
-        setup(build) {
-          // Add custom repositories for module resolution
-          {% for repo in atom.doc.features.repos %}
-          build.onResolve({ filter: /^{{repo.name}}/ }, (args) => {
-            return { path: args.path.replace(/^{{repo.name}}/, "{{repo.path}}") };
-          });
-          {% endfor %}
-        }
-      },
-      ...(config.plugins || [])
-    ]
-    {% else %}
     ...(config.plugins ? { plugins: config.plugins } : {})
-    {% endif %}
   });
 
   if (!result.success) {

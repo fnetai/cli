@@ -72,6 +72,12 @@ commands:
             # - fnode build
             - fnode cli
 
+  test-fnode-bun-build:
+      - wdir: .tests/fnode-bun
+        steps:
+          - fnode build
+          - fnode cli
+
   test-all:
     - fnet run test-fnode-node
     - fnet run test-fnet-node
