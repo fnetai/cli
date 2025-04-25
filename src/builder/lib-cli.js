@@ -48,7 +48,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       .option('runtime', { type: 'string', default: 'node', choices: ['node', 'python', 'bun'] });
   }, async (argv) => {
     try {
-      const templateDir = resolveTemplatePath('./template/node/project');
+      const templateDir = resolveTemplatePath('./template/fnode/project');
       const outDir = path.resolve(cwd, argv.name);
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
@@ -90,7 +90,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       .option('update', { type: 'boolean', default: false, alias: '-u' });
   }, async (argv) => {
     try {
-      const templateDir = resolveTemplatePath('./template/node/project');
+      const templateDir = resolveTemplatePath('./template/fnode/project');
       const outDir = process.cwd();
 
       const context = await createContext(argv);
@@ -420,7 +420,7 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "ac:",
-      templateDir: resolveTemplatePath(`./template/node/node`),
+      templateDir: resolveTemplatePath(`./template/fnode/node`),
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
       tags: argv.ftag,
     };
@@ -430,7 +430,7 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "local:",
-      templateDir: resolveTemplatePath(`./template/node/${project.runtime.template}`),
+      templateDir: resolveTemplatePath(`./template/fnode/${project.runtime.template}`),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,

@@ -8,7 +8,7 @@ const cwd = process.cwd();
 /**
  * Resolves a template path that works both in local development and in the published package
  * 
- * @param {string} templatePath - The relative path to the template (e.g., './template/node/project')
+ * @param {string} templatePath - The relative path to the template (e.g., './template/fnode/project')
  * @returns {string} The resolved absolute path to the template
  * @throws {Error} If the template path cannot be resolved
  */

@@ -52,7 +52,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     ;
   }, async (argv) => {
     try {
-      const templateDir = resolveTemplatePath('./template/flow/project');
+      const templateDir = resolveTemplatePath('./template/fnet/project');
       const outDir = path.resolve(cwd, argv.name);
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
@@ -90,7 +90,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       .option('update', { type: 'boolean', default: false, alias: '-u' });
   }, async (argv) => {
     try {
-      const templateDir = resolveTemplatePath('./template/flow/project');
+      const templateDir = resolveTemplatePath('./template/fnet/project');
       const outDir = process.cwd();
 
       const context = await createContext(argv);
@@ -366,8 +366,8 @@ async function createContext(argv) {
       mode: argv.mode,
       protocol: argv.protocol || "ac:",
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-      templateDir: resolveTemplatePath('./template/flow/node'),
-      coreDir: resolveTemplatePath('./template/flow/core'),
+      templateDir: resolveTemplatePath('./template/fnet/node'),
+      coreDir: resolveTemplatePath('./template/fnet/core'),
       tags: argv.ftag,
     }
 
@@ -379,8 +379,8 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "local:",
-      templateDir: resolveTemplatePath('./template/flow/node'),
-      coreDir: resolveTemplatePath('./template/flow/core'),
+      templateDir: resolveTemplatePath('./template/fnet/node'),
+      coreDir: resolveTemplatePath('./template/fnet/core'),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,
