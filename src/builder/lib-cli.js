@@ -20,7 +20,7 @@ import { setupSignalHandlers, setupGlobalErrorHandlers } from '../utils/process-
 import resolveTemplatePath from '../utils/resolve-template-path.js';
 import migrateNodeYaml from '../utils/migrate-node-yaml.js';
 
-import Builder from './lib-builder.js';
+import RuntimeFactory from './runtime-factory.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.cwd();
@@ -130,7 +130,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
   }, async (argv) => {
     try {
       const context = await createContext(argv);
-      const builder = new Builder(context);
+      const builder = await RuntimeFactory.createBuilder(context);
       await builder.init();
       await builder.build();
 
@@ -151,7 +151,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
   }, async (argv) => {
     try {
       const context = await createContext({ ...argv, mode: "all" });
-      const builder = new Builder(context);
+      const builder = await RuntimeFactory.createBuilder(context);
       await builder.init();
       await builder.build();
 
@@ -171,7 +171,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
   }, async (argv) => {
     try {
       const context = await createContext({ ...argv, mode: "file" });
-      const builder = new Builder(context);
+      const builder = await RuntimeFactory.createBuilder(context);
       await builder.init();
       await builder.build();
 
