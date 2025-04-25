@@ -45,6 +45,33 @@ dependencies: g::file://./config/dependencies.yaml...
 
 This flexibility allows you to keep your project file compact while still maintaining all necessary configuration.
 
+##### Multi-Language Support
+
+Flownet is evolving to support multiple programming languages simultaneously within the same fnode project. This means you can have:
+
+```text
+my-fnode-project/
+├── src/
+│   ├── index.js          # JavaScript implementation
+│   ├── index.python      # Python implementation
+│   ├── index.go          # Go implementation
+│   ├── index.rs          # Rust implementation
+│   └── index.c           # C implementation
+├── fnode.yaml            # Project configuration file
+└── .workspace/           # Build infrastructure (managed by CLI)
+```
+
+This polyglot approach offers several powerful advantages:
+
+- **Focus on Functional Reference Code**: Write your core logic once, and migrate it to other languages as needed
+- **Language Agnostic Development**: Choose the best language for each specific use case
+- **Seamless Migration**: Start with one language (e.g., JavaScript) for rapid prototyping, then migrate performance-critical parts to more efficient languages (e.g., Rust or Go)
+- **Optimal Runtime Selection**: Use the `--ftag` parameter to select which language implementation to build and run
+
+For example, you might use JavaScript for quick development, Python for data processing, Go for high-performance services, Rust for memory-safe system components, and C for low-level hardware access - all within the same project structure.
+
+This vision represents the future of Flownet: a truly language-agnostic development platform where developers can focus on functional logic rather than language-specific constraints.
+
 #### fnet Project
 
 An **fnet project** (Flow Network Project) is a workflow-oriented project that orchestrates processes and services. These projects:
@@ -229,7 +256,63 @@ fnode run <command-group> [--ftag <tags>]
 fnet run <command-group> [--ftag <tags>]
 ```
 
-This executes command groups defined in the `commands` section of your project file.
+This executes command groups defined in the `commands` section of your project file. Flownet uses the powerful `@fnet/shell-flow` package to provide a flexible command execution system.
+
+###### Command Group Structure
+
+You can define sophisticated command groups in your project file:
+
+```yaml
+commands:
+  # Simple sequential commands
+  build:
+    - "echo 'Starting build'"
+    - steps:
+        - "npm install"
+        - "npm run build"
+        - "npm run test"
+      onError: "stop"
+      captureName: "build_output"
+
+  # Complex deployment with parallel and background tasks
+  deploy:
+    - "echo 'Starting deployment'"
+    - parallel:
+        - "npm run test:unit"
+        - "npm run test:integration"
+    - fork:
+        - "npm run watch:css"
+        - "npm run watch:js"
+      env:
+        NODE_ENV: "production"
+
+  # Control commands and templating
+  greet:
+    - echo: "Hello, {{username}}!"
+    - sleep: 2
+    - echo: "Running in {{environment}} mode"
+    - exit: "{{success ? 0 : 1}}"
+    context:
+      username: "developer"
+      environment: "development"
+      success: true
+```
+
+###### Key Features
+
+The command system supports:
+
+- **Sequential Execution**: Run commands one after another
+- **Parallel Execution**: Run multiple commands simultaneously
+- **Background Tasks**: Start processes that continue running in the background
+- **Control Commands**: Special commands like `echo`, `sleep`, and `exit`
+- **Template Variables**: Use `{{variable}}` syntax for dynamic values
+- **Error Handling**: Configure how errors are handled with `onError`
+- **Retry Mechanism**: Automatically retry failed commands
+- **Script Mode**: Execute commands in a script file for better performance
+- **Output Capture**: Capture command output for later use
+
+This powerful system allows you to define complex build, test, and deployment workflows directly in your project file, eliminating the need for separate build scripts.
 
 ##### Environment-Aware Command Execution
 
@@ -303,15 +386,85 @@ fnode pip3 [commands..]
 
 These commands use the Conda environment in the project's `.workspace/.conda` directory.
 
-#### Tag Support
+#### Tag Support with --ftag
 
-Both CLI tools support the `--ftag` parameter for conditional configuration:
+Both CLI tools support the `--ftag` parameter for powerful conditional configuration. This feature allows you to define environment-specific settings in a single project file:
 
 ```bash
 fnode build --ftag dev --ftag local
 ```
 
-This activates sections in your project file marked with `t::dev::` or `t::local::` tags.
+This activates sections in your project file marked with `t::dev::` or `t::local::` tags. For example:
+
+```yaml
+# Base configuration (always applied)
+name: my-project
+version: 1.0.0
+
+# Development environment configuration
+t::dev::database:
+  url: "mongodb://localhost:27017"
+  logging: true
+
+# Production environment configuration
+t::prod::database:
+  url: "mongodb://production-server:27017"
+  logging: false
+  replicas: 3
+
+# Feature flags
+t::experimental::features:
+  newUI: true
+```
+
+When you run a command with `--ftag dev`, only the sections marked with `t::dev::` will be activated and merged with the base configuration. If you run with `--ftag prod`, the production settings will be used instead.
+
+You can specify multiple tags, and any section marked with any of those tags will be activated (OR logic). This powerful feature allows you to:
+
+- Maintain different configurations for development, staging, and production in a single file
+- Enable or disable features conditionally
+- Create specialized builds for different environments
+- Test new features without affecting the main configuration
+
+The `--ftag` parameter can be used with most CLI commands, including `build`, `deploy`, `run`, and others.
+
+##### Potential Opportunities with Tag-Based Configuration
+
+This powerful tag-based configuration system opens up numerous possibilities:
+
+1. **DevOps and CI/CD Integration**
+   - Run the same codebase with different configurations in your CI/CD pipeline
+   - Maintain a single source of truth for all environment configurations
+
+2. **Feature Flags**
+   - Gradually roll out new features to specific environments or user groups
+   - Implement A/B testing with different configurations for different user segments
+
+3. **Multi-Deployment Strategies**
+   - Create region-specific configurations (EU, US, Asia)
+   - Develop customer-specific deployments with tailored features
+
+4. **Development Workflow Improvements**
+   - Enable performance optimizations or debugging features in development
+   - Define team-specific configurations for better collaboration
+
+5. **Experimental Features and Prototyping**
+   - Test experimental code without affecting the main codebase
+   - Quickly prototype different approaches with alternative configurations
+
+6. **Conditional Dependency Management**
+   - Define different dependencies for different environments
+   - Include development tools only in development builds
+
+7. **Security and Compliance**
+   - Create security profiles with different encryption requirements
+   - Implement compliance-specific configurations (GDPR, HIPAA, etc.)
+
+8. **Performance Optimizations**
+   - Define scaling profiles for different load scenarios
+   - Optimize resource usage based on the deployment environment
+
+By leveraging tags, you can create highly adaptable applications that adjust their behavior based on the context in which they run.
 
 #### Key Differences
 
