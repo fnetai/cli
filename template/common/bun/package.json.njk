@@ -53,7 +53,7 @@
   {% endif %}
   "license": "{{atom.doc.license or 'MIT'}}",
   "scripts": {
-    "build": "bun build ./src/cli/index.js",
+    "build": "bun build ./src/cli/index.js --outfile=dist/cli/esm/index.js",
     "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
     "serve": "bunx serve ./"
     {% if atom.doc.features.cli.enabled %}

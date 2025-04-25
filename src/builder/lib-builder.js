@@ -511,6 +511,14 @@ class Builder {
     await this.initLibs();
   }
 
+  async initBun() {
+    await initFeatures(this.#apiContext);
+    await initDependencies(this.#apiContext);
+    await this.initLibraryDir();
+    await this.initNunjucks();
+    await this.initLibs();
+  }
+
   async initPython() {
     await initFeaturesPython(this.#apiContext);
     await initDependenciesPython(this.#apiContext);
@@ -537,6 +545,35 @@ class Builder {
       await formatFiles(this.#apiContext);
 
       await createDts(this.#apiContext);
+
+      if (this.#buildMode) {
+
+        await installNpmPackages(this.#apiContext);
+        await runNpmBuild(this.#apiContext);
+
+        if (this.#deployMode)
+          await this.deploy();
+      }
+    }
+  }
+  async bunBuild() {
+    if (this.#fileMode) {
+      await this.createAtomLibFiles({ libs: this.#libs });
+      await this.createEngine();
+      await this.createProjectYaml();
+
+      await createProjectReadme(this.#apiContext);
+      await createTsConfig(this.#apiContext);
+      await createGitIgnore(this.#apiContext);
+      await createToYargs(this.#apiContext);
+      await createCli(this.#apiContext);
+      await createApp(this.#apiContext);
+      // await createRollup(this.#apiContext);
+      await createPackageJson(this.#apiContext);
+
+      await formatFiles(this.#apiContext);
+
+      // await createDts(this.#apiContext);
 
       if (this.#buildMode) {
 
@@ -602,6 +639,8 @@ class Builder {
       await this.initLibrary();
       if (this.#atom.doc.features.runtime.type === 'node')
         await this.initNode();
+      else if (this.#atom.doc.features.runtime.type === 'bun')
+        await this.initBun();
       else if (this.#atom.doc.features.runtime.type === 'python')
         await this.initPython();
     }
@@ -615,6 +654,8 @@ class Builder {
     try {
       if (this.#atom.doc.features.runtime.type === 'node')
         await this.nodeBuild();
+      else if (this.#atom.doc.features.runtime.type === 'bun')
+        await this.bunBuild();
       else if (this.#atom.doc.features.runtime.type === 'python')
         await this.pythonBuild();
 

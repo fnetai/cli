@@ -61,3 +61,13 @@ commands:
           steps:
             # - fnode build
             - fnode cli
+
+  test-bun-node:
+    - rm -rf .tests/bun-node
+    - wdir: .tests
+      steps:
+        - fnode create --name bun-node --runtime bun
+        - wdir: .tests/bun-node
+          steps:
+            # - fnode build
+            - fnode cli

@@ -6,6 +6,14 @@ npm-default:
   params:
     # bin: some-bin-name
     name: "{{npm.name or "@fnet/"+name}}"
+{% elif runtime==='bun' %}
+bun-default:
+  type: bun
+  enabled: false
+  version: "{{npm.version or "0.1.0"}}"  
+  params:
+    # bin: some-bin-name
+    name: "{{npm.name or "@fnet/"+name}}"
 {% elif runtime==='python' %}
 pypi-default:
   type: pypi

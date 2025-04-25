@@ -45,7 +45,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     return yargs
       .option('name', { type: 'Project name', demandOption: true })
       .option('vscode', { type: 'boolean', default: true, alias: 'vs' })
-      .option('runtime', { type: 'string', default: 'node', choices: ['node', 'python'] });
+      .option('runtime', { type: 'string', default: 'node', choices: ['node', 'python', 'bun'] });
   }, async (argv) => {
     try {
       const templateDir = resolveTemplatePath('./template/node/project');
@@ -454,8 +454,13 @@ async function loadLocalProject({ tags }) {
   features.runtime = features.runtime || {};
   features.runtime.type = features.runtime.type || "node";
 
-  if (features.runtime.type === "python") features.runtime.template = features.runtime.template || "python";
-  else features.runtime.template = features.runtime.template || "node";
+  if (features.runtime.type === "python") {
+    features.runtime.template = features.runtime.template || "python";
+  } else if (features.runtime.type === "bun") {
+    features.runtime.template = features.runtime.template || "bun";
+  } else {
+    features.runtime.template = features.runtime.template || "node";
+  }
 
   const libraryAtom = {
     doc: {
