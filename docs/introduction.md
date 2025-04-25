@@ -100,6 +100,102 @@ Flownet uses the `@fnet/yaml` npm package to make these configuration files more
 
 This powerful approach allows you to create flexible, environment-aware configurations while maintaining the simplicity and readability of YAML.
 
+### Command Line Interface
+
+Flownet provides two main CLI tools that reflect the project types:
+
+- **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
+- **`fnet`**: For Workflow projects (uses `fnet.yaml`)
+
+#### Common Commands
+
+Both CLI tools share similar command structures but serve different project types:
+
+##### Project Creation
+
+```bash
+# For Node/classic projects
+fnode create --name <project-name> [--runtime <node|python|bun>] [--vscode <true|false>]
+
+# For Workflow projects
+fnet create --name <project-name> [--runtime <node>] [--vscode <true|false>]
+```
+
+##### Building Projects
+
+```bash
+# For Node/classic projects
+fnode build [--id <id>] [--buildId <build-id>] [--mode <all|file|build|deploy|bpmn>] [--ftag <tags>]
+
+# For Workflow projects
+fnet build [--id <id>] [--buildId <build-id>] [--mode <all|file|build|deploy|bpmn>] [--ftag <tags>]
+```
+
+##### Deployment
+
+```bash
+# For Node/classic projects
+fnode deploy [--id <id>] [--buildId <build-id>] [--ftag <tags>]
+
+# For Workflow projects
+fnet deploy [--id <id>] [--buildId <build-id>] [--ftag <tags>]
+```
+
+##### Running Commands from Project File
+
+```bash
+# For Node/classic projects
+fnode run <command-group> [--ftag <tags>]
+
+# For Workflow projects
+fnet run <command-group> [--ftag <tags>]
+```
+
+This executes command groups defined in the `commands` section of your project file.
+
+##### Environment-Aware Command Execution
+
+```bash
+# For Node/classic projects
+fnode with <config> <command> [options..]
+
+# For Workflow projects
+fnet with <config> <command> [options..]
+```
+
+This runs a command with environment variables from a specified configuration file.
+
+#### Runtime-Specific Commands
+
+The `fnode` CLI supports additional commands for Python projects:
+
+```bash
+fnode python [commands..]
+fnode python3 [commands..]
+fnode pip [commands..]
+fnode pip3 [commands..]
+```
+
+These commands use the Conda environment in the project's `.workspace/.conda` directory.
+
+#### Tag Support
+
+Both CLI tools support the `--ftag` parameter for conditional configuration:
+
+```bash
+fnode build --ftag dev --ftag local
+```
+
+This activates sections in your project file marked with `t::dev::` or `t::local::` tags.
+
+#### Key Differences
+
+1. **Runtime Support**: `fnode` supports three runtimes (node, python, bun), while `fnet` only supports node
+2. **Project File**: `fnode` uses `fnode.yaml`, `fnet` uses `fnet.yaml`
+3. **Builder Class**: `fnode` uses `lib-builder.js`, `fnet` uses `wf-builder.js`
+4. **Template Directories**: `fnode` uses `template/fnode`, `fnet` uses `template/fnet`
+5. **Conda Commands**: Only `fnode` supports Conda commands for Python projects
+
 ### Isolated Workspace
 
 Flownet uses a clear separation between functional code and build infrastructure:
