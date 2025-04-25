@@ -16,10 +16,6 @@
         "@flownet/lib-to-nextjs": "^0.3.10",
         "@flownet/lib-to-webos": "^0.3.16",
         "@fnet/auto-conda-env": "^0.1.24",
-        "@fnet/cli-project-common": "^0.3.14",
-        "@fnet/cli-project-flow": "^0.12.1",
-        "@fnet/cli-project-node": "^0.4.1",
-        "@fnet/cli-project-schemas": "^0.1.2",
         "@fnet/config": "^0.2.28",
         "@fnet/dir-zipper": "^0.1.8",
         "@fnet/expression": "^0.1.29",
@@ -124,14 +120,6 @@
     "@fnet/args": ["@fnet/args@0.1.27", "", { "dependencies": { "@fnet/args": "^0.1", "ajv": "^8.17", "merge": "^2.1", "minimist": "^1.2" } }, "sha512-zFWodMyY3LONgq1cYAJecnU/fQSCdngR70f+LDVkbGQmYOkiNgz+/YfcQps72sD0YlMBNjR4Mzaqy1ef5ieh8A=="],
 
     "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.1.24", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.1", "nanoid": "^5.0", "semver": "^7.6" } }, "sha512-rFRqVloYKSfwUnVZpPWKZbg0Mj7qHsRHC3r+2l+OLUV/DkqJDjMVZYH9N0Y/AeQ9vFalGaYoXTHDvCUULP9Ihg=="],
-
-    "@fnet/cli-project-common": ["@fnet/cli-project-common@0.3.14", "", {}, "sha512-zGD2ke/ksk6aygtwYpLDQv9O3+/CaM/x/FxyocOyURG+3uCC1z1T5golBYuizVTEFDlDZ2RHEXlvT5Qo1u0O5g=="],
-
-    "@fnet/cli-project-flow": ["@fnet/cli-project-flow@0.12.1", "", {}, "sha512-XzNf4olrRnP1kYZ70dDx+zFgjZVm18p8bcZNfGBESVU5at111bz8yM4ctMZS1IAWct1BvTsZR3GOF0UvzH7zIA=="],
-
-    "@fnet/cli-project-node": ["@fnet/cli-project-node@0.4.1", "", {}, "sha512-aMLdag10sSsv18z40YDezHaOrnCOUf5BbQx/eMMMqXMQRTeR4ohEfee5H15hUXupb290PioV2WeE9kVh8TAB+Q=="],
-
-    "@fnet/cli-project-schemas": ["@fnet/cli-project-schemas@0.1.2", "", {}, "sha512-m9bMpA52nU+1TlsA7mCIJLB+tBORjfcGJCJQ49RyaL+oFxdVTGB9y5H3OhXLBezkxKmvdwUNx+yB1pvcviVzSg=="],
 
     "@fnet/config": ["@fnet/config@0.2.28", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/yaml": "^0.1" } }, "sha512-XMlbqleXl9V49dWAmHcUQWhy2joUVdcEkX8rPv6uvESk10k+xDXTJdzEy53CkCVr+DgIS0oRWwVEjYoksS9ScA=="],
 

@@ -3,14 +3,15 @@ import path from 'node:path';
 import semver from 'semver';
 import fnetShellJs from '@fnet/shelljs';
 import fnetConfig from '@fnet/config';
-import fnetUpListFiles from '@fnet/up-list-files';
 import fnetObjectFromSchema from '@fnet/object-from-schema';
 import yaml from 'yaml';
 
 import which from '../../which.js';
+import resolveTemplatePath from '../../../utils/resolve-template-path.js';
 
 import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const cwd = process.cwd();
 
 export default async function deployToNpm({ atom, setProgress, context, deploymentProject, deploymentProjectTarget: target, yamlTarget }) {
 
@@ -51,9 +52,8 @@ export default async function deployToNpm({ atom, setProgress, context, deployme
 
   if (!npmConfig) {
     // create config from schema
-    const schemas = fnetUpListFiles({ dir: __dirname, pattern: '@fnet/cli-project-schemas/dist/schemas/to-npm.yaml', absolute: true });
-    if (schemas.length === 0) throw new Error('Couldnt find schema to create npm config');
-    const newConfig = await fnetObjectFromSchema({ schema: schemas[0], tags: context.tags });
+    const schemaPath = resolveTemplatePath('./template/schemas/to-npm.yaml');
+    const newConfig = await fnetObjectFromSchema({ schema: schemaPath, tags: context.tags });
 
     const projectDir = context.project.projectDir;
     const dotFnetDir = path.resolve(projectDir, '.fnet');
