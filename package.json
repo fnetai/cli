@@ -10,7 +10,8 @@
   "scripts": {
     "build": "rollup --config",
     "deploy": "bun publish --access public",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT"
+    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
+    "postbuild": "chmod +x dist/fnode/index.js dist/fnet/index.js dist/frun/index.js"
   },
   "repository": {
     "type": "git",
