@@ -30,7 +30,13 @@ export default async function createProjectReadme({ atom, context, setProgress, 
       templateContext.input = yaml.content;
     }
 
-    const templateDir = context.templateCommonDir;
+    const outputSchemaPath = path.resolve(context.project.projectDir, `fnet/output.yaml`);
+    if (fs.existsSync(outputSchemaPath)) {
+      const yaml = await fnetYaml({ file: outputSchemaPath, tags: context.tags });
+      templateContext.output = yaml.content;
+    }
+
+    const templateDir = context.templateDir;
     const template = nunjucks.compile(
       fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
       nunjucks.configure(templateDir)
@@ -50,7 +56,7 @@ export default async function createProjectReadme({ atom, context, setProgress, 
 
     const templateContext = { content: main }
 
-    const templateDir = context.templateCommonDir;
+    const templateDir = context.templateDir;
     const template = nunjucks.compile(
       fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
       nunjucks.configure(templateDir)

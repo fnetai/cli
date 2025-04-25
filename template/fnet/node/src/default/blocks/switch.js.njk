@@ -1,0 +1,73 @@
+{% include "src/default/macros/block-header.js.njk" %}
+
+{% if not hasDefaultCondition %}
+  {% include "src/default/macros/block-next-header.js.njk" %}
+{% endif %}
+
+{% include "src/default/macros/block-modules-header.js.njk" %}
+
+{% for child in childs %}
+  {% if not child.definition.dynamic %}
+    // CHILD: {{child.indexKey}}
+    import {{child.codeKey}} from "./{{child.codeKey}}";
+  {% endif %}
+{% endfor%}
+
+export default function Block(context) {
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+  
+  this.run= function (){
+      
+    const args=Array.from(arguments);
+
+    return new Promise(async (resolve,reject)=>{
+        
+      {% include "src/default/macros/block-run-header.js.njk" %}
+
+      {% include "src/default/macros/page.js.njk" %}
+
+      {% include "src/default/macros/block-modules.js.njk" %}
+      
+      {% for child in childs %}
+        {% if loop.first %}
+          if ({{child.context.transform.condition | safe}}) 
+        {% else %}
+          {%if child.context.transform.condition %}
+            else if ({{child.context.transform.condition | safe}}) 
+          {% else %}
+            else
+          {% endif %}
+        {% endif %} 
+          {
+            {% if child.definition.dynamic %}
+              // CHILD: {{child.indexKey}}
+              const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}");
+            {% endif %}
+
+            const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c });
+
+            {% if workflow.parent.context.atom.doc.features.print_runners %}
+              console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+            {% endif %}
+
+            return resolve(await current.run.apply(current,args));
+          }
+      {% endfor%}
+
+      {% if not hasDefaultCondition %}
+        {% if context.transform.return %}
+          resolve({type:'return',value: {{context.transform.return | safe}}});
+        {% elseif context.next %}
+          {% include "src/default/macros/block-next.js.njk" %}
+        {% else %}
+          resolve();
+        {% endif %}
+      {% endif %}
+    });
+  }  
+
+  Object.freeze(this);
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}

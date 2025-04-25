@@ -1,0 +1,8 @@
+{% for child in childs %}
+  {% if child.module===true%}
+    {% if not child.definition.dynamic %}
+    // MODULE : {{child.indexKey}}
+    import { default as {{child.codeKey}} } from "./{{child.codeKey}}";
+    {% endif %}
+  {% endif %}
+{% endfor%}

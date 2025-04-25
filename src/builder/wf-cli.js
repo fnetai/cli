@@ -1,25 +1,34 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawn } from 'child_process';
-import prompt from '@fnet/prompt';
+import { spawn } from 'node:child_process';
+import os from 'node:os';
 import fs from 'node:fs';
+import treeKill from 'tree-kill';
+
 import YAML from 'yaml';
+import yargs from 'yargs';
+
+import fnetPrompt from '@fnet/prompt';
 import fnetShellJs from '@fnet/shelljs';
 import fnetYaml from '@fnet/yaml';
 import fnetConfig from '@fnet/config';
-import fnetObjectFromSchema from '@fnet/object-from-schema';
 import fnetShellFlow from '@fnet/shell-flow';
 import fnetRender from '@flownet/lib-render-templates-dir';
-import yargs from 'yargs';
-import os from 'node:os';
 
-import Builder from './wf-builder.js';
 import findNodeModules from './find-node-modules.js';
 import which from './which.js';
+import { setupSignalHandlers, setupGlobalErrorHandlers } from '../utils/process-manager.js';
+import resolveTemplatePath from '../utils/resolve-template-path.js';
+
+import Builder from './wf-builder.js';
+
 // import pkg from '../../package.json' with { type: 'json' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.cwd();
+
+// Set up global error handlers to ensure all subprocesses are terminated
+setupGlobalErrorHandlers();
 
 // fnet env (Assuming this sets up environment variables based on redis config)
 fnetConfig({
@@ -43,7 +52,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
     ;
   }, async (argv) => {
     try {
-      const templateDir = path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/project');
+      const templateDir = resolveTemplatePath('./template/fnet/project');
       const outDir = path.resolve(cwd, argv.name);
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
@@ -81,7 +90,7 @@ let cmdBuilder = yargs(process.argv.slice(2))
       .option('update', { type: 'boolean', default: false, alias: '-u' });
   }, async (argv) => {
     try {
-      const templateDir = path.resolve(nodeModulesDir, '@fnet/cli-project-flow/dist/template/project');
+      const templateDir = resolveTemplatePath('./template/fnet/project');
       const outDir = process.cwd();
 
       const context = await createContext(argv);
@@ -175,10 +184,10 @@ cmdBuilder = bindInputCommand(cmdBuilder);
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun' });
-cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'npm', preArgs: ['run', 'serve', '--'] });
-cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'npm', preArgs: ['run', 'watch', '--'] });
-cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'npm', preArgs: ['run', 'app', '--'] });
-cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'npm', preArgs: ['run', 'cli', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'bun', preArgs: ['run', 'serve', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'] });
+cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'] });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
@@ -191,6 +200,8 @@ cmdBuilder
   .argv;
 
 function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
+  if (typeof bin === 'function') bin = bin();
+
   return builder.command(
     `${name || bin} [commands..]`, `${bin} ${preArgs.join(' ')}`,
     (yargs) => {
@@ -218,12 +229,12 @@ function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
           stdio: 'inherit',
-          shell: true
+          shell: true,
+          detached: true
         });
 
-        subprocess.on('close', (code) => {
-          process.exit(code);
-        });
+        // Set up signal handlers and error handlers for the subprocess
+        setupSignalHandlers(subprocess);
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -261,15 +272,15 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
           cwd: fs.existsSync(projectDir) ? projectDir : cwd,
           stdio: 'inherit',
           shell: true,
+          detached: true,
           env: {
             ...process.env,
             ...env
           }
         });
 
-        subprocess.on('close', (code) => {
-          process.exit(code);
-        });
+        // Set up signal handlers and error handlers for the subprocess
+        setupSignalHandlers(subprocess);
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -278,7 +289,7 @@ function bindWithContextCommand(builder, { name, preArgs = [] }) {
   );
 }
 
-function bindRunContextCommand(builder, { name, preArgs = [] }) {
+function bindRunContextCommand(builder, { name }) {
   return builder.command(
     `${name} group [options..]`, `Run a command group.`,
     (yargs) => {
@@ -290,16 +301,17 @@ function bindRunContextCommand(builder, { name, preArgs = [] }) {
     },
     async (argv) => {
       try {
-        const context = await createContext(argv);
-        const { project } = context;
-        const { projectFileParsed } = project;
-        const commands = projectFileParsed.commands;
-        if (!commands) throw new Error('Commands not found in project file.');
+        // Import the common run utility
+        const { runCommandGroup } = await import('../utils/common-run.js');
 
-        const group = commands[argv.group];
-        if (!group) throw new Error(`Command group '${argv.group}' not found in project file.`);
-
-        await fnetShellFlow({ commands: group });
+        // Run command group using the common utility
+        await runCommandGroup({
+          projectType: 'fnet', // Only look for fnet.yaml
+          group: argv.group,
+          tags: argv.ftag,
+          args: argv,
+          argv: process.argv
+        });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -326,7 +338,7 @@ function bindInputCommand(builder) {
         if (!schema) throw new Error('Config schema not found in project file.');
 
         if (!Reflect.has(argv, 'name')) {
-          const { inputName } = await prompt({ type: 'input', name: 'inputName', message: 'Input name:', initial: 'dev' });
+          const { inputName } = await fnetPrompt({ type: 'input', name: 'inputName', message: 'Input name:', initial: 'dev' });
           argv.name = inputName;
         }
 
@@ -336,6 +348,7 @@ function bindInputCommand(builder) {
         const configFilePath = path.resolve(dotFnetDir, `${argv.name}.fnet`);
         const exists = fs.existsSync(configFilePath);
 
+        const fnetObjectFromSchema = (await import('@fnet/object-from-schema')).default;
         const result = await fnetObjectFromSchema({ schema, format: "yaml", ref: exists ? configFilePath : undefined });
         fs.writeFileSync(configFilePath, result);
       } catch (error) {
@@ -354,9 +367,8 @@ async function createContext(argv) {
       mode: argv.mode,
       protocol: argv.protocol || "ac:",
       projectDir: path.resolve(cwd, `./.output/${argv.id}`),
-      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/default'),
-      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
-      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/core'),
+      templateDir: resolveTemplatePath('./template/fnet/node'),
+      coreDir: resolveTemplatePath('./template/fnet/core'),
       tags: argv.ftag,
     }
 
@@ -368,9 +380,8 @@ async function createContext(argv) {
       buildId: argv.buildId,
       mode: argv.mode,
       protocol: argv.protocol || "local:",
-      templateDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/default'),
-      templateCommonDir: path.resolve(nodeModulesDir, './@fnet/cli-project-common/dist/template/default'),
-      coreDir: path.resolve(nodeModulesDir, './@fnet/cli-project-flow/dist/template/core'),
+      templateDir: resolveTemplatePath('./template/fnet/node'),
+      coreDir: resolveTemplatePath('./template/fnet/core'),
       projectDir: path.resolve(project.projectDir, `./.workspace`),
       projectSrcDir: path.resolve(project.projectDir, `./src`),
       project,

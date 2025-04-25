@@ -1,0 +1,8 @@
+{% if context.transform.page %}
+    const page= {{context.transform.page | safe}};
+    
+    {% if definition.page.title %}
+        document? document.title=page.title:undefined;
+    {% endif %}
+    
+{% endif %}

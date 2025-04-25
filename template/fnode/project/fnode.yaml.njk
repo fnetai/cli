@@ -1,0 +1,12 @@
+name: {{name}}
+
+{% if runtime === 'node' %}
+features:
+  iife: false
+{% elif runtime === 'python' %}
+features:
+  s::runtime.type: python
+{% elif runtime === 'bun' %}
+features:
+  s::runtime.type: bun
+{% endif %}

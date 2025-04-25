@@ -20,9 +20,11 @@ import Auth from './auth.js';
 
 import initFeatures from "./api/init-features/index.js";
 import initFeaturesPython from "./api/init-features/python.js";
+import initFeaturesBun from "./api/init-features/bun.js";
 
 import initDependencies from "./api/init-dependencies/index.js";
 import initDependenciesPython from "./api/init-dependencies/python.js";
+import initDependenciesBun from "./api/init-dependencies/bun.js";
 
 import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
@@ -31,6 +33,7 @@ import createCli from "./api/create-cli/index.js";
 import createCliPython from "./api/create-cli/python.js";
 
 import createRollup from "./api/create-rollup/index.js";
+import createBuildJs from "./api/create-build-js/index.js";
 import createToYargs from "./api/create-to-yargs/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
@@ -399,7 +402,7 @@ class Builder {
 
   async createProjectYaml() {
 
-    const fileBase = `node.yaml`;
+    const fileBase = `fnode.yaml`;
     const message = `Creating ${fileBase}`;
 
     await this.setProgress({ message: message });
@@ -409,8 +412,14 @@ class Builder {
     const templateContext = { content: yaml.stringify(content) }
 
     const templateDir = this.#context.templateDir;
+    const templatePath = path.resolve(templateDir, `${fileBase}.njk`);
+
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(`fnode.yaml.njk template not found in ${templateDir}`);
+    }
+
     const template = nunjucks.compile(
-      fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
+      fs.readFileSync(templatePath, "utf8"),
       this.#njEnv
     );
 
@@ -511,6 +520,14 @@ class Builder {
     await this.initLibs();
   }
 
+  async initBun() {
+    await initFeaturesBun(this.#apiContext);
+    await initDependenciesBun(this.#apiContext);
+    await this.initLibraryDir();
+    await this.initNunjucks();
+    await this.initLibs();
+  }
+
   async initPython() {
     await initFeaturesPython(this.#apiContext);
     await initDependenciesPython(this.#apiContext);
@@ -540,6 +557,34 @@ class Builder {
 
       if (this.#buildMode) {
 
+        await installNpmPackages(this.#apiContext);
+        await runNpmBuild(this.#apiContext);
+
+        if (this.#deployMode)
+          await this.deploy();
+      }
+    }
+  }
+  async bunBuild() {
+    if (this.#fileMode) {
+      await this.createAtomLibFiles({ libs: this.#libs });
+      await this.createEngine();
+      await this.createProjectYaml();
+
+      await createProjectReadme(this.#apiContext);
+      await createTsConfig(this.#apiContext);
+      await createGitIgnore(this.#apiContext);
+      await createToYargs(this.#apiContext);
+      await createCli(this.#apiContext);
+      await createApp(this.#apiContext);
+      await createBuildJs(this.#apiContext);
+      await createPackageJson(this.#apiContext);
+
+      await formatFiles(this.#apiContext);
+
+      // await createDts(this.#apiContext);
+
+      if (this.#buildMode) {
         await installNpmPackages(this.#apiContext);
         await runNpmBuild(this.#apiContext);
 
@@ -602,6 +647,8 @@ class Builder {
       await this.initLibrary();
       if (this.#atom.doc.features.runtime.type === 'node')
         await this.initNode();
+      else if (this.#atom.doc.features.runtime.type === 'bun')
+        await this.initBun();
       else if (this.#atom.doc.features.runtime.type === 'python')
         await this.initPython();
     }
@@ -615,6 +662,8 @@ class Builder {
     try {
       if (this.#atom.doc.features.runtime.type === 'node')
         await this.nodeBuild();
+      else if (this.#atom.doc.features.runtime.type === 'bun')
+        await this.bunBuild();
       else if (this.#atom.doc.features.runtime.type === 'python')
         await this.pythonBuild();
 

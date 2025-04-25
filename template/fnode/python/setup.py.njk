@@ -1,0 +1,19 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="{{params.package_name}}",
+    version="{{params.version}}",
+    packages=["default","cli"],
+    package_dir={"default": "./src/default", "cli": "./src/cli"},
+    entry_points={
+        "console_scripts": [
+            "{{params.bin_name}}=cli:main",
+        ],
+    },
+    python_requires="{{params.python_requires | default('>=3.12') | safe}}",
+    install_requires=[
+      {% for dep in params.dependencies %}
+      "{{dep.package}}" {% if not loop.last%},{%endif%}
+      {% endfor %}
+    ],
+)

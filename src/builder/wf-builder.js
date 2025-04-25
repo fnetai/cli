@@ -49,6 +49,7 @@ import jumpBlock from './block/jump/index.js';
 import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
 import npmBlock from './block/npm-block/index.js';
+import which from './which.js';
 
 class Builder {
 
@@ -1034,8 +1035,14 @@ class Builder {
   async runPrettifier() {
     const projectDir = this.#context.projectDir;
 
-    const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
-    if (result.code !== 0) throw new Error(result.stderr);
+    if (which('bun')) {
+      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src")});
+      if (result.code !== 0) throw new Error(result.stderr);
+    }
+    else {
+      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src")});
+      if (result.code !== 0) throw new Error(result.stderr);
+    }
   }
 
   async deploy() {

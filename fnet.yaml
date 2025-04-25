@@ -5,29 +5,101 @@ commands:
     - bun run build
     - node ./dist/fnode/index.js --version
     - node ./dist/fnet/index.js --version
+    - node ./dist/frun/index.js --version
     - bun link
 
   deploy:
     - fnet build
     - bun publish --access public
-    
+
   compile:
     steps:
-      - fnet run build
+      - frun build
       - bun build ./src/builder/lib-cli.js --compile --outfile=.bin/fnode
       - bun build ./src/builder/wf-cli.js --compile --outfile=.bin/fnode
+      - bun build ./src/builder/run-cli.js --compile --outfile=.bin/frun
       # - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
       # - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
-      - chmod +x .bin/fnode && chmod +x .bin/fnet
-      - chmod +x .bin/fnode && chmod +x .bin/fnet
-      - du -h .bin/fnode && du -h .bin/fnet
-      - .bin/fnode --version && .bin/fnet --version
-      - .bin/fnode --help && .bin/fnet --help
-      - otool -L .bin/fnode && otool -L .bin/fnet
-      - file .bin/fnode && file .bin/fnet
-      - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet
-      - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet
-      - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet
+      - chmod +x .bin/fnode && chmod +x .bin/fnet && chmod +x .bin/frun
+
+      - du -h .bin/fnode && du -h .bin/fnet && du -h .bin/frun
+      - .bin/fnode --version && .bin/fnet --version && .bin/frun --version
+      - .bin/fnode --help && .bin/fnet --help && .bin/frun --help
+      - otool -L .bin/fnode && otool -L .bin/fnet && otool -L .bin/frun
+      - file .bin/fnode && file .bin/fnet && file .bin/frun
+      - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet && cp .bin/frun /usr/local/bin/xfrun
+      - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet && chmod +x /usr/local/bin/xfrun
+      - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet && du -h /usr/local/bin/xfrun
 
     # env:
     #   DEVELOPMENT: true
+
+  test-fnode-node:
+    - rm -rf .tests/fnode-node
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-node --runtime node
+        - wdir: .tests/fnode-node
+          steps:
+            # - fnode build
+            - fnode cli
+
+  test-fnet-node:
+    - rm -rf .tests/fnet-node
+    - wdir: .tests
+      steps:
+        - fnet create --name fnet-node --runtime node
+        - wdir: .tests/fnet-node
+          steps:
+            # - fnet build
+            - fnet cli
+
+  test-fnode-python:
+    - rm -rf .tests/fnode-python
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-python --runtime python
+        - wdir: .tests/fnode-python
+          steps:
+            # - fnode build
+            - fnode cli
+
+  test-fnode-bun:
+    - rm -rf .tests/fnode-bun
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-bun --runtime bun
+        - wdir: .tests/fnode-bun
+          steps:
+            # - fnode build
+            - fnode cli
+
+  test-fnode-bun-build:
+      - wdir: .tests/fnode-bun
+        steps:
+          - fnode build
+          - fnode cli
+
+  test-all:
+    - frun test-fnode-node
+    - frun test-fnet-node
+    - frun test-fnode-python
+    - frun test-fnode-bun
+
+  test-examples:
+    - wdir: examples/fnode/node-1
+      steps:
+        - fnode build
+        - fnode cli
+    - wdir: examples/fnode/python-1
+      steps:
+        - fnode build
+        - fnode cli
+    - wdir: examples/fnode/bun-1
+      steps:
+        - fnode build
+        - fnode cli
+    - wdir: examples/fnet/node-1
+      steps:
+        - fnet build
+        - fnet cli

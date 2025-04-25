@@ -11,7 +11,7 @@ export default async function createGitIgnore({ atom, setProgress, context, pack
             packageDependencies
     }
 
-    const templateDir = context.templateCommonDir;
+    const templateDir = context.templateDir;
     const template = nunjucks.compile(
         fs.readFileSync(path.resolve(templateDir, `.gitignore.njk`), "utf8"),
         nunjucks.configure(templateDir)
@@ -21,5 +21,5 @@ export default async function createGitIgnore({ atom, setProgress, context, pack
 
     const projectDir = context.projectDir;
     const filePath = path.resolve(projectDir, `.gitignore`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');    
+    fs.writeFileSync(filePath, templateRender, 'utf8');
 }

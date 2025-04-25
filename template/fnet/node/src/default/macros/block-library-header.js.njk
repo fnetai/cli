@@ -1,0 +1,19 @@
+{% if context.lib.type==='atom'%}
+  // LIBRARY: {{context.lib.atom.name}}
+  {% if context.lib.atom.relativePath %}
+    {% if context.transform.import %}
+      import { {{ context.transform.call | safe  }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
+    {% else %}
+      import { default as LIBRARY } from "{{context.lib.atom.relativePath}}";
+    {% endif %}
+  {% else %}
+    {% if context.transform.import %}
+      import { {{ context.transform.call | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+    {% else %}
+      import { default as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+    {% endif %}  
+  {% endif %}
+{% elseif context.lib.type==='subworkflow' %}
+  // LIBRARY: {{context.lib.indexKey}}
+  import { default as {{context.lib.codeKey}} } from "../{{context.lib.codeKey}}";
+{% endif %}

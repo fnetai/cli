@@ -1,0 +1,12 @@
+name: bun-1
+
+
+features:
+  s::runtime.type: bun
+
+commands:
+  hello:
+    - echo "Hello from bun-1 project!"
+
+  test:
+    - bun -e "console.log('Testing bun-1 project with Bun runtime...')"

@@ -1,0 +1,11 @@
+.DS_Store
+.workspace
+.fnet
+.out
+.package
+.npmrc
+.vscode
+{% if runtime === 'node' %}
+{% elif runtime === 'python' %}
+__pycache__
+{% endif %}

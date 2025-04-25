@@ -1,0 +1,8 @@
+
+{% if value.external_enabled %}
+external: [
+    {% for external in value.external %}
+        "{{external}}" {% if not loop.last %},{% endif %}
+    {% endfor %}
+],
+{% endif %}

@@ -59,7 +59,7 @@ export default async function createPackageJson({ atom, context, packageDependen
 
     const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
     const targetImports = parsedImports.all;
-    
+
     for await (const parsedImport of targetImports) {
       if (parsedImport.type !== 'npm') continue;
 
@@ -88,7 +88,7 @@ export default async function createPackageJson({ atom, context, packageDependen
     packageDevDependencies: packageDevDependencies
   }
 
-  const templateDir = context.templateCommonDir;
+  const templateDir = context.templateDir;
   const template = nunjucks.compile(
     fs.readFileSync(path.resolve(templateDir, `package.json.njk`), "utf8"),
     nunjucks.configure(templateDir)

@@ -52,7 +52,7 @@ export default async function createRollup({ atom, setProgress, context, package
   }
 
   // RENDER TEMPLATE rollup.config.js.njk
-  const templateDir = context.templateCommonDir;
+  const templateDir = context.templateDir;
   let template = nunjucks.compile(
     fs.readFileSync(path.resolve(templateDir, `rollup.config.mjs.njk`), "utf8"),
     nunjucks.configure(templateDir)

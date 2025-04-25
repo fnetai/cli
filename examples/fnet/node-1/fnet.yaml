@@ -1,0 +1,3 @@
+name: node-1
+
+flows: g::file://./fnet/flows.yaml

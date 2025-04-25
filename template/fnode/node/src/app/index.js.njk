@@ -1,0 +1,9 @@
+{% if atom.doc.features.app.enabled===true %}
+
+    {% if atom.doc.features.app.react===true %}
+        {% include "index-js-with-react-host.njk" %}
+    {% else %}
+        {% include "index-js-without-react-host.njk" %}
+    {% endif %}
+
+{% endif %}

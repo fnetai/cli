@@ -1,5 +1,6 @@
 import path from "node:path";
-import fnetShellFlow from "@fnet/shell-flow";
+import fnetShellJs from "@fnet/shelljs";
+import which from "../../which.js";
 
 export default async function formatFiles({ setProgress, context }) {
 
@@ -7,12 +8,14 @@ export default async function formatFiles({ setProgress, context }) {
 
   await setProgress({ message: "Prettifiying source files." });
 
-  let srcDir = path.join("src","**", "*");
+  let srcDir = path.join("src", "**", "*");
 
-  await fnetShellFlow({
-    commands: {
-      steps: [`prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`],
-      wdir: projectDir,
-    }
-  });
+  if (which('bun')) {
+    const result = await fnetShellJs(`prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
+    if (result.code !== 0) throw new Error(result.stderr);
+  }
+  else {
+    const result = await fnetShellJs(`prettier --write ${srcDir} *.{js,cjs,mjs,json,yaml,html} --no-error-on-unmatched-pattern`, { cwd: projectDir });
+    if (result.code !== 0) throw new Error(result.stderr);
+  }
 }

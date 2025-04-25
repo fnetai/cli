@@ -1,0 +1,7 @@
+npm-default:
+  type: npm
+  enabled: false
+  version: "{{npm.version or "0.1.0"}}"  
+  params:
+    # bin: some-bin-name
+    name: "{{npm.name or "@fnet/"+name}}"

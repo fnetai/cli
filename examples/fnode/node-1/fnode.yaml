@@ -1,0 +1,12 @@
+name: node-1
+
+
+features:
+  iife: false
+
+commands:
+  hello:
+    - echo "Hello from node-1 project!"
+
+  test:
+    - node -e "console.log('Testing node-1 project...')"

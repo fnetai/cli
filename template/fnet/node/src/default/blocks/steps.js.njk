@@ -1,0 +1,56 @@
+{% include "src/default/macros/block-header.js.njk" %}
+
+{% include "src/default/macros/block-next-header.js.njk" %}
+
+export default function Block(context){
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+
+  this.run= function (){
+      
+    const args=Array.from(arguments);
+
+    return new Promise(async (resolve,reject)=>{
+        
+      {% include "src/default/macros/block-run-header.js.njk" %}
+
+      {% if context.next %}
+
+        // NEXT : {{context.next.indexKey}}
+        {% if context.next.definition.dynamic %}
+          const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}");
+        {% endif %}
+
+        let current=new {{context.next.codeKey}}({ parent:_this, engine, flow, caller:c });
+        let currentArgs=args;
+
+        do {
+          
+          {% if workflow.parent.context.atom.doc.features.print_runners %}
+            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+          {% endif %}
+
+          const nextBlock= typeof currentArgs==='undefined'? await current.run() 
+            : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
+
+          if(nextBlock?.type==='return') return resolve(nextBlock);
+          else if(nextBlock?.type!=='block') break;
+
+          if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
+            return resolve(nextBlock);
+
+          current=new nextBlock.toType({ parent:_this, engine, flow, caller:c});
+          currentArgs=nextBlock.withArgs;
+
+        } while(true);
+
+      {% endif %}
+
+      resolve();
+    });
+  }
+
+  Object.freeze(this);
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}
