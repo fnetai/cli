@@ -51,33 +51,23 @@ async function buildOutput(name, config) {
     minify: config.minify !== undefined ? config.minify : false,
     sourcemap: config.sourcemap || 'external',
 
-    // Add diagnostic plugin for module resolution
+    // Mark npm dependencies as external to prevent bundling issues
+    external: (() => {
+      try {
+        const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+        return [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})];
+      } catch (err) {
+        console.warn('Could not read package.json:', err.message);
+        return [];
+      }
+    })(),
+
+    // Add environment variables to help with module resolution
+    define: {
+      'process.env.NODE_PATH': JSON.stringify('./node_modules')
+    },
+
     plugins: [
-      // Diagnostic plugin to log module resolution
-      {
-        name: "module-resolution-diagnostic",
-        setup(build) {
-          // Log all module resolution attempts
-          build.onResolve({ filter: /.*/ }, (args) => {
-            console.log(`[Diagnostic] Resolving module: ${args.path} from ${args.importer || 'root'}`);
-
-            // Check if module exists in node_modules
-            try {
-              const nodeModulesPath = join(process.cwd(), 'node_modules', args.path);
-              if (fs.existsSync(nodeModulesPath)) {
-                console.log(`[Diagnostic] Module ${args.path} found in node_modules at ${nodeModulesPath}`);
-              } else {
-                console.log(`[Diagnostic] Module ${args.path} not found in node_modules`);
-              }
-            } catch (err) {
-              console.error(`[Diagnostic] Error checking module: ${err.message}`);
-            }
-
-            // Let Bun continue with normal resolution
-            return null;
-          });
-        }
-      },
       ...(config.plugins || [])
     ]
   });

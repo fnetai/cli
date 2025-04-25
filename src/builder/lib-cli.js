@@ -18,6 +18,7 @@ import findNodeModules from './find-node-modules.js';
 import which from './which.js';
 import { setupSignalHandlers, setupGlobalErrorHandlers } from '../utils/process-manager.js';
 import resolveTemplatePath from '../utils/resolve-template-path.js';
+import migrateNodeYaml from '../utils/migrate-node-yaml.js';
 
 import Builder from './lib-builder.js';
 
@@ -440,8 +441,11 @@ async function createContext(argv) {
 }
 
 async function loadLocalProject({ tags }) {
-  const projectFilePath = path.resolve(cwd, 'node.yaml');
-  if (!fs.existsSync(projectFilePath)) throw new Error('node.yaml file not found in current directory.');
+  // Try to find fnode.yaml first, if not found, check for node.yaml and migrate if needed
+  let projectFilePath = migrateNodeYaml(cwd);
+
+  // If neither fnode.yaml nor node.yaml exists, throw an error
+  if (!fs.existsSync(projectFilePath)) throw new Error('fnode.yaml file not found in current directory.');
 
   const { raw, parsed: projectFileParsed } = await fnetYaml({ file: projectFilePath, tags });
   const projectDir = path.dirname(projectFilePath);

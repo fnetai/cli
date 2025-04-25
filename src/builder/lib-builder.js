@@ -402,7 +402,7 @@ class Builder {
 
   async createProjectYaml() {
 
-    const fileBase = `node.yaml`;
+    const fileBase = `fnode.yaml`;
     const message = `Creating ${fileBase}`;
 
     await this.setProgress({ message: message });
@@ -412,8 +412,14 @@ class Builder {
     const templateContext = { content: yaml.stringify(content) }
 
     const templateDir = this.#context.templateDir;
+    const templatePath = path.resolve(templateDir, `${fileBase}.njk`);
+
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(`fnode.yaml.njk template not found in ${templateDir}`);
+    }
+
     const template = nunjucks.compile(
-      fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
+      fs.readFileSync(templatePath, "utf8"),
       this.#njEnv
     );
 
