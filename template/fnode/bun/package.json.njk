@@ -62,7 +62,6 @@
     {% else %}
     ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
     {% endif %}
-
     {% endif %}
     {% if atom.doc.features.app.enabled %}
     ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
@@ -71,7 +70,7 @@
   "devDependencies": {
     {% for dep in packageDevDependencies %}
     "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
-    {% endfor%}    
+    {% endfor%}
   },
   "dependencies": {
     {% for dep in packageDependencies %}

@@ -7,6 +7,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -18,118 +19,132 @@ async function ensureDir(dir) {
   }
 }
 
-async function buildDefault() {
-  console.log('Building default module...');
-  
-  // ESM build
-  const esmOutDir = join(__dirname, 'dist/default/esm');
-  await ensureDir(esmOutDir);
-  
-  const esmResult = await Bun.build({
-    entrypoints: ['./src/default/index.js'],
-    outdir: esmOutDir,
-    format: 'esm',
-    target: 'browser',
-    minify: false,
-    sourcemap: 'external'
-  });
-  
-  if (!esmResult.success) {
-    console.error('ESM build failed:', esmResult.logs);
-    process.exit(1);
-  }
-  
-  // CJS build
-  const cjsOutDir = join(__dirname, 'dist/default/cjs');
-  await ensureDir(cjsOutDir);
-  
-  const cjsResult = await Bun.build({
-    entrypoints: ['./src/default/index.js'],
-    outdir: cjsOutDir,
-    format: 'cjs',
-    target: 'node',
-    minify: false,
-    sourcemap: 'external'
-  });
-  
-  if (!cjsResult.success) {
-    console.error('CJS build failed:', cjsResult.logs);
-    process.exit(1);
-  }
-}
+async function buildOutput(name, config) {
+  console.log(`Building ${name}...`);
 
-async function buildCli() {
-  console.log('Building CLI...');
-  
-  const cliOutDir = join(__dirname, 'dist/cli/esm');
-  await ensureDir(cliOutDir);
-  
-  const cliResult = await Bun.build({
-    entrypoints: ['./src/cli/index.js'],
-    outdir: cliOutDir,
-    format: 'esm',
-    target: 'node',
-    minify: false,
-    sourcemap: 'external'
-  });
-  
-  if (!cliResult.success) {
-    console.error('CLI build failed:', cliResult.logs);
-    process.exit(1);
-  }
-}
+  const outdir = config.outdir || join(__dirname, `dist/${name}`);
+  await ensureDir(outdir);
 
-async function buildApp() {
-  console.log('Building App...');
-  
-  const appOutDir = join(__dirname, 'dist/app/esm');
-  await ensureDir(appOutDir);
-  
-  // Copy HTML file if it exists
-  try {
-    const htmlContent = await Bun.file('./src/app/index.html').text();
-    await writeFile(join(appOutDir, 'index.html'), htmlContent);
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      console.warn('Warning: Could not copy HTML file:', err.message);
+  {% if atom.doc.features.app.enabled !== false %}
+  // Copy HTML file if it exists and this is an app build
+  if (name === 'app') {
+    try {
+      const htmlPath = './src/app/index.html';
+      if (fs.existsSync(htmlPath)) {
+        const htmlContent = await Bun.file(htmlPath).text();
+        await writeFile(join(outdir, 'index.html'), htmlContent);
+      }
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        console.warn('Warning: Could not copy HTML file:', err.message);
+      }
     }
   }
-  
-  const appResult = await Bun.build({
-    entrypoints: ['./src/app/index.js'],
-    outdir: appOutDir,
-    format: 'esm',
-    target: 'browser',
-    minify: false,
-    sourcemap: 'external'
+  {% endif %}
+
+  // Build with Bun.build
+  const result = await Bun.build({
+    entrypoints: config.entrypoints || [`./src/${name}/index.js`],
+    outdir: outdir,
+    format: config.format || 'esm',
+    target: config.target || 'browser',
+    minify: config.minify !== undefined ? config.minify : false,
+    sourcemap: config.sourcemap || 'external',
+    {% if atom.doc.features.repos and atom.doc.features.repos.length > 0 %}
+    // Custom module resolution for repositories
+    plugins: [
+      {
+        name: "custom-resolver",
+        setup(build) {
+          // Add custom repositories for module resolution
+          {% for repo in atom.doc.features.repos %}
+          build.onResolve({ filter: /^{{repo.name}}/ }, (args) => {
+            return { path: args.path.replace(/^{{repo.name}}/, "{{repo.path}}") };
+          });
+          {% endfor %}
+        }
+      },
+      ...(config.plugins || [])
+    ]
+    {% else %}
+    ...(config.plugins ? { plugins: config.plugins } : {})
+    {% endif %}
   });
-  
-  if (!appResult.success) {
-    console.error('App build failed:', appResult.logs);
+
+  if (!result.success) {
+    console.error(`${name} build failed:`, result.logs);
     process.exit(1);
   }
+
+  return result;
 }
 
 async function main() {
   try {
-    await buildDefault();
-    
-    // Check if CLI exists
+    {% if atom.doc.features.project.format === 'esm' or atom.doc.features.project.format === undefined %}
+    // Build default ESM
+    await buildOutput('default', {
+      format: "esm",
+      target: "browser",
+      minify: false,
+      sourcemap: "external",
+      entrypoints: ["./src/default/index.js"],
+      outdir: "./dist/default/esm"
+    });
+    {% endif %}
+
+    {% if atom.doc.features.project.format !== 'esm' %}
+    // Build default CJS
+    await buildOutput('defaultCjs', {
+      format: "cjs",
+      target: "node",
+      minify: false,
+      sourcemap: "external",
+      entrypoints: ["./src/default/index.js"],
+      outdir: "./dist/default/cjs"
+    });
+    {% endif %}
+
+    {% if atom.doc.features.cli.enabled !== false %}
+    // Build CLI if exists
     try {
-      await Bun.file('./src/cli/index.js').exists();
-      await buildCli();
+      if (fs.existsSync('./src/cli/index.js')) {
+        await buildOutput('cli', {
+          format: "esm",
+          target: "node",
+          minify: false,
+          sourcemap: "external",
+          entrypoints: ["./src/cli/index.js"],
+          outdir: "{{ atom.doc.features.cli.dir | default('./dist/cli/esm') }}"
+        });
+      } else {
+        console.log('CLI not found, skipping CLI build');
+      }
     } catch (err) {
-      console.log('CLI not found, skipping CLI build');
+      console.log('Error building CLI:', err.message);
     }
-    
-    // Check if App exists
+    {% endif %}
+
+    {% if atom.doc.features.app.enabled !== false %}
+    // Build App if exists
     try {
-      await Bun.file('./src/app/index.js').exists();
-      await buildApp();
+      if (fs.existsSync('./src/app/index.js')) {
+        await buildOutput('app', {
+          format: "esm",
+          target: "browser",
+          minify: false,
+          sourcemap: "external",
+          entrypoints: ["./src/app/index.js"],
+          outdir: "{{ atom.doc.features.app.dir | default('./dist/app/esm') }}"
+        });
+      } else {
+        console.log('App not found, skipping App build');
+      }
     } catch (err) {
-      console.log('App not found, skipping App build');
+      console.log('Error building App:', err.message);
     }
-    
+    {% endif %}
+
     console.log('Build completed successfully!');
   } catch (err) {
     console.error('Build failed:', err);
