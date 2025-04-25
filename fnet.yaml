@@ -32,48 +32,48 @@ commands:
     # env:
     #   DEVELOPMENT: true
 
-  test-node-node:
-    - rm -rf .tests/node-node
+  test-fnode-node:
+    - rm -rf .tests/fnode-node
     - wdir: .tests
       steps:
-        - fnode create --name node-node --runtime node
-        - wdir: .tests/node-node
+        - fnode create --name fnode-node --runtime node
+        - wdir: .tests/fnode-node
           steps:
             # - fnode build
             - fnode cli
 
-  test-node-flow:
-    - rm -rf .tests/node-flow
+  test-fnet-node:
+    - rm -rf .tests/fnet-node
     - wdir: .tests
       steps:
-        - fnet create --name node-flow --runtime node
-        - wdir: .tests/node-flow
+        - fnet create --name fnet-node --runtime node
+        - wdir: .tests/fnet-node
           steps:
             # - fnet build
             - fnet cli
 
-  test-python-node:
-    - rm -rf .tests/python-node
+  test-fnode-python:
+    - rm -rf .tests/fnode-python
     - wdir: .tests
       steps:
-        - fnode create --name python-node --runtime python
-        - wdir: .tests/python-node
+        - fnode create --name fnode-python --runtime python
+        - wdir: .tests/fnode-python
           steps:
             # - fnode build
             - fnode cli
 
-  test-bun-node:
-    - rm -rf .tests/bun-node
+  test-fnode-bun:
+    - rm -rf .tests/fnode-bun
     - wdir: .tests
       steps:
-        - fnode create --name bun-node --runtime bun
-        - wdir: .tests/bun-node
+        - fnode create --name fnode-bun --runtime bun
+        - wdir: .tests/fnode-bun
           steps:
             # - fnode build
             - fnode cli
-  
+
   test-all:
-    - fnet run test-node-node
-    - fnet run test-node-flow
-    - fnet run test-python-node
-    - fnet run test-bun-node
+    - fnet run test-fnode-node
+    - fnet run test-fnet-node
+    - fnet run test-fnode-python
+    - fnet run test-fnode-bun

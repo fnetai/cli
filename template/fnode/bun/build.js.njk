@@ -1,0 +1,140 @@
+#!/usr/bin/env bun
+/**
+ * Build script for Bun projects
+ * This script uses Bun's built-in bundler instead of Rollup
+ */
+
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+async function ensureDir(dir) {
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err;
+  }
+}
+
+async function buildDefault() {
+  console.log('Building default module...');
+  
+  // ESM build
+  const esmOutDir = join(__dirname, 'dist/default/esm');
+  await ensureDir(esmOutDir);
+  
+  const esmResult = await Bun.build({
+    entrypoints: ['./src/default/index.js'],
+    outdir: esmOutDir,
+    format: 'esm',
+    target: 'browser',
+    minify: false,
+    sourcemap: 'external'
+  });
+  
+  if (!esmResult.success) {
+    console.error('ESM build failed:', esmResult.logs);
+    process.exit(1);
+  }
+  
+  // CJS build
+  const cjsOutDir = join(__dirname, 'dist/default/cjs');
+  await ensureDir(cjsOutDir);
+  
+  const cjsResult = await Bun.build({
+    entrypoints: ['./src/default/index.js'],
+    outdir: cjsOutDir,
+    format: 'cjs',
+    target: 'node',
+    minify: false,
+    sourcemap: 'external'
+  });
+  
+  if (!cjsResult.success) {
+    console.error('CJS build failed:', cjsResult.logs);
+    process.exit(1);
+  }
+}
+
+async function buildCli() {
+  console.log('Building CLI...');
+  
+  const cliOutDir = join(__dirname, 'dist/cli/esm');
+  await ensureDir(cliOutDir);
+  
+  const cliResult = await Bun.build({
+    entrypoints: ['./src/cli/index.js'],
+    outdir: cliOutDir,
+    format: 'esm',
+    target: 'node',
+    minify: false,
+    sourcemap: 'external'
+  });
+  
+  if (!cliResult.success) {
+    console.error('CLI build failed:', cliResult.logs);
+    process.exit(1);
+  }
+}
+
+async function buildApp() {
+  console.log('Building App...');
+  
+  const appOutDir = join(__dirname, 'dist/app/esm');
+  await ensureDir(appOutDir);
+  
+  // Copy HTML file if it exists
+  try {
+    const htmlContent = await Bun.file('./src/app/index.html').text();
+    await writeFile(join(appOutDir, 'index.html'), htmlContent);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.warn('Warning: Could not copy HTML file:', err.message);
+    }
+  }
+  
+  const appResult = await Bun.build({
+    entrypoints: ['./src/app/index.js'],
+    outdir: appOutDir,
+    format: 'esm',
+    target: 'browser',
+    minify: false,
+    sourcemap: 'external'
+  });
+  
+  if (!appResult.success) {
+    console.error('App build failed:', appResult.logs);
+    process.exit(1);
+  }
+}
+
+async function main() {
+  try {
+    await buildDefault();
+    
+    // Check if CLI exists
+    try {
+      await Bun.file('./src/cli/index.js').exists();
+      await buildCli();
+    } catch (err) {
+      console.log('CLI not found, skipping CLI build');
+    }
+    
+    // Check if App exists
+    try {
+      await Bun.file('./src/app/index.js').exists();
+      await buildApp();
+    } catch (err) {
+      console.log('App not found, skipping App build');
+    }
+    
+    console.log('Build completed successfully!');
+  } catch (err) {
+    console.error('Build failed:', err);
+    process.exit(1);
+  }
+}
+
+main();

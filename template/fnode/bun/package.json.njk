@@ -20,7 +20,7 @@
   "main": "dist/default/esm/index.js",
   "type":"module",
     {% else %}
-  "main": "dist/default/cjs/index.cjs",  
+  "main": "dist/default/cjs/index.cjs",
     {% endif %}
   {% if atom.doc.features.dts_enabled ===true %}
   "types": "dist/default/types/index.d.ts",
@@ -53,8 +53,8 @@
   {% endif %}
   "license": "{{atom.doc.license or 'MIT'}}",
   "scripts": {
-    "build": "bun build ./src/cli/index.js --outfile=dist/cli/esm/index.js",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
+    "build": "bun ./build.js",
+    "watch": "bun --watch ./build.js",
     "serve": "bunx serve ./"
     {% if atom.doc.features.cli.enabled %}
     {% if atom.doc.features.project.format ==='cjs' %}

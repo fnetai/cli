@@ -20,9 +20,11 @@ import Auth from './auth.js';
 
 import initFeatures from "./api/init-features/index.js";
 import initFeaturesPython from "./api/init-features/python.js";
+import initFeaturesBun from "./api/init-features/bun.js";
 
 import initDependencies from "./api/init-dependencies/index.js";
 import initDependenciesPython from "./api/init-dependencies/python.js";
+import initDependenciesBun from "./api/init-dependencies/bun.js";
 
 import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
@@ -31,6 +33,7 @@ import createCli from "./api/create-cli/index.js";
 import createCliPython from "./api/create-cli/python.js";
 
 import createRollup from "./api/create-rollup/index.js";
+import createBuildJs from "./api/create-build-js/index.js";
 import createToYargs from "./api/create-to-yargs/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
@@ -512,8 +515,8 @@ class Builder {
   }
 
   async initBun() {
-    await initFeatures(this.#apiContext);
-    await initDependencies(this.#apiContext);
+    await initFeaturesBun(this.#apiContext);
+    await initDependenciesBun(this.#apiContext);
     await this.initLibraryDir();
     await this.initNunjucks();
     await this.initLibs();
@@ -568,7 +571,7 @@ class Builder {
       await createToYargs(this.#apiContext);
       await createCli(this.#apiContext);
       await createApp(this.#apiContext);
-      // await createRollup(this.#apiContext);
+      await createBuildJs(this.#apiContext);
       await createPackageJson(this.#apiContext);
 
       await formatFiles(this.#apiContext);
@@ -576,7 +579,6 @@ class Builder {
       // await createDts(this.#apiContext);
 
       if (this.#buildMode) {
-
         await installNpmPackages(this.#apiContext);
         await runNpmBuild(this.#apiContext);
 
