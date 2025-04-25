@@ -72,7 +72,8 @@
   },
   "bin": {
     "fnet": "dist/fnet/index.js",
-    "fnode": "dist/fnode/index.js"
+    "fnode": "dist/fnode/index.js",
+    "frun": "dist/frun/index.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",

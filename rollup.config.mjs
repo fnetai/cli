@@ -49,7 +49,7 @@ export default [
       chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
 
     },
-    plugins: [fnetDelete({ targets: ["./dist/fnet/**"] }), ...commonPlugins()],
+    plugins: [fnetDelete({ targets: ["./dist/fnet/**"] }), ...commonPlugins('src/builder/wf-cli.js')],
     // External function remains the same
     external: id => /node_modules/.test(id)
   },
@@ -66,6 +66,30 @@ export default [
     },
     plugins: [fnetDelete({ targets: ["dist/fnode/**"] }), ...commonPlugins()],
     // External function remains the same
+    external: id => /node_modules/.test(id)
+  },
+  {
+    input: `src/builder/run-cli.js`,
+    output: {
+      format: "esm",
+      exports: "auto",
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
+      dir: 'dist/frun',
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
+    },
+    plugins: [
+      fnetDelete({ targets: ["dist/frun/**"] }),
+      json(),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(DEVELOPMENT ? 'development' : 'production'),
+        preventAssignment: true,
+      }),
+      resolve({
+        preferBuiltins: true,
+      }),
+      commonjs(),
+    ],
     external: id => /node_modules/.test(id)
   }
 ];

@@ -1,0 +1,12 @@
+name: python-1
+
+
+features:
+  s::runtime.type: python
+
+commands:
+  hello:
+    - echo "Hello from python-1 project!"
+
+  test:
+    - python -c "print('Testing python-1 project...')"
