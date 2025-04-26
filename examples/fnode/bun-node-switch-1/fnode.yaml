@@ -1,0 +1,29 @@
+name: bun-node-switch-1
+
+
+features:
+  runtime:
+    t::node::type: node
+    t::bun::type: bun
+  cli: true
+  app: true
+
+commands:
+  cli-test:
+    usage: frun test --ftag <runtime>
+    steps:
+      - fnode build --ftag {{args.ftag}}
+      - fnode cli
+  app-test:
+    usage: frun test --ftag <runtime>
+    steps:
+      - fnode build --ftag {{args.ftag}}
+      - fnode app
+  both-test:
+    usage: frun test --ftag <runtime>
+    steps:
+      - fnode build --ftag {{args.ftag}}
+      - fork:
+          - fnode cli
+          - fnode app
+      - pause: "Press any key to continue..."
