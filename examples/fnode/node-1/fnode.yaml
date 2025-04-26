@@ -1,10 +1,15 @@
 name: node-1
 
-
 features:
-  iife: false
+  s::runtime.type: node
 
 commands:
+  both:
+    - fork:
+        - fnode cli
+        - fnode app
+    - pause: "Press any key to continue..."
+
   hello:
     - echo "Hello from node-1 project!"
 
