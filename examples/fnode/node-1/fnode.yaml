@@ -2,16 +2,20 @@ name: node-1
 
 features:
   s::runtime.type: node
+  app: false
+  cli: false
 
 commands:
-  both:
+  cli-test: 
+    - fnode build
+    - fnode cli
+
+  app-test: 
+    - fnode build
+    - fnode app
+
+  both-test:
     - fork:
         - fnode cli
         - fnode app
     - pause: "Press any key to continue..."
-
-  hello:
-    - echo "Hello from node-1 project!"
-
-  test:
-    - node -e "console.log('Testing node-1 project...')"

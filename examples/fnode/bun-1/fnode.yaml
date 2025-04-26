@@ -3,6 +3,8 @@ name: bun-1
 
 features:
   s::runtime.type: bun
+  cli: true
+  app: true
 
 commands:
   hello:
@@ -10,3 +12,17 @@ commands:
 
   test:
     - bun -e "console.log('Testing bun-1 project with Bun runtime...')"
+
+  cli-test:
+    - fnode build
+    - fnode cli
+
+  app-test:
+    - fnode build
+    - fnode app
+
+  both-test:
+    - fork:
+        - fnode cli
+        - fnode app
+    - pause: "Press any key to continue..."

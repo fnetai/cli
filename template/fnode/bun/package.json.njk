@@ -64,7 +64,7 @@
     {% endif %}
     {% endif %}
     {% if atom.doc.features.app.enabled %}
-    ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
+    ,"app": "bun {{atom.doc.features.app.dir}}/index.html"
     {% endif %}
   },
   "devDependencies": {
