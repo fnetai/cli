@@ -184,11 +184,12 @@ As a developer, you only need to know these commands and their options. The inte
 
 #### Core Commands
 
-Flownet provides three main CLI tools:
+Flownet provides four main CLI tools:
 
 - **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
 - **`fnet`**: For Workflow projects (uses `fnet.yaml`)
 - **`frun`**: Unified interface that works with both project types (auto-detects project file)
+- **`fbin`**: Binary management system for installing, compiling, and managing CLI tools
 
 These CLI tools share similar command structures but serve different purposes:
 
@@ -347,6 +348,44 @@ fnet with <config> <command> [options..]
 ```
 
 This runs a command with environment variables from a specified configuration file.
+
+#### Binary System Commands
+
+The `fbin` CLI tool provides a powerful binary management system that allows you to compile, install, and manage CLI tools:
+
+```bash
+# Initialize the bin system
+fbin setup
+
+# Add bin directory to PATH
+fbin path [--yes]
+
+# Compile a CLI project to a binary
+fbin compile [source] [options]
+
+# Install a binary to the bin directory
+fbin install [source] [options]
+
+# Uninstall a binary from the bin directory
+fbin uninstall [name] [options]
+
+# List installed binaries
+fbin list [options]
+```
+
+The binary system also integrates with `fnode` and `fnet` projects:
+
+```bash
+# Compile and install a CLI-enabled fnode project
+fnode compile [options]
+fnode install [options]
+
+# Compile and install a CLI-enabled fnet project
+fnet compile [options]
+fnet install [options]
+```
+
+These commands make it easy to create, distribute, and manage CLI tools built with Flownet. The `--yes` or `-y` flag can be used with most commands to automatically answer yes to all prompts, which is useful for scripting and automation.
 
 #### Development Commands
 
@@ -533,6 +572,51 @@ Flownet uses a clear separation between functional code and build infrastructure
 
 This separation ensures that developers only need to focus on the functional code while all the complexity of building, running, and deploying is contained within the `.workspace` directory.
 
+## The Binary System
+
+The Flownet binary system is designed to make CLI tools more efficient and easier to distribute. It provides a complete solution for compiling, installing, and managing binaries.
+
+### How It Works
+
+The binary system consists of several components:
+
+1. **Bin Directory**: A dedicated directory (`~/.fnet/bin`) for storing compiled binaries
+2. **Metadata Storage**: Keeps track of installed binaries, their versions, and sources
+3. **PATH Integration**: Automatically adds the bin directory to your PATH
+4. **Compilation Tools**: Uses Bun's compilation capabilities for creating native binaries
+5. **Project Integration**: Seamlessly works with `fnode` and `fnet` projects
+
+### Binary System Features
+
+- **Fast Startup**: Pre-compiled binaries start much faster than interpreted scripts
+- **Cross-Platform Support**: Works on macOS, Linux, and Windows
+- **Multiple Shell Support**: Compatible with Bash, Zsh, Fish, PowerShell, and more
+- **Version Management**: Keeps track of binary versions and metadata
+- **Project Integration**: Easily compile and install CLI-enabled projects
+- **Automation Support**: All commands support the `--yes` flag for scripting
+
+### Usage Examples
+
+```bash
+# Compile a JavaScript file to a binary
+fbin compile script.js -o my-tool
+
+# Install a compiled binary
+fbin install ./my-tool --name awesome-tool
+
+# Install a CLI-enabled project
+cd my-project
+fnode install
+
+# List installed binaries
+fbin list
+
+# Uninstall a binary
+fbin uninstall awesome-tool
+```
+
+The binary system makes it easy to create, distribute, and manage CLI tools, significantly improving the developer experience.
+
 ## Benefits
 
 This approach creates a more efficient development experience:
@@ -542,5 +626,7 @@ This approach creates a more efficient development experience:
 - **AI-Friendly Development**: AI agents can focus on generating functional code without needing to understand complex infrastructure details
 - **Flexibility**: The same core component can be used in different contexts (CLI, browser) without code duplication
 - **Clean Project Structure**: Clear separation between functional code and build infrastructure
+- **Efficient CLI Tools**: Fast startup times and easy distribution of compiled binaries
+- **Cross-Platform Compatibility**: Works seamlessly across different operating systems and shells
 
-By isolating the functional core from everything else, @fnet/cli transforms how we approach software development, making it more efficient and focused on what truly matters.
+By isolating the functional core from everything else and providing powerful tools for distribution, @fnet/cli transforms how we approach software development, making it more efficient and focused on what truly matters.

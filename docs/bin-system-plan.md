@@ -174,7 +174,14 @@ These features will build on the foundation established in Phase 1.
    - Add `fnode install` and `fnet install` commands for CLI-enabled projects
    - Update documentation and examples
 
-Total estimated time: 7-12 days
+6. Phase 6: Project File Integration (2-3 days)
+   - Add CLI configuration options to project files (fnode.yaml and fnet.yaml)
+   - Automatically generate package.json bin entries from project files
+   - Update templates to include CLI configuration examples
+   - Add automatic detection of CLI features from project files
+   - Update documentation and examples
+
+Total estimated time: 9-15 days
 
 ## 10. Implementation Checklists
 
@@ -333,7 +340,37 @@ The following checklist for Phase 5 (Binary Management Commands) has been comple
   - [x] Provide usage examples
   - [x] Update the main documentation
 
-### 10.6. Test Commands for Phase 2, Phase 3, Phase 4, and Phase 5
+### 10.6. Phase 6 Checklist
+
+The following checklist focuses on Phase 6 (Project File Integration):
+
+- [ ] Add CLI configuration options to project files
+  - [ ] Define CLI configuration schema for fnode.yaml
+  - [ ] Define CLI configuration schema for fnet.yaml
+  - [ ] Add support for bin name configuration
+  - [ ] Add support for installable flag
+
+- [ ] Update package.json generation
+  - [ ] Automatically generate bin entries from project files
+  - [ ] Handle different runtime configurations
+  - [ ] Ensure backward compatibility
+
+- [ ] Update templates
+  - [ ] Update fnode templates to include CLI configuration examples
+  - [ ] Update fnet templates to include CLI configuration examples
+  - [ ] Add documentation comments to template files
+
+- [ ] Add automatic feature detection
+  - [ ] Detect CLI features from project files
+  - [ ] Enable/disable commands based on project configuration
+  - [ ] Add validation for CLI configuration
+
+- [ ] Update documentation
+  - [ ] Document the new configuration options
+  - [ ] Provide usage examples
+  - [ ] Update the main documentation
+
+### 10.7. Test Commands for Phase 2, Phase 3, Phase 4, and Phase 5
 
 The following commands have been added to `fnet.yaml` for testing Phase 2, Phase 3, Phase 4, and Phase 5 implementations:
 
@@ -499,6 +536,65 @@ test-phase5-all:
   - frun test-fbin-uninstall
   - frun test-fnode-install
   - frun test-fnet-install
+
+# Test commands for Phase 6
+test-cli-config-fnode:
+  - rm -rf .tests/cli-config-fnode-test
+  - wdir: .tests
+    steps:
+      - fnode create --name cli-config-fnode-test --runtime node
+      - wdir: .tests/cli-config-fnode-test
+        steps:
+          - filemap:
+              target: "fnode.yaml"
+              sources:
+                - source: |
+                    name: cli-config-fnode-test
+                    version: 1.0.0
+                    runtime: node
+
+                    cli:
+                      enabled: true
+                      bin: custom-bin-name
+                      installable: true
+                  provider: text
+                  target: "fnode.yaml"
+          - fnode build
+          - cat package.json
+          - fnode install --yes
+          - fbin list
+          - ~/.fnet/bin/custom-bin-name
+
+test-cli-config-fnet:
+  - rm -rf .tests/cli-config-fnet-test
+  - wdir: .tests
+    steps:
+      - fnet create --name cli-config-fnet-test --runtime node
+      - wdir: .tests/cli-config-fnet-test
+        steps:
+          - filemap:
+              target: "fnet.yaml"
+              sources:
+                - source: |
+                    name: cli-config-fnet-test
+                    version: 1.0.0
+                    runtime: node
+
+                    cli:
+                      enabled: true
+                      bin: custom-flow-bin
+                      installable: true
+                  provider: text
+                  target: "fnet.yaml"
+          - fnet build
+          - cat package.json
+          - fnet install --yes
+          - fbin list
+          - ~/.fnet/bin/custom-flow-bin
+
+test-phase6-all:
+  - frun test-cli-config-fnode
+  - frun test-cli-config-fnet
 ```
 
 These commands will:
@@ -509,7 +605,9 @@ These commands will:
 4. Install binaries using the new install commands
 5. List installed binaries using the new list command
 6. Uninstall binaries using the new uninstall command
-7. Verify that all commands work correctly
+7. Test CLI configuration in project files
+8. Verify that custom bin names are correctly used
+9. Verify that all commands work correctly
 
 ## 11. Platform Support
 

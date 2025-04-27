@@ -25,6 +25,8 @@ Flownet is a revolutionary development framework that isolates non-functional co
 - **Unified Interface**: Consistent commands across different project types
 - **Tag-Based Configuration**: Powerful conditional configuration with `--ftag` parameter
 - **Isolated Workspace**: All build artifacts and dependencies are kept in `.workspace` directory
+- **Binary System**: Compile, install, and manage CLI tools with the integrated binary system
+- **Fast Startup**: Pre-compiled binaries start much faster than interpreted scripts
 
 ## Installation
 
@@ -70,6 +72,26 @@ fnode cli
 frun <command-group> [--ftag <tags>]
 ```
 
+### Compile and Install
+
+```bash
+# Compile a JavaScript file to a binary
+fbin compile script.js -o my-tool
+
+# Install a compiled binary
+fbin install ./my-tool --name awesome-tool
+
+# Install a CLI-enabled project
+cd my-project
+fnode install --yes
+
+# List installed binaries
+fbin list
+
+# Uninstall a binary
+fbin uninstall awesome-tool --yes
+```
+
 ## Project Types
 
 Flownet supports two main project types:
@@ -93,11 +115,12 @@ An **fnet project** (Flow Project) is a workflow-oriented project that focuses o
 
 ## CLI Tools
 
-Flownet provides three main CLI tools:
+Flownet provides four main CLI tools:
 
 - **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
 - **`fnet`**: For Workflow projects (uses `fnet.yaml`)
 - **`frun`**: Unified interface that works with both project types (auto-detects project file)
+- **`fbin`**: Binary management system for installing, compiling, and managing CLI tools
 
 ## Multi-Language Support
 
@@ -140,3 +163,54 @@ t::dev::database:
 t::prod::database:
   url: "mongodb://production-server:27017"
 ```
+
+## Binary System
+
+Flownet includes a powerful binary system that makes it easy to create, distribute, and manage CLI tools:
+
+### Binary System Features
+
+- **Fast Startup**: Pre-compiled binaries start much faster than interpreted scripts
+- **Cross-Platform Support**: Works on macOS, Linux, and Windows
+- **Multiple Shell Support**: Compatible with Bash, Zsh, Fish, PowerShell, and more
+- **Version Management**: Keeps track of binary versions and metadata
+- **Project Integration**: Easily compile and install CLI-enabled projects
+- **Automation Support**: All commands support the `--yes` flag for scripting
+
+### Setup and Usage
+
+```bash
+# Initialize the bin system
+fbin setup
+
+# Add bin directory to PATH
+fbin path
+
+# Compile a JavaScript file to a binary
+fbin compile script.js -o my-tool
+
+# Install a binary to the bin directory
+fbin install ./my-tool --name awesome-tool
+
+# List installed binaries
+fbin list
+
+# Uninstall a binary
+fbin uninstall awesome-tool
+```
+
+### Project Integration
+
+The binary system integrates seamlessly with Flownet projects:
+
+```bash
+# Compile and install a CLI-enabled fnode project
+fnode compile
+fnode install
+
+# Compile and install a CLI-enabled fnet project
+fnet compile
+fnet install
+```
+
+This makes it easy to distribute your Flownet projects as standalone CLI tools.
