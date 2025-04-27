@@ -26,7 +26,7 @@
         "@fnet/object-from-schema": "^0.1.25",
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
-        "@fnet/shell-flow": "^0.1.42",
+        "@fnet/shell-flow": "^0.1.46",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.1.7",
         "@fnet/to-rust": "^0.1.14",
@@ -203,7 +203,7 @@
 
     "@fnet/expression": ["@fnet/expression@0.1.29", "", {}, "sha512-06S/BUPjdcZU8IqvufTXhxzJZjlQ6i99eLECSaVkH3HUjebSxJYViQPrg/SLXF0WkxWJ7TY9q4rYmtgLTozyAw=="],
 
-    "@fnet/filemap": ["@fnet/filemap@0.1.3", "", { "dependencies": { "@aws-sdk/client-s3": "^3.741", "@fnet/args": "^0.1", "@google-cloud/storage": "^7.15", "handlebars": "^4.7", "nunjucks": "^3.2" } }, "sha512-Pu3DDgP4TvXXgNqp7YY6hS/C8271Ya0aFR2qqdY7Q6lI5hrIJNgFUtu2BRt3vWZRfB2+J2WWvv/Gzt4OJMUSXw=="],
+    "@fnet/filemap": ["@fnet/filemap@0.1.5", "", { "dependencies": { "@aws-sdk/client-s3": "^3.741", "@fnet/args": "^0.1", "@google-cloud/storage": "^7.15", "handlebars": "^4.7", "nunjucks": "^3.2" } }, "sha512-HC+KkSiR7QeIzrNodGfyNQkog0wPXJ1P5qklfAtDx8cTL6omedT+boCBhg5VN/Gwvw3cgMpWaoy0cD93ulyuEA=="],
 
     "@fnet/files-to-gcs": ["@fnet/files-to-gcs@0.3.9", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/list-files": "^0.1", "@google-cloud/storage": "^7.15", "mime-types": "^3.0" }, "bin": { "fnet-files-to-gcs": "dist/cli/esm/index.js" } }, "sha512-jPeAO0Eu5GnsBNc9zNovksit/O6+uzrhm+808gIwILcNhHZLwigsR+VLbczuYh0JgJ4p6NFS1V8Tbz0GRzszKA=="],
 
@@ -223,7 +223,7 @@
 
     "@fnet/rollup-plugin-delete": ["@fnet/rollup-plugin-delete@0.1.10", "", { "dependencies": { "del": "^8.0" } }, "sha512-P4Ntl/QeUfkGWaDzx/oOHvRpG/mnS14ksyZBu2A5ntwaq0SsH3WkjTJ1moKUgPnRmelJsYCa2rSf+up/R73KXQ=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.43", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-2v7i271snQ92Q7/7cVolhXl1IcNdZXrQUAC75m42KKd9ICIBi/x/vDrAEyDHQaatPruftlLP950ZD+NPelXGLw=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.46", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-QYDOGIt8L1mS9eDJOJSb/dhUTYKV6qHSFRf9O0Ja7ZGARhw/Cl9SclFAdd8vJPelNEkYoVpAQ8ePFEepVXvtKA=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 

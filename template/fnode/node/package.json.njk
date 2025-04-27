@@ -20,7 +20,7 @@
   "main": "dist/default/esm/index.js",
   "type":"module",
     {% else %}
-  "main": "dist/default/cjs/index.cjs",  
+  "main": "dist/default/cjs/index.cjs",
     {% endif %}
   {% if atom.doc.features.dts_enabled ===true %}
   "types": "dist/default/types/index.d.ts",
@@ -62,7 +62,7 @@
     {% else %}
     ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
     {% endif %}
-
+    ,"compile": "mkdir -p .bin && bun build {{atom.doc.features.cli.dir}}/index.js --compile --outfile=.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} && chmod +x .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
     {% endif %}
     {% if atom.doc.features.app.enabled %}
     ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
@@ -71,7 +71,7 @@
   "devDependencies": {
     {% for dep in packageDevDependencies %}
     "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
-    {% endfor%}    
+    {% endfor%}
   },
   "dependencies": {
     {% for dep in packageDependencies %}

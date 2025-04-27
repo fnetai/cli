@@ -146,10 +146,23 @@ commands:
         - fnode create --name fnode-node-compile --runtime node
         - wdir: .tests/fnode-node-compile
           steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (args) => {
+                        console.log("Hello from fnode-node-compile project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "index.js"
             - fnode build
             - fnode compile
-            - ls -la .bin
-            - ./.bin/fnode-node-compile --help
+            - wdir: .tests/fnode-node-compile/.workspace
+              steps:
+                - pwd
+                - ls -la .bin
+                - ./.bin/fnode-node-compile
 
   test-fnet-compile:
     - rm -rf .tests/fnet-node-compile
@@ -158,10 +171,23 @@ commands:
         - fnet create --name fnet-node-compile --runtime node
         - wdir: .tests/fnet-node-compile
           steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (args) => {
+                        console.log("Hello from fnet-node-compile project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "index.js"
             - fnet build
             - fnet compile
-            - ls -la .bin
-            - ./.bin/fnet-node-compile --help
+            - wdir: .tests/fnet-node-compile/.workspace
+              steps:
+                - pwd
+                - ls -la .bin
+                - ./.bin/fnet-node-compile
 
   test-compile-all:
     - frun test-fnode-compile
