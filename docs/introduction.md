@@ -494,7 +494,7 @@ By leveraging tags, you can create highly adaptable applications that adjust the
 
 1. **Runtime Support**: `fnode` supports three runtimes (Node.js, Python, Bun), while `fnet` only supports Node.js
 2. **Project File**: `fnode` uses `fnode.yaml`, `fnet` uses `fnet.yaml`, `frun` auto-detects either file
-3. **Builder Class**: `fnode` uses `lib-builder.js`, `fnet` uses `wf-builder.js`
+3. **Builder Classes**: `fnode` uses runtime-specific builders (node, python, bun), `fnet` uses `wf-builder.js`
 4. **Template Directories**: `fnode` uses `template/fnode`, `fnet` uses `template/fnet`
 5. **Conda Commands**: Only `fnode` supports Conda commands for Python projects
 6. **Command Scope**: `fnode` and `fnet` are project-specific, while `frun` works with both project types

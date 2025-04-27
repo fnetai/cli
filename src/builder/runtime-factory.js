@@ -9,10 +9,11 @@ class RuntimeFactory {
    * @returns {Promise<Object>} Runtime-specific builder instance
    */
   static async createBuilder(context) {
-    // If no project is provided, use the legacy builder
+    // If no project is provided, default to node runtime
     if (!context.project) {
-      const LegacyBuilder = (await import('./lib-builder.js')).default;
-      return new LegacyBuilder(context);
+      console.warn('No project provided, defaulting to node runtime');
+      const NodeBuilder = (await import('./lib-builder-node.js')).default;
+      return new NodeBuilder(context);
     }
 
     // Get the runtime type from the project
@@ -23,12 +24,12 @@ class RuntimeFactory {
       const BuilderClass = await this.loadBuilderClass(runtimeType);
       return new BuilderClass(context);
     } catch (error) {
-      console.warn(`Warning: Could not load builder for runtime '${runtimeType}'. Falling back to legacy builder.`);
+      console.warn(`Warning: Could not load builder for runtime '${runtimeType}'. Falling back to node builder.`);
       console.warn(`Error: ${error.message}`);
-      
-      // Fall back to the legacy builder
-      const LegacyBuilder = (await import('./lib-builder.js')).default;
-      return new LegacyBuilder(context);
+
+      // Fall back to the node builder as default
+      const NodeBuilder = (await import('./lib-builder-node.js')).default;
+      return new NodeBuilder(context);
     }
   }
 
