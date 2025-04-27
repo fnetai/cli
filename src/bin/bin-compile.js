@@ -28,12 +28,26 @@ export const builder = {
     type: 'string',
     alias: 'n'
   },
-
   force: {
     describe: 'Force overwrite if binary already exists',
     type: 'boolean',
     default: false,
     alias: 'f'
+  },
+  target: {
+    describe: 'Target platform (auto, linux, macos, windows)',
+    type: 'string',
+    choices: ['auto', 'linux', 'macos', 'windows'],
+    default: 'auto'
+  },
+  minify: {
+    describe: 'Minify the output binary',
+    type: 'boolean',
+    default: true
+  },
+  external: {
+    describe: 'External packages to exclude from the bundle (comma-separated)',
+    type: 'string'
   }
 };
 
@@ -123,7 +137,30 @@ export const handler = async (argv) => {
       process.exit(1);
     }
 
-    const bunProcess = spawn('bun', ['build', sourcePath, '--compile', `--outfile=${outputPath}`], {
+    // Prepare build arguments
+    const buildArgs = ['build', sourcePath, '--compile', `--outfile=${outputPath}`];
+
+    // Add target platform if specified
+    if (argv.target && argv.target !== 'auto') {
+      buildArgs.push(`--target=${argv.target}`);
+    }
+
+    // Add minify option
+    if (argv.minify === false) {
+      buildArgs.push('--no-minify');
+    }
+
+    // Add external packages
+    if (argv.external) {
+      const externals = argv.external.split(',').map(pkg => pkg.trim());
+      externals.forEach(pkg => {
+        buildArgs.push(`--external:${pkg}`);
+      });
+    }
+
+    console.log(chalk.blue(`Running: bun ${buildArgs.join(' ')}`));
+
+    const bunProcess = spawn('bun', buildArgs, {
       stdio: 'inherit'
     });
 
