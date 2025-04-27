@@ -98,113 +98,114 @@ This naming convention (`src/<bin name>-cli`) clearly identifies CLI-related dir
 ### Phase 1: Preparation
 
 1. Create the new directory structure:
-   - [ ] Create `src/fnode-cli/` directory
-   - [ ] Create `src/fnet-cli/` directory
-   - [ ] Create `src/frun-cli/` directory
+   - [x] Create `src/fnode-cli/` directory
+   - [x] Create `src/fnet-cli/` directory
+   - [x] Create `src/frun-cli/` directory
 
 2. Create common utilities:
-   - [ ] Extract common functions from existing CLI files to `src/utils/cli-utils.js`
-   - [ ] Update imports in existing files
+   - [x] Extract common functions from existing CLI files to `src/utils/cli-utils.js`
+   - [x] Update imports in existing files
 
 3. Set up build fallback:
-   - [ ] Ensure `bun run build && bun link` works as a fallback if `frun build` fails
-   - [ ] Document this fallback in the project's README or development guide
+   - [x] Ensure `bun run build && bun link` works as a fallback if `frun build` fails
+   - [x] Document this fallback in the project's README or development guide
 
 ### Phase 2: Refactor `frun` Command
 
 The `frun` command is the simplest, so we'll start with it:
 
 1. Create the main entry point:
-   - [ ] Create `src/frun-cli/frun-cli.js`
-   - [ ] Move the main logic from `src/builder/run-cli.js`
+   - [x] Create `src/frun-cli/frun-cli.js`
+   - [x] Move the main logic from `src/builder/run-cli.js`
 
 2. Create command handlers:
-   - [ ] Create `src/frun-cli/command-cmd.js`
-   - [ ] Move command-specific logic from `src/builder/run-cli.js`
+   - [x] Create `src/frun-cli/command-cmd.js`
+   - [x] Move command-specific logic from `src/builder/run-cli.js`
 
 3. Update entry point:
-   - [ ] Update `dist/frun/index.js` to use the new entry point
+   - [x] Update `dist/frun/index.js` to use the new entry point
 
 4. Test:
-   - [ ] Test the refactored `frun` command
+   - [x] Test the refactored `frun` command
 
 ### Phase 3: Refactor `fnode` Command
 
 The `fnode` command is more complex:
 
 1. Create the main entry point:
-   - [ ] Create `src/fnode-cli/fnode-cli.js`
-   - [ ] Move the main logic from `src/builder/lib-cli.js`
+   - [x] Create `src/fnode-cli/fnode-cli.js`
+   - [x] Move the main logic from `src/builder/lib-cli.js`
 
 2. Create command handlers:
-   - [ ] Create `src/fnode-cli/create-cmd.js`
-   - [ ] Create `src/fnode-cli/project-cmd.js`
-   - [ ] Create `src/fnode-cli/build-cmd.js`
-   - [ ] Create `src/fnode-cli/deploy-cmd.js`
-   - [ ] Create `src/fnode-cli/file-cmd.js`
-   - [ ] Create `src/fnode-cli/input-cmd.js`
-   - [ ] Create `src/fnode-cli/install-cmd.js`
-   - [ ] Create `src/fnode-cli/run-cmd.js`
-   - [ ] Create `src/fnode-cli/with-cmd.js`
-   - [ ] Create `src/fnode-cli/passthrough-cmd.js` (for npm, node, bun, etc.)
-   - [ ] Move command-specific logic from `src/builder/lib-cli.js`
+   - [x] Create `src/fnode-cli/create-cmd.js`
+   - [x] Create `src/fnode-cli/project-cmd.js`
+   - [x] Create `src/fnode-cli/build-cmd.js`
+   - [x] Create `src/fnode-cli/deploy-cmd.js`
+   - [x] Create `src/fnode-cli/file-cmd.js`
+   - [x] Create `src/fnode-cli/input-cmd.js`
+   - [x] Create `src/fnode-cli/install-cmd.js`
+   - [x] Create `src/fnode-cli/run-cmd.js`
+   - [x] Create `src/fnode-cli/with-cmd.js`
+   - [x] Create `src/fnode-cli/passthrough-cmd.js` (for npm, node, bun, etc.)
+   - [x] Move command-specific logic from `src/builder/lib-cli.js`
 
 3. Update entry point:
-   - [ ] Update `dist/fnode/index.js` to use the new entry point
+   - [x] Update `dist/fnode/index.js` to use the new entry point
 
 4. Test:
-   - [ ] Test the refactored `fnode` command
+   - [x] Test the refactored `fnode` command
 
 ### Phase 4: Refactor `fnet` Command
 
 The `fnet` command is similar to the `fnode` command:
 
 1. Create the main entry point:
-   - [ ] Create `src/fnet-cli/fnet-cli.js`
-   - [ ] Move the main logic from `src/builder/wf-cli.js`
+   - [x] Create `src/fnet-cli/fnet-cli.js`
+   - [x] Move the main logic from `src/builder/wf-cli.js`
 
 2. Create command handlers:
-   - [ ] Create `src/fnet-cli/create-cmd.js`
-   - [ ] Create `src/fnet-cli/project-cmd.js`
-   - [ ] Create `src/fnet-cli/build-cmd.js`
-   - [ ] Create `src/fnet-cli/deploy-cmd.js`
-   - [ ] Create `src/fnet-cli/file-cmd.js`
-   - [ ] Create `src/fnet-cli/input-cmd.js`
-   - [ ] Create `src/fnet-cli/install-cmd.js`
-   - [ ] Create `src/fnet-cli/run-cmd.js`
-   - [ ] Create `src/fnet-cli/with-cmd.js`
-   - [ ] Create `src/fnet-cli/passthrough-cmd.js` (for npm, node, bun, etc.)
-   - [ ] Move command-specific logic from `src/builder/wf-cli.js`
+   - [x] Create `src/fnet-cli/create-cmd.js`
+   - [x] Create `src/fnet-cli/project-cmd.js`
+   - [x] Create `src/fnet-cli/build-cmd.js`
+   - [x] Create `src/fnet-cli/deploy-cmd.js`
+   - [x] Create `src/fnet-cli/file-cmd.js`
+   - [x] Create `src/fnet-cli/input-cmd.js`
+   - [x] Create `src/fnet-cli/install-cmd.js`
+   - [x] Create `src/fnet-cli/run-cmd.js`
+   - [x] Create `src/fnet-cli/with-cmd.js`
+   - [x] Create `src/fnet-cli/passthrough-cmd.js` (for npm, node, bun, etc.)
+   - [x] Move command-specific logic from `src/builder/wf-cli.js`
 
 3. Update entry point:
-   - [ ] Update `dist/fnet/index.js` to use the new entry point
+   - [x] Update `dist/fnet/index.js` to use the new entry point
 
 4. Test:
-   - [ ] Test the refactored `fnet` command
+   - [x] Test the refactored `fnet` command
 
 ### Phase 5: Cleanup and Documentation
 
 1. Cleanup:
-   - [ ] Remove the old CLI files
-   - [ ] Update imports in other files
+   - [x] Remove the old CLI files
+   - [x] Update imports in other files
 
 2. Documentation:
-   - [ ] Update documentation to reflect the new structure
-   - [ ] Add comments to the new files
-   - [ ] Document the new directory structure in the project's README
+   - [x] Update documentation to reflect the new structure
+   - [x] Add comments to the new files
+   - [x] Document the new directory structure in the project's README
 
 3. Final testing:
-   - [ ] Test all commands to ensure they work as expected
+   - [x] Test all commands to ensure they work as expected
 
 ### Future Considerations
 
-1. For complete consistency, consider renaming the existing `src/bin` directory to `src/fbin-cli` in a future update.
-2. Also consider updating the file naming in `src/bin` to use the `<command>-cmd.js` pattern:
+1. ✅ Renamed the existing `src/bin` directory to `src/fbin-cli` for complete consistency.
+2. ✅ Updated the file naming to use the `<command>-cmd.js` pattern:
    - `bin-setup.js` → `setup-cmd.js`
    - `bin-path.js` → `path-cmd.js`
    - `bin-compile.js` → `compile-cmd.js`
    - etc.
-3. Ensure all new CLI commands follow this directory structure and file naming pattern.
+3. Consider removing the old `src/bin` directory after ensuring all functionality is properly migrated.
+4. Ensure all new CLI commands follow this directory structure and file naming pattern.
 
 ## Implementation Guidelines
 
@@ -227,39 +228,39 @@ The `fnet` command is similar to the `fnode` command:
 
 #### `frun` Commands
 
-- [ ] Default command (run command group) works as expected
+- [x] Default command (run command group) works as expected
 
 #### `fnode` Commands
 
-- [ ] `fnode create` command works as expected
-- [ ] `fnode project` command works as expected
-- [ ] `fnode build` command works as expected
-- [ ] `fnode deploy` command works as expected
-- [ ] `fnode file` command works as expected
-- [ ] `fnode input` command works as expected
-- [ ] `fnode install` command works as expected
-- [ ] `fnode run` command works as expected
-- [ ] `fnode with` command works as expected
-- [ ] Pass-through commands (npm, node, bun, etc.) work as expected
+- [x] `fnode create` command works as expected
+- [x] `fnode project` command works as expected
+- [x] `fnode build` command works as expected
+- [x] `fnode deploy` command works as expected
+- [x] `fnode file` command works as expected
+- [x] `fnode input` command works as expected
+- [x] `fnode install` command works as expected
+- [x] `fnode run` command works as expected
+- [x] `fnode with` command works as expected
+- [x] Pass-through commands (npm, node, bun, etc.) work as expected
 
 #### `fnet` Commands
 
-- [ ] `fnet create` command works as expected
-- [ ] `fnet project` command works as expected
-- [ ] `fnet build` command works as expected
-- [ ] `fnet deploy` command works as expected
-- [ ] `fnet file` command works as expected
-- [ ] `fnet input` command works as expected
-- [ ] `fnet install` command works as expected
-- [ ] `fnet run` command works as expected
-- [ ] `fnet with` command works as expected
-- [ ] Pass-through commands (npm, node, bun, etc.) work as expected
+- [x] `fnet create` command works as expected
+- [x] `fnet project` command works as expected
+- [x] `fnet build` command works as expected
+- [x] `fnet deploy` command works as expected
+- [x] `fnet file` command works as expected
+- [x] `fnet input` command works as expected
+- [x] `fnet install` command works as expected
+- [x] `fnet run` command works as expected
+- [x] `fnet with` command works as expected
+- [x] Pass-through commands (npm, node, bun, etc.) work as expected
 
 ### Build Process Testing
 
-- [ ] `frun build` works correctly to build the project
-- [ ] Fallback `bun run build && bun link` works if `frun build` fails
-- [ ] After each phase, verify that the project can be built successfully
+- [x] `frun build` works correctly to build the project
+- [x] Fallback `bun run build && bun link` works if `frun build` fails
+- [x] After each phase, verify that the project can be built successfully
 
 ## Timeline
 

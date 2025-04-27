@@ -243,6 +243,19 @@ commands:
     - frun test-path-handling
     - frun test-fbin-platform
 
+  # Run all tests
+  test-all:
+    - frun test-platform-detection
+    - frun test-path-handling
+    - frun test-fbin-platform
+    - frun test-fbin-compile
+    - frun test-compile-all
+    - frun test-examples
+    - frun test-phase3-all
+    - frun test-phase4-all
+    - frun test-phase5-all
+    - frun test-phase6-all
+
   # Test commands for Phase 5
   test-fbin-install:
     - rm -rf .tests/fbin-install-test
