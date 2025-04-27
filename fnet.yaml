@@ -172,15 +172,22 @@ commands:
         - wdir: .tests/fnet-node-compile
           steps:
             - filemap:
-                target: "src"
+                target: "./"
                 sources:
+                  - source: |
+                      main:
+                        steps:
+                          - hello-world:    
+                              call: hello-step
+                    provider: text
+                    target: "fnet/flows.yaml"
                   - source: |
                       export default async (args) => {
                         console.log("Hello from fnet-node-compile project!");
                         return "Success!";
                       }
                     provider: text
-                    target: "index.js"
+                    target: "src/hello-step.js"
             - fnet build
             - fnet compile
             - wdir: .tests/fnet-node-compile/.workspace
