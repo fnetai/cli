@@ -43,16 +43,15 @@ Currently, the codebase:
    - Create metadata storage structure
    - Validate the setup is working correctly
 
-### Phase 2: Binary Management
+### Phase 2: Node Project Compilation
 
-1. Implement binary compilation with Bun
-2. Create binary naming and versioning system
-3. Add commands for managing binaries:
-   - `fbin install`: Install binary from a project
-   - `fbin uninstall`: Remove a binary
-   - `fbin list`: List all installed binaries
-   - `fbin update`: Update a binary to the latest version
-   - `fbin clean`: Remove unused versions
+1. Add compile option to Node project templates (fnode/node and fnet/node)
+2. Implement direct command-line compilation for CLI-enabled projects
+   - Add `fnode compile` command as a shortcut for Node projects
+   - Add `fnet compile` command as a shortcut for Flow projects
+3. Focus on compiling the bundled CLI output (dist/cli/esm/index.js)
+4. Test compiled binaries for proper functionality
+5. Ensure cross-platform compatibility of compiled binaries
 
 ### Phase 3: Integration with Build System
 
@@ -150,9 +149,10 @@ These features will build on the foundation established in Phase 1.
    - Implement `fbin path` command
    - Update build configuration
 
-2. Phase 2: Binary Management (2-3 days)
-   - Implement binary compilation with Bun
-   - Implement binary management commands
+2. Phase 2: Node Project Compilation (2-3 days)
+   - Add compile option to Node project templates
+   - Implement `fnode compile` and `fnet compile` commands
+   - Test compiled binaries for functionality
 
 3. Phase 3: Integration with Build System (1-2 days)
    - Add `--bin` flag to build and deploy commands
@@ -167,9 +167,11 @@ These features will build on the foundation established in Phase 1.
 
 Total estimated time: 6-10 days
 
-## 10. Implementation Checklist for Phase 1
+## 10. Implementation Checklists
 
-The following checklist focuses on Phase 1 (Setup and Infrastructure) which is our immediate priority:
+### 10.1. Phase 1 Checklist (Completed)
+
+The following checklist for Phase 1 (Setup and Infrastructure) has been completed:
 
 - [x] Create project file structure
   - [x] Create `src/bin` directory
@@ -203,6 +205,78 @@ The following checklist focuses on Phase 1 (Setup and Infrastructure) which is o
   - [x] Test `fbin setup` command
   - [x] Test `fbin path` command
   - [x] Verify bin directory structure is created correctly
+
+### 10.2. Phase 2 Checklist
+
+The following checklist focuses on Phase 2 (Node Project Compilation):
+
+- [ ] Analyze Node project templates
+  - [ ] Understand the structure of fnode/node template
+  - [ ] Understand the structure of fnet/node template
+  - [ ] Identify the CLI output path (dist/cli/esm/index.js)
+
+- [ ] Add compile option to Node project templates
+  - [ ] Update package.json.njk in fnode/node template
+  - [ ] Update package.json.njk in fnet/node template
+  - [ ] Add compile script that uses Bun's build command
+
+- [ ] Implement command-line compilation
+  - [ ] Add `fnode compile` command as a shortcut for Node projects
+  - [ ] Add `fnet compile` command as a shortcut for Flow projects
+  - [ ] Ensure the commands work with CLI-enabled projects
+  - [ ] Set proper permissions for compiled binaries
+
+- [ ] Test compiled binaries
+  - [ ] Test on different operating systems
+  - [ ] Verify that compiled binaries run correctly
+  - [ ] Compare performance with non-compiled versions
+
+- [ ] Documentation
+  - [ ] Document the compile option in project templates
+  - [ ] Provide usage examples
+  - [ ] Update the main documentation
+
+### 10.3. Test Commands for Phase 2
+
+The following commands will be added to `fnet.yaml` for testing Phase 2 implementation:
+
+```yaml
+# Test commands for Phase 2
+test-fnode-compile:
+  - rm -rf .tests/fnode-node-compile
+  - wdir: .tests
+    steps:
+      - fnode create --name fnode-node-compile --runtime node
+      - wdir: .tests/fnode-node-compile
+        steps:
+          - fnode build
+          - fnode compile
+          - ls -la .bin
+          - ./.bin/fnode-node-compile --help
+
+test-fnet-compile:
+  - rm -rf .tests/fnet-node-compile
+  - wdir: .tests
+    steps:
+      - fnet create --name fnet-node-compile --runtime node
+      - wdir: .tests/fnet-node-compile
+        steps:
+          - fnet build
+          - fnet compile
+          - ls -la .bin
+          - ./.bin/fnet-node-compile --help
+
+test-compile-all:
+  - frun test-fnode-compile
+  - frun test-fnet-compile
+```
+
+These commands will:
+
+1. Create test projects using the updated templates
+2. Build the projects
+3. Compile the projects using the new compile commands
+4. Verify that the compiled binaries exist and run correctly
 
 ## 11. Platform Support
 

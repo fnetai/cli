@@ -20,7 +20,7 @@ commands:
     - chmod +x .bin/frun
     - .bin/frun --help
     - otool -L .bin/frun
-  
+
   compile-fbin:
     - bun build ./dist/fbin/index.js --compile --outfile=.bin/fbin
     - du -h .bin/fbin
@@ -137,3 +137,32 @@ commands:
     - cat ~/.fnet/metadata/binaries.json
     - echo "Checking if bin directory is in PATH..."
     - echo $PATH | grep -q ~/.fnet/bin && echo "Bin directory is in PATH" || echo "Bin directory is NOT in PATH"
+
+  # Test commands for Phase 2
+  test-fnode-compile:
+    - rm -rf .tests/fnode-node-compile
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-node-compile --runtime node
+        - wdir: .tests/fnode-node-compile
+          steps:
+            - fnode build
+            - fnode compile
+            - ls -la .bin
+            - ./.bin/fnode-node-compile --help
+
+  test-fnet-compile:
+    - rm -rf .tests/fnet-node-compile
+    - wdir: .tests
+      steps:
+        - fnet create --name fnet-node-compile --runtime node
+        - wdir: .tests/fnet-node-compile
+          steps:
+            - fnet build
+            - fnet compile
+            - ls -la .bin
+            - ./.bin/fnet-node-compile --help
+
+  test-compile-all:
+    - frun test-fnode-compile
+    - frun test-fnet-compile
