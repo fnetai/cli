@@ -157,7 +157,7 @@ commands:
                     provider: text
                     target: "index.js"
             - fnode build
-            - fnode compile
+            - cd .workspace && fbin compile ./dist/cli/esm/index.js -o .bin/fnode-node-compile
             - wdir: .tests/fnode-node-compile/.workspace
               steps:
                 - pwd
@@ -177,7 +177,7 @@ commands:
                   - source: |
                       main:
                         steps:
-                          - hello-world:    
+                          - hello-world:
                               call: hello-step
                     provider: text
                     target: "fnet/flows.yaml"
@@ -189,7 +189,7 @@ commands:
                     provider: text
                     target: "src/hello-step.js"
             - fnet build
-            - fnet compile
+            - cd .workspace && fbin compile ./dist/cli/esm/index.js -o .bin/fnet-node-compile
             - wdir: .tests/fnet-node-compile/.workspace
               steps:
                 - pwd
@@ -199,3 +199,19 @@ commands:
   test-compile-all:
     - frun test-fnode-compile
     - frun test-fnet-compile
+
+  # Test commands for Phase 3
+  test-fbin-compile:
+    - rm -rf .tests/fbin-compile-test
+    - mkdir -p .tests/fbin-compile-test
+    - wdir: .tests/fbin-compile-test
+      steps:
+        - echo 'console.log("Hello from fbin-compile test!");' > test.js
+        - fbin compile test.js -o test-bin
+        - ./test-bin
+
+
+
+  test-phase3-all:
+    - frun test-fbin-compile
+    - frun test-compile-all

@@ -11,6 +11,7 @@ import { hideBin } from 'yargs/helpers';
 // Import commands
 import setupCommand from './bin-setup.js';
 import pathCommand from './bin-path.js';
+import compileCommand from './bin-compile.js';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -27,6 +28,7 @@ async function main() {
       .usage('Usage: $0 <command> [options]')
       .command(setupCommand)
       .command(pathCommand)
+      .command(compileCommand)
       .demandCommand(1, 'You need to specify a command')
       .help()
       .version()
