@@ -11,7 +11,6 @@ import fnetPrompt from '@fnet/prompt';
 import fnetShellJs from '@fnet/shelljs';
 import fnetYaml from '@fnet/yaml';
 import fnetConfig from '@fnet/config';
-import fnetShellFlow from '@fnet/shell-flow';
 import fnetRender from '@flownet/lib-render-templates-dir';
 
 import findNodeModules from './find-node-modules.js';

@@ -55,7 +55,7 @@ async function buildOutput(name, config) {
     external: (() => {
       try {
         const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-        return [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})];
+        return [...Object.keys(pkg.dependencies || {})];
       } catch (err) {
         console.warn('Could not read package.json:', err.message);
         return [];

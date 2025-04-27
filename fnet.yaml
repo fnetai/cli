@@ -34,7 +34,7 @@ commands:
     # env:
     #   DEVELOPMENT: true
 
-  test-fnode-node:
+  create-fnode-node:
     - rm -rf .tests/fnode-node
     - wdir: .tests
       steps:
@@ -44,7 +44,7 @@ commands:
             # - fnode build
             - fnode cli
 
-  test-fnet-node:
+  create-fnet-node:
     - rm -rf .tests/fnet-node
     - wdir: .tests
       steps:
@@ -54,7 +54,7 @@ commands:
             # - fnet build
             - fnet cli
 
-  test-fnode-python:
+  create-fnode-python:
     - rm -rf .tests/fnode-python
     - wdir: .tests
       steps:
@@ -64,7 +64,7 @@ commands:
             # - fnode build
             - fnode cli
 
-  test-fnode-bun:
+  create-fnode-bun:
     - rm -rf .tests/fnode-bun
     - wdir: .tests
       steps:
@@ -74,17 +74,11 @@ commands:
             # - fnode build
             - fnode cli
 
-  test-fnode-bun-build:
-      - wdir: .tests/fnode-bun
-        steps:
-          - fnode build
-          - fnode cli
-
-  test-all:
-    - frun test-fnode-node
-    - frun test-fnet-node
-    - frun test-fnode-python
-    - frun test-fnode-bun
+  create-all:
+    - frun create-fnode-node
+    - frun create-fnet-node
+    - frun create-fnode-python
+    - frun create-fnode-bun
 
   test-examples:
     - wdir: examples/fnode/node-1
