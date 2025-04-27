@@ -7,6 +7,7 @@ import treeKill from 'tree-kill';
 
 import YAML from 'yaml';
 import yargs from 'yargs';
+import chalk from 'chalk';
 
 import fnetPrompt from '@fnet/prompt';
 import fnetShellJs from '@fnet/shelljs';
@@ -189,6 +190,7 @@ cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', p
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'] });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'] });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'] });
+cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install" });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
 cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
@@ -315,6 +317,123 @@ function bindRunContextCommand(builder, { name }) {
         });
       } catch (error) {
         console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+function bindInstallCommand(builder, { name }) {
+  return builder.command(
+    `${name} [options]`, `Install the project as a binary`,
+    (yargs) => {
+      return yargs
+        .option('name', {
+          alias: 'n',
+          describe: 'Name to use for the installed binary',
+          type: 'string'
+        })
+        .option('force', {
+          alias: 'f',
+          describe: 'Force overwrite if binary already exists',
+          type: 'boolean',
+          default: false
+        })
+        .option('version', {
+          alias: 'v',
+          describe: 'Version of the binary',
+          type: 'string'
+        })
+        .option('yes', {
+          alias: 'y',
+          describe: 'Automatically answer yes to all prompts',
+          type: 'boolean',
+          default: false
+        })
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { projectDir } = context;
+
+        // First, compile the project
+        console.log(chalk.blue('Compiling project...'));
+
+        // Create .bin directory if it doesn't exist
+        const binDir = path.join(projectDir, '.bin');
+        if (!fs.existsSync(binDir)) {
+          fs.mkdirSync(binDir, { recursive: true });
+        }
+
+        // Determine binary name
+        const projectName = path.basename(path.dirname(projectDir));
+        const binaryName = argv.name || projectName;
+        const binaryPath = path.join(binDir, binaryName);
+
+        // Compile the project
+        const { spawn } = await import('child_process');
+        const compileProcess = spawn('bun', ['build', './dist/cli/esm/index.js', '--compile', `--outfile=${binaryPath}`], {
+          cwd: projectDir,
+          stdio: 'inherit',
+          shell: true
+        });
+
+        // Wait for compilation to complete
+        await new Promise((resolve, reject) => {
+          compileProcess.on('close', (code) => {
+            if (code === 0) {
+              resolve();
+            } else {
+              reject(new Error(`Compilation failed with code ${code}`));
+            }
+          });
+
+          compileProcess.on('error', (err) => {
+            reject(err);
+          });
+        });
+
+        // Set executable permissions (not needed on Windows)
+        if (process.platform !== 'win32') {
+          fs.chmodSync(binaryPath, 0o755);
+        }
+
+        console.log(chalk.green(`Binary compiled successfully: ${binaryPath}`));
+
+        // Now, install the binary
+        console.log(chalk.blue('Installing binary...'));
+
+        // Use fbin install to install the binary
+        const installArgs = ['install', binaryPath];
+        if (argv.name) installArgs.push('--name', argv.name);
+        if (argv.version) installArgs.push('--version', argv.version);
+        if (argv.force) installArgs.push('--force');
+        if (argv.yes) installArgs.push('--yes');
+
+        const installProcess = spawn('fbin', installArgs, {
+          stdio: 'inherit',
+          shell: true
+        });
+
+        // Wait for installation to complete
+        await new Promise((resolve, reject) => {
+          installProcess.on('close', (code) => {
+            if (code === 0) {
+              resolve();
+            } else {
+              reject(new Error(`Installation failed with code ${code}`));
+            }
+          });
+
+          installProcess.on('error', (err) => {
+            reject(err);
+          });
+        });
+
+      } catch (error) {
+        console.error(chalk.red(`Failed to install binary: ${error.message}`));
         process.exit(1);
       }
     }

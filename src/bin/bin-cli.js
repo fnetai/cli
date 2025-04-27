@@ -12,6 +12,9 @@ import { hideBin } from 'yargs/helpers';
 import setupCommand from './bin-setup.js';
 import pathCommand from './bin-path.js';
 import compileCommand from './bin-compile.js';
+import installCommand from './bin-install.js';
+import uninstallCommand from './bin-uninstall.js';
+import listCommand from './bin-list.js';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -29,6 +32,9 @@ async function main() {
       .command(setupCommand)
       .command(pathCommand)
       .command(compileCommand)
+      .command(installCommand)
+      .command(uninstallCommand)
+      .command(listCommand)
       .demandCommand(1, 'You need to specify a command')
       .help()
       .version()

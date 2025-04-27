@@ -167,7 +167,14 @@ These features will build on the foundation established in Phase 1.
    - Fix bugs and edge cases
    - Document platform-specific considerations
 
-Total estimated time: 6-10 days
+5. Phase 5: Binary Management Commands (1-2 days)
+   - Add `fbin install` command for installing binaries to bin directory
+   - Add `fbin uninstall` command for removing binaries from bin directory
+   - Add `fbin list` command for listing installed binaries
+   - Add `fnode install` and `fnet install` commands for CLI-enabled projects
+   - Update documentation and examples
+
+Total estimated time: 7-12 days
 
 ## 10. Implementation Checklists
 
@@ -293,12 +300,45 @@ The following checklist for Phase 4 (Multi-Platform Support and Testing) has bee
   - [x] Add platform-specific notes to command outputs
   - [x] Provide troubleshooting guidance for common issues
 
-### 10.5. Test Commands for Phase 2, Phase 3, and Phase 4
+### 10.5. Phase 5 Checklist (Completed)
 
-The following commands have been added to `fnet.yaml` for testing Phase 2, Phase 3, and Phase 4 implementations:
+The following checklist for Phase 5 (Binary Management Commands) has been completed:
+
+- [x] Add `fbin install` command
+  - [x] Create bin-install.js for the install command
+  - [x] Implement binary installation from local file to bin directory
+  - [x] Add support for versioning and metadata
+  - [x] Handle conflicts with existing binaries
+
+- [x] Add `fbin uninstall` command
+  - [x] Create bin-uninstall.js for the uninstall command
+  - [x] Implement binary removal from bin directory
+  - [x] Update metadata after removal
+  - [x] Add confirmation prompt for safety
+
+- [x] Add `fbin list` command
+  - [x] Create bin-list.js for the list command
+  - [x] Implement listing of installed binaries
+  - [x] Show binary details (version, installation date, source)
+  - [x] Add filtering options
+
+- [x] Add `fnode install` and `fnet install` commands
+  - [x] Update wf-cli.js to add install command to fnet
+  - [x] Update lib-cli.js to add install command to fnode
+  - [x] Ensure the commands work with CLI-enabled projects
+  - [x] Add appropriate error handling and feedback
+
+- [x] Update documentation
+  - [x] Document the new commands and their options
+  - [x] Provide usage examples
+  - [x] Update the main documentation
+
+### 10.6. Test Commands for Phase 2, Phase 3, Phase 4, and Phase 5
+
+The following commands have been added to `fnet.yaml` for testing Phase 2, Phase 3, Phase 4, and Phase 5 implementations:
 
 ```yaml
-# Test commands for Phase 2, Phase 3, and Phase 4
+# Test commands for Phase 2, Phase 3, Phase 4, and Phase 5
 test-fnode-compile:
   - rm -rf .tests/fnode-node-compile
   - wdir: .tests
@@ -393,6 +433,72 @@ test-phase4-all:
   - frun test-platform-detection
   - frun test-path-handling
   - frun test-fbin-platform
+
+# Additional test commands for Phase 5
+test-fbin-install:
+  - rm -rf .tests/fbin-install-test
+  - mkdir -p .tests/fbin-install-test
+  - wdir: .tests/fbin-install-test
+    steps:
+      - echo 'console.log("Hello from fbin-install test!");' > test.js
+      - fbin compile test.js -o test-bin
+      - fbin install test-bin --name test-bin-installed
+      - fbin list
+      - ~/.fnet/bin/test-bin-installed
+
+test-fbin-uninstall:
+  - fbin uninstall test-bin-installed --force
+  - fbin list
+
+test-fnode-install:
+  - rm -rf .tests/fnode-install-test
+  - wdir: .tests
+    steps:
+      - fnode create --name fnode-install-test --runtime node
+      - wdir: .tests/fnode-install-test
+        steps:
+          - filemap:
+              target: "src"
+              sources:
+                - source: |
+                    export default async (args) => {
+                      console.log("Hello from fnode-install-test project!");
+                      return "Success!";
+                    }
+                  provider: text
+                  target: "index.js"
+          - fnode build
+          - fnode install
+          - fbin list
+          - ~/.fnet/bin/fnode-install-test
+
+test-fnet-install:
+  - rm -rf .tests/fnet-install-test
+  - wdir: .tests
+    steps:
+      - fnet create --name fnet-install-test --runtime node
+      - wdir: .tests/fnet-install-test
+        steps:
+          - filemap:
+              target: "src"
+              sources:
+                - source: |
+                    export default async (args) => {
+                      console.log("Hello from fnet-install-test project!");
+                      return "Success!";
+                    }
+                  provider: text
+                  target: "src/hello-step.js"
+          - fnet build
+          - fnet install
+          - fbin list
+          - ~/.fnet/bin/fnet-install-test
+
+test-phase5-all:
+  - frun test-fbin-install
+  - frun test-fbin-uninstall
+  - frun test-fnode-install
+  - frun test-fnet-install
 ```
 
 These commands will:
@@ -400,7 +506,10 @@ These commands will:
 1. Create test projects using the updated templates
 2. Build the projects
 3. Compile the projects using the new compile commands
-4. Verify that the compiled binaries exist and run correctly
+4. Install binaries using the new install commands
+5. List installed binaries using the new list command
+6. Uninstall binaries using the new uninstall command
+7. Verify that all commands work correctly
 
 ## 11. Platform Support
 

@@ -242,3 +242,69 @@ commands:
     - frun test-platform-detection
     - frun test-path-handling
     - frun test-fbin-platform
+
+  # Test commands for Phase 5
+  test-fbin-install:
+    - rm -rf .tests/fbin-install-test
+    - mkdir -p .tests/fbin-install-test
+    - wdir: .tests/fbin-install-test
+      steps:
+        - echo 'console.log("Hello from fbin-install test!");' > test.js
+        - fbin compile test.js -o test-bin
+        - fbin install test-bin --name test-bin-installed --yes
+        - fbin list
+        - ~/.fnet/bin/test-bin-installed
+
+  test-fbin-uninstall:
+    - fbin uninstall test-bin-installed --force --yes
+    - fbin list
+
+  test-fnode-install:
+    - rm -rf .tests/fnode-install-test
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-install-test --runtime node
+        - wdir: .tests/fnode-install-test
+          steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (args) => {
+                        console.log("Hello from fnode-install-test project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "index.js"
+            - fnode build
+            - fnode install --yes
+            - fbin list
+            - ~/.fnet/bin/fnode-install-test
+
+  test-fnet-install:
+    - rm -rf .tests/fnet-install-test
+    - wdir: .tests
+      steps:
+        - fnet create --name fnet-install-test --runtime node
+        - wdir: .tests/fnet-install-test
+          steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (args) => {
+                        console.log("Hello from fnet-install-test project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "src/hello-step.js"
+            - fnet build
+            - fnet install --yes
+            - fbin list
+            - ~/.fnet/bin/fnet-install-test
+
+  test-phase5-all:
+    - frun test-fbin-install
+    - frun test-fbin-uninstall
+    - frun test-fnode-install
+    - frun test-fnet-install
