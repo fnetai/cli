@@ -215,3 +215,30 @@ commands:
   test-phase3-all:
     - frun test-fbin-compile
     - frun test-compile-all
+
+  # Test commands for Phase 4
+  test-platform-detection:
+    - echo "Testing platform detection..."
+    - node -e "console.log('Platform:', process.platform)"
+    - node -e "console.log('Architecture:', process.arch)"
+    - node -e "console.log('OS:', require('os').type())"
+    - node -e "console.log('Shell:', process.env.SHELL)"
+
+  test-path-handling:
+    - echo "Testing path handling..."
+    - node -e "console.log('Path separator:', require('path').sep)"
+    - node -e "console.log('Delimiter:', require('path').delimiter)"
+    - node -e "console.log('Home directory:', require('os').homedir())"
+    - node -e "console.log('Temp directory:', require('os').tmpdir())"
+
+  test-fbin-platform:
+    - echo "Testing fbin commands on current platform..."
+    - fbin --version
+    - fbin setup --help
+    - fbin path --help
+    - fbin compile --help
+
+  test-phase4-all:
+    - frun test-platform-detection
+    - frun test-path-handling
+    - frun test-fbin-platform

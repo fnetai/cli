@@ -86,11 +86,43 @@ export const handler = async (argv) => {
     const platform = process.platform;
     console.log(chalk.blue(`Detected platform: ${platform}`));
 
+    // Add extension for Windows
+    if (platform === 'win32' && !outputPath.endsWith('.exe')) {
+      outputPath = `${outputPath}.exe`;
+      console.log(chalk.blue(`Adjusted output path for Windows: ${outputPath}`));
+    }
+
     // Compile binary
     console.log(chalk.blue(`Compiling ${sourcePath} to ${outputPath}...`));
 
     // Use Bun's build command for compilation
     const { spawn } = await import('child_process');
+
+    // Check if bun is available
+    try {
+      const bunVersionProcess = spawn('bun', ['--version'], {
+        stdio: 'pipe'
+      });
+
+      await new Promise((resolve, reject) => {
+        bunVersionProcess.on('close', (code) => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject(new Error(`Bun is not available. Please install Bun first.`));
+          }
+        });
+
+        bunVersionProcess.on('error', (err) => {
+          reject(new Error(`Bun is not available: ${err.message}`));
+        });
+      });
+    } catch (error) {
+      console.error(chalk.red(`Bun is not available: ${error.message}`));
+      console.error(chalk.yellow('Please install Bun first: https://bun.sh/'));
+      process.exit(1);
+    }
+
     const bunProcess = spawn('bun', ['build', sourcePath, '--compile', `--outfile=${outputPath}`], {
       stdio: 'inherit'
     });
@@ -110,9 +142,18 @@ export const handler = async (argv) => {
       });
     });
 
-    // Set executable permissions
-    fs.chmodSync(outputPath, 0o755);
+    // Set executable permissions (not needed on Windows)
+    if (platform !== 'win32') {
+      fs.chmodSync(outputPath, 0o755);
+    }
     console.log(chalk.green(`Binary compiled successfully: ${outputPath}`));
+
+    // Platform-specific notes
+    if (platform === 'win32') {
+      console.log(chalk.yellow('Note: On Windows, you may need to run the binary from a command prompt or PowerShell.'));
+    } else if (platform === 'darwin') {
+      console.log(chalk.yellow('Note: On macOS, you may need to allow the binary to run in System Preferences > Security & Privacy.'));
+    }
 
 
   } catch (error) {
