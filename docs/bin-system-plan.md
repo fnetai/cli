@@ -53,11 +53,12 @@ Currently, the codebase:
 4. Test compiled binaries for proper functionality
 5. Ensure cross-platform compatibility of compiled binaries
 
-### Phase 3: Integration with Build System
+### Phase 3: Bin System Compilation Integration
 
-1. Add `--bin` flag to build and deploy commands
-2. Update project templates to support binary compilation
-3. Add binary-specific configuration options to project files
+1. Add `compile` command to `fbin` CLI
+2. Update Node project templates to use `fbin compile` in package.json
+3. Create a more platform-independent and flexible compilation mechanism
+4. Test the integration with different project types
 
 ## 5. Benefits
 
@@ -154,10 +155,10 @@ These features will build on the foundation established in Phase 1.
    - Implement `fnode compile` and `fnet compile` commands
    - Test compiled binaries for functionality
 
-3. Phase 3: Integration with Build System (1-2 days)
-   - Add `--bin` flag to build and deploy commands
-   - Update project templates
-   - Add binary-specific configuration options
+3. Phase 3: Bin System Compilation Integration (1-2 days)
+   - Add `compile` command to `fbin` CLI
+   - Update Node project templates to use `fbin compile`
+   - Create a more platform-independent compilation mechanism
 
 4. Phase 4: Testing and Bug Fixing (2-3 days)
    - Test on different operating systems
@@ -206,37 +207,66 @@ The following checklist for Phase 1 (Setup and Infrastructure) has been complete
   - [x] Test `fbin path` command
   - [x] Verify bin directory structure is created correctly
 
-### 10.2. Phase 2 Checklist
+### 10.2. Phase 2 Checklist (Completed)
 
-The following checklist focuses on Phase 2 (Node Project Compilation):
+The following checklist for Phase 2 (Node Project Compilation) has been completed:
 
-- [ ] Analyze Node project templates
-  - [ ] Understand the structure of fnode/node template
-  - [ ] Understand the structure of fnet/node template
-  - [ ] Identify the CLI output path (dist/cli/esm/index.js)
+- [x] Analyze Node project templates
+  - [x] Understand the structure of fnode/node template
+  - [x] Understand the structure of fnet/node template
+  - [x] Identify the CLI output path (dist/cli/esm/index.js)
 
-- [ ] Add compile option to Node project templates
+- [x] Add compile option to Node project templates
+  - [x] Update package.json.njk in fnode/node template
+  - [x] Update package.json.njk in fnet/node template
+  - [x] Add compile script that uses Bun's build command
+
+- [x] Implement command-line compilation
+  - [x] Add `fnode compile` command as a shortcut for Node projects
+  - [x] Add `fnet compile` command as a shortcut for Flow projects
+  - [x] Ensure the commands work with CLI-enabled projects
+  - [x] Set proper permissions for compiled binaries
+
+- [x] Test compiled binaries
+  - [x] Test on macOS (other platforms will be tested in future phases)
+  - [x] Verify that compiled binaries run correctly
+  - [x] Compare performance with non-compiled versions
+
+- [x] Documentation
+  - [x] Document the compile option in project templates
+  - [x] Provide usage examples
+  - [x] Update the main documentation
+
+### 10.3. Phase 3 Checklist
+
+The following checklist focuses on Phase 3 (Bin System Compilation Integration):
+
+- [ ] Add `compile` command to `fbin` CLI
+  - [ ] Create bin-compile.js for the compile command
+  - [ ] Implement platform detection for appropriate compilation
+  - [ ] Add support for different output formats and options
+
+- [ ] Update Node project templates to use `fbin compile`
   - [ ] Update package.json.njk in fnode/node template
   - [ ] Update package.json.njk in fnet/node template
-  - [ ] Add compile script that uses Bun's build command
+  - [ ] Ensure backward compatibility with existing projects
 
-- [ ] Implement command-line compilation
-  - [ ] Add `fnode compile` command as a shortcut for Node projects
-  - [ ] Add `fnet compile` command as a shortcut for Flow projects
-  - [ ] Ensure the commands work with CLI-enabled projects
-  - [ ] Set proper permissions for compiled binaries
+- [ ] Create a more platform-independent compilation mechanism
+  - [ ] Handle different operating systems appropriately
+  - [ ] Support various compilation options
+  - [ ] Implement error handling and reporting
 
-- [ ] Test compiled binaries
-  - [ ] Test on different operating systems
-  - [ ] Verify that compiled binaries run correctly
-  - [ ] Compare performance with non-compiled versions
+- [ ] Test the integration with different project types
+  - [ ] Test with fnode/node projects
+  - [ ] Test with fnet/node projects
+  - [ ] Test on different operating systems (if possible)
 
 - [ ] Documentation
-  - [ ] Document the compile option in project templates
+  - [ ] Document the `fbin compile` command and its options
+  - [ ] Update template documentation
   - [ ] Provide usage examples
-  - [ ] Update the main documentation
 
-### 10.3. Test Commands for Phase 2
+### 10.4. Test Commands for Phase 2
 
 The following commands will be added to `fnet.yaml` for testing Phase 2 implementation:
 
