@@ -3,9 +3,9 @@ name: cli
 commands:
   build:
     - bun run build
-    - node ./dist/fnode/index.js --version
-    - node ./dist/fnet/index.js --version
-    - node ./dist/frun/index.js --version
+    - bun ./dist/fnode/index.js --version
+    - bun ./dist/fnet/index.js --version
+    - bun ./dist/frun/index.js --version
     - bun link
 
   deploy:
@@ -15,24 +15,31 @@ commands:
   compile:
     steps:
       - frun build
-      - bun build ./src/builder/lib-cli.js --compile --outfile=.bin/fnode
-      - bun build ./src/builder/wf-cli.js --compile --outfile=.bin/fnode
-      - bun build ./src/builder/run-cli.js --compile --outfile=.bin/frun
-      # - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
-      # - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
-      - chmod +x .bin/fnode && chmod +x .bin/fnet && chmod +x .bin/frun
+      - pause: true
 
-      - du -h .bin/fnode && du -h .bin/fnet && du -h .bin/frun
-      - .bin/fnode --version && .bin/fnet --version && .bin/frun --version
-      - .bin/fnode --help && .bin/fnet --help && .bin/frun --help
-      - otool -L .bin/fnode && otool -L .bin/fnet && otool -L .bin/frun
-      - file .bin/fnode && file .bin/fnet && file .bin/frun
-      - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet && cp .bin/frun /usr/local/bin/xfrun
-      - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet && chmod +x /usr/local/bin/xfrun
-      - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet && du -h /usr/local/bin/xfrun
+      - bun build ./dist/frun/index.js --compile --outfile=.bin/frun
+      - du -h .bin/frun
+      - chmod +x .bin/frun
+      - .bin/frun --help
+      - otool -L .bin/frun
+      - cp .bin/frun /usr/local/bin/xfrun && chmod +x /usr/local/bin/xfrun && du -h /usr/local/bin/xfrun
+      - pause: true
 
-    # env:
-    #   DEVELOPMENT: true
+      - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
+      - du -h .bin/fnode
+      - chmod +x .bin/fnode
+      - .bin/fnode --help
+      - otool -L .bin/fnode
+      - cp .bin/fnode /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnode && du -h /usr/local/bin/xfnode
+      - pause: true
+
+      - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
+      - du -h .bin/fnet
+      - chmod +x .bin/fnet
+      - .bin/fnet --help
+      - otool -L .bin/fnet
+      - cp .bin/fnet /usr/local/bin/xfnet && chmod +x /usr/local/bin/xfnet && du -h /usr/local/bin/xfnet
+      - pause: true
 
   create-fnode-node:
     - rm -rf .tests/fnode-node
@@ -75,10 +82,10 @@ commands:
             - fnode cli
 
   create-all:
-    - frun create-fnode-node
-    - frun create-fnet-node
-    - frun create-fnode-python
-    - frun create-fnode-bun
+    - xfrun create-fnode-node
+    - xfrun create-fnet-node
+    - xfrun create-fnode-python
+    - xfrun create-fnode-bun
 
   test-examples:
     - wdir: examples/fnode/node-1
