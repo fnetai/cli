@@ -91,5 +91,21 @@ export default [
       commonjs(),
     ],
     external: id => /node_modules/.test(id)
+  },
+  {
+    input: `src/bin/bin-cli.js`,
+    output: {
+      format: "esm",
+      exports: "auto",
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
+      dir: 'dist/fbin',
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
+    },
+    plugins: [
+      fnetDelete({ targets: ["dist/fbin/**"] }),
+      ...commonPlugins()
+    ],
+    external: id => /node_modules/.test(id)
   }
 ];

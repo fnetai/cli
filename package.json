@@ -11,7 +11,7 @@
     "build": "rollup --config",
     "deploy": "bun publish --access public",
     "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
-    "postbuild": "chmod +x dist/fnode/index.js dist/fnet/index.js dist/frun/index.js"
+    "postbuild": "chmod +x dist/fnode/index.js dist/fnet/index.js dist/frun/index.js dist/fbin/index.js"
   },
   "repository": {
     "type": "git",
@@ -74,7 +74,8 @@
   "bin": {
     "fnet": "dist/fnet/index.js",
     "fnode": "dist/fnode/index.js",
-    "frun": "dist/frun/index.js"
+    "frun": "dist/frun/index.js",
+    "fbin": "dist/fbin/index.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",

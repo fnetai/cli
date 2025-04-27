@@ -1,44 +1,62 @@
 name: cli
 
+# @fnet/shell-flow commands
 commands:
   build:
     - bun run build
     - bun ./dist/fnode/index.js --version
     - bun ./dist/fnet/index.js --version
     - bun ./dist/frun/index.js --version
+    - bun ./dist/fbin/index.js --version
     - bun link
 
   deploy:
     - fnet build
     - bun publish --access public
 
+  compile-frun:
+    - bun build ./dist/frun/index.js --compile --outfile=.bin/frun
+    - du -h .bin/frun
+    - chmod +x .bin/frun
+    - .bin/frun --help
+    - otool -L .bin/frun
+  
+  compile-fbin:
+    - bun build ./dist/fbin/index.js --compile --outfile=.bin/fbin
+    - du -h .bin/fbin
+    - chmod +x .bin/fbin
+    - .bin/fbin --help
+    - otool -L .bin/fbin
+
+  compile-fnode:
+    - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
+    - du -h .bin/fnode
+    - chmod +x .bin/fnode
+    - .bin/fnode --help
+    - otool -L .bin/fnode
+
+  compile-fnet:
+    - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
+    - du -h .bin/fnet
+    - chmod +x .bin/fnet
+    - .bin/fnet --help
+    - otool -L .bin/fnet
+
   compile:
     steps:
       - frun build
       - pause: true
 
-      - bun build ./dist/frun/index.js --compile --outfile=.bin/frun
-      - du -h .bin/frun
-      - chmod +x .bin/frun
-      - .bin/frun --help
-      - otool -L .bin/frun
-      - cp .bin/frun /usr/local/bin/xfrun && chmod +x /usr/local/bin/xfrun && du -h /usr/local/bin/xfrun
+      - frun compile-fbin
       - pause: true
 
-      - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
-      - du -h .bin/fnode
-      - chmod +x .bin/fnode
-      - .bin/fnode --help
-      - otool -L .bin/fnode
-      - cp .bin/fnode /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnode && du -h /usr/local/bin/xfnode
+      - frun compile-frun
       - pause: true
 
-      - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
-      - du -h .bin/fnet
-      - chmod +x .bin/fnet
-      - .bin/fnet --help
-      - otool -L .bin/fnet
-      - cp .bin/fnet /usr/local/bin/xfnet && chmod +x /usr/local/bin/xfnet && du -h /usr/local/bin/xfnet
+      - frun compile-fnode
+      - pause: true
+
+      - frun compile-fnet
       - pause: true
 
   create-fnode-node:
@@ -104,3 +122,18 @@ commands:
       steps:
         - fnet build
         - fnet cli
+
+  # Bin system utility commands
+  bin-setup:
+    - fbin setup
+
+  bin-path:
+    - fbin path
+
+  bin-status:
+    - echo "Checking bin system status..."
+    - ls -la ~/.fnet/bin
+    - echo "Metadata file:"
+    - cat ~/.fnet/metadata/binaries.json
+    - echo "Checking if bin directory is in PATH..."
+    - echo $PATH | grep -q ~/.fnet/bin && echo "Bin directory is in PATH" || echo "Bin directory is NOT in PATH"
