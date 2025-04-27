@@ -271,3 +271,76 @@ fnode express move
 - [ ] Get feedback from team members
 - [ ] Make any necessary adjustments
 - [ ] Prepare for release
+
+## Test Command Groups for fnet.yaml
+
+The following command groups can be added to the project's `fnet.yaml` file to facilitate testing of the express command functionality:
+
+```yaml
+commands:
+  # Basic express command tests
+  test-express-create:
+    - fnode express test-project
+    - fnode express
+    - fnet express test-workflow
+    - fnet express
+
+  # Express list command tests
+  test-express-list:
+    - fnode express list
+    - fnode express list --today
+    - fnode express list --type fnode
+    - fnode express list --type fnet
+
+  # Express open command tests
+  test-express-open:
+    - fnode express open --latest
+    - fnode express open test-project
+
+  # Express move command tests
+  test-express-move:
+    - mkdir -p ~/test-destination
+    - fnode express move --latest ~/test-destination
+    - rm -rf ~/test-destination
+
+  # Comprehensive express command test
+  test-express-all:
+    - fnode express test-all-project
+    - fnode express list
+    - fnode express open test-all-project
+    - mkdir -p ~/test-destination
+    - fnode express move test-all-project ~/test-destination
+    - rm -rf ~/test-destination
+
+  # Test express command with --yes flag
+  test-express-yes:
+    - fnode express --yes
+    - fnode express list
+
+  # Test express command from within an express project
+  # Using wdir to change working directory for isolated execution
+  test-express-within:
+    - fnode express test-within
+    - wdir: ~/.fnet/express/$(date +%Y%m%d)/test-within
+      steps:
+        - fnode express move ~/test-destination
+        - rm -rf ~/test-destination
+
+  # Test express command with different project types
+  test-express-types:
+    - fnode express node-test
+    - fnet express flow-test
+    - fnode express list --type fnode
+    - fnode express list --type fnet
+
+  # Test express command error handling
+  test-express-errors:
+    - fnode express open non-existent-project
+    - fnode express move non-existent-project ~/test-destination
+    - mkdir -p ~/test-destination/existing-project
+    - fnode express test-project
+    - fnode express move test-project ~/test-destination/existing-project
+    - rm -rf ~/test-destination
+```
+
+These command groups can be executed using `frun test-express-create`, `frun test-express-list`, etc., to test different aspects of the express command functionality.
