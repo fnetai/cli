@@ -335,7 +335,7 @@ commands:
             - fnode build
             - ls -la .workspace
             - cat .workspace/package.json
-            - cd .workspace && echo '#!/bin/sh\necho "Hello from cli-config-fnode-test"' > cli-config-fnode-test && chmod +x cli-config-fnode-test && npm run install-bin
+            - cd .workspace && mkdir -p .bin && echo '#!/bin/sh\necho "Hello from cli-config-fnode-test"' > .bin/cli-config-fnode-test && chmod +x .bin/cli-config-fnode-test && npm run install-bin
             - fbin list
             - ls -la ~/.fnet/bin
             - ~/.fnet/bin/cli-config-fnode-test
@@ -366,7 +366,7 @@ commands:
             - fnet build
             - ls -la .workspace
             - cat .workspace/package.json
-            - cd .workspace && echo '#!/bin/sh\necho "Hello from cli-config-fnet-test"' > cli-config-fnet-test && chmod +x cli-config-fnet-test && npm run install-bin
+            - cd .workspace && mkdir -p .bin && echo '#!/bin/sh\necho "Hello from cli-config-fnet-test"' > .bin/cli-config-fnet-test && chmod +x .bin/cli-config-fnet-test && npm run install-bin
             - fbin list
             - ls -la ~/.fnet/bin
             - ~/.fnet/bin/cli-config-fnet-test
