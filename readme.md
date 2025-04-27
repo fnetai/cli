@@ -26,6 +26,7 @@ Flownet is a revolutionary development framework that isolates non-functional co
 - **Tag-Based Configuration**: Powerful conditional configuration with `--ftag` parameter
 - **Isolated Workspace**: All build artifacts and dependencies are kept in `.workspace` directory
 - **Binary System**: Compile, install, and manage CLI tools with the integrated binary system
+- **Project File Configuration**: Configure CLI features directly in your project files
 - **Fast Startup**: Pre-compiled binaries start much faster than interpreted scripts
 
 ## Installation
@@ -84,6 +85,10 @@ fbin install ./my-tool --name awesome-tool
 # Install a CLI-enabled project
 cd my-project
 fnode install --yes
+
+# Or use npm scripts in your project
+npm run compile
+npm run install-bin
 
 # List installed binaries
 fbin list
@@ -211,6 +216,36 @@ fnode install
 # Compile and install a CLI-enabled fnet project
 fnet compile
 fnet install
+
+# Using npm scripts in your project
+npm run compile
+npm run install-bin
 ```
 
 This makes it easy to distribute your Flownet projects as standalone CLI tools.
+
+### CLI Configuration in Project Files
+
+You can configure CLI features directly in your project files:
+
+```yaml
+# In fnode.yaml or fnet.yaml
+name: my-project
+
+features:
+  # For fnode projects
+  s::runtime.type: node  # or python, bun
+
+  # CLI configuration
+  cli:
+    enabled: true
+    bin: custom-bin-name  # Name of the binary (defaults to project name)
+    installable: true     # Enable 'fnode install' or 'fnet install' command
+```
+
+This configuration will:
+
+1. Enable CLI functionality for your project
+2. Set the binary name to `custom-bin-name`
+3. Add `compile` and `install-bin` scripts to your package.json
+4. Allow you to install the binary with `fnode install` or `npm run install-bin`

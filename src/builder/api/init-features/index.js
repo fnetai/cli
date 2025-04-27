@@ -145,6 +145,18 @@ export default async function initFeatures(apiContext) {
   features.cli.format = features.cli.format || "esm";
   features.cli.folder = features.cli.folder || features.cli.folder || "esm";
   features.cli.node_options = features.cli.node?.options || features.cli.node_options || '';
+
+  // CLI binary configuration
+  features.cli.bin = features.cli.bin || atom.doc.name;
+  features.cli.installable = features.cli.installable === true;
+
+  // Set npm::bin for package.json
+  if (features.cli.enabled) {
+    // Use the bin name from CLI configuration
+    atom.doc['npm::bin'] = features.cli.bin;
+    console.log(`Setting npm::bin to ${features.cli.bin} from features.cli.bin`);
+  }
+
   features.json = features.cli.enabled || features.json;
 
   // rollup output default

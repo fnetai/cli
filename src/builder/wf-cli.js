@@ -369,7 +369,14 @@ function bindInstallCommand(builder, { name }) {
 
         // Determine binary name
         const projectName = path.basename(path.dirname(projectDir));
-        const binaryName = argv.name || projectName;
+
+        // Get binary name from project file if available
+        const binName = context.project?.projectFileParsed?.features?.cli?.bin;
+
+        // Use command line argument, or bin name from project file, or project name
+        const binaryName = argv.name || binName || projectName;
+        console.log(chalk.blue(`Using binary name: ${binaryName}`));
+
         const binaryPath = path.join(binDir, binaryName);
 
         // Compile the project

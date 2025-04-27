@@ -62,6 +62,8 @@
     {% else %}
     ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
     {% endif %}
+    ,"compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o {{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
+    ,"install-bin": "fbin install ./{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
     {% endif %}
     {% if atom.doc.features.app.enabled %}
     ,"app": "bun {{atom.doc.features.app.dir}}/index.html"

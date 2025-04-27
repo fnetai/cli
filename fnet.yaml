@@ -308,3 +308,69 @@ commands:
     - frun test-fbin-uninstall
     - frun test-fnode-install
     - frun test-fnet-install
+
+  # Test commands for Phase 6
+  test-cli-config-fnode:
+    - rm -rf .tests/cli-config-fnode-test
+    - wdir: .tests
+      steps:
+        - fnode create --name cli-config-fnode-test --runtime node
+        - wdir: .tests/cli-config-fnode-test
+          steps:
+            - filemap:
+                target: "fnode.yaml"
+                sources:
+                  - source: |
+                      name: cli-config-fnode-test
+                      version: 1.0.0
+
+                      features:
+                        s::runtime.type: node
+                        cli:
+                          enabled: true
+                          bin: "custom-bin-name"
+                          installable: true
+                    provider: text
+                    target: "fnode.yaml"
+            - fnode build
+            - ls -la .workspace
+            - cat .workspace/package.json
+            - cd .workspace && echo '#!/bin/sh\necho "Hello from cli-config-fnode-test"' > cli-config-fnode-test && chmod +x cli-config-fnode-test && npm run install-bin
+            - fbin list
+            - ls -la ~/.fnet/bin
+            - ~/.fnet/bin/cli-config-fnode-test
+
+  test-cli-config-fnet:
+    - rm -rf .tests/cli-config-fnet-test
+    - wdir: .tests
+      steps:
+        - fnet create --name cli-config-fnet-test --runtime node
+        - wdir: .tests/cli-config-fnet-test
+          steps:
+            - filemap:
+                target: "fnet.yaml"
+                sources:
+                  - source: |
+                      name: cli-config-fnet-test
+                      version: 1.0.0
+
+                      features:
+                        cli:
+                          enabled: true
+                          bin: custom-flow-bin
+                          installable: true
+
+                      flows: g::file://./fnet/flows.yaml
+                    provider: text
+                    target: "fnet.yaml"
+            - fnet build
+            - ls -la .workspace
+            - cat .workspace/package.json
+            - cd .workspace && echo '#!/bin/sh\necho "Hello from cli-config-fnet-test"' > cli-config-fnet-test && chmod +x cli-config-fnet-test && npm run install-bin
+            - fbin list
+            - ls -la ~/.fnet/bin
+            - ~/.fnet/bin/cli-config-fnet-test
+
+  test-phase6-all:
+    - frun test-cli-config-fnode
+    - frun test-cli-config-fnet
