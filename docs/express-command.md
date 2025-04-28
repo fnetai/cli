@@ -191,93 +191,93 @@ fnode express move
 
 ### Preparation
 
-- [ ] Review and finalize the express command documentation
-- [ ] Identify dependencies needed for implementation
-- [ ] Ensure `@fnet/prompt` package is available and up-to-date
-- [ ] Plan the directory structure for the implementation
+- [x] Review and finalize the express command documentation
+- [x] Identify dependencies needed for implementation
+- [x] Ensure `@fnet/prompt` package is available and up-to-date
+- [x] Plan the directory structure for the implementation
 
 ### Core Implementation
 
 #### Express Create Command
 
-- [ ] Create `express-cmd.js` in both `src/fnode-cli` and `src/fnet-cli` directories
-- [ ] Implement the base command structure
-- [ ] Add logic to create the `~/.fnet/express` directory if it doesn't exist
-- [ ] Implement date-based directory structure (YYYYMMDD)
-- [ ] Implement project naming logic:
-  - [ ] Auto-numbering for unnamed projects
-  - [ ] Using provided names when unique
-  - [ ] Adding numbers to duplicate names
-- [ ] Reuse project creation logic from existing `create` command
-- [ ] Implement interactive prompts using `@fnet/prompt`
-- [ ] Add IDE detection and integration (VS Code, VS Code Insiders)
-- [ ] Implement `--yes` flag to skip interactive prompts
-- [ ] Add proper error handling and user feedback
+- [x] Create `express-cmd.js` in both `src/fnode-cli` and `src/fnet-cli` directories
+- [x] Implement the base command structure
+- [x] Add logic to create the `~/.fnet/express` directory if it doesn't exist
+- [x] Implement date-based directory structure (YYYYMMDD)
+- [x] Implement project naming logic:
+  - [x] Auto-numbering for unnamed projects
+  - [x] Using provided names when unique
+  - [x] Adding numbers to duplicate names
+- [x] Reuse project creation logic from existing `create` command
+- [x] Implement interactive prompts using `@fnet/prompt`
+- [x] Add IDE detection and integration (VS Code, VS Code Insiders)
+- [x] Implement `--yes` flag to skip interactive prompts
+- [x] Add proper error handling and user feedback
 
 #### Express List Command
 
-- [ ] Implement the `list` subcommand in the express command files
-- [ ] Add logic to scan the express directory for projects
-- [ ] Implement sorting by date (newest first)
-- [ ] Create a formatted table display for projects
-- [ ] Implement filtering options:
-  - [ ] `--today` for today's projects
-  - [ ] `--type` for filtering by project type
-  - [ ] `--name` for filtering by name pattern
-- [ ] Add proper error handling and user feedback
+- [x] Implement the `list` subcommand in the express command files
+- [x] Add logic to scan the express directory for projects
+- [x] Implement sorting by date (newest first)
+- [x] Create a formatted table display for projects
+- [x] Implement filtering options:
+  - [x] `--today` for today's projects
+  - [x] `--type` for filtering by project type
+  - [x] `--name` for filtering by name pattern
+- [x] Add proper error handling and user feedback
 
 #### Express Open Command
 
-- [ ] Implement the `open` subcommand in the express command files
-- [ ] Add logic to find projects by name
-- [ ] Implement interactive project selection when no name is provided
-- [ ] Add IDE detection and integration
-- [ ] Implement `--latest` option to open the most recent project
-- [ ] Add proper error handling and user feedback
+- [x] Implement the `open` subcommand in the express command files
+- [x] Add logic to find projects by name
+- [x] Implement interactive project selection when no name is provided
+- [x] Add IDE detection and integration
+- [x] Implement `--latest` option to open the most recent project
+- [x] Add proper error handling and user feedback
 
 #### Express Move Command
 
-- [ ] Implement the `move` subcommand in the express command files
-- [ ] Add logic to copy project files to a specified destination
-- [ ] Implement interactive destination selection
-- [ ] Add logic to detect when running from within an express project
-- [ ] Implement project configuration updates during the move process
-- [ ] Add option to delete or keep the original project after moving
-- [ ] Implement `--latest` option to move the most recent project
-- [ ] Add proper error handling and user feedback
+- [x] Implement the `move` subcommand in the express command files
+- [x] Add logic to copy project files to a specified destination
+- [x] Implement interactive destination selection
+- [x] Add logic to detect when running from within an express project
+- [x] Implement project configuration updates during the move process
+- [x] Add option to delete or keep the original project after moving
+- [x] Implement `--latest` option to move the most recent project
+- [x] Add proper error handling and user feedback
 
 ### Integration
 
-- [ ] Register the express command in the CLI entry points
-- [ ] Update command help documentation
-- [ ] Ensure proper command discovery in the CLI tools
+- [x] Register the express command in the CLI entry points
+- [x] Update command help documentation
+- [x] Ensure proper command discovery in the CLI tools
 
 ### Testing
 
-- [ ] Create test cases for each subcommand
-- [ ] Test the express command with various scenarios:
-  - [ ] Creating projects with and without names
-  - [ ] Listing projects with different filters
-  - [ ] Opening projects with different methods
-  - [ ] Moving projects to different destinations
-- [ ] Test IDE integration with available editors
-- [ ] Test error handling and edge cases
-- [ ] Verify that the command works correctly in different environments
+- [x] Create test cases for each subcommand
+- [x] Test the express command with various scenarios:
+  - [x] Creating projects with and without names
+  - [x] Listing projects with different filters
+  - [x] Opening projects with different methods
+  - [x] Moving projects to different destinations
+- [x] Test IDE integration with available editors
+- [x] Test error handling and edge cases
+- [x] Verify that the command works correctly in different environments
 
 ### Documentation
 
-- [ ] Update the main CLI documentation to include the express command
-- [ ] Add examples to the documentation
-- [ ] Create a user guide for the express command
-- [ ] Document any known limitations or edge cases
+- [x] Update the main CLI documentation to include the express command
+- [x] Add examples to the documentation
+- [x] Create a user guide for the express command
+- [x] Document any known limitations or edge cases
 
 ### Final Steps
 
-- [ ] Review the implementation against the requirements
-- [ ] Perform a final round of testing
-- [ ] Get feedback from team members
-- [ ] Make any necessary adjustments
-- [ ] Prepare for release
+- [x] Review the implementation against the requirements
+- [x] Perform a final round of testing
+- [x] Get feedback from team members
+- [x] Make any necessary adjustments
+- [x] Prepare for release
 
 ## Test Command Groups for fnet.yaml
 

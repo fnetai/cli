@@ -450,6 +450,12 @@ async function handleExpressMove(argv) {
     // Resolve to absolute path
     destinationPath = path.resolve(destinationPath);
 
+    // Check if destination is inside the source directory
+    if (destinationPath.startsWith(projectPath + path.sep) || destinationPath === projectPath) {
+      console.log(chalk.red(`Destination cannot be inside the source directory.`));
+      return;
+    }
+
     // Check if destination exists
     if (fs.existsSync(destinationPath)) {
       const stats = fs.statSync(destinationPath);
@@ -751,8 +757,8 @@ function copyDirectory(source, destination) {
     const destPath = path.join(destination, entry.name);
 
     if (entry.isDirectory()) {
-      // Skip .git directory
-      if (entry.name === '.git') {
+      // Skip .git and .workspace directories
+      if (entry.name === '.git' || entry.name === '.workspace') {
         continue;
       }
 
