@@ -415,11 +415,14 @@ async function handleExpressOpen(argv) {
     }
     // Otherwise, show a list of projects to choose from
     else {
-      projectPath = await selectProjectInteractively();
-      if (!projectPath) {
+      const relativeProjectPath = await selectProjectInteractively();
+      if (!relativeProjectPath) {
         console.log(chalk.yellow('No project selected.'));
         return;
       }
+
+      // Convert relative path to absolute path
+      projectPath = path.join(EXPRESS_BASE_DIR, relativeProjectPath);
     }
 
     // Open the project in an IDE
@@ -464,11 +467,14 @@ async function handleExpressMove(argv) {
     }
     // Otherwise, show a list of projects to choose from
     else {
-      projectPath = await selectProjectInteractively();
-      if (!projectPath) {
+      const relativeProjectPath = await selectProjectInteractively();
+      if (!relativeProjectPath) {
         console.log(chalk.yellow('No project selected.'));
         return;
       }
+
+      // Convert relative path to absolute path
+      projectPath = path.join(EXPRESS_BASE_DIR, relativeProjectPath);
     }
 
     // Determine destination
@@ -476,14 +482,12 @@ async function handleExpressMove(argv) {
 
     if (!destinationPath) {
       // Ask for destination
-      const answers = await fnetPrompt([
-        {
-          type: 'input',
-          name: 'destination',
-          message: 'Enter destination directory:',
-          default: path.join(process.cwd(), path.basename(projectPath))
-        }
-      ]);
+      const answers = await fnetPrompt({
+        type: 'input',
+        name: 'destination',
+        message: 'Enter destination directory:',
+        initial: path.join(process.cwd(), path.basename(projectPath))
+      });
 
       destinationPath = answers.destination;
     }
@@ -514,14 +518,12 @@ async function handleExpressMove(argv) {
       // Check if destination is empty
       const files = fs.readdirSync(destinationPath);
       if (files.length > 0) {
-        const answers = await fnetPrompt([
-          {
-            type: 'confirm',
-            name: 'overwrite',
-            message: `Destination "${destinationPath}" is not empty. Continue anyway?`,
-            default: false
-          }
-        ]);
+        const answers = await fnetPrompt({
+          type: 'confirm',
+          name: 'overwrite',
+          message: `Destination "${destinationPath}" is not empty. Continue anyway?`,
+          initial: false
+        });
 
         if (!answers.overwrite) {
           console.log(chalk.yellow('Project move cancelled.'));
@@ -541,14 +543,12 @@ async function handleExpressMove(argv) {
     console.log(chalk.green(`\nProject moved successfully to ${destinationPath}`));
 
     // Ask if user wants to delete the original project
-    const answers = await fnetPrompt([
-      {
-        type: 'confirm',
-        name: 'deleteOriginal',
-        message: 'Delete the original express project?',
-        default: false
-      }
-    ]);
+    const answers = await fnetPrompt({
+      type: 'confirm',
+      name: 'deleteOriginal',
+      message: 'Delete the original express project?',
+      initial: false
+    });
 
     if (answers.deleteOriginal) {
       fs.rmSync(projectPath, { recursive: true, force: true });
@@ -627,17 +627,15 @@ async function findProjectByName(projectName) {
         return path.join(datePath, matches[0]);
       } else {
         // If multiple matches, ask user to select
-        const answers = await fnetPrompt([
-          {
-            type: 'list',
-            name: 'selectedProject',
-            message: `Multiple projects match "${projectName}". Please select one:`,
-            choices: matches.map(name => ({
-              name: `${name} (${dateDir})`,
-              value: path.join(datePath, name)
-            }))
-          }
-        ]);
+        const answers = await fnetPrompt({
+          type: 'select',
+          name: 'selectedProject',
+          message: `Multiple projects match "${projectName}". Please select one:`,
+          choices: matches.map(name => ({
+            name: `${name} (${dateDir})`,
+            value: path.join(datePath, name)
+          }))
+        });
 
         return answers.selectedProject;
       }
@@ -667,12 +665,12 @@ async function selectProjectInteractively() {
       const projectPath = path.join(datePath, projectName);
       const stats = fs.statSync(projectPath);
 
-      // Format date as YYYY-MM-DD
-      const formattedDate = `${dateDir.slice(0, 4)}-${dateDir.slice(4, 6)}-${dateDir.slice(6, 8)}`;
+      // Use YYYYMMDD/folder-name format for value
+      const relativeProjectPath = `${dateDir}/${projectName}`;
 
       projects.push({
-        name: `${projectName} (${formattedDate})`,
-        value: projectPath,
+        name: relativeProjectPath,
+        value: relativeProjectPath,
         created: stats.birthtime
       });
     }
@@ -686,14 +684,12 @@ async function selectProjectInteractively() {
   }
 
   // Ask user to select a project
-  const answers = await fnetPrompt([
-    {
-      type: 'list',
-      name: 'selectedProject',
-      message: 'Select a project:',
-      choices: projects
-    }
-  ]);
+  const answers = await fnetPrompt({
+    type: 'select',
+    name: 'selectedProject',
+    message: 'Select a project:',
+    choices: projects
+  });
 
   return answers.selectedProject;
 }
@@ -703,14 +699,12 @@ async function selectProjectInteractively() {
  */
 async function offerToOpenInIDE(projectPath) {
   try {
-    const answers = await fnetPrompt([
-      {
-        type: 'confirm',
-        name: 'openIDE',
-        message: 'Would you like to open the project in an IDE?',
-        default: true
-      }
-    ]);
+    const answers = await fnetPrompt({
+      type: 'confirm',
+      name: 'openIDE',
+      message: 'Would you like to open the project in an IDE?',
+      initial: true
+    });
 
     if (answers.openIDE) {
       await openInIDE(projectPath);
@@ -732,17 +726,15 @@ async function openInIDE(projectPath) {
 
   if (hasVSCode && hasVSCodeInsiders) {
     // Ask which IDE to use
-    const answers = await fnetPrompt([
-      {
-        type: 'list',
-        name: 'ide',
-        message: 'Which IDE would you like to use?',
-        choices: [
-          { name: 'Visual Studio Code', value: 'code' },
-          { name: 'Visual Studio Code Insiders', value: 'code-insiders' }
-        ]
-      }
-    ]);
+    const answers = await fnetPrompt({
+      type: 'select',
+      name: 'ide',
+      message: 'Which IDE would you like to use?',
+      choices: [
+        { name: 'Visual Studio Code', value: 'code' },
+        { name: 'Visual Studio Code Insiders', value: 'code-insiders' }
+      ]
+    });
 
     ideCommand = answers.ide;
   } else if (hasVSCode) {
@@ -756,6 +748,10 @@ async function openInIDE(projectPath) {
   }
 
   // Open the project in the selected IDE
+  console.log(chalk.blue(`Opening project in ${ideCommand}...`));
+  console.log(chalk.blue(`Project path: ${projectPath}`));
+
+  // Remove quotes from command to avoid shell issues
   const ideProcess = spawn(ideCommand, [projectPath], {
     stdio: 'inherit',
     shell: true
