@@ -9,11 +9,11 @@ import chalk from 'chalk';
 import fnetConfig from '@fnet/config';
 import findNodeModules from '../builder/find-node-modules.js';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
-import { 
-  bindSimpleContextCommand, 
-  bindCondaContextCommand, 
-  bindWithContextCommand, 
-  bindRunContextCommand, 
+import {
+  bindSimpleContextCommand,
+  bindCondaContextCommand,
+  bindWithContextCommand,
+  bindRunContextCommand,
   bindInstallCommand
 } from '../utils/cli-utils.js';
 
@@ -28,6 +28,7 @@ import installCmd from './install-cmd.js';
 import runCmd from './run-cmd.js';
 import withCmd from './with-cmd.js';
 import passthroughCmd from './passthrough-cmd.js';
+import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
 // Set up global error handlers
@@ -49,7 +50,8 @@ async function main() {
       .command(buildCmd)
       .command(deployCmd)
       .command(fileCmd)
-      .command(inputCmd);
+      .command(inputCmd)
+      .command('express', 'Create and manage express projects', expressCmd);
 
     // Add pass-through commands
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });

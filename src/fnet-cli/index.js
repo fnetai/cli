@@ -7,10 +7,10 @@ import { fileURLToPath } from 'node:url';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
-import { 
-  bindSimpleContextCommand, 
-  bindWithContextCommand, 
-  bindRunContextCommand, 
+import {
+  bindSimpleContextCommand,
+  bindWithContextCommand,
+  bindRunContextCommand,
   bindInstallCommand
 } from '../utils/cli-utils.js';
 
@@ -25,6 +25,7 @@ import installCmd from './install-cmd.js';
 import runCmd from './run-cmd.js';
 import withCmd from './with-cmd.js';
 import passthroughCmd from './passthrough-cmd.js';
+import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
 // Set up global error handlers
@@ -46,7 +47,8 @@ async function main() {
       .command(buildCmd)
       .command(deployCmd)
       .command(fileCmd)
-      .command(inputCmd);
+      .command(inputCmd)
+      .command('express', 'Create and manage express projects', expressCmd);
 
     // Add pass-through commands
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });

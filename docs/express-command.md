@@ -84,15 +84,22 @@ The `express` command is designed to be fully interactive:
 While the command is primarily interactive, it supports one important option:
 
 - `--yes` or `-y`: Skip all interactive prompts and use default values (useful for scripts or quick usage)
+- `--runtime`: Specify the runtime to use (node, python, bun for fnode; node for fnet)
 
 ## Examples
 
 ```bash
-# Create a quick fnode project
+# Create a quick fnode project with default runtime (node)
 fnode express
 
 # Create a fnode project with a specific name
 fnode express my-test-project
+
+# Create a fnode project with Python runtime
+fnode express --runtime python
+
+# Create a fnode project with Bun runtime
+fnode express my-bun-project --runtime bun
 
 # Create a fnet project
 fnet express
