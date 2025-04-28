@@ -1,4 +1,4 @@
-# @fnet/cli: Flownet CLI Tools
+# @fnet/cli: Flownet CLI
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/fnetai/cli/main/assets/flownet-logo.png" alt="Flownet Logo" width="200"/>

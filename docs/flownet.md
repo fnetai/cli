@@ -1,22 +1,22 @@
-# Introduction to @fnet/cli
+# Introduction to Flownet Framework
 
-## The Vision Behind @fnet/cli
+## The Vision Behind Flownet
 
-@fnet/cli is built on a simple yet powerful vision: **isolate all non-functional components so developers can focus solely on functional code**.
+Flownet is built on a simple yet powerful vision: **isolate all non-functional components so developers can focus solely on functional code**.
 
 Think about it - even for a simple "Hello World!" application that you want to deploy, how many different files and configurations do you need beyond your actual functional code? Package managers, build tools, deployment configurations, and more - these non-functional components often require significant time and attention, distracting from the core business logic.
 
 ## The Core Philosophy
 
-The fundamental philosophy of @fnet/cli is that **all non-functional components should be regenerable**.
+The fundamental philosophy of Flownet is that **all non-functional components should be regenerable**.
 
-This means developers and AI agents can focus exclusively on writing the functional code that delivers actual value, while @fnet/cli handles everything else automatically.
+This means developers and AI agents can focus exclusively on writing the functional code that delivers actual value, while Flownet handles everything else automatically.
 
-## How @fnet/cli Works
+## How Flownet Works
 
 ### Project Types: Workflow vs Node
 
-@fnet/cli supports two main project types, independent of the underlying runtime:
+Flownet supports two main project types, independent of the underlying runtime:
 
 #### fnode Project
 
@@ -617,6 +617,46 @@ fbin uninstall awesome-tool
 
 The binary system makes it easy to create, distribute, and manage CLI tools, significantly improving the developer experience.
 
+## Express Command
+
+The `express` command suite is designed to provide developers with a quick way to create, manage, and access test projects without the hassle of managing project directories. It works with projects in a dedicated location (`~/.fnet/express`) for easy access and management.
+
+### Express Command Features
+
+- **Quick Project Creation**: Create test projects with a single command
+- **Automatic Organization**: Projects are organized by date for easy reference
+- **Multiple Runtime Support**: Create projects with Node.js, Python, or Bun runtimes
+- **Interactive Interface**: Guided prompts for project creation and management
+- **IDE Integration**: Automatically open projects in your preferred IDE
+- **Project Promotion**: Easily move test projects to production-ready locations
+
+### Basic Usage
+
+```bash
+# Create a quick test project
+fnode express
+
+# Create a project with a specific name
+fnode express my-test-project
+
+# Create a project with a specific runtime
+fnode express --runtime python
+
+# List all express projects
+fnode express list
+
+# Open a specific project
+fnode express open my-test-project
+
+# Open the most recent project
+fnode express open --latest
+
+# Move a project to a production location
+fnode express move my-test-project ~/projects/production
+```
+
+The express command makes it easy to quickly create and manage test projects, significantly improving developer productivity.
+
 ## Benefits
 
 This approach creates a more efficient development experience:
@@ -628,5 +668,6 @@ This approach creates a more efficient development experience:
 - **Clean Project Structure**: Clear separation between functional code and build infrastructure
 - **Efficient CLI Tools**: Fast startup times and easy distribution of compiled binaries
 - **Cross-Platform Compatibility**: Works seamlessly across different operating systems and shells
+- **Quick Testing**: Express command for rapid project creation and testing
 
-By isolating the functional core from everything else and providing powerful tools for distribution, @fnet/cli transforms how we approach software development, making it more efficient and focused on what truly matters.
+By isolating the functional core from everything else and providing powerful tools for distribution, Flownet transforms how we approach software development, making it more efficient and focused on what truly matters.

@@ -133,33 +133,80 @@ async function handleExpressCreate(argv) {
     // Determine project name
     let projectName = argv.projectName;
     let projectDir;
+    let runtime = argv.runtime;
 
-    if (!projectName) {
-      // Auto-generate project name if not provided
-      const existingProjects = fs.readdirSync(todayDir)
-        .filter(name => name.startsWith('fnet-'))
-        .map(name => parseInt(name.replace('fnet-', ''), 10))
-        .filter(num => !isNaN(num));
+    // Interactive mode if not using --yes flag
+    if (!argv.yes) {
+      // If project name is not provided, ask for it
+      if (!projectName) {
+        // Auto-generate a default project name
+        const existingProjects = fs.readdirSync(todayDir)
+          .filter(name => name.startsWith('fnet-'))
+          .map(name => parseInt(name.replace('fnet-', ''), 10))
+          .filter(num => !isNaN(num));
 
-      const nextNumber = existingProjects.length > 0
-        ? Math.max(...existingProjects) + 1
-        : 1;
+        const nextNumber = existingProjects.length > 0
+          ? Math.max(...existingProjects) + 1
+          : 1;
 
-      projectName = `fnet-${nextNumber}`;
-      projectDir = path.join(todayDir, projectName);
-    } else {
-      // Check if project name already exists
-      projectDir = path.join(todayDir, projectName);
+        const defaultName = `fnet-${nextNumber}`;
 
-      if (fs.existsSync(projectDir)) {
-        // Find next available number for this name
-        let counter = 1;
-        while (fs.existsSync(path.join(todayDir, `${projectName}-${counter}`))) {
-          counter++;
-        }
-        projectName = `${projectName}-${counter}`;
-        projectDir = path.join(todayDir, projectName);
+        const answers = await fnetPrompt([
+          {
+            type: 'input',
+            name: 'projectName',
+            message: 'Enter project name:',
+            default: defaultName
+          }
+        ]);
+
+        projectName = answers.projectName;
       }
+
+      // Always ask for runtime selection in interactive mode
+      const defaultRuntime = runtime || 'node';
+      const runtimeAnswers = await fnetPrompt({
+        type: 'select',
+        name: 'runtime',
+        message: 'Select runtime:',
+        choices: ['node'],
+        initial: defaultRuntime
+      });
+
+      runtime = runtimeAnswers.runtime;
+    } else {
+      // In non-interactive mode, use defaults if not provided
+      if (!projectName) {
+        // Auto-generate project name
+        const existingProjects = fs.readdirSync(todayDir)
+          .filter(name => name.startsWith('fnet-'))
+          .map(name => parseInt(name.replace('fnet-', ''), 10))
+          .filter(num => !isNaN(num));
+
+        const nextNumber = existingProjects.length > 0
+          ? Math.max(...existingProjects) + 1
+          : 1;
+
+        projectName = `fnet-${nextNumber}`;
+      }
+
+      // Use default runtime if not provided
+      if (!runtime) {
+        runtime = 'node';
+      }
+    }
+
+    // Check if project name already exists
+    projectDir = path.join(todayDir, projectName);
+
+    if (fs.existsSync(projectDir)) {
+      // Find next available number for this name
+      let counter = 1;
+      while (fs.existsSync(path.join(todayDir, `${projectName}-${counter}`))) {
+        counter++;
+      }
+      projectName = `${projectName}-${counter}`;
+      projectDir = path.join(todayDir, projectName);
     }
 
     // Interactive mode if not using --yes flag
@@ -188,9 +235,8 @@ async function handleExpressCreate(argv) {
     // Create the project using the existing create command
     const createArgs = ['create', '--name', projectNameOnly];
 
-    if (argv.runtime) {
-      createArgs.push('--runtime', argv.runtime);
-    }
+    // Use the runtime parameter
+    createArgs.push('--runtime', runtime);
 
     if (argv.yes) {
       createArgs.push('--yes');
