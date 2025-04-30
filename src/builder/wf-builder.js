@@ -243,7 +243,7 @@ class Builder {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin'], absolute: true });
 
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
@@ -1036,11 +1036,11 @@ class Builder {
     const projectDir = this.#context.projectDir;
 
     if (which('bun')) {
-      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src")});
+      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
       if (result.code !== 0) throw new Error(result.stderr);
     }
     else {
-      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src")});
+      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
       if (result.code !== 0) throw new Error(result.stderr);
     }
   }

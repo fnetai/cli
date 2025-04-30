@@ -39,7 +39,7 @@ class PythonBuilder extends BuilderBase {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }

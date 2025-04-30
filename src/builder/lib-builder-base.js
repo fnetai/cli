@@ -174,7 +174,7 @@ class BuilderBase {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -370,7 +370,7 @@ class BuilderBase {
 
       await this.initAuth();
       await this.initLibrary();
-      
+
       // Call the runtime-specific initialization method
       await this.initRuntime();
     }
