@@ -24,11 +24,7 @@ export const builder = {
     type: 'string',
     alias: 'n'
   },
-  ver: {
-    describe: 'Version of the binary',
-    type: 'string',
-    alias: 'v'
-  },
+
   force: {
     describe: 'Force overwrite if binary already exists',
     type: 'boolean',
@@ -109,13 +105,36 @@ export const handler = async (argv) => {
       }
     }
 
+    // Try to get version from binary itself
+    let version = '0.0.0';
+    try {
+      // Run binary with --version flag to get its version
+      const { execSync } = require('child_process');
+      const versionOutput = execSync(`"${binPath}" --version`, {
+        timeout: 5000,
+        stdio: ['ignore', 'pipe', 'ignore']
+      }).toString().trim();
+
+      // Try to extract version number (common formats: "v1.2.3", "1.2.3", "Version: 1.2.3", etc.)
+      const versionMatch = versionOutput.match(/v?(\d+\.\d+\.\d+)/);
+      if (versionMatch) {
+        version = versionMatch[1];
+        console.log(chalk.blue(`Detected binary version: ${version}`));
+      } else {
+        console.log(chalk.yellow(`Could not parse version from output: ${versionOutput}`));
+        console.log(chalk.yellow(`Using default version: ${version}`));
+      }
+    } catch (err) {
+      console.log(chalk.yellow(`Could not detect binary version, using default: ${version}`));
+    }
+
     // Add binary to metadata
     metadata.binaries[binaryName] = {
       path: binPath,
       source: sourcePath,
       created: new Date().toISOString(),
       platform: process.platform,
-      version: argv.ver || '0.0.0',
+      version: version,
       project: path.basename(process.cwd())
     };
 

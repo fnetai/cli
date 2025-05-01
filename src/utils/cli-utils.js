@@ -240,19 +240,13 @@ export function bindInstallCommand(builder, { name }) {
           type: 'boolean',
           default: false
         })
-        .option('ver', {
-          alias: 'v',
-          describe: 'Version of the binary',
-          type: 'string'
-        })
+
         .option('yes', {
           alias: 'y',
           describe: 'Automatically answer yes to all prompts',
           type: 'boolean',
           default: false
         })
-        .help(false)
-        .version(false);
     },
     async (argv) => {
       try {
@@ -316,7 +310,7 @@ export function bindInstallCommand(builder, { name }) {
         // Use fbin install to install the binary
         const installArgs = ['install', binaryPath];
         if (argv.name) installArgs.push('--name', argv.name);
-        if (argv.ver) installArgs.push('--ver', argv.ver);
+
         if (argv.force) installArgs.push('--force');
         if (argv.yes) installArgs.push('--yes');
 
