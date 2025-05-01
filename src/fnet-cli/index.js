@@ -69,6 +69,7 @@ async function main() {
     cmdBuilder
       .demandCommand(1, 'You need at least one command before moving on')
       .help()
+      .version()
       .argv;
   } catch (error) {
     console.error(chalk.red(`Fatal error: ${error.message}`));

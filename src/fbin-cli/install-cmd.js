@@ -24,7 +24,7 @@ export const builder = {
     type: 'string',
     alias: 'n'
   },
-  version: {
+  ver: {
     describe: 'Version of the binary',
     type: 'string',
     alias: 'v'
@@ -115,7 +115,7 @@ export const handler = async (argv) => {
       source: sourcePath,
       created: new Date().toISOString(),
       platform: process.platform,
-      version: argv.version || '0.0.0',
+      version: argv.ver || '0.0.0',
       project: path.basename(process.cwd())
     };
 

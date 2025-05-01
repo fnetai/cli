@@ -240,7 +240,7 @@ export function bindInstallCommand(builder, { name }) {
           type: 'boolean',
           default: false
         })
-        .option('version', {
+        .option('ver', {
           alias: 'v',
           describe: 'Version of the binary',
           type: 'string'
@@ -316,7 +316,7 @@ export function bindInstallCommand(builder, { name }) {
         // Use fbin install to install the binary
         const installArgs = ['install', binaryPath];
         if (argv.name) installArgs.push('--name', argv.name);
-        if (argv.version) installArgs.push('--version', argv.version);
+        if (argv.ver) installArgs.push('--ver', argv.ver);
         if (argv.force) installArgs.push('--force');
         if (argv.yes) installArgs.push('--yes');
 
