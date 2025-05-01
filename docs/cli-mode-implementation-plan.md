@@ -167,7 +167,7 @@ const run = async () => {
 
     if (typeof result !== 'undefined') {
       const stdout_format = args['stdout-format'] || args.stdout_format || null;
-      
+
       if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
       else console.log(result);
     }
@@ -302,10 +302,7 @@ if (atom.doc.features.cli.mcp && atom.doc.features.cli.mcp.enabled) {
   dependencies["@modelcontextprotocol/sdk"] = "latest";
 }
 
-// If HTTP mode is enabled
-if (atom.doc.features.cli.http && atom.doc.features.cli.http.enabled) {
-  dependencies["express"] = "latest";
-}
+// HTTP mode uses Node.js built-in http module, no additional dependencies needed
 
 // Create package.json
 const packageJson = {

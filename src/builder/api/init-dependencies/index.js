@@ -47,10 +47,7 @@ export default async function initDependencies({ atom, packageDependencies, pack
       packageDependencies.push({ package: "@modelcontextprotocol/sdk", version: "^1.10" });
     }
 
-    // Add HTTP dependencies if HTTP mode is enabled
-    if (atom.doc.features.cli.http && atom.doc.features.cli.http.enabled === true) {
-      packageDependencies.push({ package: "express", version: "^5.1" });
-    }
+    // HTTP mode uses Node.js built-in http module, no additional dependencies needed
   }
 
   if (atom.doc.features.render && atom.doc.features.render.enabled !== false) {

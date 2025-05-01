@@ -8,7 +8,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 {% endif %}
 
 {% if atom.doc.features.cli.http.enabled===true %}
-import express from 'express';
+// Using Node.js built-in http module instead of express
 {% endif %}
 
   {% if atom.doc.features.cli.extend===true %}
@@ -64,21 +64,34 @@ import express from 'express';
 
       {% if atom.doc.features.cli.http.enabled===true %}
       if (cliMode === 'http') {
-        // HTTP mode code
-        const app = express();
-        app.use(express.json());
+        // HTTP mode code using built-in http module
+        const http = require('http');
 
-        app.post('/{{atom.doc.name}}', async (req, res) => {
-          try {
-            const result = await runExtended(req.body, { Engine });
-            res.json(result);
-          } catch (error) {
-            res.status(500).json({ error: error.message });
+        const server = http.createServer((req, res) => {
+          if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
+            let body = '';
+            req.on('data', chunk => {
+              body += chunk.toString();
+            });
+            req.on('end', async () => {
+              try {
+                const data = JSON.parse(body);
+                const result = await runExtended(data, { Engine });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(result));
+              } catch (error) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error.message }));
+              }
+            });
+          } else {
+            res.writeHead(404);
+            res.end();
           }
         });
 
         const port = args['cli-port'] || args.cli_port || 3000;
-        app.listen(port, () => {
+        server.listen(port, () => {
           console.log(`HTTP server started on port ${port}`);
         });
         return;
@@ -110,7 +123,7 @@ import express from 'express';
 
         if (typeof result !== 'undefined') {
           const stdout_format = args['stdout-format'] || args.stdout_format || null;
-          
+
           if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
           else console.log(result);
         }
@@ -160,16 +173,29 @@ import express from 'express';
 
       {% if atom.doc.features.cli.http.enabled===true %}
       if (cliMode === 'http') {
-        // HTTP mode code
-        const app = express();
-        app.use(express.json());
+        // HTTP mode code using built-in http module
+        const http = require('http');
 
-        app.post('/{{atom.doc.name}}', async (req, res) => {
-          try {
-            const result = await engine.run(req.body);
-            res.json(result);
-          } catch (error) {
-            res.status(500).json({ error: error.message });
+        const server = http.createServer((req, res) => {
+          if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
+            let body = '';
+            req.on('data', chunk => {
+              body += chunk.toString();
+            });
+            req.on('end', async () => {
+              try {
+                const data = JSON.parse(body);
+                const result = await engine.run(data);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(result));
+              } catch (error) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error.message }));
+              }
+            });
+          } else {
+            res.writeHead(404);
+            res.end();
           }
         });
 
@@ -177,7 +203,7 @@ import express from 'express';
         // In a future version, we could expose workflow nodes as separate HTTP endpoints
 
         const port = args['cli-port'] || args.cli_port || 3000;
-        app.listen(port, () => {
+        server.listen(port, () => {
           console.log(`HTTP server started on port ${port}`);
         });
         return;

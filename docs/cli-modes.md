@@ -40,7 +40,7 @@ fnode cli --cli-mode=http --cli-port=8080
 
 This mode:
 
-- Starts an HTTP server using Express
+- Starts an HTTP server using Node.js built-in http module
 - Exposes the functional code as a POST endpoint at `/<project-name>`
 - Returns the result as JSON
 - Accepts input as JSON in the request body
@@ -62,7 +62,7 @@ features:
 When a mode is enabled, the necessary dependencies will be automatically added to the project:
 
 - MCP mode: `@modelcontextprotocol/sdk`
-- HTTP mode: `express`
+- HTTP mode: Uses Node.js built-in http module (no additional dependencies)
 
 ## Implementation Details
 
