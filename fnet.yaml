@@ -502,7 +502,10 @@ commands:
                     target: "src/index.js"
             - fnode build
             - echo "Testing cli modes..."
-            - parallel:
+            - fork:
                 - fnode cli --param1 value1 --param2 value2
                 - fnode cli --cli_mode mcp --param1 value1 --param2 value2
                 - fnode cli --cli_mode http --param1 value1 --param2 value2
+            - sleep: 3
+            - pause: "Press any key to exit..."
+            - exit: 0

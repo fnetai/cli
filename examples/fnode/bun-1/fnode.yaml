@@ -3,7 +3,9 @@ name: bun-1
 
 features:
   s::runtime.type: bun
-  cli: true
+  cli:
+    mcp:
+      enabled: true
   app: true
 
 commands:

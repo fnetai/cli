@@ -3,7 +3,9 @@ name: node-1
 features:
   s::runtime.type: node
   app: false
-  cli: false
+  cli:
+    mcp:
+      enabled: true
 
 commands:
   cli-test: 
