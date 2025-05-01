@@ -2,41 +2,194 @@
 import argv from '../default/to.args.js';
 import { default as Engine } from '../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}';
 
+{% if atom.doc.features.cli.mcp.enabled===true %}
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+{% endif %}
+
+{% if atom.doc.features.cli.http.enabled===true %}
+import express from 'express';
+{% endif %}
+
   {% if atom.doc.features.cli.extend===true %}
     {# TYPE 1 #}
     import { default as runExtended } from '../../../cli';
 
     const run = async () => {
-      return await runExtended(await argv(),{ Engine });
+      const args = await argv();
+      const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+      if (cliMode === 'default') {
+        // Default mode code
+        return await runExtended(args, { Engine });
+      }
+
+      {% if atom.doc.features.cli.mcp.enabled===true %}
+      if (cliMode === 'mcp') {
+        // MCP mode code
+        const server = new McpServer({
+          name: "{{atom.doc.name}}",
+          version: "{{atom.doc.version}}"
+        });
+
+        server.tool(
+          "{{atom.doc.name}}",
+          async (toolArgs) => {
+            try {
+              const result = await runExtended(toolArgs, { Engine });
+              return {
+                content: [{
+                  type: "text",
+                  text: JSON.stringify(result)
+                }]
+              };
+            } catch (error) {
+              return {
+                content: [{
+                  type: "text",
+                  text: `Error: ${error.message}`
+                }],
+                isError: true
+              };
+            }
+          }
+        );
+
+        const transport = new StdioServerTransport();
+        await server.connect(transport);
+        console.log("MCP server started with stdio transport");
+        return;
+      }
+      {% endif %}
+
+      {% if atom.doc.features.cli.http.enabled===true %}
+      if (cliMode === 'http') {
+        // HTTP mode code
+        const app = express();
+        app.use(express.json());
+
+        app.post('/{{atom.doc.name}}', async (req, res) => {
+          try {
+            const result = await runExtended(req.body, { Engine });
+            res.json(result);
+          } catch (error) {
+            res.status(500).json({ error: error.message });
+          }
+        });
+
+        const port = args.cli_port || 3000;
+        app.listen(port, () => {
+          console.log(`HTTP server started on port ${port}`);
+        });
+        return;
+      }
+      {% endif %}
+
+      console.error(`Unknown CLI mode: ${cliMode}`);
+      process.exit(1);
     };
 
     run()
-      .then(() => {    
+      .then(() => {
         {# process.exit(0);  #}
       })
-      .catch((error) => {    
+      .catch((error) => {
         console.error(error.message);
         process.exit(1);
       });
   {% else %}
     {# TYPE 2 #}
     const run = async () => {
+      const args = await argv();
+      const cliMode = args['cli-mode'] || args.cli_mode || 'default';
       const engine = new Engine();
-      return await engine.run(await argv());
+
+      if (cliMode === 'default') {
+        // Default mode code
+        const result = await engine.run(args);
+
+        if (typeof result !== 'undefined') {
+          const stdout_format = args['stdout-format'] || args.stdout_format || null;
+          
+          if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
+          else console.log(result);
+        }
+        return;
+      }
+
+      {% if atom.doc.features.cli.mcp.enabled===true %}
+      if (cliMode === 'mcp') {
+        // MCP mode code
+        const server = new McpServer({
+          name: "{{atom.doc.name}}",
+          version: "{{atom.doc.version}}"
+        });
+
+        server.tool(
+          "{{atom.doc.name}}",
+          async (toolArgs) => {
+            try {
+              const result = await engine.run(toolArgs);
+              return {
+                content: [{
+                  type: "text",
+                  text: JSON.stringify(result)
+                }]
+              };
+            } catch (error) {
+              return {
+                content: [{
+                  type: "text",
+                  text: `Error: ${error.message}`
+                }],
+                isError: true
+              };
+            }
+          }
+        );
+
+        // Note: Direct access to workflow nodes is not implemented in this version
+        // In a future version, we could expose workflow nodes as separate MCP tools
+
+        const transport = new StdioServerTransport();
+        await server.connect(transport);
+        console.log("MCP server started with stdio transport");
+        return;
+      }
+      {% endif %}
+
+      {% if atom.doc.features.cli.http.enabled===true %}
+      if (cliMode === 'http') {
+        // HTTP mode code
+        const app = express();
+        app.use(express.json());
+
+        app.post('/{{atom.doc.name}}', async (req, res) => {
+          try {
+            const result = await engine.run(req.body);
+            res.json(result);
+          } catch (error) {
+            res.status(500).json({ error: error.message });
+          }
+        });
+
+        // Note: Direct access to workflow nodes is not implemented in this version
+        // In a future version, we could expose workflow nodes as separate HTTP endpoints
+
+        const port = args.cli_port || 3000;
+        app.listen(port, () => {
+          console.log(`HTTP server started on port ${port}`);
+        });
+        return;
+      }
+      {% endif %}
+
+      console.error(`Unknown CLI mode: ${cliMode}`);
+      process.exit(1);
     };
 
     run()
-      .then((result) => {    
-        if (typeof result !== 'undefined')
-        {
-          // TODO: REMOVE THIS LINE
-          const stdout_format=process.argv.slice(2).indexOf()!==-1? process.argv.slice(2)[process.argv.slice(2).indexOf('--stdout_format')+1]:null;
-          if(stdout_format==='json') console.log(JSON.stringify(result,null,2));
-          else console.log(result);
-        }
-        {# process.exit(0); #}    
-      })
-      .catch((error) => {    
+      .catch((error) => {
         console.error(error.message);
         process.exit(1);
       });
