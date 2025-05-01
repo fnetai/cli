@@ -79,7 +79,7 @@ const run = async () => {
       }
     });
 
-    const port = args.cli_port || 3000;
+    const port = args['cli-port'] || args.cli_port || 3000;
     app.listen(port, () => {
       console.log(`HTTP server started on port ${port}`);
     });
@@ -182,7 +182,7 @@ const run = async () => {
       }
     });
 
-    const port = args.cli_port || 3000;
+    const port = args['cli-port'] || args.cli_port || 3000;
     app.listen(port, () => {
       console.log(`HTTP server started on port ${port}`);
     });
@@ -280,7 +280,7 @@ const run = async () => {
       }
     });
 
-    const port = args.cli_port || 3000;
+    const port = args['cli-port'] || args.cli_port || 3000;
     app.listen(port, () => {
       console.log(`HTTP server started on port ${port}`);
     });
@@ -383,7 +383,7 @@ const run = async () => {
       }
     });
 
-    const port = args.cli_port || 3000;
+    const port = args['cli-port'] || args.cli_port || 3000;
     app.listen(port, () => {
       console.log(`HTTP server started on port ${port}`);
     });

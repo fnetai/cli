@@ -77,7 +77,7 @@ import express from 'express';
           }
         });
 
-        const port = args.cli_port || 3000;
+        const port = args['cli-port'] || args.cli_port || 3000;
         app.listen(port, () => {
           console.log(`HTTP server started on port ${port}`);
         });
@@ -176,7 +176,7 @@ import express from 'express';
         // Note: Direct access to workflow nodes is not implemented in this version
         // In a future version, we could expose workflow nodes as separate HTTP endpoints
 
-        const port = args.cli_port || 3000;
+        const port = args['cli-port'] || args.cli_port || 3000;
         app.listen(port, () => {
           console.log(`HTTP server started on port ${port}`);
         });
