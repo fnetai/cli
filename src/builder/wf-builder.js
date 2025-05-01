@@ -1141,7 +1141,12 @@ class Builder {
           let bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
           bpmnDir = path.resolve(bpmnDir, 'fnet');
           if (fs.existsSync(bpmnDir)) {
-            fs.writeFileSync(path.resolve(bpmnDir, 'flow.bpmn'), network.diagramXML, 'utf8');
+            // delete if flow.bpmn exists
+            if (fs.existsSync(path.resolve(bpmnDir, 'flow.bpmn'))) {
+              fs.unlinkSync(path.resolve(bpmnDir, 'flow.bpmn'));
+            }
+            
+            fs.writeFileSync(path.resolve(bpmnDir, 'flows.bpmn'), network.diagramXML, 'utf8');
           }
         }
 
