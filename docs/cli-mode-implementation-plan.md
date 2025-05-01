@@ -318,19 +318,19 @@ const packageJson = {
 ### 4.1. Default Mode
 
 ```bash
-fnode cli -- --param1 value1 --param2 value2
+fnode cli --param1 value1 --param2 value2
 ```
 
 ### 4.2. MCP Mode
 
 ```bash
-fnode cli -- --cli-mode=mcp
+fnode cli --cli-mode=mcp
 ```
 
 ### 4.3. HTTP Mode
 
 ```bash
-fnode cli -- --cli-mode=http --port=8080
+fnode cli --cli-mode=http --cli-port=8080
 ```
 
 ## 5. Documentation

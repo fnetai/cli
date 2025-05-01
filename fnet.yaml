@@ -210,8 +210,6 @@ commands:
         - fbin compile test.js -o test-bin
         - ./test-bin
 
-
-
   test-phase3-all:
     - frun test-fbin-compile
     - frun test-compile-all
@@ -477,6 +475,17 @@ commands:
                             enabled: true
                           http:
                             enabled: true
+
+                      input:
+                        type: object
+                        description: "CLI Modes Test Input"
+                        properties:
+                          param1:
+                            type: string
+                            description: "First parameter"
+                          param2:
+                            type: string
+                            description: "Second parameter"
                     provider: text
                     target: "fnode.yaml"
                   - source: |
