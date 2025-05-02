@@ -4,14 +4,16 @@
 {% macro importMcpDependencies() %}
 import { Server, ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import express from "express";
 {% endmacro %}
 
 {% macro mcpModeCodeExtended(runFn) %}
   if (cliMode === 'mcp') {
     // MCP mode code
     const server = new Server({
-      name: "{{atom.doc.name}}",
-      version: "{{atom.doc.version}}"
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
     }, {
       capabilities: {
         tools: {}
@@ -22,8 +24,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
     server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
         tools: [{
-          name: "{{atom.doc.name}}",
-          description: "{{atom.doc.description}}",
+          name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
+          description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
           inputSchema: {
             type: "object",
             properties: {},
@@ -35,7 +37,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
     // Handle tool execution
     server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      if (request.params.name === "{{atom.doc.name}}") {
+      if (request.params.name === "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}") {
         try {
           const result = await {{ runFn }}(request.params.arguments, { Engine });
           return {
@@ -57,9 +59,46 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
       throw new Error("Tool not found");
     });
 
-    const transport = new StdioServerTransport();
+    // Get transport type from arguments
+    const transportType = args['mcp-transport-type'] || args.mcp_transport_type || 'stdio';
+    let transport;
+
+    if (transportType === 'stdio') {
+      // Use stdio transport
+      transport = new StdioServerTransport();
+      console.log("MCP server started with stdio transport");
+    } else if (transportType === 'http') {
+      // Use HTTP transport
+      const app = express();
+      app.use(express.json());
+
+      const port = args['cli-port'] || args.cli_port || 3000;
+      const server = app.listen(port, () => {
+        console.log(`MCP server started with HTTP transport on port ${port}`);
+      });
+
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
+      });
+
+      app.post('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res, req.body);
+      });
+
+      app.get('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res);
+      });
+
+      app.delete('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res);
+      });
+    } else {
+      console.error(`Unknown MCP transport type: ${transportType}`);
+      console.error(`Supported types: stdio, http`);
+      process.exit(1);
+    }
+
     await server.connect(transport);
-    // console.log("MCP server started with stdio transport");
     return;
   }
 {% endmacro %}
@@ -68,8 +107,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
   if (cliMode === 'mcp') {
     // MCP mode code
     const server = new Server({
-      name: "{{atom.doc.name}}",
-      version: "{{atom.doc.version}}"
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
     }, {
       capabilities: {
         tools: {}
@@ -80,8 +119,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
     server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
         tools: [{
-          name: "{{atom.doc.name}}",
-          description: "{{atom.doc.description}}",
+          name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
+          description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
           inputSchema: {
             type: "object",
             properties: {},
@@ -93,7 +132,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
     // Handle tool execution
     server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      if (request.params.name === "{{atom.doc.name}}") {
+      if (request.params.name === "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}") {
         try {
           const result = await {{ engineVar }}.run(request.params.arguments);
           return {
@@ -118,43 +157,67 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
     // Note: Direct access to workflow nodes is not implemented in this version
     // In a future version, we could expose workflow nodes as separate MCP tools
 
-    const transport = new StdioServerTransport();
+    // Get transport type from arguments
+    const transportType = args['mcp-transport-type'] || args.mcp_transport_type || 'stdio';
+    let transport;
+
+    if (transportType === 'stdio') {
+      // Use stdio transport
+      transport = new StdioServerTransport();
+      console.log("MCP server started with stdio transport");
+    } else if (transportType === 'http') {
+      // Use HTTP transport
+      const app = express();
+      app.use(express.json());
+
+      const port = args['cli-port'] || args.cli_port || 3000;
+      const server = app.listen(port, () => {
+        console.log(`MCP server started with HTTP transport on port ${port}`);
+      });
+
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
+      });
+
+      app.post('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res, req.body);
+      });
+
+      app.get('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res);
+      });
+
+      app.delete('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res);
+      });
+    } else {
+      console.error(`Unknown MCP transport type: ${transportType}`);
+      console.error(`Supported types: stdio, http`);
+      process.exit(1);
+    }
+
     await server.connect(transport);
-    // console.log("MCP server started with stdio transport");
     return;
   }
 {% endmacro %}
 
-{% macro httpModeCodeBuiltIn(runFn, engineParam) %}
+{% macro httpModeCodeExpress(runFn, engineParam) %}
   if (cliMode === 'http') {
-    // HTTP mode code using built-in http module
-    const http = require('http');
+    // HTTP mode code using Express
+    const app = express();
+    app.use(express.json());
 
-    const server = http.createServer((req, res) => {
-      if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk.toString();
-        });
-        req.on('end', async () => {
-          try {
-            const data = JSON.parse(body);
-            const result = await {{ runFn }}(data{{ engineParam }});
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
-          } catch (error) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: error.message }));
-          }
-        });
-      } else {
-        res.writeHead(404);
-        res.end();
+    app.post('/{{atom.doc.features.cli.http.path or atom.doc.name}}', async (req, res) => {
+      try {
+        const result = await {{ runFn }}(req.body{{ engineParam }});
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
       }
     });
 
     const port = args['cli-port'] || args.cli_port || 3000;
-    server.listen(port, () => {
+    app.listen(port, () => {
       console.log(`HTTP server started on port ${port}`);
     });
     return;
@@ -211,7 +274,8 @@ import { default as Engine } from '../default/{{atom.doc.features.cli_default_en
 {% endif %}
 
 {% if atom.doc.features.cli.http.enabled===true %}
-// Using Node.js built-in http module instead of express for better compatibility
+// Using express for HTTP mode
+import express from 'express';
 {% endif %}
 
 {% if atom.doc.features.cli.extend===true %}
@@ -229,7 +293,7 @@ import { default as Engine } from '../default/{{atom.doc.features.cli_default_en
     {% endif %}
 
     {% if atom.doc.features.cli.http.enabled===true %}
-    {{ httpModeCodeBuiltIn('runExtended', ', { Engine }') }}
+    {{ httpModeCodeExpress('runExtended', ', { Engine }') }}
     {% endif %}
 
     console.error(`Unknown CLI mode: ${cliMode}`);
@@ -251,7 +315,7 @@ import { default as Engine } from '../default/{{atom.doc.features.cli_default_en
     {% endif %}
 
     {% if atom.doc.features.cli.http.enabled===true %}
-    {{ httpModeCodeBuiltIn('engine.run', '') }}
+    {{ httpModeCodeExpress('engine.run', '') }}
     {% endif %}
 
     console.error(`Unknown CLI mode: ${cliMode}`);

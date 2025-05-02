@@ -6,10 +6,14 @@
     import { Server } from "@modelcontextprotocol/sdk/server/index.js";
     import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
     import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+    import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+    import express from "express";
   {% else %}
     const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
     const { ListToolsRequestSchema, CallToolRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
     const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+    const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
+    const express = require("express");
   {% endif %}
 {% endmacro %}
 
@@ -68,43 +72,46 @@
       throw new Error("Tool not found");
     });
 
-    const transport = new StdioServerTransport();
+    // Get transport type from arguments
+    const transportType = args['mcp-transport-type'] || args.mcp_transport_type || 'stdio';
+    let transport;
+
+    if (transportType === 'stdio') {
+      // Use stdio transport
+      transport = new StdioServerTransport();
+      console.log("MCP server started with stdio transport");
+    } else if (transportType === 'http') {
+      // Use HTTP transport
+      const app = express();
+      app.use(express.json());
+
+      const port = args['cli-port'] || args.cli_port || 3000;
+      const server = app.listen(port, () => {
+        console.log(`MCP server started with HTTP transport on port ${port}`);
+      });
+
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
+      });
+
+      app.post('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res, req.body);
+      });
+
+      app.get('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res);
+      });
+
+      app.delete('/mcp', async (req, res) => {
+        await transport.handleRequest(req, res);
+      });
+    } else {
+      console.error(`Unknown MCP transport type: ${transportType}`);
+      console.error(`Supported types: stdio, http`);
+      process.exit(1);
+    }
+
     await server.connect(transport);
-    {# console.log("MCP server started with stdio transport"); #}
-    return;
-  }
-{% endmacro %}
-
-{% macro httpModeCodeBuiltIn(nodeFn) %}
-  if (cliMode === 'http') {
-    // HTTP mode code using built-in http module
-    const server = http.createServer((req, res) => {
-      if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk.toString();
-        });
-        req.on('end', async () => {
-          try {
-            const data = JSON.parse(body);
-            const result = await {{ nodeFn }}(data);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
-          } catch (error) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: error.message }));
-          }
-        });
-      } else {
-        res.writeHead(404);
-        res.end();
-      }
-    });
-
-    const port = args['cli-port'] || args.cli_port || 3000;
-    server.listen(port, () => {
-      console.log(`HTTP server started on port ${port}`);
-    });
     return;
   }
 {% endmacro %}
@@ -115,7 +122,7 @@
     const app = express();
     app.use(express.json());
 
-    app.post('/{{atom.doc.name}}', async (req, res) => {
+    app.post('/{{atom.doc.features.cli.http.path or atom.doc.name}}', async (req, res) => {
       try {
         const result = await {{ nodeFn }}(req.body);
         res.json(result);
@@ -187,8 +194,8 @@ import Node from '../../../cli';
 {% endif %}
 
 {% if atom.doc.features.cli.http.enabled===true %}
-// Using Node.js built-in http module instead of express for better compatibility
-const http = require('http');
+// Using express for HTTP mode
+import express from 'express';
 {% endif %}
 
 const run = async () => {
@@ -256,8 +263,8 @@ const Node = require('../../../cli');
 {% endif %}
 
 {% if atom.doc.features.cli.http.enabled===true %}
-// Using Node.js built-in http module instead of express for better compatibility
-const http = require('http');
+// Using express for HTTP mode
+const express = require('express');
 {% endif %}
 
 const run = async () => {

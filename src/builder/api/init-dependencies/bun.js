@@ -45,6 +45,7 @@ export default async function initDependenciesBun({ atom, packageDependencies, p
     // Add MCP dependencies if MCP mode is enabled
     if (atom.doc.features.cli.mcp && atom.doc.features.cli.mcp.enabled === true) {
       packageDependencies.push({ package: "@modelcontextprotocol/sdk", version: "^1.10" });
+      packageDependencies.push({ package: "express", version: "^4.18" });
     }
 
     // HTTP mode uses Node.js built-in http module, no additional dependencies needed
