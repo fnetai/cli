@@ -1,4 +1,4 @@
 export default async (args)=>{
-  console.log("Hello from Node.js project!");
-  return "Success!";
+  // console.log("Hello from Node.js project!");
+  return "HELLO WORLD!";
 }

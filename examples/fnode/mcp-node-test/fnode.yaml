@@ -1,0 +1,58 @@
+name: mcp-node-test
+
+input:
+  type: object
+  # required: ["username", "email"]
+  properties:
+    username:
+      type: string
+      description: "User's display name"
+      minLength: 3
+      maxLength: 50
+    email:
+      type: string
+      description: "User's email address"
+      format: email
+    age:
+      type: integer
+      description: "User's age in years"
+      minimum: 18
+      maximum: 120
+    preferences:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: ["light", "dark", "system"]
+          default: "system"
+        notifications:
+          type: boolean
+          default: true
+        language:
+          type: string
+          enum: ["en", "tr", "es", "fr", "de"]
+          default: "en"
+
+features:
+  s::runtime.type: node
+  cli:
+    mcp:
+      enabled: true
+      name: "User Profile Manager"
+      tool:
+        name: "user-profile-tool"
+        description: "Manage user profiles with MCP pattern"
+
+commands:
+  build:
+    - fnode build
+
+  cli-test:
+    - fnode build
+    - fnode cli
+
+  valid-test:
+    - fnode cli --username "JohnDoe" --email "john@example.com" --age 30 --preferences.theme "dark" --preferences.language "en"
+
+  invalid-test:
+    - fnode cli --username "Jo" --email "invalid-email" --age 15

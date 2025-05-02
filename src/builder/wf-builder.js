@@ -14,7 +14,7 @@ import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
 import createRollup from "./api/create-rollup/index.js";
-import createToYargs from "./api/create-to-yargs/index.js";
+import createInputArgs from "./api/create-input-args/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
 import createProjectReadme from "./api/create-project-readme/index.js";
@@ -993,19 +993,9 @@ class Builder {
 
     const { content: main, ...content } = this.#atom.doc;
 
-    const templateContext = { content: yaml.stringify(content) }
-
-    const templateDir = this.#context.templateDir;
-    const template = nunjucks.compile(
-      fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
-      this.#njEnv
-    );
-
-    const templateRender = template.render(templateContext);
-
     const projectDir = this.#context.projectDir;
     const filePath = path.resolve(projectDir, `${fileBase}`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');
+    fs.writeFileSync(filePath, yaml.stringify(content), 'utf8');
   }
 
   async createProjectMainYaml() {
@@ -1141,7 +1131,12 @@ class Builder {
           let bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
           bpmnDir = path.resolve(bpmnDir, 'fnet');
           if (fs.existsSync(bpmnDir)) {
-            fs.writeFileSync(path.resolve(bpmnDir, 'flow.bpmn'), network.diagramXML, 'utf8');
+            // delete if flow.bpmn exists
+            if (fs.existsSync(path.resolve(bpmnDir, 'flow.bpmn'))) {
+              fs.unlinkSync(path.resolve(bpmnDir, 'flow.bpmn'));
+            }
+
+            fs.writeFileSync(path.resolve(bpmnDir, 'flows.bpmn'), network.diagramXML, 'utf8');
           }
         }
 
@@ -1154,7 +1149,7 @@ class Builder {
         await createProjectReadme(this.#apiContext);
         await createTsConfig(this.#apiContext);
         await createGitIgnore(this.#apiContext);
-        await createToYargs(this.#apiContext);
+        await createInputArgs(this.#apiContext);
         await createCli(this.#apiContext);
         await createApp(this.#apiContext);
         await createRollup(this.#apiContext);

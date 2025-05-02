@@ -5,11 +5,11 @@ import Ajv from 'ajv/dist/2020.js';
 import standaloneCode from 'ajv/dist/standalone/index.js';
 import addFormats from 'ajv-formats';
 
-export default async function createToYargs({ atom, setProgress, context, njEnv }) {
+export default async function createInputArgs({ atom, setProgress, context, njEnv }) {
 
   if (atom.doc.features.cli.enabled !== true) return;
 
-  await setProgress({ message: "Creating yargs." });
+  await setProgress({ message: "Creating input args." });
 
   let schema = {};
   const imports = [];
@@ -34,8 +34,6 @@ export default async function createToYargs({ atom, setProgress, context, njEnv 
     const ftag = { type: "array", description: "Tags to filter the config", hidden: false };
 
     if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
-    // if (Reflect.has(fargsOptions, 'describe') || Reflect.has(fargsOptions, 'description')) fargs.describe = fargsOptions.describe || fargsOptions.description;
-    // if (Reflect.has(fargsOptions, 'choices')) fargs.choices = fargsOptions.choices;
 
     if (schema.properties) {
       schema.properties["fargs"] = fargs;
@@ -47,14 +45,14 @@ export default async function createToYargs({ atom, setProgress, context, njEnv 
 
   const templateDir = context.templateDir;
   const template = nunjucks.compile(
-    fs.readFileSync(path.resolve(templateDir, `src/default/to.args.js.njk`), "utf8"),
+    fs.readFileSync(path.resolve(templateDir, `src/default/input.args.js.njk`), "utf8"),
     njEnv
   );
 
   const templateRender = template.render(templateContext);
 
   const projectDir = context.projectDir;
-  const filePath = path.resolve(projectDir, `src/default/to.args.js`);
+  const filePath = path.resolve(projectDir, `src/default/input.args.js`);
   fs.writeFileSync(filePath, templateRender, 'utf8');
 
   const ajv = new Ajv({

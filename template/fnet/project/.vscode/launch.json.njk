@@ -1,0 +1,41 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug-fnet-cli",
+      "type": "node",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/.workspace/dist/cli/esm/index.js",
+      "cwd": "${workspaceFolder}/.workspace",
+      "preLaunchTask": "fnet-watch",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "debug-fnet-app",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000/dist/app/esm/",
+      "webRoot": "${workspaceFolder}/.workspace",
+      "preLaunchTask": "fnet-watch",
+      // "userDataDir": false,
+      // "runtimeArgs": [
+      //   "--profile-directory=<profile-name>",
+      // ]
+    },
+  ],
+  // "compounds": [
+  //   {
+  //     "name": "debug-fnet-all",
+  //     "configurations": [
+  //       "debug-fnet-cli",
+  //       "debug-fnet-app"
+  //     ]
+  //   }
+  // ]
+}

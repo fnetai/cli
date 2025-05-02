@@ -210,8 +210,6 @@ commands:
         - fbin compile test.js -o test-bin
         - ./test-bin
 
-
-
   test-phase3-all:
     - frun test-fbin-compile
     - frun test-compile-all
@@ -256,6 +254,7 @@ commands:
     - frun test-phase5-all
     - frun test-phase6-all
     - frun test-express-all
+    - frun test-cli-modes
 
   # Test commands for Phase 5
   test-fbin-install:
@@ -452,3 +451,61 @@ commands:
     - fnode express test-project
     - fnode express move test-project ~/test-destination/existing-project
     - rm -rf ~/test-destination
+
+  # Test CLI modes
+  test-cli-modes:
+    - rm -rf .tests/cli-modes-test
+    - wdir: .tests
+      steps:
+        - fnode create --name cli-modes-test --runtime node
+        - wdir: .tests/cli-modes-test
+          steps:
+            - filemap:
+                target: "./"
+                sources:
+                  - source: |
+                      name: cli-modes-test
+                      version: 1.0.0
+
+                      features:
+                        s::runtime.type: node
+                        cli:
+                          enabled: true
+                          mcp:
+                            enabled: true
+                          http:
+                            enabled: true
+
+                      input:
+                        type: object
+                        description: "CLI Modes Test Input"
+                        properties:
+                          param1:
+                            type: string
+                            description: "First parameter"
+                          param2:
+                            type: string
+                            description: "Second parameter"
+                    provider: text
+                    target: "fnode.yaml"
+                  - source: |
+                      export default async (args) => {
+                        console.log("CLI Modes Test Project");
+                        console.log("Arguments:", JSON.stringify(args, null, 2));
+                        return {
+                          message: "CLI modes test successful",
+                          mode: args.cli_mode || "default",
+                          args
+                        };
+                      }
+                    provider: text
+                    target: "src/index.js"
+            - fnode build
+            - echo "Testing cli modes..."
+            - fork:
+                - fnode cli --param1 value1 --param2 value2
+                - fnode cli --cli_mode mcp --param1 value1 --param2 value2
+                - fnode cli --cli_mode http --param1 value1 --param2 value2
+            - sleep: 3
+            - pause: "Press any key to exit..."
+            - exit: 0

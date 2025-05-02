@@ -54,13 +54,22 @@
   "license": "{{atom.doc.license or 'MIT'}}",
   "scripts": {
     "build": "rollup --config",
+    "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
     "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
     "serve": "bunx serve ./"
     {% if atom.doc.features.cli.enabled %}
     {% if atom.doc.features.project.format ==='cjs' %}
-    ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs"
+    ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs",
+    {% if atom.doc.features.cli.mcp.enabled===true %}
+    ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
+    ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
+    {% endif %}
     {% else %}
     ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
+    {% if atom.doc.features.cli.mcp.enabled===true %}
+    ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
+    ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
+    {% endif %}
     {% endif %}
     ,"compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
     ,"install-bin": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"

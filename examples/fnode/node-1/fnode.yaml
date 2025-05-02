@@ -2,8 +2,19 @@ name: node-1
 
 features:
   s::runtime.type: node
-  app: false
-  cli: false
+  app: true
+  cli:
+    mcp:
+      enabled: true
+      name: blabla server
+      tool: lorem-ipsum-tool
+
+input:
+  type: object
+  properties:
+    name:
+      type: string
+      default: "World"
 
 commands:
   cli-test: 

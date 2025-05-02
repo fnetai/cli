@@ -22,7 +22,8 @@ export async function createContext(argv) {
       protocol: argv.protocol || 'ac:',
       templateDir: resolveTemplatePath('./template/fnode/node'),
       projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
-      tags: argv.ftag
+      tags: argv.ftag,
+      dev: argv.dev
     };
   } else {
     try {
@@ -35,7 +36,8 @@ export async function createContext(argv) {
         projectDir: path.resolve(project.projectDir, './.workspace'),
         projectSrcDir: path.resolve(project.projectDir, './src'),
         project,
-        tags: argv.ftag
+        tags: argv.ftag,
+        dev: argv.dev
       };
     } catch (error) {
       // If project loading fails, return a minimal context
