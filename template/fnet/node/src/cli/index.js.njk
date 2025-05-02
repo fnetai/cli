@@ -27,11 +27,15 @@ import express from "express";
         tools: [{
           name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
           description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
+          {% if atom.doc.input %}
+          inputSchema: {{atom.doc.input | dump | safe}}
+          {% else %}
           inputSchema: {
             type: "object",
             properties: {},
             additionalProperties: true
           }
+          {% endif %}
         }]
       };
     });
@@ -61,40 +65,40 @@ import express from "express";
     });
 
     // Get transport type from arguments
-    const transportType = args['mcp-transport-type'] || args.mcp_transport_type || 'stdio';
+    const transportType = args['mcp-transport'] || args.mcp_transport || 'stdio';
     let transport;
 
     if (transportType === 'stdio') {
       // Use stdio transport
       transport = new StdioServerTransport();
-    } else if (transportType === 'http') {
-      // Use HTTP transport
+    } else if (transportType === 'sse') {
+      // Use SSE transport
       const app = express();
       app.use(express.json());
 
       const port = args['cli-port'] || args.cli_port || 3000;
       const server = app.listen(port, () => {
-        console.log(`MCP server started with HTTP transport on port ${port}`);
+        console.log(`MCP server started with SSE transport on port ${port}`);
       });
 
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
       });
 
-      app.post('/mcp', async (req, res) => {
+      app.post('/sse', async (req, res) => {
         await transport.handleRequest(req, res, req.body);
       });
 
-      app.get('/mcp', async (req, res) => {
+      app.get('/sse', async (req, res) => {
         await transport.handleRequest(req, res);
       });
 
-      app.delete('/mcp', async (req, res) => {
+      app.delete('/sse', async (req, res) => {
         await transport.handleRequest(req, res);
       });
     } else {
       console.error(`Unknown MCP transport type: ${transportType}`);
-      console.error(`Supported types: stdio, http`);
+      console.error(`Supported types: stdio, sse`);
       process.exit(1);
     }
 
@@ -121,11 +125,15 @@ import express from "express";
         tools: [{
           name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
           description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
+          {% if atom.doc.input %}
+          inputSchema: {{atom.doc.input | dump | safe}}
+          {% else %}
           inputSchema: {
             type: "object",
             properties: {},
             additionalProperties: true
           }
+          {% endif %}
         }]
       };
     });
@@ -158,40 +166,40 @@ import express from "express";
     // In a future version, we could expose workflow nodes as separate MCP tools
 
     // Get transport type from arguments
-    const transportType = args['mcp-transport-type'] || args.mcp_transport_type || 'stdio';
+    const transportType = args['mcp-transport'] || args.mcp_transport || 'stdio';
     let transport;
 
     if (transportType === 'stdio') {
       // Use stdio transport
       transport = new StdioServerTransport();
-    } else if (transportType === 'http') {
-      // Use HTTP transport
+    } else if (transportType === 'sse') {
+      // Use SSE transport
       const app = express();
       app.use(express.json());
 
       const port = args['cli-port'] || args.cli_port || 3000;
       const server = app.listen(port, () => {
-        console.log(`MCP server started with HTTP transport on port ${port}`);
+        console.log(`MCP server started with SSE transport on port ${port}`);
       });
 
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
       });
 
-      app.post('/mcp', async (req, res) => {
+      app.post('/sse', async (req, res) => {
         await transport.handleRequest(req, res, req.body);
       });
 
-      app.get('/mcp', async (req, res) => {
+      app.get('/sse', async (req, res) => {
         await transport.handleRequest(req, res);
       });
 
-      app.delete('/mcp', async (req, res) => {
+      app.delete('/sse', async (req, res) => {
         await transport.handleRequest(req, res);
       });
     } else {
       console.error(`Unknown MCP transport type: ${transportType}`);
-      console.error(`Supported types: stdio, http`);
+      console.error(`Supported types: stdio, sse`);
       process.exit(1);
     }
 

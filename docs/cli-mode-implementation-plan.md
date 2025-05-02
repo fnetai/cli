@@ -37,7 +37,7 @@ This plan details the addition of MCP (Model Context Protocol) and HTTP CLI mode
 ### Command Line Arguments
 
 - [ ] Implement --cli-mode parameter (default, mcp, http)
-- [ ] Implement --mcp-transport-type parameter (stdio, http)
+- [ ] Implement --mcp-transport parameter (stdio, sse)
 - [ ] Implement --cli-port parameter for HTTP server
 - [ ] Implement --stdout-format parameter for output formatting
 
@@ -45,7 +45,7 @@ This plan details the addition of MCP (Model Context Protocol) and HTTP CLI mode
 
 - [ ] Test default mode functionality
 - [ ] Test MCP mode with stdio transport
-- [ ] Test MCP mode with HTTP transport
+- [ ] Test MCP mode with SSE transport
 - [ ] Test HTTP mode
 - [ ] Test dependency management
 - [ ] Test error handling for unknown modes
