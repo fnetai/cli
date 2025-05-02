@@ -1,47 +1,54 @@
 {% if atom.doc.features.cli.enabled===true %}
 
-{% if atom.doc.features.project.format==='esm' %}
+{# Define macros for reusable code blocks #}
+{% macro importMcpDependencies(format) %}
+  {% if format === 'esm' %}
+    import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+    import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+    import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+  {% else %}
+    const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
+    const { ListToolsRequestSchema, CallToolRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
+    const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+  {% endif %}
+{% endmacro %}
 
-import argv from '../default/input.args.js';
-
-{% if atom.doc.features.cli.extend===true %}
-
-import Node from '../../../cli';
-
-{% if atom.doc.features.cli.mcp.enabled===true %}
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-{% endif %}
-
-{% if atom.doc.features.cli.http.enabled===true %}
-// Using Node.js built-in http module instead of express
-{% endif %}
-
-const run = async () => {
-  const args = await argv();
-  const cliMode = args['cli-mode'] || args.cli_mode || 'default';
-
-  if (cliMode === 'default') {
-    // Default mode code
-    return await Node(args);
-  }
-
-  {% if atom.doc.features.cli.mcp.enabled===true %}
+{% macro mcpModeCode(nodeFn) %}
   if (cliMode === 'mcp') {
     // MCP mode code
-    const server = new McpServer({
+    const server = new Server({
       name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
       version: "{{atom.doc.version or '0.0.1'}}"
+    }, {
+      capabilities: {
+        tools: {}
+      }
     });
 
-    server.tool(
-      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
-      {% if atom.doc.input %}
-      {{atom.doc.input | dump | safe}},
-      {% endif %}
-      async (toolArgs) => {
+    // Define available tools
+    server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: [{
+          name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
+          description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
+          {% if atom.doc.input %}
+          inputSchema: {{atom.doc.input | dump | safe}}
+          {% else %}
+          inputSchema: {
+            type: "object",
+            properties: {},
+            additionalProperties: true
+          }
+          {% endif %}
+        }]
+      };
+    });
+
+    // Handle tool execution
+    server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      if (request.params.name === "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}") {
         try {
-          const result = await Node(toolArgs);
+          const result = await {{ nodeFn }}(request.params.arguments);
           return {
             content: [{
               type: "text",
@@ -58,20 +65,19 @@ const run = async () => {
           };
         }
       }
-    );
+      throw new Error("Tool not found");
+    });
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
     {# console.log("MCP server started with stdio transport"); #}
     return;
   }
-  {% endif %}
+{% endmacro %}
 
-  {% if atom.doc.features.cli.http.enabled===true %}
+{% macro httpModeCodeBuiltIn(nodeFn) %}
   if (cliMode === 'http') {
     // HTTP mode code using built-in http module
-    const http = require('http');
-
     const server = http.createServer((req, res) => {
       if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
         let body = '';
@@ -81,7 +87,7 @@ const run = async () => {
         req.on('end', async () => {
           try {
             const data = JSON.parse(body);
-            const result = await Node(data);
+            const result = await {{ nodeFn }}(data);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(result));
           } catch (error) {
@@ -101,92 +107,9 @@ const run = async () => {
     });
     return;
   }
-  {% endif %}
+{% endmacro %}
 
-  console.error(`Unknown CLI mode: ${cliMode}`);
-  process.exit(1);
-};
-
-run()
-  .then(() => {
-    {# process.exit(0);     #}
-  })
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
-
-{% else %}
-import Node from '../../../src';
-
-{% if atom.doc.features.cli.mcp.enabled===true %}
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-{% endif %}
-
-{% if atom.doc.features.cli.http.enabled===true %}
-import express from 'express';
-{% endif %}
-
-const run = async () => {
-  const args = await argv();
-  const cliMode = args['cli-mode'] || args.cli_mode || 'default';
-
-  if (cliMode === 'default') {
-    // Default mode code
-    const result = await Node(args);
-
-    if (typeof result !== 'undefined') {
-      const stdout_format = args['stdout-format'] || args.stdout_format || null;
-
-      if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
-      else console.log(result);
-    }
-    return;
-  }
-
-  {% if atom.doc.features.cli.mcp.enabled===true %}
-  if (cliMode === 'mcp') {
-    // MCP mode code
-    const server = new McpServer({
-      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
-      version: "{{atom.doc.version or '0.0.1'}}"
-    });
-
-    server.tool(
-      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
-      {% if atom.doc.input %}
-      {{atom.doc.input | dump | safe}},
-      {% endif %}      
-      async (toolArgs) => {
-        try {
-          const result = await Node(toolArgs);
-          return {
-            content: [{
-              type: "text",
-              text: JSON.stringify(result)
-            }]
-          };
-        } catch (error) {
-          return {
-            content: [{
-              type: "text",
-              text: `Error: ${error.message}`
-            }],
-            isError: true
-          };
-        }
-      }
-    );
-
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    {# console.log("MCP server started with stdio transport"); #}
-    return;
-  }
-  {% endif %}
-
-  {% if atom.doc.features.cli.http.enabled===true %}
+{% macro httpModeCodeExpress(nodeFn) %}
   if (cliMode === 'http') {
     // HTTP mode code
     const app = express();
@@ -194,7 +117,7 @@ const run = async () => {
 
     app.post('/{{atom.doc.name}}', async (req, res) => {
       try {
-        const result = await Node(req.body);
+        const result = await {{ nodeFn }}(req.body);
         res.json(result);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -207,17 +130,117 @@ const run = async () => {
     });
     return;
   }
+{% endmacro %}
+
+{% macro defaultModeExtend(nodeFn) %}
+  if (cliMode === 'default') {
+    // Default mode code
+    return await {{ nodeFn }}(args);
+  }
+{% endmacro %}
+
+{% macro defaultModeStandard(nodeFn) %}
+  if (cliMode === 'default') {
+    // Default mode code
+    const result = await {{ nodeFn }}(args);
+
+    if (typeof result !== 'undefined') {
+      const stdout_format = args['stdout-format'] || args.stdout_format || null;
+
+      if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
+      else console.log(result);
+    }
+    return;
+  }
+{% endmacro %}
+
+{% macro runWithCatch() %}
+run()
+  .catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+{% endmacro %}
+
+{% macro runWithThenCatch() %}
+run()
+  .then(() => {
+    {# process.exit(0); #}
+  })
+  .catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+{% endmacro %}
+
+{# Main template starts here #}
+{% if atom.doc.features.project.format==='esm' %}
+
+import argv from '../default/input.args.js';
+
+{% if atom.doc.features.cli.extend===true %}
+
+import Node from '../../../cli';
+
+{% if atom.doc.features.cli.mcp.enabled===true %}
+{{ importMcpDependencies('esm') }}
+{% endif %}
+
+{% if atom.doc.features.cli.http.enabled===true %}
+// Using Node.js built-in http module instead of express for better compatibility
+const http = require('http');
+{% endif %}
+
+const run = async () => {
+  const args = await argv();
+  const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+  {{ defaultModeExtend('Node') }}
+
+  {% if atom.doc.features.cli.mcp.enabled===true %}
+  {{ mcpModeCode('Node') }}
+  {% endif %}
+
+  {% if atom.doc.features.cli.http.enabled===true %}
+  {{ httpModeCodeBuiltIn('Node') }}
   {% endif %}
 
   console.error(`Unknown CLI mode: ${cliMode}`);
   process.exit(1);
 };
 
-run()
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
+{{ runWithThenCatch() }}
+
+{% else %}
+import Node from '../../../src';
+
+{% if atom.doc.features.cli.mcp.enabled===true %}
+{{ importMcpDependencies('esm') }}
+{% endif %}
+
+{% if atom.doc.features.cli.http.enabled===true %}
+import express from 'express';
+{% endif %}
+
+const run = async () => {
+  const args = await argv();
+  const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+  {{ defaultModeStandard('Node') }}
+
+  {% if atom.doc.features.cli.mcp.enabled===true %}
+  {{ mcpModeCode('Node') }}
+  {% endif %}
+
+  {% if atom.doc.features.cli.http.enabled===true %}
+  {{ httpModeCodeExpress('Node') }}
+  {% endif %}
+
+  console.error(`Unknown CLI mode: ${cliMode}`);
+  process.exit(1);
+};
+
+{{ runWithCatch() }}
 {% endif %}
 
 {% elif atom.doc.features.project.format==='cjs' %}
@@ -229,228 +252,64 @@ const argv = require('../default/input.args.js');
 const Node = require('../../../cli');
 
 {% if atom.doc.features.cli.mcp.enabled===true %}
-const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
-const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+{{ importMcpDependencies('cjs') }}
 {% endif %}
 
 {% if atom.doc.features.cli.http.enabled===true %}
-// Using Node.js built-in http module instead of express
+// Using Node.js built-in http module instead of express for better compatibility
+const http = require('http');
 {% endif %}
 
 const run = async () => {
   const args = await argv();
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
-  if (cliMode === 'default') {
-    // Default mode code
-    return await Node(args);
-  }
+  {{ defaultModeExtend('Node') }}
 
   {% if atom.doc.features.cli.mcp.enabled===true %}
-  if (cliMode === 'mcp') {
-    // MCP mode code
-    const server = new McpServer({
-      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
-      version: "{{atom.doc.version or '0.0.1'}}"
-    });
-
-    server.tool(
-      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
-      {% if atom.doc.input %}
-      {{atom.doc.input | dump | safe}},
-      {% endif %}
-      async (toolArgs) => {
-        try {
-          const result = await Node(toolArgs);
-          return {
-            content: [{
-              type: "text",
-              text: JSON.stringify(result)
-            }]
-          };
-        } catch (error) {
-          return {
-            content: [{
-              type: "text",
-              text: `Error: ${error.message}`
-            }],
-            isError: true
-          };
-        }
-      }
-    );
-
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    {# console.log("MCP server started with stdio transport"); #}
-    return;
-  }
+  {{ mcpModeCode('Node') }}
   {% endif %}
 
   {% if atom.doc.features.cli.http.enabled===true %}
-  if (cliMode === 'http') {
-    // HTTP mode code using built-in http module
-    const http = require('http');
-
-    const server = http.createServer((req, res) => {
-      if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk.toString();
-        });
-        req.on('end', async () => {
-          try {
-            const data = JSON.parse(body);
-            const result = await Node(data);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
-          } catch (error) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: error.message }));
-          }
-        });
-      } else {
-        res.writeHead(404);
-        res.end();
-      }
-    });
-
-    const port = args['cli-port'] || args.cli_port || 3000;
-    server.listen(port, () => {
-      console.log(`HTTP server started on port ${port}`);
-    });
-    return;
-  }
+  {{ httpModeCodeBuiltIn('Node') }}
   {% endif %}
 
   console.error(`Unknown CLI mode: ${cliMode}`);
   process.exit(1);
 };
 
-run()
-  .then(() => {
-    {# process.exit(0); #}
-  })
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
+{{ runWithThenCatch() }}
 
 {% else %}
 const Node = require('../../../src');
 
 {% if atom.doc.features.cli.mcp.enabled===true %}
-const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
-const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+{{ importMcpDependencies('cjs') }}
 {% endif %}
 
 {% if atom.doc.features.cli.http.enabled===true %}
-// Using Node.js built-in http module instead of express
+const express = require('express');
 {% endif %}
 
 const run = async () => {
   const args = await argv();
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
-  if (cliMode === 'default') {
-    // Default mode code
-    const result = await Node(args);
-
-    if (typeof result !== 'undefined') {
-      const stdout_format = args['stdout-format'] || args.stdout_format || null;
-
-      if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
-      else console.log(result);
-    }
-    return;
-  }
+  {{ defaultModeStandard('Node') }}
 
   {% if atom.doc.features.cli.mcp.enabled===true %}
-  if (cliMode === 'mcp') {
-    // MCP mode code
-    const server = new McpServer({
-      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
-      version: "{{atom.doc.version or '0.0.1'}}"
-    });
-
-    server.tool(
-      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
-      {% if atom.doc.input %}
-      {{atom.doc.input | dump | safe}},
-      {% endif %}
-      async (toolArgs) => {
-        try {
-          const result = await Node(toolArgs);
-          return {
-            content: [{
-              type: "text",
-              text: JSON.stringify(result)
-            }]
-          };
-        } catch (error) {
-          return {
-            content: [{
-              type: "text",
-              text: `Error: ${error.message}`
-            }],
-            isError: true
-          };
-        }
-      }
-    );
-
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    {# console.log("MCP server started with stdio transport"); #}
-    return;
-  }
+  {{ mcpModeCode('Node') }}
   {% endif %}
 
   {% if atom.doc.features.cli.http.enabled===true %}
-  if (cliMode === 'http') {
-    // HTTP mode code using built-in http module
-    const http = require('http');
-
-    const server = http.createServer((req, res) => {
-      if (req.method === 'POST' && req.url === '/{{atom.doc.name}}') {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk.toString();
-        });
-        req.on('end', async () => {
-          try {
-            const data = JSON.parse(body);
-            const result = await Node(data);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
-          } catch (error) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: error.message }));
-          }
-        });
-      } else {
-        res.writeHead(404);
-        res.end();
-      }
-    });
-
-    const port = args['cli-port'] || args.cli_port || 3000;
-    server.listen(port, () => {
-      console.log(`HTTP server started on port ${port}`);
-    });
-    return;
-  }
+  {{ httpModeCodeExpress('Node') }}
   {% endif %}
 
   console.error(`Unknown CLI mode: ${cliMode}`);
   process.exit(1);
 };
 
-run()
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
+{{ runWithCatch() }}
 {% endif %}
 
 {% endif %}
