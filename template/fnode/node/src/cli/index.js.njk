@@ -2,7 +2,7 @@
 
 {% if atom.doc.features.project.format==='esm' %}
 
-import argv from '../default/to.args.js';
+import argv from '../default/input.args.js';
 
 {% if atom.doc.features.cli.extend===true %}
 
@@ -216,7 +216,7 @@ run()
 
 {% elif atom.doc.features.project.format==='cjs' %}
 
-const argv = require('../default/to.args.js');
+const argv = require('../default/input.args.js');
 
 {% if atom.doc.features.cli.extend===true %}
 

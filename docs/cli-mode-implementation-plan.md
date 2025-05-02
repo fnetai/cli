@@ -36,7 +36,7 @@ features:
 ```nunjucks
 {% if atom.doc.features.cli.enabled===true %}
 
-import argv from '../default/to.args.js';
+import argv from '../default/input.args.js';
 import Node from '../../../src';
 
 {% if atom.doc.features.cli.mcp.enabled===true %}
@@ -144,7 +144,7 @@ run()
 ```nunjucks
 {% if atom.doc.features.cli.enabled===true %}
 
-import argv from '../default/to.args.js';
+import argv from '../default/input.args.js';
 import { default as Engine } from '../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}';
 
 {% if atom.doc.features.cli.mcp.enabled===true %}

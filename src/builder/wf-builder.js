@@ -14,7 +14,7 @@ import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
 import createRollup from "./api/create-rollup/index.js";
-import createToYargs from "./api/create-to-yargs/index.js";
+import createInputArgs from "./api/create-input-args/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
 import createProjectReadme from "./api/create-project-readme/index.js";
@@ -1159,7 +1159,7 @@ class Builder {
         await createProjectReadme(this.#apiContext);
         await createTsConfig(this.#apiContext);
         await createGitIgnore(this.#apiContext);
-        await createToYargs(this.#apiContext);
+        await createInputArgs(this.#apiContext);
         await createCli(this.#apiContext);
         await createApp(this.#apiContext);
         await createRollup(this.#apiContext);
