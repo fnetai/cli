@@ -35,10 +35,10 @@ export default async function createInputArgs({ atom, setProgress, context, njEn
 
     if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
 
-    if (schema.properties) {
-      schema.properties["fargs"] = fargs;
-      schema.properties["ftag"] = ftag;
-    }
+    // if (schema.properties) {
+    //   schema.properties["fargs"] = fargs;
+    //   schema.properties["ftag"] = ftag;
+    // }
   }
 
   const templateContext = { imports, atom: atom }

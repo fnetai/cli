@@ -133,14 +133,14 @@
 {% macro defaultModeExtend(nodeFn) %}
   if (cliMode === 'default') {
     // Default mode code
-    return await {{ nodeFn }}(args);
+    return await {{ nodeFn }}(await argv());
   }
 {% endmacro %}
 
 {% macro defaultModeStandard(nodeFn) %}
   if (cliMode === 'default') {
     // Default mode code
-    const result = await {{ nodeFn }}(args);
+    const result = await {{ nodeFn }}(await argv());
 
     if (typeof result !== 'undefined') {
       const stdout_format = args['stdout-format'] || args.stdout_format || null;
@@ -187,9 +187,10 @@ import Node from '../../../cli';
 // Using express for HTTP mode
 import express from 'express';
 {% endif %}
+import minimist from 'minimist';
 
 const run = async () => {
-  const args = await argv();
+  const args = minimist(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeExtend('Node') }}
@@ -218,8 +219,10 @@ import Node from '../../../src';
 import express from 'express';
 {% endif %}
 
+import minimist from 'minimist';
+
 const run = async () => {
-  const args = await argv();
+  const args = minimist(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeStandard('Node') }}
@@ -254,8 +257,9 @@ const Node = require('../../../cli');
 const express = require('express');
 {% endif %}
 
+import minimist from "minimist"
 const run = async () => {
-  const args = await argv();
+  const args = minimist(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeExtend('Node') }}
@@ -284,8 +288,10 @@ const Node = require('../../../src');
 const express = require('express');
 {% endif %}
 
+const minimist=require('minimist');
+
 const run = async () => {
-  const args = await argv();
+  const args = minimist(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeStandard('Node') }}

@@ -218,14 +218,14 @@ import express from "express";
 {% macro defaultModeExtended() %}
   if (cliMode === 'default') {
     // Default mode code
-    return await runExtended(args, { Engine });
+    return await runExtended(await argv(), { Engine });
   }
 {% endmacro %}
 
 {% macro defaultModeEngine(engineVar) %}
   if (cliMode === 'default') {
     // Default mode code
-    const result = await {{ engineVar }}.run(args);
+    const result = await {{ engineVar }}.run(await argv());
 
     if (typeof result !== 'undefined') {
       const stdout_format = args['stdout-format'] || args.stdout_format || null;
@@ -271,9 +271,10 @@ import express from 'express';
 {% if atom.doc.features.cli.extend===true %}
   {# TYPE 1 #}
   import { default as runExtended } from '../../../cli';
+  import minimist from 'minimist';
 
   const run = async () => {
-    const args = await argv();
+    const args = minimist(process.argv.slice(2));
     const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
     {{ defaultModeExtended() }}
@@ -293,8 +294,9 @@ import express from 'express';
   {{ runWithThenCatch() }}
 {% else %}
   {# TYPE 2 #}
+  import minimist from 'minimist';
   const run = async () => {
-    const args = await argv();
+    const args =minimist(process.argv.slice(2));
     const cliMode = args['cli-mode'] || args.cli_mode || 'default';
     const engine = new Engine();
 
