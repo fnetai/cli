@@ -54,6 +54,7 @@
   "license": "{{atom.doc.license or 'MIT'}}",
   "scripts": {
     "build": "rollup --config",
+    "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
     "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
     "serve": "bunx serve ./"
     {% if atom.doc.features.cli.enabled %}

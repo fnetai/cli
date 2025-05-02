@@ -1,3 +1,10 @@
 name: node-1
 
 flows: g::file://./fnet/flows.yaml
+
+features:
+  app: false
+commands:
+  debug:
+    - fnet build --dev
+    - fnet cli

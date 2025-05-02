@@ -1,4 +1,5 @@
 main:
   steps:
-    - hello-world:        
+    - hello-world:
+        debugger: true     
         return: Hello World!

@@ -2,7 +2,7 @@ name: node-1
 
 features:
   s::runtime.type: node
-  app: false
+  app: true
   cli:
     mcp:
       enabled: true

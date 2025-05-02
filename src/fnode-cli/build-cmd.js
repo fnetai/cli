@@ -30,6 +30,11 @@ const command = {
       .option('ftag', {
         type: 'array',
         describe: 'Tags for conditional configuration'
+      })
+      .option('dev', {
+        type: 'boolean',
+        default: false,
+        describe: 'Development mode'
       });
   },
   handler: async (argv) => {
