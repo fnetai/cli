@@ -1,9 +1,10 @@
 {% if atom.doc.features.project.format === 'esm' %}
   import fnetArgs from '@fnet/args';
-  import validate from "./validate_input";
+  import validate,{schema as inputSchema} from "./validate_input";
+
 {% elif atom.doc.features.project.format === 'cjs' %}
   const fnetArgs = require('@fnet/args');
-  const validate = require("./validate_input");
+  const validate,{schema as inputSchema} = require("./validate_input");
 {% endif %}
 
 {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}
@@ -38,7 +39,7 @@
 
   export default async () => {
 
-    let schema = {{options | dump | safe}};
+    let schema = inputSchema;
     let initial;
 
     {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}    
@@ -77,7 +78,8 @@
 {% elif atom.doc.features.project.format === 'cjs' %}
 
   module.exports = async () => {
-    let schema = {{options | dump | safe}};
+
+    let schema = inputSchema;
     let initial;
 
     {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}    

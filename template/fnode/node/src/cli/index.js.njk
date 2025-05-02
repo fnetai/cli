@@ -35,15 +35,7 @@
         tools: [{
           name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
           description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
-          {% if atom.doc.input %}
-          inputSchema: {{atom.doc.input | dump | safe}}
-          {% else %}
-          inputSchema: {
-            type: "object",
-            properties: {},
-            additionalProperties: true
-          }
-          {% endif %}
+          inputSchema: inputSchema
         }]
       };
     });
@@ -183,6 +175,7 @@ run()
 {% if atom.doc.features.project.format==='esm' %}
 
 import argv from '../default/input.args.js';
+import { schema as inputSchema } from '../default/validate_input.js';
 
 {% if atom.doc.features.cli.extend===true %}
 

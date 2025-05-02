@@ -27,15 +27,7 @@ import express from "express";
         tools: [{
           name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
           description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
-          {% if atom.doc.input %}
-          inputSchema: {{atom.doc.input | dump | safe}}
-          {% else %}
-          inputSchema: {
-            type: "object",
-            properties: {},
-            additionalProperties: true
-          }
-          {% endif %}
+          inputSchema: inputSchema,
         }]
       };
     });
@@ -125,15 +117,7 @@ import express from "express";
         tools: [{
           name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
           description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
-          {% if atom.doc.input %}
-          inputSchema: {{atom.doc.input | dump | safe}}
-          {% else %}
-          inputSchema: {
-            type: "object",
-            properties: {},
-            additionalProperties: true
-          }
-          {% endif %}
+          inputSchema: inputSchema,
         }]
       };
     });
@@ -274,6 +258,7 @@ run()
 
 {# Main template starts here #}
 import argv from '../default/input.args.js';
+import { schema as inputSchema } from '../default/validate_input.js';
 import { default as Engine } from '../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}';
 
 {% if atom.doc.features.cli.mcp.enabled===true %}
