@@ -993,19 +993,9 @@ class Builder {
 
     const { content: main, ...content } = this.#atom.doc;
 
-    const templateContext = { content: yaml.stringify(content) }
-
-    const templateDir = this.#context.templateDir;
-    const template = nunjucks.compile(
-      fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
-      this.#njEnv
-    );
-
-    const templateRender = template.render(templateContext);
-
     const projectDir = this.#context.projectDir;
     const filePath = path.resolve(projectDir, `${fileBase}`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');
+    fs.writeFileSync(filePath, yaml.stringify(content), 'utf8');
   }
 
   async createProjectMainYaml() {
@@ -1145,7 +1135,7 @@ class Builder {
             if (fs.existsSync(path.resolve(bpmnDir, 'flow.bpmn'))) {
               fs.unlinkSync(path.resolve(bpmnDir, 'flow.bpmn'));
             }
-            
+
             fs.writeFileSync(path.resolve(bpmnDir, 'flows.bpmn'), network.diagramXML, 'utf8');
           }
         }
