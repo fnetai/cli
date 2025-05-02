@@ -66,7 +66,6 @@ import express from "express";
     if (transportType === 'stdio') {
       // Use stdio transport
       transport = new StdioServerTransport();
-      console.log("MCP server started with stdio transport");
     } else if (transportType === 'http') {
       // Use HTTP transport
       const app = express();
@@ -164,7 +163,6 @@ import express from "express";
     if (transportType === 'stdio') {
       // Use stdio transport
       transport = new StdioServerTransport();
-      console.log("MCP server started with stdio transport");
     } else if (transportType === 'http') {
       // Use HTTP transport
       const app = express();
