@@ -2,7 +2,8 @@
 
 {# Define macros for reusable code blocks #}
 {% macro importMcpDependencies() %}
-import { Server, ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import express from "express";
@@ -269,9 +270,7 @@ import { default as Engine } from '../default/{{atom.doc.features.cli_default_en
 
 {% if atom.doc.features.cli.mcp.enabled===true %}
 {{ importMcpDependencies() }}
-{% endif %}
-
-{% if atom.doc.features.cli.http.enabled===true %}
+{% elif atom.doc.features.cli.http.enabled===true %}
 // Using express for HTTP mode
 import express from 'express';
 {% endif %}
