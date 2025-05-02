@@ -30,12 +30,15 @@ const run = async () => {
   if (cliMode === 'mcp') {
     // MCP mode code
     const server = new McpServer({
-      name: "{{atom.doc.name}}",
-      version: "{{atom.doc.version}}"
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
     });
 
     server.tool(
-      "{{atom.doc.name}}",
+      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
+      {% if atom.doc.input %}
+      {{atom.doc.input | dump | safe}},
+      {% endif %}
       async (toolArgs) => {
         try {
           const result = await Node(toolArgs);
@@ -59,7 +62,7 @@ const run = async () => {
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.log("MCP server started with stdio transport");
+    {# console.log("MCP server started with stdio transport"); #}
     return;
   }
   {% endif %}
@@ -146,12 +149,15 @@ const run = async () => {
   if (cliMode === 'mcp') {
     // MCP mode code
     const server = new McpServer({
-      name: "{{atom.doc.name}}",
-      version: "{{atom.doc.version}}"
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
     });
 
     server.tool(
-      "{{atom.doc.name}}",
+      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
+      {% if atom.doc.input %}
+      {{atom.doc.input | dump | safe}},
+      {% endif %}      
       async (toolArgs) => {
         try {
           const result = await Node(toolArgs);
@@ -175,7 +181,7 @@ const run = async () => {
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.log("MCP server started with stdio transport");
+    {# console.log("MCP server started with stdio transport"); #}
     return;
   }
   {% endif %}
@@ -244,12 +250,15 @@ const run = async () => {
   if (cliMode === 'mcp') {
     // MCP mode code
     const server = new McpServer({
-      name: "{{atom.doc.name}}",
-      version: "{{atom.doc.version}}"
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
     });
 
     server.tool(
-      "{{atom.doc.name}}",
+      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
+      {% if atom.doc.input %}
+      {{atom.doc.input | dump | safe}},
+      {% endif %}
       async (toolArgs) => {
         try {
           const result = await Node(toolArgs);
@@ -273,7 +282,7 @@ const run = async () => {
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.log("MCP server started with stdio transport");
+    {# console.log("MCP server started with stdio transport"); #}
     return;
   }
   {% endif %}
@@ -360,12 +369,15 @@ const run = async () => {
   if (cliMode === 'mcp') {
     // MCP mode code
     const server = new McpServer({
-      name: "{{atom.doc.name}}",
-      version: "{{atom.doc.version}}"
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
     });
 
     server.tool(
-      "{{atom.doc.name}}",
+      "{{atom.doc.features.cli.mcp.tool or atom.doc.name}}",
+      {% if atom.doc.input %}
+      {{atom.doc.input | dump | safe}},
+      {% endif %}
       async (toolArgs) => {
         try {
           const result = await Node(toolArgs);
@@ -389,7 +401,7 @@ const run = async () => {
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.log("MCP server started with stdio transport");
+    {# console.log("MCP server started with stdio transport"); #}
     return;
   }
   {% endif %}
