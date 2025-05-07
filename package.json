@@ -11,8 +11,7 @@
     "build": "rollup --config",
     "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
     "deploy": "bun publish --access public",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
-    "postbuild": "chmod +x dist/fnode/index.js dist/fnet/index.js dist/frun/index.js dist/fbin/index.js"
+    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT"
   },
   "repository": {
     "type": "git",
