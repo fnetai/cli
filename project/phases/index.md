@@ -9,5 +9,6 @@ This document outlines the organic phased growth of Flownet CLI. Each phase repr
 - **[Phase 003: @fnet/shell-flow Package Analysis](./phase-003.md)** - Knowledge phase analyzing the @fnet/shell-flow npm package
 - **[Phase 004: @fnet/service Package Analysis](./phase-004.md)** - Knowledge phase analyzing the @fnet/service npm package
 - **[Phase 005: Flownet CLI Entry Points Analysis](./phase-005.md)** - Knowledge phase analyzing the CLI entry points provided by the Flownet CLI project
+- **[Phase 006: Template Directory Analysis](./phase-006.md)** - Knowledge phase analyzing the purpose and usage of the template directory
 
 *Note: Phases can be either Implementation Phases or Knowledge Phases.*
