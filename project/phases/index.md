@@ -5,5 +5,6 @@ This document outlines the organic phased growth of Flownet CLI. Each phase repr
 ## Available Phases
 
 - **[Phase 001: @fnet/yaml Package Analysis](./phase-001.md)** - Knowledge phase analyzing the @fnet/yaml npm package
+- **[Phase 002: @fnet/config Package Analysis](./phase-002.md)** - Knowledge phase analyzing the @fnet/config npm package
 
 *Note: Phases can be either Implementation Phases or Knowledge Phases.*
