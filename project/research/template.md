@@ -2,7 +2,7 @@
 
 ## Overview
 
-[Brief description of the research topic and its relevance to [Project X]]
+[Brief description of the research topic and its relevance to Flownet CLI]
 
 ## Details
 

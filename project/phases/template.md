@@ -13,7 +13,7 @@ Choose one:
 
 ## Approach
 
-**REMEMBER: The primary purpose is to add valuable features and components to the [Project X] application if a phase is an Implementation Phase.**
+**REMEMBER: The primary purpose is to add valuable features and components to the Flownet CLI application if a phase is an Implementation Phase.**
 
 **IMPORTANT: Start with the absolute minimum viable implementation. Keep it simple!**
 

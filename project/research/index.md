@@ -1,6 +1,6 @@
-# [Project X] Research Documents
+# Flownet CLI Research Documents
 
-This section contains outputs of Knowledge Phases with detailed research findings and analysis related to [Project X].
+This section contains outputs of Knowledge Phases with detailed research findings and analysis related to Flownet CLI.
 
 ## Available Research Documents
 

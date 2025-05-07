@@ -1,6 +1,6 @@
-# [Project X] Phases
+# Flownet CLI Phases
 
-This document outlines the organic phased growth of [Project X]. Each phase represents a specific milestone in the development process.
+This document outlines the organic phased growth of Flownet CLI. Each phase represents a specific milestone in the development process.
 
 ## Available Phases
 

@@ -1,6 +1,6 @@
-# [Project X] Fundamentals
+# Flownet CLI Fundamentals
 
-Welcome to the [Project X] Fundamentals documentation. This section contains quick notes on the core building blocks and foundational approaches of [Project X].
+Welcome to the Flownet CLI Fundamentals documentation. This section contains quick notes on the core building blocks and foundational approaches of Flownet CLI.
 
 ## Available Fundamentals
 

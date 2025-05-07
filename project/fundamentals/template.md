@@ -2,7 +2,7 @@
 
 ## Overview
 
-[Brief description of this fundamental and its role in [Project X]]
+[Brief description of this fundamental and its role in Flownet CLI]
 
 ## Details
 
