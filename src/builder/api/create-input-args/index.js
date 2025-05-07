@@ -35,13 +35,13 @@ export default async function createInputArgs({ atom, setProgress, context, njEn
 
     if (Reflect.has(fargsOptions, 'default')) fargs.default = fargsOptions.default;
 
-    if (schema.properties) {
-      schema.properties["fargs"] = fargs;
-      schema.properties["ftag"] = ftag;
-    }
+    // if (schema.properties) {
+    //   schema.properties["fargs"] = fargs;
+    //   schema.properties["ftag"] = ftag;
+    // }
   }
 
-  const templateContext = { options: schema, imports, atom: atom }
+  const templateContext = { imports, atom: atom }
 
   const templateDir = context.templateDir;
   const template = nunjucks.compile(
@@ -58,7 +58,7 @@ export default async function createInputArgs({ atom, setProgress, context, njEn
   const ajv = new Ajv({
     allErrors: true,
     useDefaults: true,
-    formats: { },
+    formats: {},
     strict: false,
     code: {
       esm: true,
@@ -67,10 +67,11 @@ export default async function createInputArgs({ atom, setProgress, context, njEn
       source: true
     },
   });
-  
+
   addFormats(ajv);
   const validate = ajv.compile(schema);
   const validateCode = standaloneCode(ajv, validate);
-  
-  fs.writeFileSync(path.resolve(projectDir, `src/default/validate_input.js`), validateCode, 'utf8');
+  const modifiedValidateCode = validateCode + '\nexport { schema31 as schema };';
+
+  fs.writeFileSync(path.resolve(projectDir, `src/default/validate_input.js`), modifiedValidateCode, 'utf8');
 }

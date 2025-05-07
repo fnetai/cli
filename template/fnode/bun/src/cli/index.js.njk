@@ -3,6 +3,7 @@
 {% if atom.doc.features.project.format==='esm' %}
 
 import argv from '../default/input.args.js';
+import { schema as inputSchema } from '../default/validate_input.js';
 
 {% if atom.doc.features.cli.extend===true %}
 

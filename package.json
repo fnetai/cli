@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.116.0",
+  "version": "0.116.3",
   "files": [
     "dist",
     "template"
@@ -11,8 +11,7 @@
     "build": "rollup --config",
     "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
     "deploy": "bun publish --access public",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
-    "postbuild": "chmod +x dist/fnode/index.js dist/fnet/index.js dist/frun/index.js dist/fbin/index.js"
+    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT"
   },
   "repository": {
     "type": "git",
@@ -42,11 +41,12 @@
     "@fnet/object-from-schema": "^0.1.25",
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
-    "@fnet/shell-flow": "^0.1.46",
+    "@fnet/service": "^0.1.5",
+    "@fnet/shell-flow": "^0.1.50",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.1.7",
     "@fnet/to-rust": "^0.1.14",
-    "@fnet/up-list-files": "^0.1.13",
+    "@fnet/up-list-files": "^0.1.14",
     "@fnet/yaml": "^0.1.40",
     "@node-red/util": "^4.0.9",
     "ajv": "^8.17.1",
@@ -84,6 +84,6 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.40.0"
+    "rollup": "^4.40.2"
   }
 }
