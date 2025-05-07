@@ -42,6 +42,7 @@
     "@fnet/object-from-schema": "^0.1.25",
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
+    "@fnet/service": "^0.1.5",
     "@fnet/shell-flow": "^0.1.50",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.1.7",
