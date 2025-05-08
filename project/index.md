@@ -23,8 +23,8 @@ For all users:
 
 ## Where to Go?
 
-- **[Fundamentals](./fundamentals/index.md)** - Core building blocks and foundational approaches of Flownet CLI
+- **[Fundamentals](./fundamentals/index.md)** - Core building blocks and foundational approaches of Flownet CLI. A fundamental document is prepared as an single output file **if a user asked it explicitly**.
 - **[Phases](./phases/index.md)** - Organic phased growth of Flownet CLI
-- **[Research Documents](./research/index.md)** - Outputs of Research Phases with detailed research findings and analysis
-- **[Reports](./reports/index.md)** - Project status, code quality, implementation reviews, security assessments, performance metrics, and other evaluation results
-- **[Guides](./guides/index.md)** - Quick, practical instructions for specific tasks
+- **[Research Documents](./research/index.md)** - Outputs of Research Phases with detailed research findings and analysis. A research document is prepared as an single output file for a phase **if the phase is a Research Phase**.
+- **[Reports](./reports/index.md)** - Project status, code quality, implementation reviews, security assessments, performance metrics, and other evaluation results. A report is prepared as an single output file for **if a user asked it explicitly**.
+- **[Guides](./guides/index.md)** - Simple, step-by-step instructions for specific tasks. Quick, practical instructions for specific tasks. A guide is prepared as an single output file **if a user asked it explicitly**.
