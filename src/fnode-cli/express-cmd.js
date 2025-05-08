@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import chalk from 'chalk';
 // import { createContext } from './context.js';
 import fnetPrompt from '@fnet/prompt';
+import promptUtils from '../utils/prompt-utils.js';
 
 // Base directory for express projects
 const EXPRESS_BASE_DIR = path.join(os.homedir(), '.fnet', 'express');
@@ -659,18 +660,22 @@ async function findProjectByName(projectName) {
       if (matches.length === 1) {
         return path.join(datePath, matches[0]);
       } else {
-        // If multiple matches, ask user to select
-        const answers = await fnetPrompt({
-          type: 'select',
-          name: 'selectedProject',
+        // If multiple matches, ask user to select using the new utility function
+        const matchChoices = matches.map(name => ({
+          name: path.join(datePath, name),
+          value: path.join(datePath, name),
+          message: `${name} (${dateDir})`
+        }));
+
+        const selectedProject = await promptUtils.promptForSelection({
+          items: matchChoices,
           message: `Multiple projects match "${projectName}". Please select one:`,
-          choices: matches.map(name => ({
-            name: `${name} (${dateDir})`,
-            value: path.join(datePath, name)
-          }))
+          nameField: 'message',
+          valueField: 'value',
+          allowAbort: true
         });
 
-        return answers.selectedProject;
+        return selectedProject;
       }
     }
   }
@@ -704,6 +709,7 @@ async function selectProjectInteractively() {
       projects.push({
         name: relativeProjectPath,
         value: relativeProjectPath,
+        message: `${projectName} (${dateDir})`,
         created: stats.birthtime
       });
     }
@@ -716,15 +722,16 @@ async function selectProjectInteractively() {
     return null;
   }
 
-  // Ask user to select a project
-  const answers = await fnetPrompt({
-    type: 'select',
-    name: 'selectedProject',
+  // Ask user to select a project using the new utility function
+  const selectedProject = await promptUtils.promptForSelection({
+    items: projects,
     message: 'Select a project:',
-    choices: projects
+    nameField: 'message',
+    valueField: 'value',
+    allowAbort: true
   });
 
-  return answers.selectedProject;
+  return selectedProject;
 }
 
 /**

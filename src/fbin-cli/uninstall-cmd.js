@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import chalk from 'chalk';
 import fnetPrompt from '@fnet/prompt';
 import binSystem from '../utils/bin-system.js';
+import promptUtils from '../utils/prompt-utils.js';
 import { createContext } from './context.js';
 
 export const command = 'uninstall [name] [options]';
@@ -16,7 +17,7 @@ export const builder = {
   name: {
     describe: 'Name of the binary to uninstall',
     type: 'string',
-    demandOption: true
+    demandOption: false // Changed from true to false to allow interactive selection
   },
   force: {
     describe: 'Skip confirmation prompt',
@@ -61,8 +62,38 @@ export const handler = async (argv) => {
       process.exit(1);
     }
 
+    // If name is not provided and not in non-interactive mode, prompt for selection
+    if (!argv.name && !argv.yes) {
+      const binaries = Object.keys(metadata.binaries);
+
+      if (binaries.length === 0) {
+        console.log(chalk.yellow('No binaries installed.'));
+        return;
+      }
+
+      // Prompt user to select a binary
+      const selectedBinary = await promptUtils.promptForSelection({
+        items: binaries,
+        message: 'Select a binary to uninstall:',
+        allowAbort: true
+      });
+
+      if (!selectedBinary) {
+        console.log(chalk.yellow('Uninstallation cancelled.'));
+        return;
+      }
+
+      argv.name = selectedBinary;
+    }
+
     // Check if binary exists in metadata
     const binaryName = argv.name;
+    if (!binaryName) {
+      console.error(chalk.red('Binary name is required.'));
+      console.error(chalk.yellow('Use --name to specify a binary or run without --yes to select interactively.'));
+      process.exit(1);
+    }
+
     if (!metadata.binaries[binaryName]) {
       console.error(chalk.red(`Binary not found in metadata: ${binaryName}`));
       console.log(chalk.yellow('Use fbin list to see installed binaries.'));

@@ -10,6 +10,7 @@ import fnetPrompt from '@fnet/prompt';
 import { createContext } from './context.js';
 import serviceSystem from '../utils/service-system.js';
 import serviceSchema from '../utils/service-schema.js';
+import promptUtils from '../utils/prompt-utils.js';
 
 /**
  * Command configuration
@@ -51,13 +52,14 @@ const command = {
         handler: listDefinitionsHandler
       })
       .command({
-        command: 'show <name>',
+        command: 'show [n]',
         describe: 'Show service definition details',
         builder: (yargs) => {
           return yargs
             .positional('name', {
               describe: 'Service definition name',
-              type: 'string'
+              type: 'string',
+              demandOption: false
             })
             .option('format', {
               describe: 'Output format',
@@ -69,25 +71,27 @@ const command = {
         handler: showDefinitionHandler
       })
       .command({
-        command: 'edit <name>',
+        command: 'edit [n]',
         describe: 'Edit a service definition',
         builder: (yargs) => {
           return yargs
             .positional('name', {
               describe: 'Service definition name',
-              type: 'string'
+              type: 'string',
+              demandOption: false
             });
         },
         handler: editDefinitionHandler
       })
       .command({
-        command: 'delete <name>',
+        command: 'delete [n]',
         describe: 'Delete a service definition',
         builder: (yargs) => {
           return yargs
             .positional('name', {
               describe: 'Service definition name',
-              type: 'string'
+              type: 'string',
+              demandOption: false
             })
             .option('force', {
               describe: 'Force deletion without confirmation',
@@ -99,13 +103,14 @@ const command = {
         handler: deleteDefinitionHandler
       })
       .command({
-        command: 'validate <name>',
+        command: 'validate [n]',
         describe: 'Validate a service definition',
         builder: (yargs) => {
           return yargs
             .positional('name', {
               describe: 'Service definition name',
-              type: 'string'
+              type: 'string',
+              demandOption: false
             });
         },
         handler: validateDefinitionHandler
@@ -255,6 +260,31 @@ async function showDefinitionHandler(argv) {
   try {
     const context = await createContext(argv);
 
+    // If name is not provided, prompt for selection
+    if (!argv.name) {
+      // Get list of service definitions
+      const definitions = serviceSystem.listServiceDefinitions();
+
+      if (definitions.length === 0) {
+        console.log(chalk.yellow('No service definitions found.'));
+        return;
+      }
+
+      // Prompt user to select a definition
+      const selectedDefinition = await promptUtils.promptForSelection({
+        items: definitions,
+        message: 'Select a service definition to show:',
+        allowAbort: true
+      });
+
+      if (!selectedDefinition) {
+        console.log(chalk.yellow('Operation cancelled.'));
+        return;
+      }
+
+      argv.name = selectedDefinition;
+    }
+
     // Load service definition
     const definition = serviceSystem.loadServiceDefinition(argv.name);
 
@@ -283,6 +313,31 @@ async function showDefinitionHandler(argv) {
 async function editDefinitionHandler(argv) {
   try {
     const context = await createContext(argv);
+
+    // If name is not provided, prompt for selection
+    if (!argv.name) {
+      // Get list of service definitions
+      const definitions = serviceSystem.listServiceDefinitions();
+
+      if (definitions.length === 0) {
+        console.log(chalk.yellow('No service definitions found.'));
+        return;
+      }
+
+      // Prompt user to select a definition
+      const selectedDefinition = await promptUtils.promptForSelection({
+        items: definitions,
+        message: 'Select a service definition to edit:',
+        allowAbort: true
+      });
+
+      if (!selectedDefinition) {
+        console.log(chalk.yellow('Operation cancelled.'));
+        return;
+      }
+
+      argv.name = selectedDefinition;
+    }
 
     // Load service definition
     const definition = serviceSystem.loadServiceDefinition(argv.name);
@@ -326,6 +381,31 @@ async function deleteDefinitionHandler(argv) {
   try {
     const context = await createContext(argv);
 
+    // If name is not provided, prompt for selection
+    if (!argv.name) {
+      // Get list of service definitions
+      const definitions = serviceSystem.listServiceDefinitions();
+
+      if (definitions.length === 0) {
+        console.log(chalk.yellow('No service definitions found.'));
+        return;
+      }
+
+      // Prompt user to select a definition
+      const selectedDefinition = await promptUtils.promptForSelection({
+        items: definitions,
+        message: 'Select a service definition to delete:',
+        allowAbort: true
+      });
+
+      if (!selectedDefinition) {
+        console.log(chalk.yellow('Operation cancelled.'));
+        return;
+      }
+
+      argv.name = selectedDefinition;
+    }
+
     // Check if definition exists
     if (!serviceSystem.serviceDefinitionExists(argv.name)) {
       console.error(chalk.red(`Service definition '${argv.name}' not found.`));
@@ -367,6 +447,31 @@ async function deleteDefinitionHandler(argv) {
 async function validateDefinitionHandler(argv) {
   try {
     const context = await createContext(argv);
+
+    // If name is not provided, prompt for selection
+    if (!argv.name) {
+      // Get list of service definitions
+      const definitions = serviceSystem.listServiceDefinitions();
+
+      if (definitions.length === 0) {
+        console.log(chalk.yellow('No service definitions found.'));
+        return;
+      }
+
+      // Prompt user to select a definition
+      const selectedDefinition = await promptUtils.promptForSelection({
+        items: definitions,
+        message: 'Select a service definition to validate:',
+        allowAbort: true
+      });
+
+      if (!selectedDefinition) {
+        console.log(chalk.yellow('Operation cancelled.'));
+        return;
+      }
+
+      argv.name = selectedDefinition;
+    }
 
     // Load service definition
     const definition = serviceSystem.loadServiceDefinition(argv.name);
