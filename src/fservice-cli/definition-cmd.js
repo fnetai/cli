@@ -211,19 +211,28 @@ async function listDefinitionsHandler(argv) {
     } else {
       // Table format (default)
       console.log(chalk.bold('\nService Definitions:'));
-      console.log(chalk.bold('─'.repeat(50)));
 
+      // Import table utils
+      const tableUtils = (await import('../utils/table-utils.js')).default;
+
+      // Create table with headers
+      const headers = ['NAME', 'BINARY', 'DESCRIPTION'];
+      const table = tableUtils.createTable(headers);
+
+      // Add rows to table
       for (const name of definitions) {
         const definition = serviceSystem.loadServiceDefinition(name);
         if (definition) {
-          console.log(chalk.green(`${name}`));
-          console.log(`  Binary: ${definition.binary}`);
-          if (definition.description) {
-            console.log(`  Description: ${definition.description}`);
-          }
-          console.log(chalk.bold('─'.repeat(50)));
+          table.push([
+            chalk.green(name),
+            definition.binary || 'undefined',
+            definition.description || ''
+          ]);
         }
       }
+
+      console.log(table.toString());
+      console.log(`Total: ${definitions.length} definition(s)`);
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
