@@ -69,14 +69,22 @@ const command = {
       } else {
         // Table format (default)
         const headers = ['NAME', 'STATUS', 'BINARY', 'DEFINITION'];
-        const table = tableUtils.createTable(headers);
+        const table = tableUtils.createTable(headers, {
+          // Remove row separators for more compact display
+          chars: {
+            'mid': '',
+            'mid-mid': '',
+            'left-mid': '',
+            'right-mid': ''
+          }
+        });
 
         services.forEach(service => {
           const statusColor = tableUtils.getStatusColor(service.status);
           table.push([
-            service.name,
-            statusColor(service.status || 'unknown'),
-            service.binary,
+            chalk.white(service.name),  // Ana sütun renkli
+            statusColor(service.status || 'unknown'),  // Durum sütunu renkli (önemli bilgi)
+            chalk.cyan(service.binary),  // Binary sütunu da önemli
             service.definition
           ]);
         });

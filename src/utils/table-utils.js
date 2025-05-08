@@ -33,6 +33,7 @@ export function createTable(headers, options = {}) {
     style: {
       head: [],  // No additional styling for headers as we'll use chalk directly
       border: [], // No border styling
+      compact: true // Reduce vertical padding
     },
     wordWrap: true
   };
@@ -56,14 +57,14 @@ export function createTable(headers, options = {}) {
  */
 export function createTableWithData(headers, rows, options = {}) {
   const table = createTable(headers, options);
-  
+
   // Add rows to the table
   if (Array.isArray(rows)) {
     rows.forEach(row => {
       table.push(row);
     });
   }
-  
+
   return table.toString();
 }
 

@@ -217,15 +217,23 @@ async function listDefinitionsHandler(argv) {
 
       // Create table with headers
       const headers = ['NAME', 'BINARY', 'DESCRIPTION'];
-      const table = tableUtils.createTable(headers);
+      const table = tableUtils.createTable(headers, {
+        // Remove row separators for more compact display
+        chars: {
+          'mid': '',
+          'mid-mid': '',
+          'left-mid': '',
+          'right-mid': ''
+        }
+      });
 
       // Add rows to table
       for (const name of definitions) {
         const definition = serviceSystem.loadServiceDefinition(name);
         if (definition) {
           table.push([
-            chalk.green(name),
-            definition.binary || 'undefined',
+            chalk.white(name),  // Ana sütun renkli
+            chalk.cyan(definition.binary || 'undefined'),  // Binary sütunu da önemli
             definition.description || ''
           ]);
         }

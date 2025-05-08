@@ -58,4 +58,4 @@ Link to detailed research document: [fbin CLI Usage Research](../research/fbin-c
 - [Phase 005: Flownet CLI Entry Points Analysis](./phase-005.md)
 - [Phase 006: Template Directory Analysis](./phase-006.md)
 - [Phase 007: 'frun' CLI Usage Research](./phase-007.md)
-- [Future phases that will build on this research]
+- [Phase 013: 'fbin' CLI Table Output Enhancement](./phase-013.md) - Implementation phase for enhancing table outputs in the 'fbin' CLI
