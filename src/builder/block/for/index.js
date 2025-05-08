@@ -1,6 +1,4 @@
 import cloneDeep from 'lodash.clonedeep';
-import pick from 'lodash.pick';
-import omit from 'lodash.omit';
 
 import initModules from '../common/init-modules.js';
 import initCommonResolve from '../common/init-common-resolve.js';
@@ -20,8 +18,13 @@ async function init({ node, initNode }) {
 
   // No steps property
   if (!node.definition.for.hasOwnProperty('steps')) {
-    const reserved = ['value', 'in'];
-    const [self, child] = [pick(node.definition.for, reserved), omit(node.definition.for, reserved)];
+    // Extract reserved properties using destructuring
+    const { value, in: inValue, ...child } = node.definition.for;
+    // Create self object with only the reserved properties
+    const self = {};
+    if (value !== undefined) self.value = value;
+    if (inValue !== undefined) self.in = inValue;
+
     node.definition.for = self;
     node.definition.for.steps = [
       {
