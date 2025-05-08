@@ -24,6 +24,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
    - Unified API across Windows, macOS, and Linux
    - Automatic platform detection and implementation selection
    - Example:
+
      ```javascript
      import manageService from '@fnet/service';
 
@@ -40,6 +41,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
    - Create and remove services from system service managers
    - Support for service descriptions and metadata
    - Example:
+
      ```javascript
      // Register a service
      await manageService({
@@ -60,6 +62,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
    - Start, stop, and enable services
    - Configurable auto-start behavior
    - Example:
+
      ```javascript
      // Start a service
      await manageService({
@@ -79,6 +82,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
    - Health monitoring with detailed diagnostics
    - Service configuration inspection
    - Example:
+
      ```javascript
      // Check service status
      const status = await manageService({
@@ -97,6 +101,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
    - Set environment variables for services
    - Platform-specific environment variable handling
    - Example:
+
      ```javascript
      await manageService({
        action: 'register',
@@ -113,6 +118,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
 6. **Working Directory Configuration**
    - Set working directory for service execution
    - Example:
+
      ```javascript
      await manageService({
        action: 'register',
@@ -126,6 +132,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
 7. **User-Level vs. System-Wide Services**
    - Support for both system-wide and user-level services
    - Example:
+
      ```javascript
      // Register a user-level service
      await manageService({
@@ -140,6 +147,7 @@ At its core, @fnet/service transforms a unified configuration object into platfo
 8. **Restart Behavior Configuration**
    - Configure automatic restart on failure
    - Example:
+
      ```javascript
      await manageService({
        action: 'register',
@@ -158,6 +166,7 @@ The @fnet/service package can be integrated into the Flownet CLI ecosystem in se
    - Extend Flownet CLI with service management commands
    - Allow users to register, start, stop, and monitor services
    - Example command structure:
+
      ```
      fnet service register --name MyService --command "node app.js" --description "My service"
      fnet service start --name MyService
@@ -168,6 +177,7 @@ The @fnet/service package can be integrated into the Flownet CLI ecosystem in se
    - Allow service definitions in project configuration files
    - Automatically register and manage services based on project configuration
    - Example project configuration:
+
      ```yaml
      services:
        api:
@@ -182,6 +192,7 @@ The @fnet/service package can be integrated into the Flownet CLI ecosystem in se
    - Integrate service management into deployment workflows
    - Automatically register and start services during deployment
    - Example deployment workflow:
+
      ```yaml
      deploy:
        steps:
@@ -195,6 +206,7 @@ The @fnet/service package can be integrated into the Flownet CLI ecosystem in se
    - Use for managing development services
    - Provide consistent service management across development environments
    - Example development workflow:
+
      ```yaml
      dev:
        services:
@@ -211,6 +223,7 @@ The @fnet/service package can complement several other Flownet packages:
 1. **@fnet/shell-flow**
    - @fnet/service could be used within shell-flow command groups for service management
    - Example integration:
+
      ```yaml
      commands:
        deploy:
@@ -229,6 +242,7 @@ The @fnet/service package can complement several other Flownet packages:
    - Service definitions could be part of project configuration
    - @fnet/config could load and validate service configurations
    - Example:
+
      ```javascript
      import { loadConfig } from '@fnet/config';
      import manageService from '@fnet/service';
@@ -249,6 +263,7 @@ The @fnet/service package can complement several other Flownet packages:
    - Service definitions could be specified in YAML format
    - @fnet/yaml could parse and enhance service configurations
    - Example:
+
      ```yaml
      # Enhanced YAML with @fnet/yaml features
      services:
@@ -417,6 +432,7 @@ Common usage patterns for the @fnet/service package include:
    - Avoid special characters that may cause issues on some platforms
    - Consider using prefixes for related services
    - Example:
+
      ```javascript
      // Good naming pattern
      const serviceName = 'flownet-api-service';
@@ -430,6 +446,7 @@ Common usage patterns for the @fnet/service package include:
    - Provide helpful error messages for permission issues
    - Consider using user-level services when possible
    - Example:
+
      ```javascript
      try {
        await manageService({
@@ -452,6 +469,7 @@ Common usage patterns for the @fnet/service package include:
    - Provide platform-specific troubleshooting guidance
    - Consider fallback options for failed operations
    - Example:
+
      ```javascript
      try {
        await manageService({
@@ -484,6 +502,7 @@ Common usage patterns for the @fnet/service package include:
    - Implement validation for service configurations
    - Consider versioning service definitions
    - Example:
+
      ```javascript
      // Define service configurations
      const serviceConfigs = {
@@ -514,6 +533,7 @@ Common usage patterns for the @fnet/service package include:
    - Provide platform-specific configuration options
    - Document platform differences clearly
    - Example:
+
      ```javascript
      const platform = os.platform();
      let serviceConfig = {
@@ -540,6 +560,7 @@ Common usage patterns for the @fnet/service package include:
    - Set up automated recovery procedures
    - Log service events for troubleshooting
    - Example:
+
      ```javascript
      // Regular health check function
      async function monitorService(name) {

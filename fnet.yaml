@@ -8,11 +8,19 @@ commands:
     - bun ./dist/fnet/index.js --version
     - bun ./dist/frun/index.js --version
     - bun ./dist/fbin/index.js --version
+    - bun ./dist/fservice/index.js --version
     - bun link
 
   deploy:
     - fnet build
     - bun publish --access public
+
+  compile-fservice:
+    - bun build ./dist/fservice/index.js --compile --outfile=.bin/fservice
+    - du -h .bin/fservice
+    - chmod +x .bin/fservice
+    - .bin/fservice --help
+    - otool -L .bin/fservice
 
   compile-frun:
     - bun build ./dist/frun/index.js --compile --outfile=.bin/frun
@@ -44,6 +52,9 @@ commands:
 
   compile:
     steps:
+      - frun compile-fservice
+      - pause: true
+
       - frun build
       - pause: true
 

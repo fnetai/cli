@@ -56,6 +56,12 @@ export async function expressCmd(yargs) {
             type: 'string',
             choices: ['fnode', 'fnet']
           })
+          .option('all', {
+            describe: 'Show all projects regardless of type',
+            type: 'boolean',
+            default: false,
+            alias: 'a'
+          })
           .option('name', {
             describe: 'Filter by project name',
             type: 'string'
@@ -308,6 +314,11 @@ async function handleExpressList(argv) {
     // Collect all projects
     const projects = [];
 
+    // Set default type filter to 'fnet' if not specified and --all is not used
+    if (!argv.type && !argv.all) {
+      argv.type = 'fnet';
+    }
+
     for (const dateDir of dateDirs) {
       const datePath = path.join(EXPRESS_BASE_DIR, dateDir);
       const projectNames = fs.readdirSync(datePath);
@@ -357,26 +368,40 @@ async function handleExpressList(argv) {
 
     // Display projects
     console.log(chalk.blue('\nExpress Projects:'));
-    console.log(chalk.blue('=================\n'));
 
-    // Create a table with clean paths
-    const table = projects.map(project => {
+    // Import table utils
+    const tableUtils = (await import('../utils/table-utils.js')).default;
+
+    // Create table with headers
+    const headers = ['NAME', 'TYPE', 'DATE', 'PATH'];
+    const table = tableUtils.createTable(headers, {
+      // Remove row separators for more compact display
+      chars: {
+        'mid': '',
+        'mid-mid': '',
+        'left-mid': '',
+        'right-mid': ''
+      }
+    });
+
+    // Add rows to table
+    for (const project of projects) {
       // Replace home directory with ~ for cleaner display
       let displayPath = project.path;
       if (displayPath.startsWith(os.homedir())) {
         displayPath = '~' + displayPath.substring(os.homedir().length);
       }
 
-      return {
-        Name: project.name,
-        Type: project.type,
-        Date: project.date,
-        Path: displayPath
-      };
-    });
+      table.push([
+        chalk.white(project.name),  // Major column
+        project.type === 'fnet' ? chalk.cyan(project.type) : project.type === 'fnode' ? chalk.green(project.type) : project.type,  // Type is important
+        project.date,
+        displayPath
+      ]);
+    }
 
     // Display the table
-    console.table(table);
+    console.log(table.toString());
     console.log(chalk.blue(`\nTotal: ${projects.length} projects`));
   } catch (error) {
     console.error(chalk.red(`Error listing express projects: ${error.message}`));

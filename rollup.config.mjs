@@ -94,5 +94,21 @@ export default [
       ...commonPlugins()
     ],
     external: id => /node_modules/.test(id)
+  },
+  {
+    input: `src/fservice-cli/index.js`,
+    output: {
+      format: "esm",
+      exports: "auto",
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
+      dir: 'dist/fservice',
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
+    },
+    plugins: [
+      fnetDelete({ targets: ["dist/fservice/**"] }),
+      ...commonPlugins()
+    ],
+    external: id => /node_modules/.test(id)
   }
 ];

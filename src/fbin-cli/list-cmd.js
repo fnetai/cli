@@ -6,6 +6,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import chalk from 'chalk';
 import binSystem from '../utils/bin-system.js';
+import tableUtils from '../utils/table-utils.js';
 import { createContext } from './context.js';
 
 export const command = 'list [options]';
@@ -82,47 +83,31 @@ export const handler = async (argv) => {
     console.log(chalk.blue(`Found ${binaryCount} installed binaries:`));
     console.log();
 
-    // Calculate column widths
-    const nameWidth = Math.max(
-      ...Object.keys(binaries).map(name => name.length),
-      'NAME'.length
-    );
-    const versionWidth = Math.max(
-      ...Object.values(binaries).map(binary => (binary.version || 'N/A').length),
-      'VERSION'.length
-    );
-    const platformWidth = Math.max(
-      ...Object.values(binaries).map(binary => (binary.platform || 'N/A').length),
-      'PLATFORM'.length
-    );
-
-    // Print header
-    console.log(
-      chalk.green('NAME'.padEnd(nameWidth + 2)) +
-      chalk.green('VERSION'.padEnd(versionWidth + 2)) +
-      chalk.green('PLATFORM'.padEnd(platformWidth + 2)) +
-      chalk.green('CREATED')
-    );
-
-    // Print separator
-    console.log(
-      '─'.repeat(nameWidth + 2) +
-      '─'.repeat(versionWidth + 2) +
-      '─'.repeat(platformWidth + 2) +
-      '─'.repeat(20)
-    );
-
-    // Print binaries
-    Object.entries(binaries).forEach(([name, binary]) => {
-      const created = new Date(binary.created).toLocaleString();
-      console.log(
-        chalk.white(name.padEnd(nameWidth + 2)) +
-        chalk.yellow((binary.version || 'N/A').padEnd(versionWidth + 2)) +
-        chalk.cyan((binary.platform || 'N/A').padEnd(platformWidth + 2)) +
-        chalk.gray(created)
-      );
+    // Create table with headers
+    const headers = ['NAME', 'VERSION', 'PLATFORM', 'CREATED'];
+    const table = tableUtils.createTable(headers, {
+      // Remove row separators for more compact display
+      chars: {
+        'mid': '',
+        'mid-mid': '',
+        'left-mid': '',
+        'right-mid': ''
+      }
     });
 
+    // Add rows to table
+    Object.entries(binaries).forEach(([name, binary]) => {
+      const created = new Date(binary.created).toLocaleString();
+      table.push([
+        chalk.white(name),  // Ana sütun renkli
+        binary.version || 'N/A',  // Diğer sütunlar normal metin
+        binary.platform || 'N/A',
+        created
+      ]);
+    });
+
+    // Print table
+    console.log(table.toString());
     console.log();
     console.log(chalk.blue(`Bin directory: ${binDir}`));
 
