@@ -102,6 +102,7 @@ The template directory contains several types of files:
 Templates are rendered using the `@flownet/lib-render-templates-dir` library, which is a wrapper around the Nunjucks templating engine. The rendering process typically follows these steps:
 
 1. **Context Preparation**: A context object is created with data for the template
+
    ```javascript
    const templateContext = {
      atom: atom,                   // Project configuration
@@ -110,11 +111,13 @@ Templates are rendered using the `@flownet/lib-render-templates-dir` library, wh
    ```
 
 2. **Template Resolution**: The template directory is resolved using the `resolveTemplatePath` utility
+
    ```javascript
    const templateDir = resolveTemplatePath('./template/fnode/project');
    ```
 
 3. **Rendering**: Templates are rendered with the context data
+
    ```javascript
    await fnetRender({
      pattern: ["index.js.njk"],
@@ -154,6 +157,7 @@ Templates are used throughout the Flownet CLI codebase for various purposes:
 1. **Project Creation**:
    - `fnode create` and `fnet create` commands use templates to generate new projects
    - Example from `src/fnode-cli/create-cmd.js`:
+
      ```javascript
      const templateDir = resolveTemplatePath('./template/fnode/project');
      await fnetRender({
@@ -167,6 +171,7 @@ Templates are used throughout the Flownet CLI codebase for various purposes:
 2. **Component Creation**:
    - Templates are used to create specific components like CLI interfaces or web applications
    - Example from `src/builder/api/create-cli/index.js`:
+
      ```javascript
      await fnetRender({
        pattern: ["index.js.njk"],
@@ -179,6 +184,7 @@ Templates are used throughout the Flownet CLI codebase for various purposes:
 3. **Configuration Generation**:
    - Templates generate configuration files like package.json, tsconfig.json, etc.
    - Example from `src/builder/api/create-ts-config/index.js`:
+
      ```javascript
      const template = nunjucks.compile(
        fs.readFileSync(path.resolve(templateDir, `tsconfig.json.njk`), "utf8"),
@@ -199,6 +205,7 @@ Templates are used throughout the Flownet CLI codebase for various purposes:
 The template system in Flownet CLI supports several advanced features:
 
 1. **Conditional Logic**: Templates use Nunjucks conditionals to adapt to different configurations
+
    ```njk
    {% if atom.doc.features.cli.enabled %}
    // CLI-specific code
@@ -206,6 +213,7 @@ The template system in Flownet CLI supports several advanced features:
    ```
 
 2. **Macros**: Reusable template fragments defined as macros
+
    ```njk
    {% macro importMcpDependencies() %}
    import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -214,16 +222,19 @@ The template system in Flownet CLI supports several advanced features:
    ```
 
 3. **Template Inheritance**: Templates can extend or include other templates
+
    ```njk
    {% include "header.njk" %}
    ```
 
 4. **Variable Substitution**: Templates can substitute variables from the context
+
    ```njk
    "name": "{{atom.doc.name}}",
    ```
 
 5. **Loops and Iterations**: Templates can iterate over arrays and objects
+
    ```njk
    {% for dep in packageDependencies %}
    "{{dep.package}}": "{{dep.version}}"{% if not loop.last %},{% endif %}
@@ -237,6 +248,7 @@ The template system allows for customization based on project configuration:
 1. **Runtime-Specific Templates**: Different templates for Node.js, Bun, and Python
 2. **Project Type Templates**: Different templates for fnode and fnet projects
 3. **Feature-Based Conditionals**: Templates adapt based on enabled features
+
    ```njk
    {% if atom.doc.features.cli.mcp.enabled===true %}
    // MCP-specific code
@@ -248,12 +260,14 @@ The template system allows for customization based on project configuration:
 Templates are tightly integrated with the project configuration system:
 
 1. **Atom Object**: Templates access project configuration through the `atom` object
+
    ```njk
    "name": "{{atom.doc.name}}",
    "version": "{{atom.doc.version}}",
    ```
 
 2. **Feature Detection**: Templates check for enabled features
+
    ```njk
    {% if atom.doc.features.app.enabled===true %}
    // App-specific code
@@ -261,6 +275,7 @@ Templates are tightly integrated with the project configuration system:
    ```
 
 3. **Format Adaptation**: Templates adapt to different module formats
+
    ```njk
    {% if atom.doc.features.project.format==='esm' %}
    // ESM-specific code
@@ -274,11 +289,13 @@ Templates are tightly integrated with the project configuration system:
 Templates support different CLI modes for projects:
 
 1. **Default Mode**: Standard CLI execution
+
    ```njk
    {{ defaultModeStandard('Node') }}
    ```
 
 2. **MCP Mode**: Model Context Protocol mode for LLM integration
+
    ```njk
    {% if atom.doc.features.cli.mcp.enabled===true %}
    {{ mcpModeCode('Node') }}
@@ -286,6 +303,7 @@ Templates support different CLI modes for projects:
    ```
 
 3. **HTTP Mode**: HTTP server mode
+
    ```njk
    {% if atom.doc.features.cli.http.enabled===true %}
    {{ httpModeCodeExpress('Node') }}

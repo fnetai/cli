@@ -35,6 +35,7 @@ When the @fnet/cli package is installed globally (via npm, yarn, or bun), these 
 The `fnode` CLI tool is designed for managing Node/classic projects that use `fnode.yaml` as their project configuration file.
 
 **Key functionality**:
+
 - Project creation and management
 - Building and deployment
 - File and input management
@@ -43,11 +44,13 @@ The `fnode` CLI tool is designed for managing Node/classic projects that use `fn
 - Express project management
 
 **Command structure**:
+
 ```
 fnode <command> [options]
 ```
 
 **Main commands**:
+
 - `create`: Create a new fnode project
 - `project`: Manage fnode project
 - `build`: Build fnode project
@@ -65,17 +68,20 @@ fnode <command> [options]
 The `fnet` CLI tool is designed for managing Workflow projects that use `fnet.yaml` as their project configuration file.
 
 **Key functionality**:
+
 - Workflow project creation and management
 - Building and deployment
 - File and input management
 - Command execution in project context
 
 **Command structure**:
+
 ```
 fnet <command> [options]
 ```
 
 **Main commands**:
+
 - `create`: Create a new fnet project
 - `project`: Manage fnet project
 - `build`: Build fnet project
@@ -93,16 +99,19 @@ fnet <command> [options]
 The `frun` CLI tool provides a unified interface for running command groups from project files. It works with both `fnode.yaml` and `fnet.yaml` project files.
 
 **Key functionality**:
+
 - Execute command groups defined in project files
 - Auto-detect project type (fnode or fnet)
 - Support for conditional execution with tags
 
 **Command structure**:
+
 ```
 frun <command-group> [options]
 ```
 
 **Main commands**:
+
 - Default command: Run a command group from project file
 
 #### 4. fbin
@@ -110,17 +119,20 @@ frun <command-group> [options]
 The `fbin` CLI tool manages the binary system for installing, compiling, and distributing CLI tools.
 
 **Key functionality**:
+
 - Compile JavaScript files to standalone binaries
 - Install binaries to a central location
 - Manage binary versions and metadata
 - Add binary directory to PATH
 
 **Command structure**:
+
 ```
 fbin <command> [options]
 ```
 
 **Main commands**:
+
 - `setup`: Set up the binary system
 - `path`: Manage the binary directory in PATH
 - `compile`: Compile a JavaScript file to a binary
@@ -155,16 +167,19 @@ The four CLI tools are designed to work together as part of a cohesive ecosystem
 Flownet projects can be run in different modes using the `--cli-mode` parameter:
 
 1. **Default Mode**: Runs the functional code directly
+
    ```
    fnode cli --param1 value1 --param2 value2
    ```
 
 2. **MCP Mode**: Runs the functional code as an MCP (Model Context Protocol) server
+
    ```
    fnode cli --cli-mode=mcp
    ```
 
 3. **HTTP Mode**: Runs the functional code as an HTTP server
+
    ```
    fnode cli --cli-mode=http
    ```
@@ -178,6 +193,7 @@ The Flownet CLI project provides templates for creating new projects with CLI ca
 3. **Compilation Support**: Projects include npm scripts for compiling and installing as binaries
 
 Example from a template:
+
 ```json
 "scripts": {
   "compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}",

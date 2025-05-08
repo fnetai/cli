@@ -72,6 +72,7 @@ At its core, @fnet/shell-flow transforms declarative command definitions (in YAM
    - Capture command output for further processing
    - Named output capture for reference in subsequent commands
    - Example:
+
      ```yaml
      commands:
        version:
@@ -84,6 +85,7 @@ At its core, @fnet/shell-flow transforms declarative command definitions (in YAM
    - Set environment variables for specific commands or groups
    - Inherit or override parent environment
    - Example:
+
      ```yaml
      commands:
        build:
