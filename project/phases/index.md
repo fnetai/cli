@@ -13,5 +13,7 @@ This document outlines the organic phased growth of Flownet CLI. Each phase repr
 - **[Phase 007: 'frun' CLI Usage Research](./phase-007.md)** - Knowledge phase analyzing the 'frun' CLI entry point from an end-user perspective
 - **[Phase 008: 'fbin' CLI Usage Research](./phase-008.md)** - Knowledge phase analyzing the 'fbin' CLI entry point from an end-user perspective
 - **[Phase 009: @fnet/prompt Extended Usage Analysis](./phase-009.md)** - Knowledge phase analyzing the extended usage of the @fnet/prompt npm package
+- **[Phase 010: @fnet/object-from-schema Package Analysis](./phase-010.md)** - Knowledge phase analyzing the @fnet/object-from-schema npm package
+- **[Phase 011: 'fservice' CLI Implementation](./phase-011.md)** - Implementation phase for the new 'fservice' CLI entry point
 
 *Note: Phases can be either Implementation Phases or Knowledge Phases.*

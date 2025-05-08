@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.116.3",
+  "version": "0.117.0",
   "files": [
     "dist",
     "template"
@@ -41,7 +41,7 @@
     "@fnet/object-from-schema": "^0.1.25",
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
-    "@fnet/service": "^0.1.5",
+    "@fnet/service": "^0.1.7",
     "@fnet/shell-flow": "^0.1.50",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.1.7",
@@ -76,7 +76,8 @@
     "fnet": "dist/fnet/index.js",
     "fnode": "dist/fnode/index.js",
     "frun": "dist/frun/index.js",
-    "fbin": "dist/fbin/index.js"
+    "fbin": "dist/fbin/index.js",
+    "fservice": "dist/fservice/index.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
