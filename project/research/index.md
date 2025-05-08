@@ -12,5 +12,6 @@ This section contains outputs of Knowledge Phases with detailed research finding
 - **[Template Directory Analysis](./template-directory-analysis.md)** - Analysis of the purpose, structure, and usage of the template directory in the Flownet CLI project
 - **['frun' CLI Usage Research](./frun-cli-usage.md)** - Analysis of the 'frun' CLI entry point from an end-user perspective, focusing on usage patterns and optimal user experience
 - **['fbin' CLI Usage Research](./fbin-cli-usage.md)** - Analysis of the 'fbin' CLI entry point from an end-user perspective, focusing on binary management and distribution
+- **[@fnet/prompt Extended Usage Analysis](./fnet-prompt-extended-usage.md)** - Analysis of the @fnet/prompt npm package and its extended usage for creating interactive CLI experiences
 
 *Note: Research documents are outputs of Knowledge Phases.*
