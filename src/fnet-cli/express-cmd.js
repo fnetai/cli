@@ -56,6 +56,12 @@ export async function expressCmd(yargs) {
             type: 'string',
             choices: ['fnode', 'fnet']
           })
+          .option('all', {
+            describe: 'Show all projects regardless of type',
+            type: 'boolean',
+            default: false,
+            alias: 'a'
+          })
           .option('name', {
             describe: 'Filter by project name',
             type: 'string'
@@ -307,6 +313,11 @@ async function handleExpressList(argv) {
 
     // Collect all projects
     const projects = [];
+
+    // Set default type filter to 'fnet' if not specified and --all is not used
+    if (!argv.type && !argv.all) {
+      argv.type = 'fnet';
+    }
 
     for (const dateDir of dateDirs) {
       const datePath = path.join(EXPRESS_BASE_DIR, dateDir);
