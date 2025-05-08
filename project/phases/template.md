@@ -9,7 +9,7 @@
 Choose one:
 
 - **Implementation Phase**: Adds minimal working functionality to the system
-- **Knowledge Phase**: Research-only phase that informs future development
+- **Research Phase**: Research-only phase that informs future development
 
 ## Approach
 
@@ -24,7 +24,7 @@ For Implementation Phases:
 3. Avoid premature optimization or complex structures
 4. Skip nice-to-have features for later phases
 
-For Knowledge Phases:
+For Research Phases:
 
 1. Research the core concepts thoroughly
 2. First check `./research/index.md` to understand the research directory structure
@@ -42,7 +42,7 @@ For Knowledge Phases:
 - [ ] Update Documentation
   - [ ] Add link to this phase in `./phases/index.md`
 
-**For Knowledge Phases:**
+**For Research Phases:**
 
 - [ ] Research Preparation
   - [ ] Check `./research/index.md` to understand the research directory structure
@@ -60,7 +60,7 @@ For Knowledge Phases:
 
 [After completing the phase, add a brief summary]
 
-For Knowledge Phases, include:
+For Research Phases, include:
 
 - Key findings
 - Link to detailed research document: [Topic](../research/filename.md)
@@ -69,9 +69,15 @@ For Knowledge Phases, include:
 **IMPORTANT: After completing this phase:**
 
 - Add a link to this phase in `./phases/index.md`
-- For Knowledge Phases: Also add a link to the research document in `./research/index.md`
+- For Research Phases: Also add a link to the research document in `./research/index.md`
 
-## Related Phases
+## Related Links
 
-- [Previous phase that this builds upon]
-- [Next phase that will build on this]
+- [Related phase if applicable]
+- [Related research if applicable]
+- [Related report if applicable]
+- [Related fundamental if applicable]
+- [Related guide if applicable]
+- [Other relevant reference links if applicable]
+
+*Note: This is a template file. Replace the placeholders with actual content relevant to your phase. Keep it simple and focused on the essential information.*
