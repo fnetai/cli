@@ -17,5 +17,6 @@ This document outlines the organic phased growth of Flownet CLI. Each phase repr
 - **[Phase 011: 'fservice' CLI Implementation](./phase-011.md)** - Implementation phase for the new 'fservice' CLI entry point
 - **[Phase 012: 'fservice' CLI Table Output Enhancement](./phase-012.md)** - Implementation phase for enhancing table outputs in the 'fservice' CLI using cli-table3
 - **[Phase 013: 'fbin' CLI Table Output Enhancement](./phase-013.md)** - Implementation phase for enhancing table outputs in the 'fbin' CLI using cli-table3
+- **[Phase 014: 'fnet' and 'fnode' CLI Table Output Enhancement](./phase-014.md)** - Implementation phase for enhancing table outputs in the 'fnet' and 'fnode' CLI using cli-table3
 
 *Note: Phases can be either Implementation Phases or Knowledge Phases.*
