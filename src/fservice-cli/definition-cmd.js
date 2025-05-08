@@ -277,7 +277,7 @@ async function showDefinitionHandler(argv) {
         allowAbort: true
       });
 
-      if (!selectedDefinition) {
+      if (selectedDefinition === null) {
         console.log(chalk.yellow('Operation cancelled.'));
         return;
       }
@@ -331,7 +331,7 @@ async function editDefinitionHandler(argv) {
         allowAbort: true
       });
 
-      if (!selectedDefinition) {
+      if (selectedDefinition === null) {
         console.log(chalk.yellow('Operation cancelled.'));
         return;
       }
@@ -398,7 +398,7 @@ async function deleteDefinitionHandler(argv) {
         allowAbort: true
       });
 
-      if (!selectedDefinition) {
+      if (selectedDefinition === null) {
         console.log(chalk.yellow('Operation cancelled.'));
         return;
       }
@@ -465,7 +465,7 @@ async function validateDefinitionHandler(argv) {
         allowAbort: true
       });
 
-      if (!selectedDefinition) {
+      if (selectedDefinition === null) {
         console.log(chalk.yellow('Operation cancelled.'));
         return;
       }

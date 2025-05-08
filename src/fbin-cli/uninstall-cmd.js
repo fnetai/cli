@@ -78,7 +78,7 @@ export const handler = async (argv) => {
         allowAbort: true
       });
 
-      if (!selectedBinary) {
+      if (selectedBinary === null) {
         console.log(chalk.yellow('Uninstallation cancelled.'));
         return;
       }

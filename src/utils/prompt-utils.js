@@ -7,7 +7,7 @@ import fnetPrompt from '@fnet/prompt';
 
 /**
  * Prompt user to select an item from a list
- * 
+ *
  * @param {Object} options - Options
  * @param {Array<string|Object>} options.items - List of items to select from
  * @param {string} options.message - Prompt message
@@ -61,7 +61,7 @@ export async function promptForSelection(options) {
   // Add abort option if allowed
   if (allowAbort) {
     choices.push({
-      name: 'abort',
+      name: 'cancel',
       value: null,
       message: chalk.yellow('Cancel')
     });
@@ -86,12 +86,17 @@ export async function promptForSelection(options) {
     initial: initialChoice
   });
 
+  // If the selected value is 'cancel', return null
+  if (selectedValue === 'cancel') {
+    return null;
+  }
+
   return selectedValue;
 }
 
 /**
  * Prompt user to select multiple items from a list
- * 
+ *
  * @param {Object} options - Options
  * @param {Array<string|Object>} options.items - List of items to select from
  * @param {string} options.message - Prompt message

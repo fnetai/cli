@@ -675,6 +675,11 @@ async function findProjectByName(projectName) {
           allowAbort: true
         });
 
+        if (selectedProject === null) {
+          console.log(chalk.yellow('Operation cancelled.'));
+          return null;
+        }
+
         return selectedProject;
       }
     }
@@ -730,6 +735,11 @@ async function selectProjectInteractively() {
     valueField: 'value',
     allowAbort: true
   });
+
+  if (selectedProject === null) {
+    console.log(chalk.yellow('Operation cancelled.'));
+    return null;
+  }
 
   return selectedProject;
 }
