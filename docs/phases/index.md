@@ -19,5 +19,6 @@ This document outlines the organic phased growth of Flownet CLI. Each phase repr
 - **[Phase 013: 'fbin' CLI Table Output Enhancement](./phase-013.md)** - Implementation phase for enhancing table outputs in the 'fbin' CLI using cli-table3
 - **[Phase 014: 'fnet' and 'fnode' CLI Table Output Enhancement](./phase-014.md)** - Implementation phase for enhancing table outputs in the 'fnet' and 'fnode' CLI using cli-table3
 - **[Phase 015: Interactive Selection from List Commands](./phase-015.md)** - Implementation phase for enhancing CLI commands to prompt for selection when no name is provided
+- **[Phase 016: Express Remove and Enter Commands](./phase-016.md)** - Implementation phase for adding 'remove' and 'enter' commands to 'fnode express' and 'fnet express'
 
 *Note: Phases can be either Implementation Phases or Knowledge Phases.*

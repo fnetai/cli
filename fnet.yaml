@@ -424,14 +424,34 @@ commands:
     - fnode express move --latest ~/test-destination
     - rm -rf ~/test-destination
 
+  # Express remove command tests
+  test-express-remove:
+    - fnode express test-remove-project
+    - fnode express remove test-remove-project --yes
+    - fnet express test-remove-workflow
+    - fnet express remove test-remove-workflow --yes
+    - fnode express test-remove-cancel
+    - fnode express remove test-remove-cancel
+
+  # Express enter command tests
+  test-express-enter:
+    - fnode express test-enter-project
+    - fnode express enter test-enter-project
+    - fnet express test-enter-workflow
+    - fnet express enter test-enter-workflow
+    - fnode express enter --latest
+
   # Comprehensive express command test
   test-express-all:
     - fnode express test-all-project
     - fnode express list
     - fnode express open test-all-project
+    - fnode express enter test-all-project
     - mkdir -p ~/test-destination
     - fnode express move test-all-project ~/test-destination
     - rm -rf ~/test-destination
+    - fnet express test-all-workflow
+    - fnet express remove test-all-workflow --yes
 
   # Test express command with --yes flag
   test-express-yes:

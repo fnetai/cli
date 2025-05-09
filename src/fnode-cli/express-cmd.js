@@ -114,6 +114,50 @@ export async function expressCmd(yargs) {
         await handleExpressMove(argv);
       }
     )
+    .command(
+      'remove [project-name]',
+      'Remove an express project',
+      (yargs) => {
+        return yargs
+          .positional('project-name', {
+            describe: 'Name of the project to remove',
+            type: 'string'
+          })
+          .option('latest', {
+            describe: 'Remove the most recent project',
+            type: 'boolean',
+            default: false
+          })
+          .option('yes', {
+            alias: 'y',
+            describe: 'Skip confirmation prompt',
+            type: 'boolean',
+            default: false
+          });
+      },
+      async (argv) => {
+        await handleExpressRemove(argv);
+      }
+    )
+    .command(
+      'enter [project-name]',
+      'Enter the directory of an express project in the active terminal',
+      (yargs) => {
+        return yargs
+          .positional('project-name', {
+            describe: 'Name of the project to enter',
+            type: 'string'
+          })
+          .option('latest', {
+            describe: 'Enter the most recent project directory',
+            type: 'boolean',
+            default: false
+          });
+      },
+      async (argv) => {
+        await handleExpressEnter(argv);
+      }
+    )
     .demandCommand(1, 'You need to specify a command')
     .help();
 }
@@ -860,5 +904,144 @@ function copyDirectory(source, destination) {
       // Copy file
       fs.copyFileSync(sourcePath, destPath);
     }
+  }
+}
+
+/**
+ * Handle express remove command
+ */
+async function handleExpressRemove(argv) {
+  try {
+    // Ensure express base directory exists
+    if (!fs.existsSync(EXPRESS_BASE_DIR)) {
+      console.log(chalk.yellow('No express projects found.'));
+      return;
+    }
+
+    let projectPath;
+
+    // If --latest flag is used, find the most recent project
+    if (argv.latest) {
+      projectPath = await findLatestProject();
+      if (!projectPath) {
+        console.log(chalk.yellow('No express projects found.'));
+        return;
+      }
+    }
+    // If project name is provided, find that project
+    else if (argv.projectName) {
+      projectPath = await findProjectByName(argv.projectName);
+      if (!projectPath) {
+        console.log(chalk.yellow(`Project "${argv.projectName}" not found.`));
+        return;
+      }
+    }
+    // Otherwise, show a list of projects to choose from
+    else {
+      const relativeProjectPath = await selectProjectInteractively();
+      if (!relativeProjectPath) {
+        console.log(chalk.yellow('No project selected.'));
+        return;
+      }
+
+      // Convert relative path to absolute path
+      projectPath = path.join(EXPRESS_BASE_DIR, relativeProjectPath);
+    }
+
+    // Get project name for display
+    const projectName = path.basename(projectPath);
+
+    // Confirm deletion unless --yes flag is used
+    if (!argv.yes) {
+      const answers = await fnetPrompt({
+        type: 'confirm',
+        name: 'confirm',
+        message: `Are you sure you want to remove project "${projectName}"?`,
+        initial: false
+      });
+
+      if (!answers.confirm) {
+        console.log(chalk.yellow('Project removal cancelled.'));
+        return;
+      }
+    }
+
+    // Remove the project
+    console.log(chalk.blue(`Removing project "${projectName}"...`));
+    fs.rmSync(projectPath, { recursive: true, force: true });
+    console.log(chalk.green(`Project "${projectName}" removed successfully.`));
+  } catch (error) {
+    console.error(chalk.red(`Error removing express project: ${error.message}`));
+    process.exit(1);
+  }
+}
+
+/**
+ * Handle express enter command
+ */
+async function handleExpressEnter(argv) {
+  try {
+    // Ensure express base directory exists
+    if (!fs.existsSync(EXPRESS_BASE_DIR)) {
+      console.log(chalk.yellow('No express projects found.'));
+      return;
+    }
+
+    let projectPath;
+
+    // If --latest flag is used, find the most recent project
+    if (argv.latest) {
+      projectPath = await findLatestProject();
+      if (!projectPath) {
+        console.log(chalk.yellow('No express projects found.'));
+        return;
+      }
+    }
+    // If project name is provided, find that project
+    else if (argv.projectName) {
+      projectPath = await findProjectByName(argv.projectName);
+      if (!projectPath) {
+        console.log(chalk.yellow(`Project "${argv.projectName}" not found.`));
+        return;
+      }
+    }
+    // Otherwise, show a list of projects to choose from
+    else {
+      const relativeProjectPath = await selectProjectInteractively();
+      if (!relativeProjectPath) {
+        console.log(chalk.yellow('No project selected.'));
+        return;
+      }
+
+      // Convert relative path to absolute path
+      projectPath = path.join(EXPRESS_BASE_DIR, relativeProjectPath);
+    }
+
+    // Display the path for the user
+    console.log(chalk.blue(`Entering project directory: ${projectPath}`));
+
+    // Execute a shell command to change directory
+    // This will open a new shell in the target directory
+    console.log(chalk.yellow(`\nOpening a new shell in the project directory...`));
+
+    // Determine which shell to use
+    const shell = process.env.SHELL || '/bin/bash';
+
+    // Launch a new shell in the project directory
+    const shellProcess = spawn(shell, [], {
+      stdio: 'inherit',
+      cwd: projectPath,
+      shell: true
+    });
+
+    return new Promise((resolve) => {
+      shellProcess.on('close', () => {
+        console.log(chalk.green(`\nReturned from project directory.`));
+        resolve();
+      });
+    });
+  } catch (error) {
+    console.error(chalk.red(`Error entering express project directory: ${error.message}`));
+    process.exit(1);
   }
 }
