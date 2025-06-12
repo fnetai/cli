@@ -59,7 +59,10 @@ export default async function deployToFnetPackage({ setProgress, context, deploy
   command += ` --bucketName='${config.env.GCS_BUCKET_NAME}'`;
   command += ` --keyFilename='${path.resolve(path.dirname(configFile), config.env.GCS_UPLOADER_KEY_FILE)}'`;
   command += ` --dir='${projectDir}'`;
-  command += ` --pattern={'dist/**/**','bin/**/**','test/**/**','*.html'}`;
+  command += ` --pattern='dist/**/**'`;
+  command += ` --pattern='bin/**/**'`;
+  command += ` --pattern='test/**/**'`;
+  command += ` --pattern='*.html'`;
   command += ` --destDir='${packageJSON.name}/${packageJSON.version}'`;
   command += ` --metadata.cacheControl='public, max-age=31536000, immutable'`;
   // command += ` --verbose`;
