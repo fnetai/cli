@@ -72,33 +72,89 @@
       // Use stdio transport
       transport = new StdioServerTransport();
     } else if (transportType === 'http') {
-      // Use Streamable HTTP transport (modern HTTP transport)
+      // Use Streamable HTTP transport (official transport as of MCP 2025-03-26)
       const app = express();
       app.use(express.json());
 
       const port = args['cli-port'] || args.cli_port || 3000;
-      const httpServer = app.listen(port, () => {
-        console.log(`MCP server started with Streamable HTTP transport on port ${port}`);
-      });
+      const host = args['cli-host'] || args.cli_host || '0.0.0.0';
+      const mcpEndpoint = '/mcp';
 
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
-      });
+      // Map to store transports by session ID
+      const transports = {};
 
       // Handle POST requests for client-to-server communication
-      app.post('/mcp', async (req, res) => {
+      app.post(mcpEndpoint, async (req, res) => {
+        // Check for existing session ID
+        const sessionId = req.get('Mcp-Session-Id');
+        let transport;
+
+        if (sessionId && transports[sessionId]) {
+          // Reuse existing transport
+          transport = transports[sessionId];
+        } else if (!sessionId && req.body && (req.body.method === 'initialize' ||
+                  (Array.isArray(req.body) && req.body.some(item => item.method === 'initialize')))) {
+          // New initialization request
+          transport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: () => {
+              // Generate cryptographically secure session ID
+              return require('crypto').randomBytes(16).toString('hex');
+            },
+            onsessioninitialized: (sessionId) => {
+              // Store the transport by session ID
+              transports[sessionId] = transport;
+            }
+          });
+
+          // Clean up transport when closed
+          transport.onclose = () => {
+            if (transport.sessionId) {
+              delete transports[transport.sessionId];
+            }
+          };
+
+          // Connect to the MCP server
+          await server.connect(transport);
+        } else {
+          // Invalid request
+          return res.status(400).json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Bad Request: No valid session ID provided'
+            },
+            id: null
+          });
+        }
+
+        // Handle the request
         await transport.handleRequest(req, res, req.body);
       });
 
-      // Handle GET requests for server-to-client notifications via SSE
-      app.get('/mcp', async (req, res) => {
+      // Reusable handler for GET and DELETE requests
+      const handleSessionRequest = async (req, res) => {
+        const sessionId = req.get('Mcp-Session-Id');
+        if (!sessionId || !transports[sessionId]) {
+          return res.status(400).send('Invalid or missing session ID');
+        }
+
+        const transport = transports[sessionId];
         await transport.handleRequest(req, res);
-      });
+      };
+
+      // Handle GET requests for server-to-client notifications via SSE
+      app.get(mcpEndpoint, handleSessionRequest);
 
       // Handle DELETE requests for session termination
-      app.delete('/mcp', async (req, res) => {
-        await transport.handleRequest(req, res);
+      app.delete(mcpEndpoint, handleSessionRequest);
+
+      app.listen(port, host, () => {
+        console.log(`MCP server started with Streamable HTTP transport`);
+        console.log(`Endpoint: http://${host}:${port}${mcpEndpoint}`);
+        console.log(`Listening on ${host}:${port}`);
       });
+
+      return;
     } else {
       console.error(`Unknown MCP transport type: ${transportType}`);
       console.error(`Supported types: stdio, http`);
