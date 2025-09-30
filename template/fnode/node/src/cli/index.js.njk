@@ -71,34 +71,37 @@
     if (transportType === 'stdio') {
       // Use stdio transport
       transport = new StdioServerTransport();
-    } else if (transportType === 'sse') {
-      // Use SSE transport
+    } else if (transportType === 'http') {
+      // Use Streamable HTTP transport (modern HTTP transport)
       const app = express();
       app.use(express.json());
 
       const port = args['cli-port'] || args.cli_port || 3000;
-      const server = app.listen(port, () => {
-        console.log(`MCP server started with SSE transport on port ${port}`);
+      const httpServer = app.listen(port, () => {
+        console.log(`MCP server started with Streamable HTTP transport on port ${port}`);
       });
 
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => Math.random().toString(36).substring(2, 15),
       });
 
-      app.post('/sse', async (req, res) => {
+      // Handle POST requests for client-to-server communication
+      app.post('/mcp', async (req, res) => {
         await transport.handleRequest(req, res, req.body);
       });
 
-      app.get('/sse', async (req, res) => {
+      // Handle GET requests for server-to-client notifications via SSE
+      app.get('/mcp', async (req, res) => {
         await transport.handleRequest(req, res);
       });
 
-      app.delete('/sse', async (req, res) => {
+      // Handle DELETE requests for session termination
+      app.delete('/mcp', async (req, res) => {
         await transport.handleRequest(req, res);
       });
     } else {
       console.error(`Unknown MCP transport type: ${transportType}`);
-      console.error(`Supported types: stdio, sse`);
+      console.error(`Supported types: stdio, http`);
       process.exit(1);
     }
 
