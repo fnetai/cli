@@ -177,7 +177,7 @@ class NodeBuilder extends BuilderBase {
 
         if (!fs.existsSync(srcFilePath)) {
           fs.mkdirSync(path.dirname(srcFilePath), { recursive: true });
-          let template = 'export default async (args)=>{\n';
+          let template = 'export default async (input)=>{\n';
           template += '}';
           fs.writeFileSync(srcFilePath, template, 'utf8');
         }

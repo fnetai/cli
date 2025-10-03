@@ -103,7 +103,7 @@ export default class Workflow extends Object {
           throw new Error('Unknown situation');
         
         current=new nextBlock.toType({ parent:this, engine:this.engine, flow:this, caller:c });
-        currentArgs=nextBlock.withArgs;
+        currentArgs=nextBlock.input;
 
       } while(true);
 

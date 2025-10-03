@@ -58,7 +58,7 @@ export default function Block(context) {
               return resolve(nextBlock);
 
             current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, onError, error });
-            currentArgs=nextBlock.withArgs;
+            currentArgs=nextBlock.input;
             
           } while(true);
             

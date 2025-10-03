@@ -41,8 +41,7 @@ export default function Block(context) {
               console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
             {% endif %}
 
-            {# return resolve(await current.run.apply(current,args)); #}
-            current.run.apply(current,args).then(resolve);
+            Array.isArray(args)? current.run.apply(current,args).then(resolve):current.run.call(current,args).then(resolve);
           };
 
           {% if context.try.definition.dynamic %}
@@ -55,7 +54,7 @@ export default function Block(context) {
             console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
           {% endif %}
 
-          return resolve(await current.run.apply(current,args));
+          return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
         }
         catch({{context.except.context.transform.as | safe}}){
             throw new Error('Error must not reach here!');

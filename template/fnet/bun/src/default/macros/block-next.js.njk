@@ -13,8 +13,8 @@ return resolve ({
     fromClosure: c,
     toType:{{context.next.codeKey}},
     onError,
-    {% if context.transform.nextArgs %}
-    withArgs: {{context.transform.nextArgs | safe}},
+    {% if context.transform.output %}
+    input: {{context.transform.output | safe}},
     {% endif %}
 });
 

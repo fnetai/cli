@@ -1,3 +1,3 @@
-export default async (args) => {
+export default async (input) => {
   console.log("Hello world!");
 }

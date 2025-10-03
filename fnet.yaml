@@ -161,7 +161,7 @@ commands:
                 target: "src"
                 sources:
                   - source: |
-                      export default async (args) => {
+                      export default async (input) => {
                         console.log("Hello from fnode-node-compile project!");
                         return "Success!";
                       }
@@ -193,7 +193,7 @@ commands:
                     provider: text
                     target: "fnet/flows.yaml"
                   - source: |
-                      export default async (args) => {
+                      export default async (input) => {
                         console.log("Hello from fnet-node-compile project!");
                         return "Success!";
                       }
@@ -294,7 +294,7 @@ commands:
                 target: "src"
                 sources:
                   - source: |
-                      export default async (args) => {
+                      export default async (input) => {
                         console.log("Hello from fnode-install-test project!");
                         return "Success!";
                       }
@@ -316,7 +316,7 @@ commands:
                 target: "src"
                 sources:
                   - source: |
-                      export default async (args) => {
+                      export default async (input) => {
                         console.log("Hello from fnet-install-test project!");
                         return "Success!";
                       }
@@ -520,13 +520,13 @@ commands:
                     provider: text
                     target: "fnode.yaml"
                   - source: |
-                      export default async (args) => {
+                      export default async (input) => {
                         console.log("CLI Modes Test Project");
-                        console.log("Arguments:", JSON.stringify(args, null, 2));
+                        console.log("Arguments:", JSON.stringify(input, null, 2));
                         return {
                           message: "CLI modes test successful",
-                          mode: args.cli_mode || "default",
-                          args
+                          mode: input.cli_mode || "default",
+                          input
                         };
                       }
                     provider: text
