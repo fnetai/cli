@@ -29,7 +29,21 @@ export default function Block(context) {
         {% include "src/default/macros/block-modules.js.njk" %}
         
         try{
-            
+
+          const onError=error=>{
+            {% if context.except.definition.dynamic %}
+                const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
+            {% endif %}
+
+            const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c, onError });
+
+            {% if workflow.parent.context.atom.doc.features.print_runners %}
+              console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+            {% endif %}
+
+            return resolve(await current.run.apply(current,args));
+          };
+
           {% if context.try.definition.dynamic %}
               const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}");
           {% endif %}

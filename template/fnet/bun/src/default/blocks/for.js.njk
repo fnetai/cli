@@ -57,7 +57,7 @@ export default function Block(context) {
             if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
               return resolve(nextBlock);
 
-            current=new nextBlock.toType({ parent:_this, engine, flow, caller:c});
+            current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, onError, error });
             currentArgs=nextBlock.withArgs;
             
           } while(true);

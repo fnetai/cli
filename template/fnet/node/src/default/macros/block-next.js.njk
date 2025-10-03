@@ -12,6 +12,7 @@ return resolve ({
     fromType: _this.constructor,
     fromClosure: c,
     toType:{{context.next.codeKey}},
+    onError,
     {% if context.transform.nextArgs %}
     withArgs: {{context.transform.nextArgs | safe}},
     {% endif %}

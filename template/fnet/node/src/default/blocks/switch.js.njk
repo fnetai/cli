@@ -45,7 +45,7 @@ export default function Block(context) {
               const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}");
             {% endif %}
 
-            const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c });
+            const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c, onError });
 
             {% if workflow.parent.context.atom.doc.features.print_runners %}
               console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);

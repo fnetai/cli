@@ -81,7 +81,8 @@ export default function Block(context){
         {% endif %}
       }
       catch(error){
-          reject(error);
+          onError? onError(error) : reject(error);
+          {# reject(error); #}
       }
     });
   }

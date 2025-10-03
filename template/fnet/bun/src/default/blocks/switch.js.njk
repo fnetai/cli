@@ -1,8 +1,7 @@
+
 {% include "src/default/macros/block-header.js.njk" %}
 
-{% if not hasDefaultCondition %}
-  {% include "src/default/macros/block-next-header.js.njk" %}
-{% endif %}
+{# {% include "src/default/macros/block-next-header.js.njk" %} #}
 
 {% include "src/default/macros/block-modules-header.js.njk" %}
 
@@ -16,56 +15,53 @@
 export default function Block(context) {
 
   {% include "src/default/macros/block-body-header.js.njk" %}
-  
+
   this.run= function (){
       
     const args=Array.from(arguments);
 
     return new Promise(async (resolve,reject)=>{
         
-      {% include "src/default/macros/block-run-header.js.njk" %}
+        {% include "src/default/macros/block-run-header.js.njk" %}
 
-      {% include "src/default/macros/page.js.njk" %}
+        {% include "src/default/macros/page.js.njk" %}
 
-      {% include "src/default/macros/block-modules.js.njk" %}
-      
-      {% for child in childs %}
-        {% if loop.first %}
-          if ({{child.context.transform.condition | safe}}) 
-        {% else %}
-          {%if child.context.transform.condition %}
-            else if ({{child.context.transform.condition | safe}}) 
-          {% else %}
-            else
-          {% endif %}
-        {% endif %} 
-          {
-            {% if child.definition.dynamic %}
-              // CHILD: {{child.indexKey}}
-              const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}");
+        {% include "src/default/macros/block-modules.js.njk" %}
+        
+        try{
+            
+          const onError=error=>{
+            {% if context.except.definition.dynamic %}
+                const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
             {% endif %}
 
-            const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c });
+            const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c , error });
 
             {% if workflow.parent.context.atom.doc.features.print_runners %}
               console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
             {% endif %}
 
-            return resolve(await current.run.apply(current,args));
-          }
-      {% endfor%}
+            {# return resolve(await current.run.apply(current,args)); #}
+            current.run.apply(current,args).then(resolve);
+          };
 
-      {% if not hasDefaultCondition %}
-        {% if context.transform.return %}
-          resolve({type:'return',value: {{context.transform.return | safe}}});
-        {% elseif context.next %}
-          {% include "src/default/macros/block-next.js.njk" %}
-        {% else %}
-          resolve();
-        {% endif %}
-      {% endif %}
+          {% if context.try.definition.dynamic %}
+              const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}");
+          {% endif %}
+          
+          const current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c ,onError, error });
+
+          {% if workflow.parent.context.atom.doc.features.print_runners %}
+            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+          {% endif %}
+
+          return resolve(await current.run.apply(current,args));
+        }
+        catch({{context.except.context.transform.as | safe}}){
+            throw new Error('Error must not reach here!');
+        }
     });
-  }  
+  }
 
   Object.freeze(this);
 }

@@ -2,6 +2,6 @@ if (this.constructor !== Block) throw Error(Message.USE_CONSTRUCTOR);
 
 this.context=context;
 
-const { engine, flow, caller }=context || {};
+const { engine, flow, caller, onError, error }=context || {};
 
 const _this=this;

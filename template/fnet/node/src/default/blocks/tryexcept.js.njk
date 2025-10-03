@@ -30,11 +30,26 @@ export default function Block(context) {
         
         try{
             
+          const onError=error=>{
+            {% if context.except.definition.dynamic %}
+                const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
+            {% endif %}
+
+            const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c , error });
+
+            {% if workflow.parent.context.atom.doc.features.print_runners %}
+              console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+            {% endif %}
+
+            {# return resolve(await current.run.apply(current,args)); #}
+            current.run.apply(current,args).then(resolve);
+          };
+
           {% if context.try.definition.dynamic %}
               const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}");
           {% endif %}
           
-          const current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c });
+          const current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c ,onError, error });
 
           {% if workflow.parent.context.atom.doc.features.print_runners %}
             console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
@@ -43,18 +58,7 @@ export default function Block(context) {
           return resolve(await current.run.apply(current,args));
         }
         catch({{context.except.context.transform.as | safe}}){
-            
-          {% if context.except.definition.dynamic %}
-              const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
-          {% endif %}
-
-          const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c });
-
-          {% if workflow.parent.context.atom.doc.features.print_runners %}
-            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
-          {% endif %}
-
-          return resolve(await current.run.apply(current,args));
+            throw new Error('Error must not reach here!');
         }
     });
   }

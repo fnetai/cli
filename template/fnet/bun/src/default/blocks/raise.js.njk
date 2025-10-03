@@ -15,7 +15,7 @@ export default function Block(context){
         
         const raise = {{context.transform.raise | safe}};
 
-        reject(new Error(raise?.message||raise||"Unknown error"));
+        onError? onError(new Error(raise?.message||raise||"Unknown error")) : reject(new Error(raise?.message||raise||"Unknown error"));
     });
   }
 
