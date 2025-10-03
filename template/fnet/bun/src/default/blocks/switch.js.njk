@@ -18,7 +18,7 @@ export default function Block(context) {
 
   this.run= function (){
       
-    const args=Array.from(arguments);
+    {% include "src/default/macros/block-entry-args.js.njk" %}
 
     return new Promise(async (resolve,reject)=>{
         
@@ -41,7 +41,6 @@ export default function Block(context) {
               console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
             {% endif %}
 
-            {# return resolve(await current.run.apply(current,args)); #}
             current.run.apply(current,args).then(resolve);
           };
 

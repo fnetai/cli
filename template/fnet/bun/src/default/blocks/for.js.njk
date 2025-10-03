@@ -18,7 +18,7 @@ export default function Block(context) {
 
   this.run= function (){
       
-    const args=Array.from(arguments);
+    {% include "src/default/macros/block-entry-args.js.njk" %}
 
     return new Promise(async (resolve,reject)=>{
                   
