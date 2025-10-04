@@ -72,6 +72,10 @@ export default function Block(context){
           flow.set({{assign.key | safe}},{{assign.value | safe}});
         {% endfor%}
 
+        {% for assign in context.transform.assign %}
+          flow.set({{assign.key | safe}},{{assign.value | safe}});
+        {% endfor%}
+
         {% if context.transform.return %}
           resolve({type:'return',value: {{context.transform.return | safe}}});
         {% elseif context.next and context.transform.operation!=='wait-for-next'%}

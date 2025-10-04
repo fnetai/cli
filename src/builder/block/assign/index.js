@@ -18,19 +18,6 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
-  for (let i = 0; i < transform.assign?.length; i++) {
-    let assign = transform.assign[i];
-    let assignKey = Object.keys(assign)[0];
-    let assingValue = assign[assignKey];
-
-    let assignTransform = {
-      key: await transformExpression(assignKey),
-      value: await transformExpression(assingValue)
-    }
-
-    transform.assign[i] = assignTransform;
-  }
-
   await initCommonResolve({ node, transformExpression });
 
   await resolveTypeCommon({ node });

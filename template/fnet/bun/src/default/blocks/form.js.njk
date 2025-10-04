@@ -28,6 +28,11 @@ export default function Block(context){
         flow.waitForNext({
           key:'{{indexKey}}',
           next: async () => {
+            
+            {% for assign in context.transform.assign %}
+              flow.set({{assign.key | safe}},{{assign.value | safe}});
+            {% endfor%}
+
             {% if context.transform.return %}
               resolve({type:'return',value: {{context.transform.return | safe}}});
             {% elseif context.next %}

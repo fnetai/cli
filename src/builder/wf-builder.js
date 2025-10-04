@@ -383,16 +383,16 @@ class Builder {
     else if (await switchBlock.hits(api)) await switchBlock.init(api);
     else if (await ifBlock.hits(api)) await ifBlock.init(api);
     else if (await parralelBlock.hits(api)) await parralelBlock.init(api);
-    else if (await assignBlock.hits(api)) await assignBlock.init(api);
-    else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
     else if (await callBlock.hits(api)) await callBlock.init(api);
-    else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
+    else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
     else if (await formBlock.hits(api)) await formBlock.init(api);
     else if (await operationBlock.hits(api)) await operationBlock.init(api);
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
     else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
     else if (await returnBlock.hits(api)) await returnBlock.init(api);
+    else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
+    else if (await assignBlock.hits(api)) await assignBlock.init(api);
     else throw new Error('Undefined step type.');
   }
 

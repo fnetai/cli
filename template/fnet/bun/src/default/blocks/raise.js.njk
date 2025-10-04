@@ -15,6 +15,10 @@ export default function Block(context){
         
         const raise = {{context.transform.raise | safe}};
 
+        {% for assign in context.transform.assign %}
+          flow.set({{assign.key | safe}},{{assign.value | safe}});
+        {% endfor%}
+
         onError? onError(new Error(raise?.message||raise||"Unknown error")) : reject(new Error(raise?.message||raise||"Unknown error"));
     });
   }

@@ -13,4 +13,19 @@ export default async function initCommonResolve({ node, transformExpression }) {
     node.hasNextArgs = true;
     transform.output = await transformExpression(transform.output);
   }
+
+  if (transform.hasOwnProperty('assign')) {
+    for (let i = 0; i < transform.assign?.length; i++) {
+      let assign = transform.assign[i];
+      let assignKey = Object.keys(assign)[0];
+      let assingValue = assign[assignKey];
+
+      let assignTransform = {
+        key: await transformExpression(assignKey),
+        value: await transformExpression(assingValue)
+      }
+
+      transform.assign[i] = assignTransform;
+    }
+  }
 };
