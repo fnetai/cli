@@ -44,7 +44,9 @@
     }
   },
   {% endif %}
-
+  "flownet": {
+    "type": "node",
+  },
   {% if atom.doc.repo.url %}
     "repository": {
         "type": "{{atom.doc.repo.type or 'git'}}",
