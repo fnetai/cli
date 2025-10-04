@@ -22,3 +22,4 @@ dist
 !template/**/project/.vscode
 
 knowledge
+.examples
