@@ -3,6 +3,8 @@ export default function resolveNextBlock({ node }) {
   
   if(node.hasReturn) return;
 
+  // console.log(node.indexKey,node.hasModules,node.module, definition.next);
+
   if (definition.next === 'end') { }
   else if (definition.next === 'stop') { }
   else if (definition.next === 'none') { }
@@ -34,6 +36,8 @@ export default function resolveNextBlock({ node }) {
     let targetIndex = node.index + 1;
 
     while (parent.parent) {
+
+      if(parent.module===true) break;
 
       // NEITHER JUMP TO PARENT NOR SIBLING ENABLED
       if (parent.blockAutoJumpToParent && parent.blockAutoJumpToSibling)
