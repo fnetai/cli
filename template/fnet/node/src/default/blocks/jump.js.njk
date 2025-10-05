@@ -22,6 +22,8 @@ export default function Block(context){
       {% else %}
         resolve();
       {% endif %}
+      
+      {% include "src/default/macros/block-signal.js.njk" %}
     });
   }
 

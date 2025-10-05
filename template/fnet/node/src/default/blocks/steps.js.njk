@@ -47,6 +47,9 @@ export default function Block(context){
       {% endif %}
 
       resolve();
+      
+      {% include "src/default/macros/block-signal.js.njk" %}
+
     });
   }
 

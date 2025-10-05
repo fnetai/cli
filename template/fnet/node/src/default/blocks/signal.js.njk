@@ -13,10 +13,8 @@ export default function Block(context){
       
       {% include "src/default/macros/page.js.njk" %}
 
-      {% if context.transform.signal==='next' %}
-          await flow.continueForNext({key:'{{indexKey}}'});
-          resolve();
-      {% endif %}                    
+      {% include "src/default/macros/block-signal.js.njk" %}
+
     });
   }
 }

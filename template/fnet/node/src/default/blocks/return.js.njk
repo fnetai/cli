@@ -17,7 +17,9 @@ export default function Block(context){
 
         flow.result={value: value};
 
-        resolve();            
+        resolve();
+
+        {% include "src/default/macros/block-signal.js.njk" %}
     });
   }
 

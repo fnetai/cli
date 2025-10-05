@@ -53,7 +53,8 @@ export default function Block(context){
         {% endif %}
 
         {% include "src/default/macros/block-run-form.js.njk" %}
-        
+
+        {% include "src/default/macros/block-signal.js.njk" %}
       }
       catch(error){
         reject(error);                

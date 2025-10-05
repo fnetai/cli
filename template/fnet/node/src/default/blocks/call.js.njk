@@ -84,6 +84,8 @@ export default function Block(context){
         {% elseif not context.next%}
           resolve();
         {% endif %}
+
+        {% include "src/default/macros/block-signal.js.njk" %}
       }
       catch(error){
           onError? onError(error) : reject(error);

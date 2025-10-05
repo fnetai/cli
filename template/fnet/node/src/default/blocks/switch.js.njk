@@ -64,6 +64,9 @@ export default function Block(context) {
           resolve();
         {% endif %}
       {% endif %}
+
+      {% include "src/default/macros/block-signal.js.njk" %}
+
     });
   }  
 

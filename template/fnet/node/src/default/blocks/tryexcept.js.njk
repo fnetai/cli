@@ -54,11 +54,13 @@ export default function Block(context) {
             console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
           {% endif %}
 
-          return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
+          resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
         }
         catch({{context.except.context.transform.as | safe}}){
             throw new Error('Error must not reach here!');
         }
+
+        {% include "src/default/macros/block-signal.js.njk" %}
     });
   }
 
