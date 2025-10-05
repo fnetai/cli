@@ -15,10 +15,8 @@ export default function Block(context){
         
         const raise = {{context.transform.raise | safe}};
 
-        {% for assign in context.transform.assign %}
-          flow.set({{assign.key | safe}},{{assign.value | safe}});
-        {% endfor%}
-
+        {% include "src/default/macros/block-assign.js.njk" %}
+        
         {% include "src/default/macros/block-signal.js.njk" %}
 
         onError? onError(new Error(raise?.message||raise||"Unknown error")) : reject(new Error(raise?.message||raise||"Unknown error"));

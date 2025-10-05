@@ -28,11 +28,6 @@ export default function Block(context){
         flow.waitForNext({
           key:'{{indexKey}}',
           next: async () => {
-
-            {% for assign in context.transform.assign %}
-              flow.set({{assign.key | safe}},{{assign.value | safe}});
-            {% endfor%}
-
             {% if context.transform.return %}
               resolve({type:'return',value: {{context.transform.return | safe}}});
             {% elseif context.next %}
@@ -54,7 +49,9 @@ export default function Block(context){
 
         {% include "src/default/macros/block-run-form.js.njk" %}
 
-        {% include "src/default/macros/block-signal.js.njk" %}
+        {% include "src/default/macros/block-assign.js.njk" %}
+        
+        {% include "src/default/macros/signal.js.njk" %}
       }
       catch(error){
         reject(error);                

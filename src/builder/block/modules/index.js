@@ -20,7 +20,7 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   const transform = node.context.transform;
 
   await initCommonResolve({ node, transformExpression });
-  
+
   await resolveTypeCommon({ node });
 
   resolveNextBlock({ node });

@@ -46,10 +46,13 @@ export default function Block(context){
 
       {% endif %}
 
-      resolve();
-      
+
+      {% include "src/default/macros/block-assign.js.njk" %}
+
       {% include "src/default/macros/block-signal.js.njk" %}
 
+      resolve();
+      
     });
   }
 

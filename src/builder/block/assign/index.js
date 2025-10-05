@@ -21,10 +21,11 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   await initCommonResolve({ node, transformExpression });
 
   await resolveTypeCommon({ node });
+
   resolveNextBlock({ node });
 }
 
-export default{
+export default {
   hits,
   init,
   resolve

@@ -55,6 +55,10 @@ export default function Block(context) {
           }
       {% endfor%}
 
+      {% include "src/default/macros/block-assign.js.njk" %}
+
+      {% include "src/default/macros/block-signal.js.njk" %}
+
       {% if not hasDefaultCondition %}
         {% if context.transform.return %}
           resolve({type:'return',value: {{context.transform.return | safe}}});
@@ -64,8 +68,6 @@ export default function Block(context) {
           resolve();
         {% endif %}
       {% endif %}
-
-      {% include "src/default/macros/block-signal.js.njk" %}
 
     });
   }  

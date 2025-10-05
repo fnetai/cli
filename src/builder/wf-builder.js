@@ -45,6 +45,7 @@ import callBlock from './block/call/index.js';
 import stepsBlock from './block/steps/index.js';
 import formBlock from './block/form/index.js';
 import signalBlock from './block/signal/index.js';
+import waitBlock from './block/wait/index.js';
 import jumpBlock from './block/jump/index.js';
 import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
@@ -387,6 +388,7 @@ class Builder {
     else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
     else if (await formBlock.hits(api)) await formBlock.init(api);
     else if (await signalBlock.hits(api)) await signalBlock.init(api);
+    else if (await waitBlock.hits(api)) await waitBlock.init(api);
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
     else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
@@ -857,6 +859,7 @@ class Builder {
       case "tryexcept":
       case "for":
       case "signal":
+      case "wait":
       case "modules":
         this.createBlockFromTemplate({ node });
         break;

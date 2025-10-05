@@ -1,0 +1,3 @@
+{% for assign in context.transform.assign %}
+flow.set({{assign.key | safe}},{{assign.value | safe}});
+{% endfor%}

@@ -1,11 +1,11 @@
 import cloneDeep from 'lodash.clonedeep';
 
 async function hits({ node }) {
-  return node.definition.hasOwnProperty('signal');
+  return node.definition.hasOwnProperty('wait');
 }
 
 async function init({ node, initNode }) {
-  node.type = "signal";
+  node.type = "wait";
 
   node.resolve = resolve;
 }

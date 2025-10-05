@@ -60,7 +60,7 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   resolveNextBlock({ node });
 }
 
-export default{
+export default {
   hits,
   init,
   resolve

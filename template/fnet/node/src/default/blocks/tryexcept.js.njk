@@ -60,6 +60,8 @@ export default function Block(context) {
             throw new Error('Error must not reach here!');
         }
 
+        {% include "src/default/macros/block-assign.js.njk" %}
+
         {% include "src/default/macros/block-signal.js.njk" %}
     });
   }
