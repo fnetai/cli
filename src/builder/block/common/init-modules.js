@@ -27,12 +27,8 @@ export default async function initModules({ node, initNode }) {
 
   const extraModules = [];
 
-  const newOne = fnetKvTransformer({
+  const newOne = await fnetKvTransformer({
     data: node.definition, callback: (key, value, path) => {
-      // if (typeof key === 'number') {
-      //   debugger;
-      // }
-
       const exp = fnetExpression({ expression: key });
       if (exp?.processor === 'm') {
         const newPath = path.slice(0, -1);
