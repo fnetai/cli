@@ -10,7 +10,6 @@ export default async function initCommonResolve({ node, transformExpression }) {
   }
 
   if (transform.hasOwnProperty('output')) {
-    node.hasNextArgs = true;
     transform.output = await transformExpression(transform.output);
   }
 

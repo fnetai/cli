@@ -37,7 +37,7 @@ export default function resolveNextBlock({ node }) {
 
     while (parent.parent) {
 
-      if (parent.module === true) break;
+      // if (parent.module === true) break;
 
       // NEITHER JUMP TO PARENT NOR SIBLING ENABLED
       if (parent.blockAutoJumpToParent && parent.blockAutoJumpToSibling)
