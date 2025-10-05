@@ -739,8 +739,8 @@ class Builder {
   async resolveTypeCommon({ node }) {
     const transform = node.context.transform;
 
-    if (transform.hasOwnProperty('operation'))
-      transform.operation = await this.transformExpression(transform.operation);
+    // if (transform.hasOwnProperty('operation'))
+    //   transform.operation = await this.transformExpression(transform.operation);
 
     if (transform.hasOwnProperty('page'))
       transform.page = await this.transformExpression(transform.page);
@@ -905,8 +905,8 @@ class Builder {
 
   async transformExpression(value) {
     let temp = await this.transformValue(value);
+    // if(temp===value) return value;
     temp = JSON.stringify(temp);
-    // temp = this.replaceExpressionLegacy(temp);
     temp = this.replaceSpecialPattern(temp);
     return temp;
   }

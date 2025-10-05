@@ -22,9 +22,9 @@ export default function Block(context){
         {% if context.next and context.transform.operation==='wait-for-next' %}
         flow.waitForNext({
           key:'{{indexKey}}',
-          next: new Promise((resolve,reject) => {
+          next: async () =>  {
               {% include "src/default/macros/block-next.js.njk" %}
-          })
+          }
         });
         {% endif %}
         
