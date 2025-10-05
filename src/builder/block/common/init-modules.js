@@ -13,9 +13,11 @@ export default async function initModules({ node, initNode }) {
         ...modules[key]
       }
 
-      if (node.type === 'modules') {
-        transformed.export = transformed.export || key;
-      }
+      if (typeof transformed.export === 'boolean')
+        transformed.export = transformed.export === true ? key : false;
+      else if (typeof transformed.export === 'string')
+        transformed.export = transformed.export;
+      else delete transformed.export;
 
       node.definition.modules.push({
         [key]: transformed
@@ -25,7 +27,7 @@ export default async function initModules({ node, initNode }) {
 
   const extraModules = [];
 
-  const newOne = await fnetKvTransformer({
+  const newOne = fnetKvTransformer({
     data: node.definition, callback: (key, value, path) => {
       // if (typeof key === 'number') {
       //   debugger;

@@ -24,6 +24,10 @@ export default class Object {
     this.print = print;
   }
 
+  get module() {
+    return this.#module;
+  }
+
   getModule(path) {
     return getValue(this.#module, path);
   }

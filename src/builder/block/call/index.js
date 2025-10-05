@@ -43,8 +43,6 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
       transform.result[i] = assignTransform;
     }
-
-    // transform.result = await transformExpression(transform.result);
   }
   const root = node.workflow.parent;
 

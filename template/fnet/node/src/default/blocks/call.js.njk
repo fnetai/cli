@@ -38,6 +38,7 @@ export default function Block(context){
           const lib={{context.lib.codeKey}};
         {% elseif target.atom.protocol==='use:' %}
           const lib={{context.transform.call}};
+          if(!lib) throw new Error('[use] Couldnt find lib.');
         {% else %}
           const lib=undefined; 
           throw new Error('Couldn file lib.');
