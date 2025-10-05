@@ -54,7 +54,7 @@ export default function Block(context){
 
         {% include "src/default/macros/block-run-form.js.njk" %}
         
-        {% if context.transform.operation==='continue-for-next' %}
+        {% if context.transform.signal==='next' %}
           flow.continueForNext({key:'{{indexKey}}'});
         {% endif %}
       }

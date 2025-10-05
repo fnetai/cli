@@ -44,7 +44,7 @@ import returnBlock from './block/return/index.js';
 import callBlock from './block/call/index.js';
 import stepsBlock from './block/steps/index.js';
 import formBlock from './block/form/index.js';
-import operationBlock from './block/operation/index.js';
+import signalBlock from './block/signal/index.js';
 import jumpBlock from './block/jump/index.js';
 import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
@@ -386,7 +386,7 @@ class Builder {
     else if (await callBlock.hits(api)) await callBlock.init(api);
     else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
     else if (await formBlock.hits(api)) await formBlock.init(api);
-    else if (await operationBlock.hits(api)) await operationBlock.init(api);
+    else if (await signalBlock.hits(api)) await signalBlock.init(api);
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
     else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
     else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
@@ -739,9 +739,6 @@ class Builder {
   async resolveTypeCommon({ node }) {
     const transform = node.context.transform;
 
-    // if (transform.hasOwnProperty('operation'))
-    //   transform.operation = await this.transformExpression(transform.operation);
-
     if (transform.hasOwnProperty('page'))
       transform.page = await this.transformExpression(transform.page);
 
@@ -859,7 +856,7 @@ class Builder {
       case "jump":
       case "tryexcept":
       case "for":
-      case "operation":
+      case "signal":
       case "modules":
         this.createBlockFromTemplate({ node });
         break;
