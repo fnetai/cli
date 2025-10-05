@@ -76,7 +76,6 @@ export default function Block(context){
           flow.set({{assign.key | safe}},{{assign.value | safe}});
         {% endfor%}
 
-
         {% if context.transform.return %}
           resolve({type:'return',value: {{context.transform.return | safe}}});
         {% elseif context.next and context.transform.wait!=='next'%}
@@ -89,7 +88,6 @@ export default function Block(context){
       }
       catch(error){
           onError? onError(error) : reject(error);
-          {# reject(error); #}
       }
     });
   }
