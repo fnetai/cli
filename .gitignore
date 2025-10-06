@@ -21,5 +21,4 @@ dist
 !template/**/.vscode
 !template/**/project/.vscode
 
-knowledge
 .examples

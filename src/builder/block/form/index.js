@@ -16,14 +16,14 @@ async function init({ node, initNode }) {
 
 async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExpression }) {
 
-  node.defintion.wait = 'next'; // Must wait for next always
-
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
   if (transform.props)
     transform.props = await transformExpression(transform.props);
 
+
+  // transform.wait = 'next';
 
   const root = node.workflow.parent;
 
