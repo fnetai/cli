@@ -9,11 +9,11 @@ export default async function initCommonResolve({ node, transformExpression }) {
     transform.return = await transformExpression(transform.return);
   }
 
-  if (transform.hasOwnProperty('output')) {
+  if (Reflect.has(transform, 'output')) {
     transform.output = await transformExpression(transform.output);
   }
 
-  if (transform.hasOwnProperty('assign')) {
+  if (Reflect.has(transform, 'assign')) {
     for (let i = 0; i < transform.assign?.length; i++) {
       let assign = transform.assign[i];
       let assignKey = Object.keys(assign)[0];

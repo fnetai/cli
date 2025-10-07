@@ -456,7 +456,7 @@ class Builder {
     const calls = root.context.calls;
 
     for await (const node of calls) {
-      const callName = node.definition.import || node.definition.call;
+      const callName = node.definition.from || node.definition.import || node.definition.call;
 
       const targetNode =
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||
@@ -511,7 +511,7 @@ class Builder {
     const forms = root.context.forms;
 
     for await (const node of forms) {
-      const formName = node.definition.import || node.definition.form;
+      const formName = node.definition.from || node.definition.import || node.definition.form;
 
       const targetNode =
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||

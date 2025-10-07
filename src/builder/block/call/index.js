@@ -26,6 +26,9 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   if (transform.args)
     transform.args = await transformExpression(transform.args);
 
+  if (transform.new)
+    transform.new = await transformExpression(transform.new);
+
   if (transform.result) {
     if (typeof transform.result === 'string') {
       transform.result = [{ [transform.result]: "e::result" }];
@@ -46,7 +49,9 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   }
   const root = node.workflow.parent;
 
-  if (transform.import)
+  if (transform.from)
+    node.context.lib = root.context.libs.find(w => w.name === transform.from);
+  else if (transform.import)
     node.context.lib = root.context.libs.find(w => w.name === transform.import);
   else
     node.context.lib = root.context.libs.find(w => w.name === transform.call);
