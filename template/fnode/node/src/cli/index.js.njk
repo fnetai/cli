@@ -273,10 +273,10 @@ import Node from '../../../cli';
 // Using express for HTTP mode
 import express from 'express';
 {% endif %}
-import minimist from 'minimist';
+import argsParser from 'yargs-parser';
 
 const run = async () => {
-  const args = minimist(process.argv.slice(2));
+  const args = argsParser(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeExtend('Node') }}
@@ -305,10 +305,10 @@ import Node from '../../../src';
 import express from 'express';
 {% endif %}
 
-import minimist from 'minimist';
+import argsParser from 'yargs-parser';
 
 const run = async () => {
-  const args = minimist(process.argv.slice(2));
+  const args = argsParser(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeStandard('Node') }}
@@ -343,9 +343,10 @@ const Node = require('../../../cli');
 const express = require('express');
 {% endif %}
 
-import minimist from "minimist"
+const argsParser = require('yargs-parser');
+
 const run = async () => {
-  const args = minimist(process.argv.slice(2));
+  const args = argsParser(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeExtend('Node') }}
@@ -374,10 +375,10 @@ const Node = require('../../../src');
 const express = require('express');
 {% endif %}
 
-const minimist=require('minimist');
+const argsParser = require('yargs-parser');
 
 const run = async () => {
-  const args = minimist(process.argv.slice(2));
+  const args = argsParser(process.argv.slice(2));
   const cliMode = args['cli-mode'] || args.cli_mode || 'default';
 
   {{ defaultModeStandard('Node') }}
