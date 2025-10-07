@@ -22,3 +22,5 @@ dist
 !template/**/project/.vscode
 
 .examples
+.puppet-page
+examples

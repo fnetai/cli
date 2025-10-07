@@ -6,7 +6,7 @@ async function hits({ node }) {
 }
 
 async function init({ node, initNode }) {
-  node.type = "jump";
+  node.type = "next";
 
   node.resolve = resolve;
 }

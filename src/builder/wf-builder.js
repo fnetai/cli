@@ -46,7 +46,7 @@ import stepsBlock from './block/steps/index.js';
 import formBlock from './block/form/index.js';
 import signalBlock from './block/signal/index.js';
 import waitBlock from './block/wait/index.js';
-import jumpBlock from './block/jump/index.js';
+import nextBlock from './block/next/index.js';
 import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
 import npmBlock from './block/npm-block/index.js';
@@ -390,7 +390,7 @@ class Builder {
     else if (await signalBlock.hits(api)) await signalBlock.init(api);
     else if (await waitBlock.hits(api)) await waitBlock.init(api);
     else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
-    else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
+    else if (await nextBlock.hits(api)) await nextBlock.init(api);
     else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
     else if (await returnBlock.hits(api)) await returnBlock.init(api);
     else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
@@ -855,7 +855,7 @@ class Builder {
       case "form":
       case "raise":
       case "switch":
-      case "jump":
+      case "next":
       case "tryexcept":
       case "for":
       case "signal":
