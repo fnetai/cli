@@ -3,12 +3,18 @@ import switchBlock from '../switch/index.js';
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);
+
+  // Check for if::expression syntax (OLD)
   const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
-
   const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
-  if (ifProcessors.length !== 1) return false;
+  if (ifProcessors.length === 1) return true;
 
-  return true;
+  // Check for if: {condition: ...} syntax (NEW)
+  if (node.definition.if && typeof node.definition.if === 'object') {
+    return true;
+  }
+
+  return false;
 }
 
 async function init(api) {
@@ -19,24 +25,41 @@ async function init(api) {
 
   const blocks = [];
 
-  // if
+  // Handle if block
   const ifProcessor = parsedKeys.find(key => key?.processor === 'if');
 
-  const ifDefinition = node.definition[ifProcessor.expression];
+  if (ifProcessor) {
+    // OLD SYNTAX: if::e::v.number > 100:
+    const ifDefinition = node.definition[ifProcessor.expression];
+    blocks.push({
+      name: `${node.name}_if`,
+      definition: ifDefinition,
+      processor: ifProcessor,
+    });
+    delete node.definition[ifProcessor.expression];
+  } else if (node.definition.if) {
+    // NEW SYNTAX: if: { condition: e::v.number > 100, steps: [...] }
+    const {condition, ...ifDef} = node.definition.if;
 
-  blocks.push({
-    name: `${node.name}_if`,
-    definition: ifDefinition,
-    processor: ifProcessor,
-  });
-  delete node.definition[ifProcessor.expression];
+    blocks.push({
+      name: `${node.name}_if`,
+      definition: ifDef,
+      processor: {
+        expression: `if::${condition}`,
+        // Use process.statement to get the final statement after all processors
+        statement: condition,
+      },
+    });
+    delete node.definition.if;
+  }
 
-  // else if
+  // Handle elseif blocks - OLD SYNTAX
   const elseifProcessors = parsedKeys.filter(key => key?.processor === 'elseif');
   let elseIfIndex = 0;
-  for (const elseifProcessor of elseifProcessors) {
-    const elseifDefinition = node.definition[elseifProcessor.expression];
 
+  for (const elseifProcessor of elseifProcessors) {
+    // OLD SYNTAX: elseif::e::v.number > 10:
+    const elseifDefinition = node.definition[elseifProcessor.expression];
     blocks.push({
       name: `${node.name}_elseif_${elseIfIndex++}`,
       definition: elseifDefinition,
@@ -45,6 +68,25 @@ async function init(api) {
     delete node.definition[elseifProcessor.expression];
   }
 
+  // Handle elseif blocks - NEW SYNTAX
+  if (node.definition.elseif) {
+    // NEW SYNTAX: elseif: { condition: e::..., <any step type> }
+    // Note: Only single elseif supported in clean syntax due to YAML duplicate key limitation
+    // For multiple elseif, use double-colon syntax: elseif::e::condition:
+    const {condition, ...restDefinition} = node.definition.elseif;
+
+    blocks.push({
+      name: `${node.name}_elseif_${elseIfIndex++}`,
+      definition: restDefinition,
+      processor: {
+        expression: `elseif::${condition}`,
+        statement: condition,
+      },
+    });
+    delete node.definition.elseif;
+  }
+
+  // Transform to switch structure
   node.definition.switch = [];
 
   for (const block of blocks) {
@@ -54,7 +96,7 @@ async function init(api) {
     });
   }
 
-  // else
+  // Handle else
   if (node.definition?.else) {
     const elseDefinition = node.definition.else;
 
