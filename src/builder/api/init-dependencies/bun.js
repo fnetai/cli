@@ -36,7 +36,7 @@ export default async function initDependenciesBun({ atom, packageDependencies, p
 
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "@fnet/args", version: "^0.1" });
-    packageDevDependencies.push({ package: "ajv", version: "^8" });
+    // packageDevDependencies.push({ package: "ajv", version: "^8" });
 
     if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
       packageDependencies.push({ package: "@fnet/config", version: "0.2.21" });
