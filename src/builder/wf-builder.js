@@ -50,7 +50,9 @@ import nextBlock from './block/next/index.js';
 import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
 import npmBlock from './block/npm-block/index.js';
+import newBlock from './block/new/index.js';
 import which from './which.js';
+import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
 
 class Builder {
 
@@ -385,6 +387,7 @@ class Builder {
     else if (await ifBlock.hits(api)) await ifBlock.init(api);
     else if (await parralelBlock.hits(api)) await parralelBlock.init(api);
     else if (await callBlock.hits(api)) await callBlock.init(api);
+    else if (await newBlock.hits(api)) await newBlock.init(api);
     else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
     else if (await formBlock.hits(api)) await formBlock.init(api);
     else if (await signalBlock.hits(api)) await signalBlock.init(api);
@@ -441,7 +444,7 @@ class Builder {
     const callNodes = [];
     for await (const indexKey of Object.keys(index)) {
       const node = index[indexKey];
-      if (node.type !== 'call') continue;
+      if (node.type !== 'call' && node.type !== 'new') continue;
 
       callNodes.push(node);
     }
@@ -663,8 +666,11 @@ class Builder {
     }
     else if (parsedUrl.protocol === 'npm:') {
 
+      const parsed=fnetParseNpmPath({ path: parsedUrl.pathname });
+
       const npmVersions = await pickNpmVersions({
-        name: parsedUrl.pathname,
+        name: parsed.package,
+        subpath: parsed.subpath,
         projectDir: this.#context.projectDir,
         setProgress: this.#apiContext.setProgress
       });
@@ -678,11 +684,25 @@ class Builder {
           language: "js",
           dependencies: [
             {
-              package: parsedUrl.pathname,
+              package: parsed.package,
               version: npmVersions.minorRange,
               type: "npm"
             }
           ],
+        },
+        protocol: parsedUrl.protocol,
+      }
+      return atom;
+    }
+    else if (parsedUrl.protocol === 'node:') {
+
+      const atom = {
+        name: parsedUrl.pathname,
+        doc: {
+          type: "workflow.lib",
+          "content-type": "javascript",
+          language: "js",
+          dependencies: [],
         },
         protocol: parsedUrl.protocol,
       }
@@ -694,6 +714,19 @@ class Builder {
         doc: {
           type: "function",
           dependencies: []
+        },
+        protocol: parsedUrl.protocol,
+      }
+      return atom;
+    }
+    else if (parsedUrl.protocol === 'node:') {
+      const atom = {
+        name: parsedUrl.pathname,
+        doc: {
+          type: "workflow.lib",
+          "content-type": "javascript",
+          language: "js",
+          dependencies: [],
         },
         protocol: parsedUrl.protocol,
       }
@@ -786,6 +819,10 @@ class Builder {
         // nothing
         atomLib.relativePath = atomLib.name;
       }
+      else if (atomLib.protocol === 'node:') {
+        // nothing
+        atomLib.relativePath = atomLib.name;
+      }
       else if (atomLib.protocol === 'use:') {
         // nothing
       }
@@ -852,6 +889,7 @@ class Builder {
       case "steps":
       case "return":
       case "call":
+      case "new":
       case "form":
       case "raise":
       case "switch":
