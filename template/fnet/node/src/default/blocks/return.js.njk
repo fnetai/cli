@@ -22,6 +22,8 @@ export default function Block(context){
         {% include "src/default/macros/block-signal.js.njk" %}
 
         resolve({type:'return',value: value});
+
+        {% include "src/default/macros/block-run-footer.js.njk" %}
     });
   }
 

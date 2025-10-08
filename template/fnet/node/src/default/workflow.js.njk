@@ -62,14 +62,6 @@ export default class Workflow extends Object {
       debugger;
     {% endif %}
 
-    {% if context.transform.print %}
-      print({{context.transform.print | safe}});
-    {% endif%}
-
-    {% if context.transform.assert %}
-      assert({{context.transform.assert | safe}});
-    {% endif%}
-
     {% if context.transform.sleep %}
       await sleep({{context.transform.sleep}});
     {% endif %}
@@ -111,6 +103,15 @@ export default class Workflow extends Object {
       } while(true);
 
     {% endif %}
+
+    
+    {% if context.transform.print %}
+      print({{context.transform.print | safe}});
+    {% endif%}
+
+    {% if context.transform.assert %}
+      assert({{context.transform.assert | safe}});
+    {% endif%}
 
     return this.result;
   }

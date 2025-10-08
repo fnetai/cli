@@ -16,6 +16,7 @@ export default function Block(context){
 
     return new Promise(async (resolve,reject)=>{
 
+
       try{
         {% include "src/default/macros/block-run-header.js.njk" %}
 
@@ -127,10 +128,12 @@ export default function Block(context){
         {% elseif not context.next%}
           resolve();
         {% endif %}
+  
+        {% include "src/default/macros/block-run-footer.js.njk" %}
       }
       catch(error){
           onError? onError(error) : reject(error);
-      }
+      }      
     });
   }
 

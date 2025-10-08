@@ -28,6 +28,8 @@ export default function Block(context){
       {% if context.transform.signal==='next' %}
         flow.continueForNext({key:'{{indexKey}}'});
       {% endif %}
+
+      {% include "src/default/macros/block-run-footer.js.njk" %}
     });
   }
 }

@@ -26,6 +26,7 @@ export default function Block(context){
         flow.set({{assign.key | safe}},{{assign.value | safe}});
       {% endfor%}
 
+      {% include "src/default/macros/block-run-footer.js.njk" %}
     });
   }
 }

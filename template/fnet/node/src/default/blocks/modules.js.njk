@@ -42,6 +42,8 @@ export default function Block(context){
         {% elseif not context.next%}
           resolve();
         {% endif %}
+
+        {% include "src/default/macros/block-run-footer.js.njk" %}
       }
       catch(error){
         reject(error);

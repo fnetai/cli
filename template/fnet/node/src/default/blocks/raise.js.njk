@@ -20,6 +20,8 @@ export default function Block(context){
         {% include "src/default/macros/block-signal.js.njk" %}
 
         onError? onError(new Error(raise?.message||raise||"Unknown error")) : reject(new Error(raise?.message||raise||"Unknown error"));
+
+        {% include "src/default/macros/block-run-footer.js.njk" %}
     });
   }
 

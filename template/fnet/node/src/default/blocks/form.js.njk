@@ -18,6 +18,7 @@ export default function Block(context){
 
     return new Promise(async (resolve,reject)=>{
 
+
       try{
         {% include "src/default/macros/block-run-header.js.njk" %}
         
@@ -52,10 +53,13 @@ export default function Block(context){
         {% include "src/default/macros/block-assign.js.njk" %}
         
         {% include "src/default/macros/block-signal.js.njk" %}
+
+        {% include "src/default/macros/block-run-footer.js.njk" %}
       }
       catch(error){
         reject(error);                
       }
+
     });
   } 
 
