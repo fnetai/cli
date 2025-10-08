@@ -55,7 +55,7 @@ export default function Block(context){
 
           {# If 'call' is specified, get the method from instance #}
           {% if context.transform.call %}
-            const callLib = instance.{{context.transform.call}}.bind(instance);
+            const callLib = instance.{{context.transform.call}};
           {% else %}
             {# No method call, just return the instance #}
             const callLib = () => instance;
@@ -64,7 +64,6 @@ export default function Block(context){
         {% else %}
           {# EXISTING: Normal function/method call (no 'new') #}
           {% if context.lib.type==='atom'%}
-            // HELLO
             const lib=LIBRARY;
           {% elseif context.lib.type==='subworkflow' %}
             const lib={{context.lib.codeKey}};
@@ -97,10 +96,20 @@ export default function Block(context){
             const callArgs ={{ context.transform.args | safe }} ;
           {% endif %}
 
-          const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+          {% if context.transform.new !== undefined %}
+            {# For constructor calls, use instance as context #}
+            const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib.call(instance,callArgs);
+          {% else %}
+            {# For regular calls, use _this as context #}
+            const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+          {% endif %}
 
         {% else %}
-          const result = await callLib.call(_this);
+          {% if context.transform.new !== undefined %}
+            const result = await callLib.call(instance);
+          {% else %}
+            const result = await callLib.call(_this);
+          {% endif %}
         {% endif %}
 
         {% for assign in context.transform.result %}
