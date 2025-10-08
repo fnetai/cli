@@ -102,14 +102,23 @@ export default function Block(context){
             const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib.call(instance,callArgs);
           {% else %}
             {# For regular calls, use _this as context #}
-            const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+            {% if context.transform.context !== undefined %}
+              const result = Array.isArray(callArgs)?  await callLib.apply({{context.transform.context | safe}},callArgs): await callLib.call({{context.transform.context | safe}},callArgs);
+            {% else %}            
+              const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+            {% endif %}
+
           {% endif %}
 
         {% else %}
           {% if context.transform.new !== undefined %}
             const result = await callLib.call(instance);
           {% else %}
-            const result = await callLib.call(_this);
+            {% if context.transform.context !== undefined %}
+              const result = await callLib.call({{context.transform.context | safe}});
+            {% else %}            
+              const result = await callLib.call(_this);
+            {% endif %}
           {% endif %}
         {% endif %}
 

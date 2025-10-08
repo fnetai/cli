@@ -46,6 +46,9 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   if (transform.new)
     transform.new = await transformExpression(transform.new);
 
+  if (transform.context)
+    transform.context = await transformExpression(transform.context);
+
   if (transform.result) {
     if (typeof transform.result === 'string') {
       transform.result = [{ [transform.result]: "e::result" }];
