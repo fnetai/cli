@@ -98,17 +98,17 @@ export default function Block(context){
 
           {% if context.transform.new !== undefined %}
             {# For constructor calls, use instance as context #}
-            const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib.call(instance,callArgs);
+            const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib(callArgs);
           {% else %}
             {# For regular calls, use _this as context #}
-            const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+            const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib(callArgs);
           {% endif %}
 
         {% else %}
           {% if context.transform.new !== undefined %}
-            const result = await callLib.call(instance);
+            const result = await callLib();
           {% else %}
-            const result = await callLib.call(_this);
+            const result = await callLib();
           {% endif %}
         {% endif %}
 
