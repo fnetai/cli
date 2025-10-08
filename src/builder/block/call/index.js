@@ -19,8 +19,25 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
+  let targetLib = transform.from || transform.import || transform.call;
+
   if (node.target?.atom?.doc?.type === 'function') {
-    transform.call = await transformExpression(node.target.atom.name);
+    if (Reflect.has(transform, 'from')) {
+      // origin is 'from'
+      targetLib = transform.from;
+      transform.from = await transformExpression(node.target.atom.name);
+    }
+    else if (Reflect.has(transform, 'import')) {
+      // origin is 'import'
+      targetLib = transform.import;
+      transform.import = await transformExpression(node.target.atom.name);
+      // transform.call = await transformExpression(transform.call);
+    }
+    else if (Reflect.has(transform, 'call')) {
+      // origin is 'call'
+      transform.call = await transformExpression(node.target.atom.name);
+      targetLib = transform.call;
+    }
   }
 
   if (transform.args)
@@ -49,12 +66,7 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   }
   const root = node.workflow.parent;
 
-  if (transform.from)
-    node.context.lib = root.context.libs.find(w => w.name === transform.from);
-  else if (transform.import)
-    node.context.lib = root.context.libs.find(w => w.name === transform.import);
-  else
-    node.context.lib = root.context.libs.find(w => w.name === transform.call);
+  node.context.lib = root.context.libs.find(w => w.name === targetLib);
 
   await initCommonResolve({ node, transformExpression });
 

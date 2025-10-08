@@ -31,31 +31,65 @@ export default function Block(context){
             }
           });
         {% endif %}
-        
-        {% if context.lib.type==='atom'%}
-          const lib=LIBRARY;
-        {% elseif context.lib.type==='subworkflow' %}
-          const lib={{context.lib.codeKey}};
-        {% elseif target.atom.protocol==='use:' %}
-          const lib={{context.transform.call}};
-          if(!lib) throw new Error('[use] Couldnt find lib.');
+
+        {# NEW: Check if 'new' keyword is present for constructor call #}
+        {% if context.transform.new !== undefined %}
+          {# Constructor instantiation with 'new' keyword #}
+          {% if context.lib.type==='atom' and context.lib.atom.protocol!=='use:' %}
+            const LibClass=LIBRARY;
+          {% elseif context.lib.atom.protocol==='use:' %}
+            {# For use:e:: protocol, call value is the class name (e.g., use:e::Map → Map) #}
+            const LibClass={{context.transform.import}};
+            if(!LibClass) throw new Error('[use] Couldnt find class.');
+          {% else %}
+            throw new Error('Cannot instantiate: unsupported lib type.');
+          {% endif %}
+
+          {# Create instance with constructor args #}
+          {% if context.transform.new %}
+            const constructorArgs = {{ context.transform.new | safe }};
+            const instance = Array.isArray(constructorArgs) ? new LibClass(...constructorArgs) : new LibClass(constructorArgs);
+          {% else %}
+            const instance = new LibClass();
+          {% endif %}
+
+          {# If 'call' is specified, get the method from instance #}
+          {% if context.transform.call %}
+            const callLib = instance.{{context.transform.call}}.bind(instance);
+          {% else %}
+            {# No method call, just return the instance #}
+            const callLib = () => instance;
+          {% endif %}
+
         {% else %}
-          const lib=undefined; 
-          throw new Error('Couldn file lib.');
+          {# EXISTING: Normal function/method call (no 'new') #}
+          {% if context.lib.type==='atom'%}
+            // HELLO
+            const lib=LIBRARY;
+          {% elseif context.lib.type==='subworkflow' %}
+            const lib={{context.lib.codeKey}};
+          {% elseif target.atom.protocol==='use:' %}
+            const lib={{context.transform.call}};
+            if(!lib) throw new Error('[use] Couldnt find lib.');
+          {% else %}
+            const lib=undefined;
+            throw new Error('Couldn file lib.');
+          {% endif %}
+
+          {% if context.lib.atom.doc.subtype==='workflow'%}
+            const Workflow=lib;
+            const workflow=new Workflow({app:engine.app,caller:c});
+            const callLib = workflow.run.bind(workflow);
+          {% elseif context.lib.type==='subworkflow'%}
+            const Workflow=lib;
+            const workflow=new Workflow({engine,flow,caller:c});
+            const callLib = workflow.run.bind(workflow);
+          {% else %}
+            const callLib = lib;
+          {% endif %}
         {% endif %}
 
-        {% if context.lib.atom.doc.subtype==='workflow'%}
-          const Workflow=lib;
-          const workflow=new Workflow({app:engine.app,caller:c});
-          const callLib = workflow.run.bind(workflow);
-        {% elseif context.lib.type==='subworkflow'%}
-          const Workflow=lib;
-          const workflow=new Workflow({engine,flow,caller:c});
-          const callLib = workflow.run.bind(workflow);
-        {% else %}
-          const callLib = lib;
-        {% endif %}
-
+        {# Execute the call #}
         {% if context.transform.args %}
           {% if context.lib.type==='subworkflow' %}
             const callArgs ={ params: {{ context.transform.args | safe }} };
