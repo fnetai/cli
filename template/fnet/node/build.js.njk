@@ -50,6 +50,7 @@ async function buildOutput(name, config) {
     minify: config.minify !== undefined ? config.minify : false,
     sourcemap: config.sourcemap || 'external',
     external: [],
+    packages: config.packages || 'external',
     // Add environment variables to help with module resolution
     define: {
       'process.env.NODE_PATH': JSON.stringify('./node_modules')
@@ -94,7 +95,7 @@ async function main() {
         sourcemap: "external",
         entrypoints: ["./src/default/index.js"],
         outdir: "./dist/default/esm",
-        external: true
+        packages: "external"
     });
     {% endif %}
 
@@ -107,7 +108,7 @@ async function main() {
         sourcemap: "external",
         entrypoints: ["./src/default/index.js"],
         outdir: "./dist/default/cjs",
-        external: true
+        packages: "external"
       });
     {% endif %}
 
@@ -121,7 +122,7 @@ async function main() {
           sourcemap: "external",
           entrypoints: ["./src/cli/index.js"],
           outdir: "{{ atom.doc.features.cli.dir | default('./dist/cli/esm') }}",
-          external: true
+          packages: "external"
         });
       } else {
         console.log('CLI not found, skipping CLI build');
@@ -138,7 +139,7 @@ async function main() {
           sourcemap: "external",
           entrypoints: ["./src/app/index.js"],
           outdir: "{{ atom.doc.features.app.dir | default('./dist/app/esm') }}",
-          external: false
+          packages: "bundle"
         });
       } else {
         console.log('App not found, skipping App build');
