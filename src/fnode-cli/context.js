@@ -28,11 +28,12 @@ export async function createContext(argv) {
   } else {
     try {
       const project = await loadProject({ tags: argv.ftag });
+      const template = project.runtime.type === 'bun' ? 'node' : project.runtime.type;
       return {
         buildId: argv.buildId,
         mode: argv.mode,
         protocol: argv.protocol || 'local:',
-        templateDir: resolveTemplatePath(`./template/fnode/${project.runtime.template}`),
+        templateDir: resolveTemplatePath(`./template/fnode/${template}`),
         projectDir: path.resolve(project.projectDir, './.workspace'),
         projectSrcDir: path.resolve(project.projectDir, './src'),
         project,
@@ -80,7 +81,7 @@ async function loadProject({ tags }) {
   if (features.runtime.type === 'python') {
     features.runtime.template = features.runtime.template || 'python';
   } else if (features.runtime.type === 'bun') {
-    features.runtime.template = features.runtime.template || 'bun';
+    features.runtime.template = features.runtime.template || 'node';
   } else {
     features.runtime.template = features.runtime.template || 'node';
   }

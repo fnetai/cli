@@ -12,6 +12,7 @@ import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
 import createRollup from "./api/create-rollup/index.js";
+import createBuildJs from "./api/create-build-js/index.js";
 import createInputArgs from "./api/create-input-args/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
@@ -225,6 +226,8 @@ class NodeBuilder extends BuilderBase {
   async build() {
     try {
       if (this.fileMode) {
+        const project=this.apiContext.context.project;
+
         await this.createAtomLibFiles({ libs: this.libs });
         await this.createEngine();
         await this.createProjectYaml();
@@ -235,7 +238,10 @@ class NodeBuilder extends BuilderBase {
         await createInputArgs(this.apiContext);
         await createCli(this.apiContext);
         await createApp(this.apiContext);
-        await createRollup(this.apiContext);
+
+        if(project.runtime.type === 'bun') await createBuildJs(this.apiContext);
+        else await createRollup(this.apiContext);
+
         await createPackageJson(this.apiContext);
 
         await formatFiles(this.apiContext);
@@ -244,6 +250,7 @@ class NodeBuilder extends BuilderBase {
 
         if (this.buildMode) {
           await installNpmPackages(this.apiContext);
+
           await runNpmBuild(this.apiContext);
 
           if (this.deployMode)

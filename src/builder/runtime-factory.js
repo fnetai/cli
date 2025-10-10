@@ -24,12 +24,7 @@ class RuntimeFactory {
       const BuilderClass = await this.loadBuilderClass(runtimeType);
       return new BuilderClass(context);
     } catch (error) {
-      console.warn(`Warning: Could not load builder for runtime '${runtimeType}'. Falling back to node builder.`);
-      console.warn(`Error: ${error.message}`);
-
-      // Fall back to the node builder as default
-      const NodeBuilder = (await import('./lib-builder-node.js')).default;
-      return new NodeBuilder(context);
+      throw new Error(`Failed to create builder for runtime '${runtimeType}': ${error.message}`);
     }
   }
 
@@ -42,11 +37,10 @@ class RuntimeFactory {
   static async loadBuilderClass(runtimeType) {
     switch (runtimeType.toLowerCase()) {
       case 'node':
+      case 'bun':
         return (await import('./lib-builder-node.js')).default;
       case 'python':
         return (await import('./lib-builder-python.js')).default;
-      case 'bun':
-        return (await import('./lib-builder-bun.js')).default;
       default:
         throw new Error(`Unsupported runtime type: ${runtimeType}`);
     }
