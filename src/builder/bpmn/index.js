@@ -451,9 +451,8 @@ async function modelA(context) {
         // PROCESS
         const process = moddle.create('bpmn:Process', {
             id: `process_${flow.pathKey}`,
-            documentation: [moddle.create('bpmn:Documentation', { text: `Atom Workflow - ${root.context.atom.name}` })],
-            // atom: moddle.create('atom:Atom', { type: "Test" })
-            // extensionElements: moddle.create('bpmn:ExtensionElements', { values: [custom] })
+            name: flow.name,
+            documentation: [moddle.create('bpmn:Documentation', { text: `Workflow - ${flow.name}` })],
         });
         elementIndex[process.id] = process;
 
