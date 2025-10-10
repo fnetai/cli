@@ -57,10 +57,17 @@
   {% endif %}
   "license": "{{atom.doc.license or 'MIT'}}",
   "scripts": {
-    "build": "rollup --config",
-    "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT --environment FLOWNET_WATCH",
-    "serve": "bunx serve ./"
+    {% if atom.doc.features.runtime.type === 'bun' %}
+      "build": "bun ./build.js",
+      "build:dev": "bun ./build.js --dev",
+      "watch": "bun --watch --watch-mode=poll --watch-ignore-dirs=node_modules,dist --watch-paths=./src ./build.js --dev",
+      "serve": "bunx serve ./"
+    {% else %}
+      "build": "rollup --config",
+      "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
+      "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT --environment FLOWNET_WATCH",
+      "serve": "bunx serve ./"
+    {% endif %}
 
     {% if atom.doc.features.cli.enabled %}
       {% if atom.doc.features.project.format ==='cjs' %}
@@ -89,7 +96,6 @@
 
     {% if atom.doc.features.app.enabled %}
       ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
-      {# ,"app:dev": "bunx serve {{atom.doc.features.app.input.dir}}" #}
     {% endif %}
   },
   "devDependencies": {

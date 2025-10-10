@@ -10,10 +10,12 @@ import { randomUUID } from 'node:crypto';
 import Auth from './auth.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
+import initDependenciesBun from "./api/init-dependencies/bun.js";
 import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
 import createRollup from "./api/create-rollup/index.js";
+import createBuildJs from "./api/create-build-js/index.js";
 import createInputArgs from "./api/create-input-args/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
@@ -157,6 +159,8 @@ class Builder {
     try {
       await this.setProgress({ message: "Initialization started." });
 
+      const project=this.#apiContext.context.project;
+
       await this.initAuth();
       await this.initWorkflow();
 
@@ -178,7 +182,11 @@ class Builder {
       await this.initFeaturesFromNodes({ childs: root.childs, features: this.#atom.doc.features });
 
       await initFeatures(this.#apiContext);
-      await initDependencies(this.#apiContext);
+
+      if(project.runtime.type === 'bun') 
+        await initDependenciesBun(this.#apiContext);
+      else 
+        await initDependencies(this.#apiContext);
 
       await this.initAtomLibsAndDeps({ libs: root.context.libs, packageDependencies: this.#packageDependencies });
 
@@ -1159,6 +1167,8 @@ class Builder {
 
       if (this.#fileMode) {
 
+        const project=this.#apiContext.context.project;
+
         await this.initWorkflowDir();
         await this.initNunjucks();
 
@@ -1187,7 +1197,12 @@ class Builder {
         await createInputArgs(this.#apiContext);
         await createCli(this.#apiContext);
         await createApp(this.#apiContext);
-        await createRollup(this.#apiContext);
+
+        if(project.runtime.type === 'bun') 
+          await createBuildJs(this.#apiContext);
+        else 
+          await createRollup(this.#apiContext);
+
         await createPackageJson(this.#apiContext);
 
         await formatFiles(this.#apiContext);
