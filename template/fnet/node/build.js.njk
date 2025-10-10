@@ -49,8 +49,6 @@ async function buildOutput(name, config) {
     target: config.target || "browser",
     minify: config.minify !== undefined ? config.minify : false,
     sourcemap: config.sourcemap || 'external',
-    external: [],
-    packages: config.packages || 'external',
     // Add environment variables to help with module resolution
     define: {
       'process.env.NODE_PATH': JSON.stringify('./node_modules')
@@ -61,18 +59,11 @@ async function buildOutput(name, config) {
     ]
   };
 
-  if(config.external){
-    // Mark npm dependencies as external to prevent bundling issues
-    buildConfig.external = (() => {
-      try {
-        const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-        return [...Object.keys(pkg.dependencies || {})];
-      } catch (err) {
-        console.warn('Could not read package.json:', err.message);
-        return [];
-      }
-    })();
-  }
+  if(config.external) buildConfig.external = config.external;
+  if(config.packages) buildConfig.packages = config.packages;
+  if(config.banner) buildConfig.banner = config.banner;
+  if(config.footer) buildConfig.footer = config.footer;
+
   // Build with Bun.build
   const result = await Bun.build(buildConfig);
 
@@ -122,7 +113,8 @@ async function main() {
           sourcemap: "external",
           entrypoints: ["./src/cli/index.js"],
           outdir: "{{ atom.doc.features.cli.dir | default('./dist/cli/esm') }}",
-          packages: "external"
+          packages: "external",
+          banner: "#!/usr/bin/env bun"
         });
       } else {
         console.log('CLI not found, skipping CLI build');
