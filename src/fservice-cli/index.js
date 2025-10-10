@@ -41,7 +41,6 @@ const argv = yargs(hideBin(process.argv))
   .help()
   .alias('h', 'help')
   .alias('v', 'version')
-  .epilogue('For more information, visit https://flownet.com')
   .fail((msg, err, yargs) => {
     if (err) {
       console.error(chalk.red(`Error: ${err.message}`));

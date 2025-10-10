@@ -168,24 +168,45 @@ export default async function initFeaturesBun({ atom, context, setProgress }) {
 
   // Add CLI build configuration if enabled
   if (features.cli.enabled) {
+    features.cli.input = {
+      file: `./src/cli/index.js`,
+      dir: `./src/cli/`,
+      ...(features.cli.input || {})
+    };
+    features.cli.output = {
+      file: `./dist/cli/${features.cli.folder}/index.js`,
+      dir: `./dist/cli/${features.cli.folder}/`,
+      ...(features.cli.output || {})
+    };
+
     bunBuildDefault.cli = {
       format: "esm",
       target: "node",
       minify: false,
       sourcemap: "external",
-      entrypoints: ["./src/cli/index.js"],
+      entrypoints: [features.cli.input.file],
       outdir: features.cli.dir
     };
   }
 
   // Add App build configuration if enabled
   if (features.app.enabled) {
+    features.app.input = {
+      file: `./src/app/index.js`,
+      dir: `./src/app/`,
+      ...(features.app.input || {})
+    };
+    features.app.output = {
+      file: `./dist/app/${features.app.folder}/index.js`,
+      dir: `./dist/app/${features.app.folder}/`,
+      ...(features.app.output || {})
+    };
     bunBuildDefault.app = {
       format: "esm",
       target: "browser",
       minify: false,
       sourcemap: "external",
-      entrypoints: ["./src/app/index.js"],
+      entrypoints: [features.app.input.file],
       outdir: features.app.dir
     };
   }

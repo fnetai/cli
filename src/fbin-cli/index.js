@@ -2,8 +2,6 @@
  * Main entry point for the fbin command
  * This file provides a standalone CLI for managing the bin system
  */
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';

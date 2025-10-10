@@ -6,7 +6,6 @@
     "fnet/input.yaml",
     "fnet/output.yaml"
   ],
-  {# "sideEffects": false, #}
   {% if atom.doc['npm::author'] %}
     "author": "{{atom.doc['npm::author'] | safe}}",
   {% endif %}
@@ -70,33 +69,34 @@
           ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
         {% endif %}
       {% else %}
-        ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
+        ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}}"
         ,"cli:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}}"
         {% if atom.doc.features.cli.mcp.enabled===true %}
-          ,"cli:mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
-          ,"cli:mcp:inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
+          ,"cli:mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}} --cli-mode=mcp"
+          ,"cli:mcp:inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}} --cli-mode=mcp"
           ,"cli:mcp:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}} --cli-mode=mcp"
           ,"cli:mcp:inspect:dev": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}} --cli-mode=mcp"
         {% endif %}
       {% endif %}
-      ,"cli:compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
+      ,"cli:compile": "fbin compile {{atom.doc.features.cli.output.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
       ,"cli:compile:dev": "fbin compile {{atom.doc.features.cli.input.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"    
       ,"cli:install": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
 
-      ,"compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
+      ,"compile": "fbin compile {{atom.doc.features.cli.output.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
       ,"install-bin": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
     {% endif %}
 
     {% if atom.doc.features.app.enabled %}
       ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
-      {# ,"app:dev": "bunx serve {{atom.doc.features.app.input.dir}}" #}
     {% endif %}
   },
+
   "devDependencies": {
     {% for dep in packageDevDependencies %}
       "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
     {% endfor%}
   },
+
   "dependencies": {
     {% for dep in packageDependencies %}
       "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
@@ -108,7 +108,7 @@
       {% if atom.doc.features.project.format ==='cjs' %}
         "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.dir}}/index.cjs"
       {% else %}
-        "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.dir}}/index.js"
+        "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.output.file}}"
       {% endif %}
     }
   {% endif %}

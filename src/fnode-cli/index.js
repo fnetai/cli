@@ -54,6 +54,10 @@ async function main() {
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'] });
     cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install" });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
