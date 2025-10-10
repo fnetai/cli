@@ -8,6 +8,7 @@ import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
 import BuilderBase from './lib-builder-base.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
+import initDependenciesBun from "./api/init-dependencies/bun.js";
 import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
@@ -34,7 +35,11 @@ class NodeBuilder extends BuilderBase {
    */
   async initRuntime() {
     await initFeatures(this.apiContext);
-    await initDependencies(this.apiContext);
+    
+    const project=this.apiContext.context.project;
+    if(project.runtime.type === 'bun') await initDependenciesBun(this.apiContext);
+    else await initDependencies(this.apiContext);
+
     await this.initLibraryDir();
     await this.initNunjucks();
     await this.initLibs();
