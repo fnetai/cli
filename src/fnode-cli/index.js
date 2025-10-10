@@ -2,12 +2,8 @@
  * Main entry point for the fnode command
  * This file provides a CLI for managing fnode projects
  */
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import yargs from 'yargs';
 import chalk from 'chalk';
-import fnetConfig from '@fnet/config';
-import findNodeModules from '../builder/find-node-modules.js';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
 import {
   bindSimpleContextCommand,
@@ -24,10 +20,6 @@ import buildCmd from './build-cmd.js';
 import deployCmd from './deploy-cmd.js';
 import fileCmd from './file-cmd.js';
 import inputCmd from './input-cmd.js';
-import installCmd from './install-cmd.js';
-import runCmd from './run-cmd.js';
-import withCmd from './with-cmd.js';
-import passthroughCmd from './passthrough-cmd.js';
 import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
@@ -47,7 +39,8 @@ async function main() {
       .usage('Usage: $0 <command> [options]')
       .command(createCmd)
       .command(projectCmd)
-      .command(buildCmd)
+      .command(buildCmd())
+      .command(buildCmd({ dev: true }))
       .command(deployCmd)
       .command(fileCmd)
       .command(inputCmd)

@@ -59,7 +59,7 @@
   "scripts": {
     "build": "rollup --config",
     "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
+    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT --environment FLOWNET_WATCH",
     "serve": "bunx serve ./"
 
     {% if atom.doc.features.cli.enabled %}

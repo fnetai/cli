@@ -6,6 +6,8 @@ import fs from 'fs-extra';
 import path from 'path';
 
 const DEVELOPMENT = process.env.DEVELOPMENT ? true : false;
+const FLOWNET_WATCH = process.env.FLOWNET_WATCH ? true : false;
+
 const extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
 
 {% if atom.doc.features.copy_enabled===true %}
@@ -88,7 +90,7 @@ const initPlugins = async (options) => {
     const {default:copy} = await import('rollup-plugin-copy');
     plugins.push(copy(options.copy.options));
 
-    if (DEVELOPMENT) watchFiles(options.copy.options.targets);
+    if (FLOWNET_WATCH) watchFiles(options.copy.options.targets);
   }
   {% endif %}
 
@@ -259,7 +261,7 @@ const initPlugins = async (options) => {
 
   {# BROWSERSYNC #}
   {% if atom.doc.features.browsersync_enabled===true %}
-  if (options.browsersync && DEVELOPMENT) {
+  if (options.browsersync && FLOWNET_WATCH) {
     const {default:browsersync} = await import('@fnet/rollup-plugin-browsersync');
     options.browsersync.middleware = function (req, res, next) {
       if (req.method === 'OPTIONS') {

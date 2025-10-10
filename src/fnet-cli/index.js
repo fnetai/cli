@@ -2,8 +2,6 @@
  * Main entry point for the fnet command
  * This file provides a CLI for managing fnet projects
  */
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
@@ -18,14 +16,9 @@ import {
 import createCmd from './create-cmd.js';
 import projectCmd from './project-cmd.js';
 import buildCmd from './build-cmd.js';
-import buildDevCmd from './build-dev-cmd.js';
 import deployCmd from './deploy-cmd.js';
 import fileCmd from './file-cmd.js';
 import inputCmd from './input-cmd.js';
-import installCmd from './install-cmd.js';
-import runCmd from './run-cmd.js';
-import withCmd from './with-cmd.js';
-import passthroughCmd from './passthrough-cmd.js';
 import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
@@ -45,8 +38,8 @@ async function main() {
       .usage('Usage: $0 <command> [options]')
       .command(createCmd)
       .command(projectCmd)
-      .command(buildCmd)
-      .command(buildDevCmd)
+      .command(buildCmd())
+      .command(buildCmd({ dev: true }))
       .command(deployCmd)
       .command(fileCmd)
       .command(inputCmd)
@@ -61,14 +54,14 @@ async function main() {
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'] });
 
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'] });
-    
+
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'] });
 
-    
+
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'] });
     cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install" });
 
