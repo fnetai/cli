@@ -154,7 +154,7 @@ export default async function initFeatures(apiContext) {
   if (features.cli.enabled) {
     // Use the bin name from CLI configuration
     atom.doc['npm::bin'] = features.cli.bin;
-    console.log(`Setting npm::bin to ${features.cli.bin} from features.cli.bin`);
+    // console.log(`Setting npm::bin to ${features.cli.bin} from features.cli.bin`);
   }
 
   features.json = features.cli.enabled || features.json;
