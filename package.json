@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.128.3",
+  "version": "0.128.5",
   "files": [
     "dist",
     "template"

@@ -31,5 +31,5 @@
   {% endif %}
 {% elseif context.lib.type==='subworkflow' %}
   // LIBRARY: {{context.lib.indexKey}}
-  import { default as {{context.lib.codeKey}} } from "../{{context.lib.codeKey}}";
+  import { default as {{context.lib.codeKey}} } from "../{{context.lib.codeKey}}.js";
 {% endif %}

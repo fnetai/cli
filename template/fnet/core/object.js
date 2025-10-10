@@ -1,6 +1,6 @@
 import getValue from "get-value";
 import setValue from "set-value";
-import print from "./print";
+import print from "./print.js";
 
 export default class Object {
   #property;

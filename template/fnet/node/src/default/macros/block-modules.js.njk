@@ -4,7 +4,7 @@
 
     // MODULE : {{child.indexKey}}
     {% if child.definition.dynamic %}
-      const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}");
+      const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}.js");
     {% endif %}
 
     m['{{child.name}}']=async function(){

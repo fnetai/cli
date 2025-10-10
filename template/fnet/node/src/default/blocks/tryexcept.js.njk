@@ -8,7 +8,7 @@
 {% for child in childs %}
   {% if not child.definition.dynamic %}
     // CHILD: {{child.indexKey}}
-    import {{child.codeKey}} from "./{{child.codeKey}}";
+    import {{child.codeKey}} from "./{{child.codeKey}}.js";
   {% endif %}
 {% endfor%}
 
@@ -32,7 +32,7 @@ export default function Block(context) {
             
           const onError=error=>{
             {% if context.except.definition.dynamic %}
-                const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
+                const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}.js");
             {% endif %}
 
             const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c , error });
@@ -45,7 +45,7 @@ export default function Block(context) {
           };
 
           {% if context.try.definition.dynamic %}
-              const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}");
+              const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}.js");
           {% endif %}
           
           const current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c ,onError, error });

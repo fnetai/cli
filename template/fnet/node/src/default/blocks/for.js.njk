@@ -8,7 +8,7 @@
 {% if childs.length %}
   {% if not childs[0].definition.dynamic %}
     // FIRST CHILD: {{childs[0].indexKey}}
-    import {{childs[0].codeKey}} from "./{{childs[0].codeKey}}";
+    import {{childs[0].codeKey}} from "./{{childs[0].codeKey}}.js";
   {% endif %}
 {% endif%}
 
@@ -31,7 +31,7 @@ export default function Block(context) {
       {% if childs.length %}
         {% if childs[0].definition.dynamic %}
           // FIRST CHILD: {{childs[0].indexKey}}
-          const { default: {{childs[0].codeKey}} } = await import("./{{childs[0].codeKey}}");
+          const { default: {{childs[0].codeKey}} } = await import("./{{childs[0].codeKey}}.js");
         {% endif %}
       {% endif%}
 

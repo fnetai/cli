@@ -270,7 +270,7 @@ import express from 'express';
 
 {% if atom.doc.features.cli.extend===true %}
   {# TYPE 1 #}
-  import { default as runExtended } from '../../../cli';
+  import { default as runExtended } from '../../../cli/index.js';
   import argsParser from 'yargs-parser';
 
   const run = async () => {

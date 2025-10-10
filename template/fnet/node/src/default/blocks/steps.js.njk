@@ -18,7 +18,7 @@ export default function Block(context){
 
         // NEXT : {{context.next.indexKey}}
         {% if context.next.definition.dynamic %}
-          const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}");
+          const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}.js");
         {% endif %}
 
         let current=new {{context.next.codeKey}}({ parent:_this, engine, flow, caller:c ,onError, error });

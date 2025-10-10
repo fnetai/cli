@@ -18,6 +18,7 @@ import {
 import createCmd from './create-cmd.js';
 import projectCmd from './project-cmd.js';
 import buildCmd from './build-cmd.js';
+import buildDevCmd from './build-dev-cmd.js';
 import deployCmd from './deploy-cmd.js';
 import fileCmd from './file-cmd.js';
 import inputCmd from './input-cmd.js';
@@ -45,6 +46,7 @@ async function main() {
       .command(createCmd)
       .command(projectCmd)
       .command(buildCmd)
+      .command(buildDevCmd)
       .command(deployCmd)
       .command(fileCmd)
       .command(inputCmd)
@@ -54,12 +56,22 @@ async function main() {
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun' });
+
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'bun', preArgs: ['run', 'serve', '--'] });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'] });
+
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'] });
+    
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'] });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'] });
+
+    
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'] });
     cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install" });
+
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });

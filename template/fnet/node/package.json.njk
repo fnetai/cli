@@ -8,40 +8,42 @@
   ],
   {# "sideEffects": false, #}
   {% if atom.doc['npm::author'] %}
-  "author": "{{atom.doc['npm::author'] | safe}}",
+    "author": "{{atom.doc['npm::author'] | safe}}",
   {% endif %}
 
   {% if atom.doc['npm::description'] %}
-  "description": "{{atom.doc['npm::description'] | safe}}",
+    "description": "{{atom.doc['npm::description'] | safe}}",
   {% endif %}
 
   {% if atom.doc.features.project.format ==='cjs' %}
     {% if atom.doc.features.rollup_output.esm.enabled === true%}
-  "main": "dist/default/esm/index.js",
-  "type":"module",
+      "main": "dist/default/esm/index.js",
+      "type":"module",
     {% else %}
-  "main": "dist/default/cjs/index.cjs",
+      "main": "dist/default/cjs/index.cjs",
     {% endif %}
-  {% if atom.doc.features.dts_enabled ===true %}
-  "types": "dist/default/types/index.d.ts",
-  {% endif %}
-  "exports":{
-    ".":{
-      "import":"./dist/default/esm/index.js",
-      "require":"./dist/default/cjs/index.cjs"
-    }
+
+    {% if atom.doc.features.dts_enabled ===true %}
+    "types": "dist/default/types/index.d.ts",
+    {% endif %}
+
+    "exports":{
+      ".":{
+        "import":"./dist/default/esm/index.js",
+        "require":"./dist/default/cjs/index.cjs"
+      }
   },
   {% else %}
-  "main": "dist/default/esm/index.js",
-  {% if atom.doc.features.dts_enabled ===true %}
-  "types": "dist/default/types/index.d.ts",
-  {% endif %}
-  "type":"module",
-  "exports":{
-    ".":{
-      "import":"./dist/default/esm/index.js",
-      "require":"./dist/default/cjs/index.cjs"
-    }
+    "main": "dist/default/esm/index.js",
+    {% if atom.doc.features.dts_enabled ===true %}
+      "types": "dist/default/types/index.d.ts",
+    {% endif %}
+    "type":"module",
+    "exports":{
+      ".":{
+        "import":"./dist/default/esm/index.js",
+        "require":"./dist/default/cjs/index.cjs"
+      }
   },
   {% endif %}
   "flownet": {
@@ -59,44 +61,55 @@
     "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
     "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT",
     "serve": "bunx serve ./"
+
     {% if atom.doc.features.cli.enabled %}
-    {% if atom.doc.features.project.format ==='cjs' %}
-    ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs"
-    {% if atom.doc.features.cli.mcp.enabled===true %}
-    ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
-    ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
+      {% if atom.doc.features.project.format ==='cjs' %}
+        ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs"
+        {% if atom.doc.features.cli.mcp.enabled===true %}
+          ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
+          ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
+        {% endif %}
+      {% else %}
+        ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
+        ,"cli:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}}"
+        {% if atom.doc.features.cli.mcp.enabled===true %}
+          ,"cli:mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
+          ,"cli:mcp:inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
+          ,"cli:mcp:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}} --cli-mode=mcp"
+          ,"cli:mcp:inspect:dev": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}} --cli-mode=mcp"
+        {% endif %}
+      {% endif %}
+      ,"cli:compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
+      ,"cli:compile:dev": "fbin compile {{atom.doc.features.cli.input.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"    
+      ,"cli:install": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
+
+      ,"compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
+      ,"install-bin": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
     {% endif %}
-    {% else %}
-    ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/"
-    {% if atom.doc.features.cli.mcp.enabled===true %}
-    ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
-    ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/ --cli-mode=mcp"
-    {% endif %}
-    {% endif %}
-    ,"compile": "fbin compile {{atom.doc.features.cli.dir}}/index.js -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
-    ,"install-bin": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
-    {% endif %}
+
     {% if atom.doc.features.app.enabled %}
-    ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
+      ,"app": "bunx serve {{atom.doc.features.app.dir}}/"
+      {# ,"app:dev": "bunx serve {{atom.doc.features.app.input.dir}}" #}
     {% endif %}
   },
   "devDependencies": {
     {% for dep in packageDevDependencies %}
-    "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
+      "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
     {% endfor%}
   },
   "dependencies": {
     {% for dep in packageDependencies %}
-    "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
+      "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
     {% endfor%}
-    }
-    {% if atom.doc.features.cli.enabled and atom.doc['npm::bin'] %}
+  }
+  
+  {% if atom.doc.features.cli.enabled and atom.doc['npm::bin'] %}
     ,"bin":{
       {% if atom.doc.features.project.format ==='cjs' %}
-      "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.dir}}/index.cjs"
+        "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.dir}}/index.cjs"
       {% else %}
-      "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.dir}}/index.js"
+        "{{atom.doc['npm::bin']}}":"{{atom.doc.features.cli.dir}}/index.js"
       {% endif %}
     }
-    {% endif %}
+  {% endif %}
 }

@@ -3,7 +3,7 @@
 {% if context.next %}
   {% if not context.next.definition.dynamic %}
     // NEXT: {{context.next.indexKey}}
-    import {{context.next.codeKey}} from "./blocks/{{context.next.codeKey}}";
+    import {{context.next.codeKey}} from "./blocks/{{context.next.codeKey}}.js";
   {% endif %}
 {% endif %}
 
@@ -72,7 +72,7 @@ export default class Workflow extends Object {
 
       {% if context.next.definition.dynamic %}
         // NEXT : {{context.next.indexKey}}
-        const { default: {{context.next.codeKey}} } = await import("./blocks/{{context.next.codeKey}}");
+        const { default: {{context.next.codeKey}} } = await import("./blocks/{{context.next.codeKey}}.js");
       {% endif %}
       
       {# closure #}

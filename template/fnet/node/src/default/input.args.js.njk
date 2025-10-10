@@ -1,10 +1,10 @@
 {% if atom.doc.features.project.format === 'esm' %}
   import fnetArgs from '@fnet/args';
-  import validate,{schema as inputSchema} from "./validate_input";
+  import validate,{schema as inputSchema} from "./validate_input.js";
 
 {% elif atom.doc.features.project.format === 'cjs' %}
   const fnetArgs = require('@fnet/args');
-  const validate,{schema as inputSchema} = require("./validate_input");
+  const validate,{schema as inputSchema} = require("./validate_input.js");
 {% endif %}
 
 {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}

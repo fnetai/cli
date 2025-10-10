@@ -9,7 +9,7 @@
 {% for child in childs %}
   {% if not child.definition.dynamic %}
     // CHILD: {{child.indexKey}}
-    import {{child.codeKey}} from "./{{child.codeKey}}";
+    import {{child.codeKey}} from "./{{child.codeKey}}.js";
   {% endif %}
 {% endfor%}
 
@@ -42,7 +42,7 @@ export default function Block(context) {
           {
             {% if child.definition.dynamic %}
               // CHILD: {{child.indexKey}}
-              const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}");
+              const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}.js");
             {% endif %}
 
             const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c, onError });

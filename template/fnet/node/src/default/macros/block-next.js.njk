@@ -2,7 +2,7 @@
 
   // NEXT : {{context.next.indexKey}}
   {% if context.next.definition.dynamic %}
-    const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}");
+    const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}.js");
   {% endif %}
 
 

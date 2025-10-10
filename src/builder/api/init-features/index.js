@@ -287,6 +287,16 @@ export default async function initFeatures(apiContext) {
   // app default
   if (features.app.enabled === true) {
     features.app.dir = `./dist/app/${features.app.folder}`;
+    features.app.output = {
+      file: `./dist/app/${features.app.folder}/index.js`,
+      dir: `./dist/app/${features.app.folder}/`,
+      ...(features.app.output || {})
+    };
+    features.app.input = {
+      file: `./src/app/index.js`,
+      dir: `./src/app/`,
+      ...(features.app.input || {})
+    };
 
     rollup_output_default.app = {
       format: features.app.format,
@@ -294,7 +304,7 @@ export default async function initFeatures(apiContext) {
       babel: true,
       context: "window",
       replace: true,
-      input: "./src/app/index.js",
+      input: features.app.input.file,
       output_dir: features.app.dir,
       terser: true,
       output_exports: features.app.export === false ? "none" : "auto",
@@ -305,6 +315,17 @@ export default async function initFeatures(apiContext) {
   // cli default
   if (features.cli.enabled === true) {
     features.cli.dir = `./dist/cli/${features.cli.folder}`;
+    features.cli.output = {
+      file: `./dist/cli/${features.cli.folder}/index.js`,
+      dir: `./dist/cli/${features.cli.folder}/`,
+      ...(features.cli.output || {})
+    };
+    
+    features.cli.input = {
+      file: `./src/cli/index.js`,
+      dir: `./src/cli/`,
+      ...(features.cli.input || {})
+    };
 
     rollup_output_default.cli = {
       format: features.cli.format,
@@ -313,7 +334,7 @@ export default async function initFeatures(apiContext) {
       browser: false,
       replace: true,
       enabled: true,
-      input: "./src/cli/index.js",
+      input: features.cli.input.file,
       output_dir: features.cli.dir,
       banner: "#!/usr/bin/env node",
       terser: true,
