@@ -1,15 +1,16 @@
 /**
- * Build command for fnode CLI
+ * Build command for fnet CLI
  */
-import RuntimeFactory from '../builder/runtime-factory.js';
+
+import Builder from '../builder/wf-builder.js';
 import { createContext } from './context.js';
 
 /**
  * Command configuration
  */
 const command = {
-  command: 'build',
-  describe: 'Build fnode project',
+  command: 'build:dev',
+  describe: 'Build flownet project',
   builder: (yargs) => {
     return yargs
       .option('id', {
@@ -40,15 +41,18 @@ const command = {
   handler: async (argv) => {
     try {
 
+      argv.dev = true;
+
       const context = await createContext(argv);
-      const builder = await RuntimeFactory.createBuilder(context);
+
+      const builder = new Builder(context);
       await builder.init();
       await builder.build();
 
-      console.log('Building library succeeded!');
+      console.log('Building workflow succeeded!');
       process.exit(0);
     } catch (error) {
-      console.error('Building library failed!', error.message);
+      console.error('Building workflow failed!', error.message);
       process.exit(1);
     }
   }

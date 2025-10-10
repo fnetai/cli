@@ -17,6 +17,7 @@ import {
 import createCmd from './create-cmd.js';
 import projectCmd from './project-cmd.js';
 import buildCmd from './build-cmd.js';
+import buildDevCmd from './build-dev-cmd.js';
 import deployCmd from './deploy-cmd.js';
 import fileCmd from './file-cmd.js';
 import inputCmd from './input-cmd.js';
@@ -39,8 +40,8 @@ async function main() {
       .usage('Usage: $0 <command> [options]')
       .command(createCmd)
       .command(projectCmd)
-      .command(buildCmd())
-      .command(buildCmd({ dev: true }))
+      .command(buildCmd)
+      .command(buildDevCmd)
       .command(deployCmd)
       .command(fileCmd)
       .command(inputCmd)

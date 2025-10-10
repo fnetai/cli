@@ -8,7 +8,7 @@ import { createContext } from './context.js';
  * Command configuration
  */
 const command = {
-  command: 'build',
+  command: 'build:dev',
   describe: 'Build fnode project',
   builder: (yargs) => {
     return yargs
@@ -39,6 +39,8 @@ const command = {
   },
   handler: async (argv) => {
     try {
+
+      argv.dev = true;
 
       const context = await createContext(argv);
       const builder = await RuntimeFactory.createBuilder(context);
