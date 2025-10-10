@@ -63,19 +63,4 @@ export default async function createRollup({ atom, setProgress, context, package
   const projectDir = context.projectDir;
   let filePath = path.resolve(projectDir, `rollup.config.mjs`);
   fs.writeFileSync(filePath, templateRender, 'utf8');
-
-
-  // // RENDER TEMPLATE rollup.config.mjs.njk
-  // // check file if exists
-  // if (fs.existsSync(path.resolve(templateDir, `rollup.config.mjs.njk`))) {
-  //   template = nunjucks.compile(
-  //     fs.readFileSync(path.resolve(templateDir, `rollup.config.mjs.njk`), "utf8"),
-  //     nunjucks.configure(templateDir)
-  //   );
-
-  //   templateRender = template.render(templateContext);
-
-  //   filePath = path.resolve(projectDir, `rollup.config.mjs`);
-  //   fs.writeFileSync(filePath, templateRender, 'utf8');
-  // };
 }
