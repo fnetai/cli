@@ -25,9 +25,11 @@ export default class Workflow extends Object {
       {% for param in context.transform.params %}
         {% if param.hasDefault%}
           {% if param.type ==='string'%}
-            this.set('{{param.key}}',  params?.hasOwnProperty('{{param.key}}')? params['{{param.key}}']:'{{param.default}}');
+            this.set('{{param.key}}',  Reflect.has(params,'{{param.key}}')? params['{{param.key}}']:'{{param.default}}');
+          {% elif param.type ==='object' %}
+            this.set('{{param.key}}',  Reflect.has(params,'{{param.key}}')? params['{{param.key}}']:{{param.default | dump | safe}});
           {% else %}
-            this.set('{{param.key}}',  params?.hasOwnProperty('{{param.key}}')? params['{{param.key}}']:{{param.default | dump}});
+            this.set('{{param.key}}',  Reflect.has(params,'{{param.key}}')? params['{{param.key}}']:{{param.default | dump}});
           {% endif %}
         {% else %}
         this.set('{{param.key}}',this.getValue(params,'{{param.key}}'));

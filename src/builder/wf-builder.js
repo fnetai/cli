@@ -53,6 +53,7 @@ import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
 import npmBlock from './block/npm-block/index.js';
 import newBlock from './block/new/index.js';
+import outputBlock from './block/output/index.js';
 import which from './which.js';
 import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
 
@@ -406,6 +407,7 @@ class Builder {
     else if (await returnBlock.hits(api)) await returnBlock.init(api);
     else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
     else if (await assignBlock.hits(api)) await assignBlock.init(api);
+    else if (await outputBlock.hits(api)) await outputBlock.init(api);
     else throw new Error('Undefined step type.');
   }
 
@@ -727,19 +729,6 @@ class Builder {
       }
       return atom;
     }
-    else if (parsedUrl.protocol === 'node:') {
-      const atom = {
-        name: parsedUrl.pathname,
-        doc: {
-          type: "workflow.lib",
-          "content-type": "javascript",
-          language: "js",
-          dependencies: [],
-        },
-        protocol: parsedUrl.protocol,
-      }
-      return atom;
-    }
   }
 
   async resolveNodeTree({ root }) {
@@ -907,6 +896,7 @@ class Builder {
       case "signal":
       case "wait":
       case "modules":
+      case "output":
         this.createBlockFromTemplate({ node });
         break;
       default:
