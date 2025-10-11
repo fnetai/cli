@@ -28,7 +28,7 @@ async function init({ node, initNode }) {
 
   node.hasDefaultCondition = defaultChilds.length === 1;
 
-  await initModules({ node, initNode });
+  await initModules({ node, initNode, extra: false });
 
   node.blockAutoJumpToParent = false;
   node.blockAutoJumpToSibling = true;

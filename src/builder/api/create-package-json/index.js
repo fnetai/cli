@@ -57,7 +57,7 @@ export default async function createPackageJson({ atom, context, packageDependen
     const srcFilePath = checkFile.file;
     if (!fs.existsSync(srcFilePath)) throw new Error(`App file not found: ${srcFilePath}`);
 
-    const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
+    const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true, verbose: false });
     const targetImports = parsedImports.all;
 
     for await (const parsedImport of targetImports) {

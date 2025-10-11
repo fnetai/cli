@@ -11,7 +11,7 @@ async function init({ node, initNode }) {
 
   node.type = "for";
 
-  await initModules({ node, initNode });
+  await initModules({ node, initNode, extra: false });
 
   node.blockAutoJumpToParent = true;
   node.blockAutoJumpToSibling = false;

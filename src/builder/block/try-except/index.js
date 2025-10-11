@@ -9,7 +9,7 @@ async function hits({ node }) {
 async function init({ node, initNode }) {
   node.type = "tryexcept";
 
-  await initModules({ node, initNode });
+  await initModules({ node, initNode ,extra: false });
 
   node.blockAutoJumpToParent = false;
   node.blockAutoJumpToSibling = true;
