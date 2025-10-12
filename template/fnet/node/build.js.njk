@@ -46,7 +46,11 @@ async function buildOutput(name, config) {
     entrypoints: config.entrypoints || [`./src/${name}/index.js`],
     outdir: outdir,
     format: config.format || 'esm',
-    target: config.target || "browser",
+    {% if atom.doc.features.runtime.target === 'bun' %}
+      target: "bun",
+    {% else %}
+      target: config.target || "browser",
+    {% endif %}
     minify: config.minify !== undefined ? config.minify : false,
     sourcemap: config.sourcemap || 'external',
     splitting: true,
