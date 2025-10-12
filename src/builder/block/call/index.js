@@ -39,6 +39,14 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
       targetLib = transform.call;
     }
   }
+  else {
+    if (Reflect.has(transform, 'from') || Reflect.has(transform, 'import')) {
+      if (transform.call.startsWith('use:e::')) {
+        const substr = transform.call.substring(7);
+        transform.libExp = await transformExpression(`e::LIBRARY.${substr}`);
+      }
+    };
+  }
 
   if (transform.args)
     transform.args = await transformExpression(transform.args);

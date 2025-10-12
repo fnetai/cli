@@ -11,7 +11,11 @@
         import { {{ context.transform.import | safe }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
       {% elseif context.transform.import %}
         {# EXISTING: import pattern (e.g., import: npm:lodash, call: cloneDeep) #}
-        import { {{ context.transform.call | safe  }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
+        {% if context.transform.libExp %}
+          import { default as LIBRARY } from "{{context.lib.atom.relativePath}}";
+        {% else %}
+          import { {{ context.transform.call | safe  }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
+        {% endif %}
       {% else %}
         {# EXISTING: default import #}
         import { default as LIBRARY } from "{{context.lib.atom.relativePath}}";
@@ -19,7 +23,11 @@
     {% else %}
       {% if context.transform.from and context.transform.import %}
         {# NEW: from + import pattern for non-relative paths #}
-        import { {{ context.transform.import | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+        {% if context.transform.libExp %}
+          import { default as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+        {% else %}
+          import { {{ context.transform.import | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+        {% endif %}
       {% elseif context.transform.import %}
         {# EXISTING: import pattern for non-relative paths #}
         import { {{ context.transform.call | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";

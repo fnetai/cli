@@ -822,6 +822,7 @@ class Builder {
       }
       else if (atomLib.protocol === 'use:') {
         // nothing
+        console.log('USE:', atomLib.name);
       }
       else {
         const atomLibPath = `${projectDir}/src/libs/${atomLib.id}.js`;

@@ -65,7 +65,11 @@ export default function Block(context){
         {% else %}
           {# EXISTING: Normal function/method call (no 'new') #}
           {% if context.lib.type==='atom'%}
-            const lib=LIBRARY;
+            {% if context.transform.libExp %}
+              const lib={{context.transform.libExp}};
+            {% else %}
+              const lib=LIBRARY;
+            {% endif %}
           {% elseif context.lib.type==='subworkflow' %}
             const lib={{context.lib.codeKey}};
           {% elseif target.atom.protocol==='use:' %}
