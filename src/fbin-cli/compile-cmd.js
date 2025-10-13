@@ -35,6 +35,12 @@ export const builder = {
     default: false,
     alias: 'f'
   },
+  yes: {
+    describe: 'Automatically answer yes to all prompts',
+    type: 'boolean',
+    default: false,
+    alias: 'y'
+  },
   target: {
     describe: 'Target platform (auto, linux, macos, windows)',
     type: 'string',
@@ -84,7 +90,7 @@ export const handler = async (argv) => {
     }
 
     // Check if output file already exists
-    if (fs.existsSync(outputPath) && !argv.force) {
+    if (fs.existsSync(outputPath) && !argv.force && !argv.yes) {
       const { confirmOverwrite } = await fnetPrompt({
         type: 'confirm',
         name: 'confirmOverwrite',

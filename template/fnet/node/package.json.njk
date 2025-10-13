@@ -86,12 +86,9 @@
           ,"cli:mcp:inspect:dev": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}} --cli-mode=mcp"
         {% endif %}
       {% endif %}
-      ,"cli:compile": "fbin compile {{atom.doc.features.cli.output.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
-      ,"cli:compile:dev": "fbin compile {{atom.doc.features.cli.input.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"    
+      ,"cli:compile": "fbin compile {{atom.doc.features.cli.output.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
+      ,"cli:compile:dev": "fbin compile {{atom.doc.features.cli.input.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"    
       ,"cli:install": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
-
-      ,"compile": "fbin compile {{atom.doc.features.cli.output.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}}"
-      ,"install-bin": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
     {% endif %}
 
     {% if atom.doc.features.app.enabled %}
