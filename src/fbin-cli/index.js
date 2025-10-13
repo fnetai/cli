@@ -13,6 +13,9 @@ import compileCommand from './compile-cmd.js';
 import installCommand from './install-cmd.js';
 import uninstallCommand from './uninstall-cmd.js';
 import listCommand from './list-cmd.js';
+import backupCommand from './backup-cmd.js';
+import restoreCommand from './restore-cmd.js';
+import cleanupCommand from './cleanup-cmd.js';
 import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
 import { setupEnvironment } from './utils.js';
 
@@ -34,6 +37,9 @@ async function main() {
       .command(installCommand)
       .command(uninstallCommand)
       .command(listCommand)
+      .command(backupCommand)
+      .command(restoreCommand)
+      .command(cleanupCommand)
       .demandCommand(1, 'You need to specify a command')
       .help()
       .version()

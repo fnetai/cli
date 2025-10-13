@@ -229,10 +229,12 @@ export function getExportPathCommand(shell, binDir) {
  * @param {string} shell - Shell name
  * @param {string} configPath - Shell config file path
  * @param {string} binDir - Bin directory path
+ * @param {Object} options - Options (autoBackup: boolean)
  * @returns {Promise<boolean>} True if successful
  */
-export async function addBinToPath(shell, configPath, binDir) {
+export async function addBinToPath(shell, configPath, binDir, options = {}) {
   try {
+    const { autoBackup = true } = options;
     const exportCommand = getExportPathCommand(shell, binDir);
 
     // Special handling for Windows CMD
@@ -265,6 +267,24 @@ export async function addBinToPath(shell, configPath, binDir) {
       return true;
     }
 
+    // Backup config file before modifying
+    if (autoBackup && fs.existsSync(configPath)) {
+      const backupDir = createBackupDirectory();
+      const configFileName = path.basename(configPath);
+      const backed = backupFile(configPath, path.join(backupDir, 'configs'), configFileName);
+
+      if (backed) {
+        createBackupMetadata(backupDir, {
+          type: 'auto',
+          command: 'addBinToPath',
+          message: `Automatic backup before modifying ${configFileName}`,
+          files: [configPath]
+        });
+        updateLatestSymlink(backupDir);
+        console.log(chalk.green(`✓ Backed up ${configFileName} to ${backupDir}`));
+      }
+    }
+
     // Add bin directory to config file
     const newContent = `${configContent.trim()}\n\n# Added by @fnet/cli\n${exportCommand}\n`;
     fs.writeFileSync(configPath, newContent);
@@ -282,6 +302,151 @@ export async function addBinToPath(shell, configPath, binDir) {
   }
 }
 
+/**
+ * Get the backup directory path
+ * @returns {string} Backup directory path
+ */
+export function getBackupDirectory() {
+  return path.join(os.homedir(), '.fnet', 'backups');
+}
+
+/**
+ * Create a timestamped backup directory
+ * @returns {string} Backup directory path
+ */
+export function createBackupDirectory() {
+  const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\..+/, '');
+  const backupDir = path.join(getBackupDirectory(), timestamp);
+
+  if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir, { recursive: true });
+  }
+
+  return backupDir;
+}
+
+/**
+ * Backup a file
+ * @param {string} filePath - File to backup
+ * @param {string} backupDir - Backup directory
+ * @param {string} relativePath - Relative path in backup (optional)
+ * @returns {boolean} True if successful
+ */
+export function backupFile(filePath, backupDir, relativePath = null) {
+  try {
+    if (!fs.existsSync(filePath)) {
+      return false;
+    }
+
+    const fileName = relativePath || path.basename(filePath);
+    const backupPath = path.join(backupDir, fileName);
+    const backupFileDir = path.dirname(backupPath);
+
+    // Create subdirectories if needed
+    if (!fs.existsSync(backupFileDir)) {
+      fs.mkdirSync(backupFileDir, { recursive: true });
+    }
+
+    fs.copyFileSync(filePath, backupPath);
+    return true;
+  } catch (error) {
+    console.error(chalk.red(`Failed to backup file ${filePath}: ${error.message}`));
+    return false;
+  }
+}
+
+/**
+ * Create backup metadata
+ * @param {string} backupDir - Backup directory
+ * @param {Object} options - Backup options
+ * @returns {void}
+ */
+export function createBackupMetadata(backupDir, options = {}) {
+  const metadata = {
+    timestamp: new Date().toISOString(),
+    type: options.type || 'manual',
+    message: options.message || '',
+    command: options.command || '',
+    files: options.files || [],
+    ...options
+  };
+
+  const metadataPath = path.join(backupDir, 'metadata.json');
+  fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+}
+
+/**
+ * List all backups
+ * @returns {Array<Object>} Array of backup objects
+ */
+export function listBackups() {
+  const backupDir = getBackupDirectory();
+
+  if (!fs.existsSync(backupDir)) {
+    return [];
+  }
+
+  const backups = [];
+  const entries = fs.readdirSync(backupDir);
+
+  for (const entry of entries) {
+    const entryPath = path.join(backupDir, entry);
+    const stat = fs.statSync(entryPath);
+
+    if (stat.isDirectory() && entry !== 'latest') {
+      const metadataPath = path.join(entryPath, 'metadata.json');
+      let metadata = {};
+
+      if (fs.existsSync(metadataPath)) {
+        try {
+          metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+        } catch (err) {
+          // Ignore parse errors
+        }
+      }
+
+      backups.push({
+        timestamp: entry,
+        path: entryPath,
+        created: stat.mtime,
+        ...metadata
+      });
+    }
+  }
+
+  // Sort by timestamp descending (newest first)
+  backups.sort((a, b) => new Date(b.created) - new Date(a.created));
+
+  return backups;
+}
+
+/**
+ * Update latest symlink
+ * @param {string} backupDir - Backup directory path
+ * @returns {void}
+ */
+export function updateLatestSymlink(backupDir) {
+  const latestPath = path.join(getBackupDirectory(), 'latest');
+
+  try {
+    // Remove existing symlink if it exists
+    if (fs.existsSync(latestPath)) {
+      fs.unlinkSync(latestPath);
+    }
+
+    // Create new symlink (Windows requires different approach)
+    if (process.platform === 'win32') {
+      // On Windows, create a file with the path instead of symlink
+      fs.writeFileSync(latestPath + '.txt', backupDir);
+    } else {
+      fs.symlinkSync(backupDir, latestPath);
+    }
+  } catch (error) {
+    // Symlink creation might fail, but it's not critical
+    console.warn(chalk.yellow(`Could not create latest symlink: ${error.message}`));
+  }
+}
+
 export default {
   getBinDirectory,
   getMetadataDirectory,
@@ -292,5 +457,11 @@ export default {
   getAllShellConfigPaths,
   createBinDirectoryStructure,
   getExportPathCommand,
-  addBinToPath
+  addBinToPath,
+  getBackupDirectory,
+  createBackupDirectory,
+  backupFile,
+  createBackupMetadata,
+  listBackups,
+  updateLatestSymlink
 };
