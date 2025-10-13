@@ -10,7 +10,7 @@ import { Atom } from "@flownet/lib-atom-api-js";
 import fnetConfig from '@fnet/config';
 import fnetListFiles from '@fnet/list-files';
 
-import createRedisClient from '../redisClient.js';
+// import createRedisClient from '../redisClient.js';
 import Auth from './auth.js';
 import deployTo from './deploy/deploy-to/index.js';
 
@@ -130,13 +130,13 @@ class BuilderBase {
    * @private
    */
   async _cache_set(key, value, expire_ttl) {
-    if (!this._redis_client) return;
+    // if (!this._redis_client) return;
 
-    await this._redis_client.SETEX(
-      key,
-      expire_ttl || this._expire_ttl,
-      JSON.stringify(value),
-    ).catch(console.error);
+    // await this._redis_client.SETEX(
+    //   key,
+    //   expire_ttl || this._expire_ttl,
+    //   JSON.stringify(value),
+    // ).catch(console.error);
   }
 
   /**
@@ -334,7 +334,7 @@ class BuilderBase {
    * @returns {Promise<void>}
    */
   async init() {
-    this._redis_client = await createRedisClient();
+    // this._redis_client = await createRedisClient();
 
     this.#buildId = this.#context.buildId || randomUUID();
     this.#apiContext.buildId = this.#buildId;

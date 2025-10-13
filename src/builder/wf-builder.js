@@ -5,7 +5,7 @@ import fnetShellJs from '@fnet/shelljs';
 import nunjucks from "nunjucks";
 import cloneDeep from 'lodash.clonedeep';
 import isObject from 'isobject';
-import createRedisClient from '../redisClient.js';
+// import createRedisClient from '../redisClient.js';
 import { randomUUID } from 'node:crypto';
 import Auth from './auth.js';
 import initFeatures from "./api/init-features/index.js";
@@ -130,18 +130,18 @@ class Builder {
   }
 
   async _cache_set(key, value, expire_ttl) {
-    if (!this._redis_client) return;
+    // if (!this._redis_client) return;
 
-    await this._redis_client.SETEX(
-      key,
-      expire_ttl || this._expire_ttl,
-      JSON.stringify(value),
-    ).catch(console.error);
+    // await this._redis_client.SETEX(
+    //   key,
+    //   expire_ttl || this._expire_ttl,
+    //   JSON.stringify(value),
+    // ).catch(console.error);
   }
 
   async init() {
 
-    this._redis_client = await createRedisClient();
+    // this._redis_client = await createRedisClient();
 
     this.#buildId = this.#context.buildId || randomUUID();
     this.#apiContext.buildId = this.#buildId;
