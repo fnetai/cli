@@ -39,7 +39,7 @@ export async function runCommandGroup({ projectType, group, tags, args, argv }) 
 
     // Run command group
     // console.log(`Running command group '${group}' from ${projectFile.name}...`);
-    await fnetShellFlow({
+    const result = await fnetShellFlow({
       commands: commandGroup,
       context: {
         args,
@@ -47,6 +47,8 @@ export async function runCommandGroup({ projectType, group, tags, args, argv }) 
         projectType: projectFile.type
       }
     });
+
+    process.exitCode = result.exitCode || 0;
 
   } catch (error) {
     console.error(`Error: ${error.message}`);

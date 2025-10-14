@@ -15,7 +15,7 @@
         "@flownet/lib-to-macos-app": "^0.3.13",
         "@flownet/lib-to-nextjs": "^0.3.10",
         "@flownet/lib-to-webos": "^0.3.16",
-        "@fnet/auto-conda-env": "^0.1.24",
+        "@fnet/auto-conda-env": "^0.2.1",
         "@fnet/config": "^0.2.28",
         "@fnet/dir-zipper": "^0.1.8",
         "@fnet/expression": "^0.1.30",
@@ -27,9 +27,9 @@
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
         "@fnet/service": "^0.1.7",
-        "@fnet/shell-flow": "^0.2.3",
+        "@fnet/shell-flow": "^0.2.6",
         "@fnet/shelljs": "^0.2.4",
-        "@fnet/to-pyip": "^0.1.7",
+        "@fnet/to-pyip": "^0.2.1",
         "@fnet/to-rust": "^0.1.14",
         "@fnet/up-list-files": "^0.1.14",
         "@fnet/yaml": "^0.1.42",
@@ -199,7 +199,7 @@
 
     "@fnet/args": ["@fnet/args@0.1.27", "", { "dependencies": { "@fnet/args": "^0.1", "ajv": "^8.17", "merge": "^2.1", "minimist": "^1.2" } }, "sha512-zFWodMyY3LONgq1cYAJecnU/fQSCdngR70f+LDVkbGQmYOkiNgz+/YfcQps72sD0YlMBNjR4Mzaqy1ef5ieh8A=="],
 
-    "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.1.24", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.1", "nanoid": "^5.0", "semver": "^7.6" } }, "sha512-rFRqVloYKSfwUnVZpPWKZbg0Mj7qHsRHC3r+2l+OLUV/DkqJDjMVZYH9N0Y/AeQ9vFalGaYoXTHDvCUULP9Ihg=="],
+    "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.2.1", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.2", "nanoid": "^5.1", "semver": "^7.7", "yargs-parser": "^22.0" }, "bin": { "auto-conda-env": "dist/cli/esm/index.js" } }, "sha512-T3Kb0tjimOGZASMwMZfEj4j5+qG7TXZb9RpS61tSnaAdjuQz12sHvoVxSpmqzZZX/bu8WBuiAWe1vEqzbN9AkQ=="],
 
     "@fnet/config": ["@fnet/config@0.2.28", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/yaml": "^0.1" } }, "sha512-XMlbqleXl9V49dWAmHcUQWhy2joUVdcEkX8rPv6uvESk10k+xDXTJdzEy53CkCVr+DgIS0oRWwVEjYoksS9ScA=="],
 
@@ -229,11 +229,11 @@
 
     "@fnet/service": ["@fnet/service@0.1.7", "", {}, "sha512-x+/geZ6tZYUAyNnV+lftyiDEZu143QWc3Y4uTXtCr0TK6lLtm+qYE0E2a/6E+Ix+m5eb8UXb3f6Vp4JDPCOKtg=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.2.3", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "fs": "^0.0", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-DERTXr+5tvsOs6JrTy1sFf3ptbLYiaPetOCPeIYe1iO1SllH2+OfFjZ2fhQtPp9tiQ/+i40QMqLuJ5SaGgCFPQ=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.2.6", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-qQGYwr/PNu+i5sUqID45zkYqsHJEIdg4xXnfd5f34btO2YuALDXqd4PqWTeLfaapEbqIWR7zK81n72rA3yNARw=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
-    "@fnet/to-pyip": ["@fnet/to-pyip@0.1.7", "", { "dependencies": { "@flownet/lib-render-templates-dir": "^0.1", "@fnet/args": "^0.1", "@fnet/auto-conda-env": "^0.1" }, "bin": { "fnet-to-pyip": "dist/cli/esm/index.js" } }, "sha512-wcRRNOe+FeCamT0londk7KJ7SX5tLAj+cLiDskUIW4eGZKWawF8jb9ynOpyspC5jj9DhMZQnRK2unNGAGtdRPw=="],
+    "@fnet/to-pyip": ["@fnet/to-pyip@0.2.1", "", { "dependencies": { "@flownet/lib-render-templates-dir": "^0.1", "@fnet/args": "^0.1", "@fnet/auto-conda-env": "^0.2", "yargs-parser": "^22.0" }, "bin": { "fnet-to-pyip": "dist/cli/esm/index.js" } }, "sha512-/pg4kEFZ4Vj4j5uiOCFjn5PcRKcpEq9UAVgPW8q0a3I/24U/30soL9pooMoM07X6FFpH6RIpc1Xo2VwNSs4zYw=="],
 
     "@fnet/to-rust": ["@fnet/to-rust@0.1.14", "", { "dependencies": { "@flownet/lib-render-templates-dir": "^0.1", "@fnet/args": "^0.1", "@fnet/shelljs": "^0.2" }, "bin": { "fnet-to-rust": "dist/cli/esm/index.js" } }, "sha512-zybAE5PuVZ9J4ts3WgXUkdxRbfrb0tbQvGvzH7u7uRLgimmMmC+lrHgrnVd/it7uqGzLa5odbS9Wvwy/oK2wAA=="],
 
@@ -708,8 +708,6 @@
     "foreground-child": ["foreground-child@3.3.1", "", { "dependencies": { "cross-spawn": "^7.0.6", "signal-exit": "^4.0.1" } }, "sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw=="],
 
     "form-data": ["form-data@4.0.4", "", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "hasown": "^2.0.2", "mime-types": "^2.1.12" } }, "sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow=="],
-
-    "fs": ["fs@0.0.2", "", {}, "sha512-YAiVokMCrSIFZiroB1oz51hPiPRVcUtSa4x2U5RYXyhS9VAPdiFigKbPTnOSq7XY8wd3FIVPYmXpo5lMzFmxgg=="],
 
     "fs-extra": ["fs-extra@11.3.0", "", { "dependencies": { "graceful-fs": "^4.2.0", "jsonfile": "^6.0.1", "universalify": "^2.0.0" } }, "sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew=="],
 
@@ -1232,10 +1230,6 @@
     "@babel/generator/@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@flownet/lib-is-redis-online/redis": ["redis@4.7.0", "", { "dependencies": { "@redis/bloom": "1.2.0", "@redis/client": "1.6.0", "@redis/graph": "1.1.1", "@redis/json": "1.0.7", "@redis/search": "1.2.0", "@redis/time-series": "1.1.0" } }, "sha512-zvmkHEAdGMn+hMRXuMBtu4Vo5P6rHQjLoHftu+lBqq8ZTA3RCVC/WzD790bkKKiNFp7d5/9PcSD19fJyyRvOdQ=="],
-
-    "@fnet/auto-conda-env/@fnet/shell-flow": ["@fnet/shell-flow@0.1.24", "", { "dependencies": { "@fnet/args": "^0.1", "nanoid": "^5.0" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-3YM61aSRLKMK8rNdKw+MQDU1OvfRo5bn8yPynhvUmqGdGrRoUIigBlxz5JS1zXTNN/Co9t4PexvgVgRw1MYXvg=="],
-
-    "@fnet/auto-conda-env/semver": ["semver@7.7.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="],
 
     "@fnet/config/@fnet/yaml": ["@fnet/yaml@0.1.39", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-oZ921PlPEG2rtjdJHFAWEcm44yRq4L9jAsppe5/L8s8Lp1uT9I1Xlcrh+lQnOx/r6p/t7Zoic/+NMmSEcolIYQ=="],
 

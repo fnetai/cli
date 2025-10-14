@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "files": [
     "dist",
     "template"
@@ -30,7 +30,7 @@
     "@flownet/lib-to-macos-app": "^0.3.13",
     "@flownet/lib-to-nextjs": "^0.3.10",
     "@flownet/lib-to-webos": "^0.3.16",
-    "@fnet/auto-conda-env": "^0.1.24",
+    "@fnet/auto-conda-env": "^0.2.1",
     "@fnet/config": "^0.2.28",
     "@fnet/dir-zipper": "^0.1.8",
     "@fnet/expression": "^0.1.30",
@@ -42,9 +42,9 @@
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
     "@fnet/service": "^0.1.7",
-    "@fnet/shell-flow": "^0.2.3",
+    "@fnet/shell-flow": "^0.2.6",
     "@fnet/shelljs": "^0.2.4",
-    "@fnet/to-pyip": "^0.1.7",
+    "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",
     "@fnet/up-list-files": "^0.1.14",
     "@fnet/yaml": "^0.1.42",
