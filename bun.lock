@@ -229,7 +229,7 @@
 
     "@fnet/service": ["@fnet/service@0.1.7", "", {}, "sha512-x+/geZ6tZYUAyNnV+lftyiDEZu143QWc3Y4uTXtCr0TK6lLtm+qYE0E2a/6E+Ix+m5eb8UXb3f6Vp4JDPCOKtg=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.2.6", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-qQGYwr/PNu+i5sUqID45zkYqsHJEIdg4xXnfd5f34btO2YuALDXqd4PqWTeLfaapEbqIWR7zK81n72rA3yNARw=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.2.7", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-oOTR974vMvarHXUEH9Q1jmp5VIILY1CbfWN8LSPx1m0+cptttb45Zx8N50WUFOqcpgSVB61EY8oeAVxdW5lbBw=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
@@ -1230,6 +1230,8 @@
     "@babel/generator/@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@flownet/lib-is-redis-online/redis": ["redis@4.7.0", "", { "dependencies": { "@redis/bloom": "1.2.0", "@redis/client": "1.6.0", "@redis/graph": "1.1.1", "@redis/json": "1.0.7", "@redis/search": "1.2.0", "@redis/time-series": "1.1.0" } }, "sha512-zvmkHEAdGMn+hMRXuMBtu4Vo5P6rHQjLoHftu+lBqq8ZTA3RCVC/WzD790bkKKiNFp7d5/9PcSD19fJyyRvOdQ=="],
+
+    "@fnet/auto-conda-env/@fnet/shell-flow": ["@fnet/shell-flow@0.2.6", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-qQGYwr/PNu+i5sUqID45zkYqsHJEIdg4xXnfd5f34btO2YuALDXqd4PqWTeLfaapEbqIWR7zK81n72rA3yNARw=="],
 
     "@fnet/config/@fnet/yaml": ["@fnet/yaml@0.1.39", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-oZ921PlPEG2rtjdJHFAWEcm44yRq4L9jAsppe5/L8s8Lp1uT9I1Xlcrh+lQnOx/r6p/t7Zoic/+NMmSEcolIYQ=="],
 

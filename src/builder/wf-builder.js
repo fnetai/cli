@@ -624,18 +624,7 @@ class Builder {
 
     if (!parsedUrl.protocol) parsedUrl.protocol = this.#protocol;
 
-    if (parsedUrl.protocol === 'ac:') {
-      const parts = parsedUrl.pathname.split('/');
-      if (parts.length === 1) {
-        return await Atom.first({ where: { name: url, parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "workflow.lib" } });
-      }
-
-      if (parts.length === 2) {
-        const folder = await Atom.first({ where: { name: parts[0], parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "folder" } });
-        return await Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
-      }
-    }
-    else if (parsedUrl.protocol === 'local:') {
+    if (parsedUrl.protocol === 'src:') {
 
       const srcFilePath = path.resolve(this.#context.projectSrcDir, `${parsedUrl.pathname}.js`);
       const dependencies = [];
@@ -704,20 +693,6 @@ class Builder {
       }
       return atom;
     }
-    else if (parsedUrl.protocol === 'node:') {
-
-      const atom = {
-        name: parsedUrl.pathname,
-        doc: {
-          type: "workflow.lib",
-          "content-type": "javascript",
-          language: "js",
-          dependencies: [],
-        },
-        protocol: parsedUrl.protocol,
-      }
-      return atom;
-    }
     else if (parsedUrl.protocol === 'use:') {
       const atom = {
         name: parsedUrl.pathname,
@@ -729,6 +704,17 @@ class Builder {
       }
       return atom;
     }
+    else if (parsedUrl.protocol === 'ac:') {
+      const parts = parsedUrl.pathname.split('/');
+      if (parts.length === 1) {
+        return await Atom.first({ where: { name: url, parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "workflow.lib" } });
+      }
+
+      if (parts.length === 2) {
+        const folder = await Atom.first({ where: { name: parts[0], parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "folder" } });
+        return await Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
+      }
+    }    
   }
 
   async resolveNodeTree({ root }) {
@@ -797,7 +783,7 @@ class Builder {
 
       const atomLib = atomLibRef.atom;
       const projectDir = this.#context.projectDir;
-      if (atomLib.protocol === 'local:') {
+      if (atomLib.protocol === 'src:') {
         const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(`${this.#context.projectDir}/src/default/blocks`, srcFilePath);
 
@@ -822,7 +808,7 @@ class Builder {
       }
       else if (atomLib.protocol === 'use:') {
         // nothing
-        console.log('USE:', atomLib.name);
+        // console.log('USE:', atomLib.name);
       }
       else {
         const atomLibPath = `${projectDir}/src/libs/${atomLib.id}.js`;

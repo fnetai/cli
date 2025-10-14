@@ -32,7 +32,7 @@ export async function createContext(argv) {
       return {
         buildId: argv.buildId,
         mode: argv.mode,
-        protocol: argv.protocol || 'local:',
+        protocol: argv.protocol || 'src:',
         templateDir: resolveTemplatePath(`./template/fnode/${template}`),
         projectDir: path.resolve(project.projectDir, './.workspace'),
         projectSrcDir: path.resolve(project.projectDir, './src'),

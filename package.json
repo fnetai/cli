@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "files": [
     "dist",
     "template"
@@ -42,7 +42,7 @@
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
     "@fnet/service": "^0.1.7",
-    "@fnet/shell-flow": "^0.2.6",
+    "@fnet/shell-flow": "^0.2.7",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",

@@ -126,9 +126,9 @@ class NodeBuilder extends BuilderBase {
         return await this.apiContext.Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
       }
     }
-    else if (parsedUrl.protocol === 'local:') {
+    else if (parsedUrl.protocol === 'src:') {
       const atom = this.atom;
-      atom.protocol = "local:";
+      atom.protocol = "src:";
       atom.doc.dependencies = atom.doc.dependencies || [];
       atom.name = atom.doc.name;
 
@@ -177,7 +177,7 @@ class NodeBuilder extends BuilderBase {
 
       const atomLib = atomLibRef.atom;
       const projectDir = this.context.projectDir;
-      if (atomLib.protocol === 'local:') {
+      if (atomLib.protocol === 'src:') {
         const srcFilePath = path.resolve(this.context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(path.join(this.context.projectDir, 'src', 'default'), srcFilePath);
 
