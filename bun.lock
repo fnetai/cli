@@ -6,7 +6,7 @@
       "dependencies": {
         "@flownet/lib-atom-api-js": "^0.2.3",
         "@flownet/lib-is-redis-online": "^0.1.15",
-        "@flownet/lib-parse-imports-js": "^0.4.2",
+        "@flownet/lib-parse-imports-js": "^0.4.4",
         "@flownet/lib-parse-node-url": "^0.1.18",
         "@flownet/lib-render-templates-dir": "^0.1.19",
         "@flownet/lib-to-docker": "^0.3.26",
@@ -27,13 +27,13 @@
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
         "@fnet/service": "^0.1.7",
-        "@fnet/shell-flow": "^0.1.52",
+        "@fnet/shell-flow": "^0.2.3",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.1.7",
         "@fnet/to-rust": "^0.1.14",
         "@fnet/up-list-files": "^0.1.14",
         "@fnet/yaml": "^0.1.42",
-        "@node-red/util": "^4.1.0",
+        "@node-red/util": "^4.1.1",
         "ajv": "^8.17.1",
         "ajv-formats": "^3.0.1",
         "bpmn-moddle": "^9.0.4",
@@ -59,7 +59,7 @@
       "devDependencies": {
         "@rollup/plugin-commonjs": "^28.0.6",
         "@rollup/plugin-json": "^6.1.0",
-        "@rollup/plugin-node-resolve": "^16.0.2",
+        "@rollup/plugin-node-resolve": "^16.0.3",
         "@rollup/plugin-replace": "^6.0.2",
         "@rollup/plugin-terser": "^0.4.4",
         "rollup": "^4.52.4",
@@ -177,7 +177,7 @@
 
     "@flownet/lib-node-path-resolve": ["@flownet/lib-node-path-resolve@0.1.11", "", {}, "sha512-LWbCI2110r498zTKrp2TWXXnSLjhxZ05Y+udHHJF+mGGORRQ+AoMKGXRHmZb7QPIpOMLtNgJfkWQKnFj22KApg=="],
 
-    "@flownet/lib-parse-imports-js": ["@flownet/lib-parse-imports-js@0.4.3", "", { "dependencies": { "@babel/parser": "^7.28", "@babel/traverse": "^7.28", "@flownet/lib-node-path-resolve": "^0.1", "@flownet/lib-parse-npm-path": "^0.1", "@fnet/args": "^0.1", "module": "^1.2", "yargs-parser": "^22.0" }, "bin": { "fnet-parse-imports-js": "dist/cli/esm/index.js" } }, "sha512-e22CxaiWMIjqozlS1fO9hOHfRsoALxsgVNwUErDuATcpxSVrLj3PvKA+kYbBKa1C3D7v6hmO+IG0K+dQJ2Yxnw=="],
+    "@flownet/lib-parse-imports-js": ["@flownet/lib-parse-imports-js@0.4.4", "", { "dependencies": { "@babel/parser": "^7.28", "@babel/traverse": "^7.28", "@flownet/lib-node-path-resolve": "^0.1", "@flownet/lib-parse-npm-path": "^0.1", "@fnet/args": "^0.1", "module": "^1.2", "yargs-parser": "^22.0" }, "bin": { "fnet-parse-imports-js": "dist/cli/esm/index.js" } }, "sha512-bVd/vDCbUCAOKKolS/VnOdfaqzdj8gko4y8tSPruN7DqxpQn15aVXUYcnQA2HiadP8JJ5I1/aFAKrdkV7i7iCA=="],
 
     "@flownet/lib-parse-node-url": ["@flownet/lib-parse-node-url@0.1.18", "", { "dependencies": { "url-parse": "^1.5" } }, "sha512-hyNnOKFu9NMVVFvLHQTfuLBVcsR1ufPcl+CIKTFA3ffD28LSAAD6+pGBanAyHLTGvbPAVa3TlMkvKX6W879WxA=="],
 
@@ -229,7 +229,7 @@
 
     "@fnet/service": ["@fnet/service@0.1.7", "", {}, "sha512-x+/geZ6tZYUAyNnV+lftyiDEZu143QWc3Y4uTXtCr0TK6lLtm+qYE0E2a/6E+Ix+m5eb8UXb3f6Vp4JDPCOKtg=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.1.52", "", { "dependencies": { "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-x4y7q8t6/oQv9S7ufU76ADzUnbKLYKJhy66bWfSktHxDtmIRixtbqstG+a/Kgvm+rqMKR3x2WmMdoK5GiHEnlA=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.2.3", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "fs": "^0.0", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-DERTXr+5tvsOs6JrTy1sFf3ptbLYiaPetOCPeIYe1iO1SllH2+OfFjZ2fhQtPp9tiQ/+i40QMqLuJ5SaGgCFPQ=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
@@ -305,7 +305,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
 
-    "@node-red/util": ["@node-red/util@4.1.0", "", { "dependencies": { "chalk": "^4.1.2", "fs-extra": "11.3.0", "i18next": "24.2.3", "json-stringify-safe": "5.0.1", "jsonata": "2.0.6", "lodash.clonedeep": "^4.5.0", "moment": "2.30.1", "moment-timezone": "0.5.48" } }, "sha512-VF2JUQ8p8tsl1m8rCUSxSmCB3BCQPLm/c291U6wgUvl+F1TwZI0javPqJRAHZDQ4PBSLvWZcxRn+0nC2QbC4jQ=="],
+    "@node-red/util": ["@node-red/util@4.1.1", "", { "dependencies": { "chalk": "^4.1.2", "fs-extra": "11.3.0", "i18next": "24.2.3", "json-stringify-safe": "5.0.1", "jsonata": "2.0.6", "lodash.clonedeep": "^4.5.0", "moment": "2.30.1", "moment-timezone": "0.5.48" } }, "sha512-gnkRXmz49rj2OXjJC/RAPbFUQvDATC3Oy6yGuhN/McPy8mmL7q4YTIflUwWKyrsd6TU3cK17JmmXtPTQBtS8jQ=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
@@ -331,7 +331,7 @@
 
     "@rollup/plugin-json": ["@rollup/plugin-json@6.1.0", "", { "dependencies": { "@rollup/pluginutils": "^5.1.0" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-EGI2te5ENk1coGeADSIwZ7G2Q8CJS2sF120T7jLw4xFw9n7wIOXHo+kIYRAoVpJAN+kmqZSoO3Fp4JtoNF4ReA=="],
 
-    "@rollup/plugin-node-resolve": ["@rollup/plugin-node-resolve@16.0.2", "", { "dependencies": { "@rollup/pluginutils": "^5.0.1", "@types/resolve": "1.20.2", "deepmerge": "^4.2.2", "is-module": "^1.0.0", "resolve": "^1.22.1" }, "peerDependencies": { "rollup": "^2.78.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-tCtHJ2BlhSoK4cCs25NMXfV7EALKr0jyasmqVCq3y9cBrKdmJhtsy1iTz36Xhk/O+pDJbzawxF4K6ZblqCnITQ=="],
+    "@rollup/plugin-node-resolve": ["@rollup/plugin-node-resolve@16.0.3", "", { "dependencies": { "@rollup/pluginutils": "^5.0.1", "@types/resolve": "1.20.2", "deepmerge": "^4.2.2", "is-module": "^1.0.0", "resolve": "^1.22.1" }, "peerDependencies": { "rollup": "^2.78.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-lUYM3UBGuM93CnMPG1YocWu7X802BrNF3jW2zny5gQyLQgRFJhV1Sq0Zi74+dh/6NBx1DxFC4b4GXg9wUCG5Qg=="],
 
     "@rollup/plugin-replace": ["@rollup/plugin-replace@6.0.2", "", { "dependencies": { "@rollup/pluginutils": "^5.0.1", "magic-string": "^0.30.3" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-7QaYCf8bqF04dOy7w/eHmJeNExxTYwvKAmlSAH/EaWWUzbT0h5sbF6bktFoX/0F/0qwng5/dWFMyf3gzaM8DsQ=="],
 
@@ -708,6 +708,8 @@
     "foreground-child": ["foreground-child@3.3.1", "", { "dependencies": { "cross-spawn": "^7.0.6", "signal-exit": "^4.0.1" } }, "sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw=="],
 
     "form-data": ["form-data@4.0.4", "", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "hasown": "^2.0.2", "mime-types": "^2.1.12" } }, "sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow=="],
+
+    "fs": ["fs@0.0.2", "", {}, "sha512-YAiVokMCrSIFZiroB1oz51hPiPRVcUtSa4x2U5RYXyhS9VAPdiFigKbPTnOSq7XY8wd3FIVPYmXpo5lMzFmxgg=="],
 
     "fs-extra": ["fs-extra@11.3.0", "", { "dependencies": { "graceful-fs": "^4.2.0", "jsonfile": "^6.0.1", "universalify": "^2.0.0" } }, "sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew=="],
 
