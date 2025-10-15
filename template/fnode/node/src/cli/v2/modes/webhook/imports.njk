@@ -1,19 +1,9 @@
 {# ============================================================================
    WEBHOOK MODE - IMPORTS
    ============================================================================
-   Webhook server dependencies using built-in Node.js modules
-   - http: HTTP server
-   - crypto: HMAC signature verification
-   Supports both ESM and CJS formats
+   No mode-specific imports needed
+   http and crypto modules are imported in shared imports section
    ============================================================================ #}
 
-{% if atom.doc.features.project.format==='esm' %}
-// Built-in modules for webhook mode
-import http from 'http';
-import crypto from 'crypto';
-{% elif atom.doc.features.project.format==='cjs' %}
-// Built-in modules for webhook mode
-const http = require('http');
-const crypto = require('crypto');
-{% endif %}
+{# http and crypto modules imported in shared section #}
 

@@ -28,33 +28,54 @@
 {% include "./core/imports.njk" %}
 
 {# --------------------------------------------------------------------------
+   SHARED IMPORTS
+   --------------------------------------------------------------------------
+   Shared dependencies used by multiple modes
+   Prevents duplicate imports when multiple modes are enabled
+   -------------------------------------------------------------------------- #}
+{% if atom.doc.features.cli.http.enabled===true or atom.doc.features.cli.webhook.enabled===true %}
+// Shared: http module (used by HTTP and Webhook modes)
+{% if atom.doc.features.project.format==='esm' %}
+import http from 'http';
+{% elif atom.doc.features.project.format==='cjs' %}
+const http = require('http');
+{% endif %}
+{% endif %}
+
+{% if atom.doc.features.cli.mcp.enabled===true or atom.doc.features.cli.webhook.enabled===true %}
+// Shared: crypto module (used by MCP and Webhook modes)
+{% if atom.doc.features.project.format==='esm' %}
+import crypto from 'crypto';
+{% elif atom.doc.features.project.format==='cjs' %}
+const crypto = require('crypto');
+{% endif %}
+{% endif %}
+
+{# --------------------------------------------------------------------------
    MODE-SPECIFIC IMPORTS
+   --------------------------------------------------------------------------
+   Import dependencies for ALL enabled CLI modes
+   Multiple modes can be enabled simultaneously
    -------------------------------------------------------------------------- #}
 {% if atom.doc.features.cli.mcp.enabled===true %}
 {% include "./modes/mcp/imports.njk" %}
-{% elif atom.doc.features.cli.http.enabled===true %}
-{% include "./modes/http/imports.njk" %}
-{% elif atom.doc.features.cli.pipeline.enabled===true %}
-{% include "./modes/pipeline/imports.njk" %}
-{% elif atom.doc.features.cli.websocket.enabled===true %}
-{% include "./modes/websocket/imports.njk" %}
-{% elif atom.doc.features.cli.webhook.enabled===true %}
-{% include "./modes/webhook/imports.njk" %}
 {% endif %}
 
-{# Future mode imports:
-   {% if atom.doc.features.cli.websocket.enabled===true %}
-   {% include "./modes/websocket/imports.njk" %}
-   {% endif %}
+{% if atom.doc.features.cli.http.enabled===true %}
+{% include "./modes/http/imports.njk" %}
+{% endif %}
 
-   {% if atom.doc.features.cli.webhook.enabled===true %}
-   {% include "./modes/webhook/imports.njk" %}
-   {% endif %}
+{% if atom.doc.features.cli.pipeline.enabled===true %}
+{% include "./modes/pipeline/imports.njk" %}
+{% endif %}
 
-   {% if atom.doc.features.cli.grpc.enabled===true %}
-   {% include "./modes/grpc/imports.njk" %}
-   {% endif %}
-#}
+{% if atom.doc.features.cli.websocket.enabled===true %}
+{% include "./modes/websocket/imports.njk" %}
+{% endif %}
+
+{% if atom.doc.features.cli.webhook.enabled===true %}
+{% include "./modes/webhook/imports.njk" %}
+{% endif %}
 
 {# --------------------------------------------------------------------------
    ARGUMENT PARSER
