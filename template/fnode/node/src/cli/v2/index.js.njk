@@ -38,6 +38,8 @@
 {% include "./modes/pipeline/imports.njk" %}
 {% elif atom.doc.features.cli.websocket.enabled===true %}
 {% include "./modes/websocket/imports.njk" %}
+{% elif atom.doc.features.cli.webhook.enabled===true %}
+{% include "./modes/webhook/imports.njk" %}
 {% endif %}
 
 {# Future mode imports:
@@ -116,12 +118,20 @@ const run = async () => {
   {% endif %}
 
   {# --------------------------------------------------------------------------
+     WEBHOOK MODE
+     --------------------------------------------------------------------------
+     Event-driven HTTP with HMAC signature verification
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.webhook.enabled===true %}
+  {% include "./modes/webhook/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
      FUTURE MODES
      --------------------------------------------------------------------------
      Add new modes here by simply including their index.njk
 
      Examples:
-     - Webhook mode for event-driven HTTP
      - gRPC mode for high-performance RPC
      - GraphQL mode for flexible APIs
      -------------------------------------------------------------------------- #}
@@ -138,7 +148,7 @@ const run = async () => {
      UNKNOWN MODE HANDLER
      -------------------------------------------------------------------------- #}
   console.error(`Unknown CLI mode: ${cliMode}`);
-  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled===true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}{% if atom.doc.features.cli.pipeline.enabled===true %}, pipeline{% endif %}{% if atom.doc.features.cli.websocket.enabled===true %}, websocket{% endif %}`);
+  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled===true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}{% if atom.doc.features.cli.pipeline.enabled===true %}, pipeline{% endif %}{% if atom.doc.features.cli.websocket.enabled===true %}, websocket{% endif %}{% if atom.doc.features.cli.webhook.enabled===true %}, webhook{% endif %}`);
   process.exit(1);
 };
 

@@ -12,7 +12,11 @@ if (cliMode === 'pipeline') {
   
   if (pipelineMode === 'lines') {
     // Line-by-line processing (default)
+{% if atom.doc.features.project.format==='esm' %}
+    const readline = await import('readline');
+{% elif atom.doc.features.project.format==='cjs' %}
     const readline = require('readline');
+{% endif %}
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
