@@ -4,22 +4,14 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
-import fnetConfig from '@fnet/config';
 import findNodeModules from '../builder/find-node-modules.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const cwd = process.cwd();
 
 /**
  * Set up environment for fnode CLI
  */
 export function setupEnvironment() {
-  // fnet env
-  fnetConfig({
-    name: ["redis"],
-    dir: cwd,
-    optional: true
-  });
 
   // Add node_modules/.bin to PATH
   const nodeModulesDir = findNodeModules({ baseDir: __dirname });

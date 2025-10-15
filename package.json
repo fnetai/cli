@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "files": [
     "dist",
     "template"
@@ -42,7 +42,7 @@
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
     "@fnet/service": "^0.1.7",
-    "@fnet/shell-flow": "^0.2.7",
+    "@fnet/shell-flow": "^0.2.8",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",
@@ -63,7 +63,6 @@
     "nunjucks": "^3.2.4",
     "object-hash": "^3.0.0",
     "prettier": "^3.6.2",
-    "redis": "^4.7.1",
     "semver": "^7.7.3",
     "set-value": "^4.1.0",
     "tree-kill": "^1.2.2",
@@ -79,7 +78,7 @@
     "fservice": "dist/fservice/index.js"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-commonjs": "^28.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.2",

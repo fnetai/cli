@@ -285,7 +285,7 @@ class Builder {
     }
 
     // .dev
-    target = path.join(projectDir, ".dev");
+    let target = path.join(projectDir, ".dev");
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
