@@ -3,16 +3,19 @@
    ============================================================================
    Base imports required for all CLI modes
    Supports both ESM and CJS formats, standard and extend modes
+
+   fnet-specific: Imports Engine instead of Node
+   - Standard mode: Creates engine instance and calls engine.run()
+   - Extend mode: Imports runExtended and passes { Engine } as context
    ============================================================================ #}
 
 {% if atom.doc.features.project.format==='esm' %}
 {# ESM Format #}
 import argv from '../default/input.args.js';
 import { schema as inputSchema } from '../default/validate_input.js';
+import { default as Engine } from '../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}';
 {% if atom.doc.features.cli.extend===true %}
-import Node from '../../../cli';
-{% else %}
-import Node from '../../../src';
+import { default as runExtended } from '../../../cli/index.js';
 {% endif %}
 import argsParser from 'yargs-parser';
 
@@ -20,10 +23,9 @@ import argsParser from 'yargs-parser';
 {# CJS Format #}
 const argv = require('../default/input.args.js');
 const { schema: inputSchema } = require('../default/validate_input.js');
+const { default: Engine } = require('../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}');
 {% if atom.doc.features.cli.extend===true %}
-const Node = require('../../../cli');
-{% else %}
-const Node = require('../../../src');
+const { default: runExtended } = require('../../../cli/index.js');
 {% endif %}
 const argsParser = require('yargs-parser');
 

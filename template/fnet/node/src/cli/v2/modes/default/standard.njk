@@ -1,12 +1,13 @@
 {# ============================================================================
    DEFAULT MODE - STANDARD
    ============================================================================
-   Standard CLI mode that executes the Node function and prints result
+   Standard CLI mode for fnet: Creates engine instance and runs workflow
    ============================================================================ #}
 
 if (cliMode === 'default') {
   // Default mode code
-  const result = await Node(await argv());
+  const engine = new Engine();
+  const result = await engine.run(await argv());
 
   if (typeof result !== 'undefined') {
     const stdout_format = args['stdout-format'] || args.stdout_format || null;

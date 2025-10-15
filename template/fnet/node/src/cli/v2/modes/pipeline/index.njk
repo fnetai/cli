@@ -36,8 +36,13 @@ if (cliMode === 'pipeline') {
         // Validate input
         // TODO: Add schema validation if needed
 
-        // Process with Core
-        const result = await Node(input);
+        // Process with Engine
+        {% if atom.doc.features.cli.extend===true %}
+        const result = await runExtended(input, { Engine });
+        {% else %}
+        const engine = new Engine();
+        const result = await engine.run(input);
+        {% endif %}
 
         // Output result
         if (pipelineFormat === 'json') {
@@ -75,8 +80,13 @@ if (cliMode === 'pipeline') {
         // Validate input
         // TODO: Add schema validation if needed
 
-        // Process with Core
-        const result = await Node(input);
+        // Process with Engine
+        {% if atom.doc.features.cli.extend===true %}
+        const result = await runExtended(input, { Engine });
+        {% else %}
+        const engine = new Engine();
+        const result = await engine.run(input);
+        {% endif %}
 
         // Output result
         if (pipelineFormat === 'json') {

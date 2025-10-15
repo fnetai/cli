@@ -123,8 +123,13 @@ app.post(httpEndpoint, async (req, res) => {
   log('Request body:', JSON.stringify(req.body, null, 2));
 
   try {
-    // Call the Node function directly with the request body
-    const result = await Node(req.body);
+    // Call the Engine with the request body
+    {% if atom.doc.features.cli.extend===true %}
+    const result = await runExtended(req.body, { Engine });
+    {% else %}
+    const engine = new Engine();
+    const result = await engine.run(req.body);
+    {% endif %}
 
     log('HTTP input processed successfully');
     log('Result:', JSON.stringify(result, null, 2));
@@ -160,8 +165,13 @@ app.ws(wsEndpoint, (ws, req) => {
       // Parse JSON message
       const data = JSON.parse(message);
 
-      // Call the Node function
-      const result = await Node(data);
+      // Call the Engine
+      {% if atom.doc.features.cli.extend===true %}
+      const result = await runExtended(data, { Engine });
+      {% else %}
+      const engine = new Engine();
+      const result = await engine.run(data);
+      {% endif %}
 
       log('WebSocket message processed successfully');
       log('Result:', JSON.stringify(result, null, 2));

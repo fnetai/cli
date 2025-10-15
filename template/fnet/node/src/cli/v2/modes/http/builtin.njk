@@ -42,8 +42,13 @@ const server = http.createServer(async (req, res) => {
   req.on('end', async () => {
     try {
       const data = JSON.parse(body);
-      const result = await Node(data);
-      
+      {% if atom.doc.features.cli.extend===true %}
+      const result = await runExtended(data, { Engine });
+      {% else %}
+      const engine = new Engine();
+      const result = await engine.run(data);
+      {% endif %}
+
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(result));
     } catch (error) {

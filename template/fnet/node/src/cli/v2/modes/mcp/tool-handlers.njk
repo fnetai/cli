@@ -19,7 +19,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}") {
     try {
-      const result = await Node(request.params.arguments);
+      {% if atom.doc.features.cli.extend===true %}
+      const result = await runExtended(request.params.arguments, { Engine });
+      {% else %}
+      const engine = new Engine();
+      const result = await engine.run(request.params.arguments);
+      {% endif %}
       return {
         content: [{
           type: "text",

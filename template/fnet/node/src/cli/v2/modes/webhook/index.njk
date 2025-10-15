@@ -82,9 +82,14 @@ if (cliMode === 'webhook') {
           return;
         }
         
-        // Process webhook with Core
-        const result = await Node(payload);
-        
+        // Process webhook with Engine
+        {% if atom.doc.features.cli.extend===true %}
+        const result = await runExtended(payload, { Engine });
+        {% else %}
+        const engine = new Engine();
+        const result = await engine.run(payload);
+        {% endif %}
+
         // Send response
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(result));
