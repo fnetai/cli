@@ -12,6 +12,9 @@ import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprot
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import express from "express";
+{% if atom.doc.features.cli.mcp.ws===true %}
+import expressWs from "express-ws";
+{% endif %}
 {# crypto imported in shared section #}
 
 {% elif atom.doc.features.project.format==='cjs' %}
@@ -21,6 +24,9 @@ const { ListToolsRequestSchema, CallToolRequestSchema } = require("@modelcontext
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
 const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
 const express = require("express");
+{% if atom.doc.features.cli.mcp.ws===true %}
+const expressWs = require("express-ws");
+{% endif %}
 {# crypto imported in shared section #}
 
 {% endif %}

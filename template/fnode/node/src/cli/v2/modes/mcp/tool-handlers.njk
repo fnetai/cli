@@ -9,7 +9,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [{
       name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
-      description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
+      description: `{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}`,
       inputSchema: inputSchema
     }]
   };
