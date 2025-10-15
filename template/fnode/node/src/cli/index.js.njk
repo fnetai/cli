@@ -1,9 +1,9 @@
 {% if atom.doc.features.cli.enabled===true %}
 
-  {% if atom.doc.features.cli.template.version ==='v2' %}
-    {% include "./v2/index.js.njk" %}
-  {% else %}
+  {% if atom.doc.features.cli.template.version ==='v1' %}
     {% include "./index.js.v1.njk" %}
+  {% else %}
+    {% include "./v2/index.js.njk" %}
   {% endif %}
 
 {% endif %}
