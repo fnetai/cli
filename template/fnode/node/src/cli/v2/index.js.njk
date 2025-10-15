@@ -34,15 +34,23 @@
 {% include "./modes/mcp/imports.njk" %}
 {% elif atom.doc.features.cli.http.enabled===true %}
 {% include "./modes/http/imports.njk" %}
+{% elif atom.doc.features.cli.pipeline.enabled===true %}
+{% include "./modes/pipeline/imports.njk" %}
+{% elif atom.doc.features.cli.websocket.enabled===true %}
+{% include "./modes/websocket/imports.njk" %}
 {% endif %}
 
 {# Future mode imports:
-   {% if atom.doc.features.cli.pipeline.enabled===true %}
-   {% include "modes/pipeline/imports.njk" %}
-   {% endif %}
-   
    {% if atom.doc.features.cli.websocket.enabled===true %}
-   {% include "modes/websocket/imports.njk" %}
+   {% include "./modes/websocket/imports.njk" %}
+   {% endif %}
+
+   {% if atom.doc.features.cli.webhook.enabled===true %}
+   {% include "./modes/webhook/imports.njk" %}
+   {% endif %}
+
+   {% if atom.doc.features.cli.grpc.enabled===true %}
+   {% include "./modes/grpc/imports.njk" %}
    {% endif %}
 #}
 
@@ -83,37 +91,54 @@ const run = async () => {
   {# --------------------------------------------------------------------------
      HTTP MODE
      --------------------------------------------------------------------------
-     REST API server (Express, Fastify, Hono, etc.)
+     REST API server using built-in http module
      -------------------------------------------------------------------------- #}
   {% if atom.doc.features.cli.http.enabled===true %}
   {% include "./modes/http/index.njk" %}
   {% endif %}
 
   {# --------------------------------------------------------------------------
+     PIPELINE MODE
+     --------------------------------------------------------------------------
+     Unix pipeline integration via stdin/stdout
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.pipeline.enabled===true %}
+  {% include "./modes/pipeline/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     WEBSOCKET MODE
+     --------------------------------------------------------------------------
+     Real-time bidirectional communication
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.websocket.enabled===true %}
+  {% include "./modes/websocket/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
      FUTURE MODES
      --------------------------------------------------------------------------
      Add new modes here by simply including their index.njk
-     
+
      Examples:
-     - Pipeline mode for stdin/stdout processing
-     - WebSocket mode for real-time communication
+     - Webhook mode for event-driven HTTP
      - gRPC mode for high-performance RPC
      - GraphQL mode for flexible APIs
      -------------------------------------------------------------------------- #}
-  
-  {# {% if atom.doc.features.cli.pipeline.enabled===true %}
-  {% include "modes/pipeline/index.njk" %}
+
+  {# {% if atom.doc.features.cli.webhook.enabled===true %}
+  {% include "./modes/webhook/index.njk" %}
   {% endif %} #}
-  
-  {# {% if atom.doc.features.cli.websocket.enabled===true %}
-  {% include "modes/websocket/index.njk" %}
+
+  {# {% if atom.doc.features.cli.grpc.enabled===true %}
+  {% include "./modes/grpc/index.njk" %}
   {% endif %} #}
 
   {# --------------------------------------------------------------------------
      UNKNOWN MODE HANDLER
      -------------------------------------------------------------------------- #}
   console.error(`Unknown CLI mode: ${cliMode}`);
-  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled===true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}`);
+  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled===true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}{% if atom.doc.features.cli.pipeline.enabled===true %}, pipeline{% endif %}{% if atom.doc.features.cli.websocket.enabled===true %}, websocket{% endif %}`);
   process.exit(1);
 };
 
