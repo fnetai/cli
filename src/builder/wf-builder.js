@@ -255,7 +255,7 @@ class Builder {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin', '.dev'], absolute: true });
 
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
@@ -282,6 +282,12 @@ class Builder {
     const blocksDir = path.join(srcDir, 'default', 'blocks');
     if (!fs.existsSync(blocksDir)) {
       fs.mkdirSync(blocksDir, { recursive: true });
+    }
+
+    // .dev
+    target = path.join(projectDir, ".dev");
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
     }
   }
 

@@ -174,7 +174,7 @@ class BuilderBase {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin', '.dev'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -196,6 +196,12 @@ class BuilderBase {
 
     // default
     target = path.join(projectDir, "src", "default");
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
+    }
+
+    // .dev
+    target = path.join(projectDir, ".dev");
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
