@@ -1,0 +1,25 @@
+{# ============================================================================
+   RUN WRAPPER
+   ============================================================================
+   Error handling wrapper for the main run function
+   Supports both standard and extend modes
+   ============================================================================ #}
+
+{% if atom.doc.features.cli.extend===true %}
+{# Extend mode - with then() chain #}
+run()
+  .then(() => {
+    {# process.exit(0); #}
+  })
+  .catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+{% else %}
+{# Standard mode - simple catch #}
+run().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});
+{% endif %}
+

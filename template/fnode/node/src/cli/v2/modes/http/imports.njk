@@ -1,0 +1,15 @@
+{# ============================================================================
+   HTTP MODE - IMPORTS
+   ============================================================================
+   Node.js built-in http module - zero dependencies
+   Supports both ESM and CJS formats
+   ============================================================================ #}
+
+{% if atom.doc.features.project.format==='esm' %}
+// Using native http module for HTTP mode
+import http from 'http';
+{% elif atom.doc.features.project.format==='cjs' %}
+// Using native http module for HTTP mode
+const http = require('http');
+{% endif %}
+

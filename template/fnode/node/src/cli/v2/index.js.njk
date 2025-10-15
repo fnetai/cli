@@ -1,0 +1,127 @@
+{# ============================================================================
+   CLI TEMPLATE V2 - MODULAR ARCHITECTURE
+   ============================================================================
+
+   This template uses a modular, registry-based approach for maximum
+   extensibility. New modes, transports, and output formats can be added
+   without modifying the core template structure.
+
+   Architecture:
+   - core/       : Base imports, argument parsing, error handling
+   - modes/      : CLI execution modes (default, mcp, http, pipeline, etc.)
+   - output/     : Output formatters (json, yaml, table, etc.)
+
+   Each mode is self-contained and can be enabled/disabled via feature flags.
+
+   Supports:
+   - ESM and CJS formats
+   - Standard and Extend modes
+   - Multiple CLI modes (default, mcp, http)
+
+   ============================================================================ #}
+
+{% if atom.doc.features.cli.enabled===true %}
+
+{# --------------------------------------------------------------------------
+   CORE IMPORTS
+   -------------------------------------------------------------------------- #}
+{% include "./core/imports.njk" %}
+
+{# --------------------------------------------------------------------------
+   MODE-SPECIFIC IMPORTS
+   -------------------------------------------------------------------------- #}
+{% if atom.doc.features.cli.mcp.enabled===true %}
+{% include "./modes/mcp/imports.njk" %}
+{% elif atom.doc.features.cli.http.enabled===true %}
+{% include "./modes/http/imports.njk" %}
+{% endif %}
+
+{# Future mode imports:
+   {% if atom.doc.features.cli.pipeline.enabled===true %}
+   {% include "modes/pipeline/imports.njk" %}
+   {% endif %}
+   
+   {% if atom.doc.features.cli.websocket.enabled===true %}
+   {% include "modes/websocket/imports.njk" %}
+   {% endif %}
+#}
+
+{# --------------------------------------------------------------------------
+   ARGUMENT PARSER
+   -------------------------------------------------------------------------- #}
+{% include "./core/args-parser.njk" %}
+
+{# --------------------------------------------------------------------------
+   MAIN RUN FUNCTION
+   --------------------------------------------------------------------------
+   Mode registry: Each mode is self-contained and handles its own logic
+   -------------------------------------------------------------------------- #}
+const run = async () => {
+  const args = parseArgs();
+  const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+  {# --------------------------------------------------------------------------
+     DEFAULT MODE
+     --------------------------------------------------------------------------
+     Standard or extended mode based on CLI configuration
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.extend===true %}
+  {% include "./modes/default/extend.njk" %}
+  {% else %}
+  {% include "./modes/default/standard.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     MCP MODE
+     --------------------------------------------------------------------------
+     Model Context Protocol server with multiple transport options
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.mcp.enabled===true %}
+  {% include "./modes/mcp/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     HTTP MODE
+     --------------------------------------------------------------------------
+     REST API server (Express, Fastify, Hono, etc.)
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.http.enabled===true %}
+  {% include "./modes/http/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     FUTURE MODES
+     --------------------------------------------------------------------------
+     Add new modes here by simply including their index.njk
+     
+     Examples:
+     - Pipeline mode for stdin/stdout processing
+     - WebSocket mode for real-time communication
+     - gRPC mode for high-performance RPC
+     - GraphQL mode for flexible APIs
+     -------------------------------------------------------------------------- #}
+  
+  {# {% if atom.doc.features.cli.pipeline.enabled===true %}
+  {% include "modes/pipeline/index.njk" %}
+  {% endif %} #}
+  
+  {# {% if atom.doc.features.cli.websocket.enabled===true %}
+  {% include "modes/websocket/index.njk" %}
+  {% endif %} #}
+
+  {# --------------------------------------------------------------------------
+     UNKNOWN MODE HANDLER
+     -------------------------------------------------------------------------- #}
+  console.error(`Unknown CLI mode: ${cliMode}`);
+  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled===true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}`);
+  process.exit(1);
+};
+
+{# --------------------------------------------------------------------------
+   ERROR HANDLER & RUN
+   -------------------------------------------------------------------------- #}
+{% include "./core/run-wrapper.njk" %}
+
+{% endif %}
+{# End of cli.enabled check #}
+

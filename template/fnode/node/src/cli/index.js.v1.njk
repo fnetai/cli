@@ -1,0 +1,468 @@
+{# ============================================================================
+   CLI TEMPLATE - NUNJUCKS MACROS & CODE GENERATION
+   ============================================================================
+
+   This template generates CLI code for fnode projects with support for:
+   - Default CLI mode (standard command-line execution)
+   - MCP mode (Model Context Protocol server)
+   - HTTP mode (REST API server)
+
+   The template is conditional based on fnode.yaml features configuration.
+   ============================================================================ #}
+
+{% if atom.doc.features.cli.enabled===true %}
+
+{# ============================================================================
+   MACRO: importMcpDependencies
+   ============================================================================
+   Imports MCP SDK dependencies for both ESM and CJS formats
+   ============================================================================ #}
+{% macro importMcpDependencies(format) %}
+  {% if format === 'esm' %}
+    import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+    import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+    import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+    import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+    import express from "express";
+  {% else %}
+    const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
+    const { ListToolsRequestSchema, CallToolRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
+    const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+    const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
+    const express = require("express");
+  {% endif %}
+{% endmacro %}
+
+{% macro mcpModeCode(nodeFn) %}
+  if (cliMode === 'mcp') {
+    // MCP mode code
+    const server = new Server({
+      name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+      version: "{{atom.doc.version or '0.0.1'}}"
+    }, {
+      capabilities: {
+        tools: {}
+      }
+    });
+
+    // Define available tools
+    server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: [{
+          name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
+          description: "{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}",
+          inputSchema: inputSchema
+        }]
+      };
+    });
+
+    // Handle tool execution
+    server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      if (request.params.name === "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}") {
+        try {
+          const result = await {{ nodeFn }}(request.params.arguments);
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify(result)
+            }]
+          };
+        } catch (error) {
+          return {
+            content: [{
+              type: "text",
+              text: `Error: ${error.message}`
+            }],
+            isError: true
+          };
+        }
+      }
+      throw new Error("Tool not found");
+    });
+
+    // Get transport type from arguments
+    const transportType = args['mcp-transport'] || args.mcp_transport || 'stdio';
+    let transport;
+
+    if (transportType === 'stdio') {
+      // Use stdio transport
+      transport = new StdioServerTransport();
+    } else if (transportType === 'http') {
+      // Use Streamable HTTP transport (official transport as of MCP 2025-03-26)
+      const app = express();
+      app.use(express.json());
+
+      const port = args['cli-port'] || args.cli_port || 3000;
+      const host = args['cli-host'] || args.cli_host || '0.0.0.0';
+      const mcpEndpoint = '/mcp';
+      const verbose = args['cli-verbose'] || args.cli_verbose || false;
+
+      // Verbose logging helper
+      const log = (...args) => {
+        if (verbose) {
+          console.log('[MCP]', new Date().toISOString(), ...args);
+        }
+      };
+
+      // Map to store transports by session ID
+      const transports = {};
+
+      // Handle POST requests for client-to-server communication
+      app.post(mcpEndpoint, async (req, res) => {
+        // Check for existing session ID
+        const sessionId = req.get('Mcp-Session-Id');
+
+        log('POST request received');
+        log('Session ID:', sessionId || 'none');
+        log('Request body:', JSON.stringify(req.body, null, 2));
+
+        let transport;
+
+        if (sessionId && transports[sessionId]) {
+          // Reuse existing transport
+          log('Reusing existing transport for session:', sessionId);
+          transport = transports[sessionId];
+        } else if (!sessionId && req.body && (req.body.method === 'initialize' ||
+                  (Array.isArray(req.body) && req.body.some(item => item.method === 'initialize')))) {
+          // New initialization request
+          log('Creating new transport for initialization');
+          transport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: () => {
+              // Generate cryptographically secure session ID
+              return require('crypto').randomBytes(16).toString('hex');
+            },
+            onsessioninitialized: (sessionId) => {
+              // Store the transport by session ID
+              log('Session initialized:', sessionId);
+              transports[sessionId] = transport;
+            }
+          });
+
+          // Clean up transport when closed
+          transport.onclose = () => {
+            if (transport.sessionId) {
+              log('Transport closed, cleaning up session:', transport.sessionId);
+              delete transports[transport.sessionId];
+            }
+          };
+
+          // Connect to the MCP server
+          await server.connect(transport);
+          log('Server connected to transport');
+        } else {
+          // Invalid request
+          log('Invalid request - no valid session ID');
+          return res.status(400).json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Bad Request: No valid session ID provided'
+            },
+            id: null
+          });
+        }
+
+        // Handle the request
+        log('Handling request with transport');
+        await transport.handleRequest(req, res, req.body);
+      });
+
+      // Reusable handler for GET and DELETE requests
+      const handleSessionRequest = async (req, res) => {
+        const sessionId = req.get('Mcp-Session-Id');
+        log(`${req.method} request received for session:`, sessionId || 'none');
+
+        if (!sessionId || !transports[sessionId]) {
+          log('Invalid or missing session ID');
+          return res.status(400).send('Invalid or missing session ID');
+        }
+
+        const transport = transports[sessionId];
+        log('Handling request with existing transport');
+        await transport.handleRequest(req, res);
+      };
+
+      // Handle GET requests for server-to-client notifications via SSE
+      app.get(mcpEndpoint, handleSessionRequest);
+
+      // Handle DELETE requests for session termination
+      app.delete(mcpEndpoint, handleSessionRequest);
+
+      app.listen(port, host, () => {
+        console.log(`MCP server started with Streamable HTTP transport`);
+        console.log(`Endpoint: http://${host}:${port}${mcpEndpoint}`);
+        console.log(`Listening on ${host}:${port}`);
+        if (verbose) {
+          console.log(`Verbose logging enabled`);
+        }
+      });
+
+      return;
+    } else {
+      console.error(`Unknown MCP transport type: ${transportType}`);
+      console.error(`Supported types: stdio, http`);
+      process.exit(1);
+    }
+
+    await server.connect(transport);
+    return;
+  }
+{% endmacro %}
+
+{# ============================================================================
+   MACRO: httpModeCodeExpress
+   ============================================================================
+   Generates HTTP REST API server code using Express
+   ============================================================================ #}
+{% macro httpModeCodeExpress(nodeFn) %}
+  if (cliMode === 'http') {
+    // HTTP mode code
+    const app = express();
+    app.use(express.json());
+
+    app.post('/{{atom.doc.features.cli.http.path or atom.doc.name}}', async (req, res) => {
+      try {
+        const result = await {{ nodeFn }}(req.body);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    const port = args['cli-port'] || args.cli_port || 3000;
+    app.listen(port, () => {
+      console.log(`HTTP server started on port ${port}`);
+    });
+    return;
+  }
+{% endmacro %}
+
+{# ============================================================================
+   MACRO: defaultModeExtend
+   ============================================================================
+   Default CLI mode for extended Node (returns result directly)
+   ============================================================================ #}
+{% macro defaultModeExtend(nodeFn) %}
+  if (cliMode === 'default') {
+    // Default mode code
+    return await {{ nodeFn }}(await argv());
+  }
+{% endmacro %}
+
+{# ============================================================================
+   MACRO: defaultModeStandard
+   ============================================================================
+   Default CLI mode for standard Node (prints result to stdout)
+   ============================================================================ #}
+{% macro defaultModeStandard(nodeFn) %}
+  if (cliMode === 'default') {
+    // Default mode code
+    const result = await {{ nodeFn }}(await argv());
+
+    if (typeof result !== 'undefined') {
+      const stdout_format = args['stdout-format'] || args.stdout_format || null;
+
+      if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
+      else console.log(result);
+    }
+    return;
+  }
+{% endmacro %}
+
+{# ============================================================================
+   MACRO: runWithCatch
+   ============================================================================
+   Simple error handler for run() function
+   ============================================================================ #}
+{% macro runWithCatch() %}
+run()
+  .catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+{% endmacro %}
+
+{# ============================================================================
+   MACRO: runWithThenCatch
+   ============================================================================
+   Error handler with then() chain for run() function
+   ============================================================================ #}
+{% macro runWithThenCatch() %}
+run()
+  .then(() => {
+    {# process.exit(0); #}
+  })
+  .catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+{% endmacro %}
+
+{# ============================================================================
+   MAIN TEMPLATE - ESM FORMAT
+   ============================================================================ #}
+{% if atom.doc.features.project.format==='esm' %}
+
+  import argv from '../default/input.args.js';
+  import { schema as inputSchema } from '../default/validate_input.js';
+
+  {# --------------------------------------------------------------------------
+     ESM - EXTEND MODE (import from cli wrapper)
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.extend===true %}
+
+    import Node from '../../../cli';
+
+    {# Import dependencies based on enabled features #}
+    {% if atom.doc.features.cli.mcp.enabled===true %}
+      {{ importMcpDependencies('esm') }}
+    {% elif atom.doc.features.cli.http.enabled===true %}
+      // Using express for HTTP mode
+      import express from 'express';
+    {% endif %}
+    import argsParser from 'yargs-parser';
+
+    const run = async () => {
+      const args = argsParser(process.argv.slice(2));
+      const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+      {{ defaultModeExtend('Node') }}
+
+      {% if atom.doc.features.cli.mcp.enabled===true %}
+        {{ mcpModeCode('Node') }}
+      {% endif %}
+
+      {% if atom.doc.features.cli.http.enabled===true %}
+        {{ httpModeCodeBuiltIn('Node') }}
+      {% endif %}
+
+      console.error(`Unknown CLI mode: ${cliMode}`);
+      process.exit(1);
+    };
+
+    {{ runWithThenCatch() }}
+
+  {# --------------------------------------------------------------------------
+     ESM - STANDARD MODE (import from src)
+     -------------------------------------------------------------------------- #}
+  {% else %}
+    import Node from '../../../src';
+
+    {# Import dependencies based on enabled features #}
+    {% if atom.doc.features.cli.mcp.enabled===true %}
+      {{ importMcpDependencies('esm') }}
+    {% elif atom.doc.features.cli.http.enabled===true %}
+      // Using express for HTTP mode
+      import express from 'express';
+    {% endif %}
+
+    import argsParser from 'yargs-parser';
+
+    const run = async () => {
+      const args = argsParser(process.argv.slice(2));
+      const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+      {{ defaultModeStandard('Node') }}
+
+      {% if atom.doc.features.cli.mcp.enabled===true %}
+        {{ mcpModeCode('Node') }}
+      {% endif %}
+
+      {% if atom.doc.features.cli.http.enabled===true %}
+        {{ httpModeCodeExpress('Node') }}
+      {% endif %}
+
+      console.error(`Unknown CLI mode: ${cliMode}`);
+      process.exit(1);
+    };
+
+    {{ runWithCatch() }}
+  {% endif %}
+
+
+{# ============================================================================
+   MAIN TEMPLATE - CJS FORMAT
+   ============================================================================ #}
+{% elif atom.doc.features.project.format==='cjs' %}
+
+  const argv = require('../default/input.args.js');
+
+  {# --------------------------------------------------------------------------
+     CJS - EXTEND MODE (require from cli wrapper)
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.extend===true %}
+
+    const Node = require('../../../cli');
+
+    {# Import dependencies based on enabled features #}
+    {% if atom.doc.features.cli.mcp.enabled===true %}
+      {{ importMcpDependencies('cjs') }}
+    {% elif atom.doc.features.cli.http.enabled===true %}
+      // Using express for HTTP mode
+      const express = require('express');
+    {% endif %}
+
+    const argsParser = require('yargs-parser');
+
+    const run = async () => {
+      const args = argsParser(process.argv.slice(2));
+      const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+      {{ defaultModeExtend('Node') }}
+
+      {% if atom.doc.features.cli.mcp.enabled===true %}
+        {{ mcpModeCode('Node') }}
+      {% endif %}
+
+      {% if atom.doc.features.cli.http.enabled===true %}
+        {{ httpModeCodeBuiltIn('Node') }}
+      {% endif %}
+
+      console.error(`Unknown CLI mode: ${cliMode}`);
+      process.exit(1);
+    };
+
+    {{ runWithThenCatch() }}
+
+  {# --------------------------------------------------------------------------
+     CJS - STANDARD MODE (require from src)
+     -------------------------------------------------------------------------- #}
+  {% else %}
+    const Node = require('../../../src');
+
+    {# Import dependencies based on enabled features #}
+    {% if atom.doc.features.cli.mcp.enabled===true %}
+      {{ importMcpDependencies('cjs') }}
+    {% elif atom.doc.features.cli.http.enabled===true %}
+      // Using express for HTTP mode
+      const express = require('express');
+    {% endif %}
+
+    const argsParser = require('yargs-parser');
+
+    const run = async () => {
+      const args = argsParser(process.argv.slice(2));
+      const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+      {{ defaultModeStandard('Node') }}
+
+      {% if atom.doc.features.cli.mcp.enabled===true %}
+        {{ mcpModeCode('Node') }}
+      {% endif %}
+
+      {% if atom.doc.features.cli.http.enabled===true %}
+        {{ httpModeCodeExpress('Node') }}
+      {% endif %}
+
+      console.error(`Unknown CLI mode: ${cliMode}`);
+      process.exit(1);
+    };
+
+    {{ runWithCatch() }}
+  {% endif %}
+
+{% endif %}
+{# End of project.format check #}
+
+{% endif %}
+{# End of cli.enabled check #}

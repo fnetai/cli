@@ -13,7 +13,6 @@
   {% if atom.doc['npm::description'] %}
     "description": "{{atom.doc['npm::description'] | safe}}",
   {% endif %}
-
   {% if atom.doc.features.project.format ==='cjs' %}
     {% if atom.doc.features.rollup_output.esm.enabled === true%}
       "main": "dist/default/esm/index.js",

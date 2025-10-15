@@ -1,0 +1,11 @@
+{# ============================================================================
+   DEFAULT MODE - EXTEND
+   ============================================================================
+   Extended CLI mode that returns result directly (for CLI wrapper usage)
+   ============================================================================ #}
+
+if (cliMode === 'default') {
+  // Default mode code
+  return await Node(await argv());
+}
+

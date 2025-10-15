@@ -1,0 +1,27 @@
+{# ============================================================================
+   MCP MODE - IMPORTS
+   ============================================================================
+   MCP SDK dependencies for Model Context Protocol support
+   Supports both ESM and CJS formats
+   ============================================================================ #}
+
+{% if atom.doc.features.project.format==='esm' %}
+{# ESM Format #}
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import express from "express";
+import crypto from "crypto";
+
+{% elif atom.doc.features.project.format==='cjs' %}
+{# CJS Format #}
+const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
+const { ListToolsRequestSchema, CallToolRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
+const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
+const express = require("express");
+const crypto = require("crypto");
+
+{% endif %}
+
