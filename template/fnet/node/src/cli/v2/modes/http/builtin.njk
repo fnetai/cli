@@ -1,0 +1,61 @@
+{# ============================================================================
+   HTTP MODE - BUILT-IN (Native Node.js HTTP)
+   ============================================================================
+   Simple REST API server using Node.js built-in http module
+   No external dependencies required
+   ============================================================================ #}
+
+const server = http.createServer(async (req, res) => {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
+  // Only accept POST requests
+  if (req.method !== 'POST') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
+    return;
+  }
+
+  // Check path
+  const path = '/{{atom.doc.features.cli.http.path or atom.doc.name}}';
+  if (req.url !== path) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
+    return;
+  }
+
+  // Parse request body
+  let body = '';
+  req.on('data', chunk => {
+    body += chunk.toString();
+  });
+
+  req.on('end', async () => {
+    try {
+      const data = JSON.parse(body);
+      const result = await Node(data);
+      
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result));
+    } catch (error) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: error.message }));
+    }
+  });
+});
+
+const port = args['cli-port'] || args.cli_port || 3000;
+server.listen(port, () => {
+  console.log(`HTTP server started on port ${port} (native http)`);
+});
+return;
+

@@ -1,0 +1,41 @@
+{# ============================================================================
+   MCP MODE - TOOL HANDLERS
+   ============================================================================
+   Register MCP tool handlers for listing and executing tools
+   ============================================================================ #}
+
+// Define available tools
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [{
+      name: "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}",
+      description: `{{atom.doc.features.cli.mcp.tool.description or atom.doc.description}}`,
+      inputSchema: inputSchema
+    }]
+  };
+});
+
+// Handle tool execution
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === "{{atom.doc.features.cli.mcp.tool.name or atom.doc.name}}") {
+    try {
+      const result = await Node(request.params.arguments);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result)
+        }]
+      };
+    } catch (error) {
+      return {
+        content: [{
+          type: "text",
+          text: `Error: ${error.message}`
+        }],
+        isError: true
+      };
+    }
+  }
+  throw new Error("Tool not found");
+});
+

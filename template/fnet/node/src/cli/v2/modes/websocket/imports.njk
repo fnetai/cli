@@ -1,0 +1,15 @@
+{# ============================================================================
+   WEBSOCKET MODE - IMPORTS
+   ============================================================================
+   WebSocket server dependencies using 'ws' library
+   Supports both ESM and CJS formats
+   ============================================================================ #}
+
+{% if atom.doc.features.project.format==='esm' %}
+// Using ws library for WebSocket mode
+import { WebSocketServer } from 'ws';
+{% elif atom.doc.features.project.format==='cjs' %}
+// Using ws library for WebSocket mode
+const { WebSocketServer } = require('ws');
+{% endif %}
+

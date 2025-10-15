@@ -1,0 +1,15 @@
+{# ============================================================================
+   MCP MODE - SERVER SETUP
+   ============================================================================
+   Initialize MCP server with capabilities
+   ============================================================================ #}
+
+const server = new Server({
+  name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+  version: "{{atom.doc.version or '0.0.1'}}"
+}, {
+  capabilities: {
+    tools: {}
+  }
+});
+
