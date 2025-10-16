@@ -68,7 +68,7 @@
     "tree-kill": "^1.2.2",
     "typescript": "^5.9.3",
     "yaml": "^2.8.1",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "bin": {
     "fnet": "dist/fnet/index.js",
