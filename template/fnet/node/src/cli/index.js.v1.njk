@@ -261,7 +261,7 @@ import argv,{argsParser} from '../default/input.args.js';
 import { schema as inputSchema } from '../default/validate_input.js';
 import { default as Engine } from '../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}';
 
-{% if atom.doc.features.cli.mcp.enabled===true %}
+{% if atom.doc.features.cli.mcp.enabled !== false %}
 {{ importMcpDependencies() }}
 {% elif atom.doc.features.cli.http.enabled===true %}
 // Using express for HTTP mode
@@ -278,7 +278,7 @@ import express from 'express';
 
     {{ defaultModeExtended() }}
 
-    {% if atom.doc.features.cli.mcp.enabled===true %}
+    {% if atom.doc.features.cli.mcp.enabled !== false %}
     {{ mcpModeCodeExtended('runExtended') }}
     {% endif %}
 
@@ -301,7 +301,7 @@ import express from 'express';
 
     {{ defaultModeEngine('engine') }}
 
-    {% if atom.doc.features.cli.mcp.enabled===true %}
+    {% if atom.doc.features.cli.mcp.enabled !== false %}
     {{ mcpModeCodeEngine('engine') }}
     {% endif %}
 

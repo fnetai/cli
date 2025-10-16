@@ -42,7 +42,7 @@ const http = require('http');
 {% endif %}
 {% endif %}
 
-{% if atom.doc.features.cli.mcp.enabled===true or atom.doc.features.cli.webhook.enabled===true %}
+{% if atom.doc.features.cli.mcp.enabled !== false or atom.doc.features.cli.webhook.enabled===true %}
 // Shared: crypto module (used by MCP and Webhook modes)
 {% if atom.doc.features.project.format==='esm' %}
 import crypto from 'crypto';
@@ -57,7 +57,7 @@ const crypto = require('crypto');
    Import dependencies for ALL enabled CLI modes
    Multiple modes can be enabled simultaneously
    -------------------------------------------------------------------------- #}
-{% if atom.doc.features.cli.mcp.enabled===true %}
+{% if atom.doc.features.cli.mcp.enabled !== false %}
 {% include "./modes/mcp/imports.njk" %}
 {% endif %}
 
@@ -107,7 +107,7 @@ const run = async () => {
      --------------------------------------------------------------------------
      Model Context Protocol server with multiple transport options
      -------------------------------------------------------------------------- #}
-  {% if atom.doc.features.cli.mcp.enabled===true %}
+  {% if atom.doc.features.cli.mcp.enabled !== false %}
   {% include "./modes/mcp/index.njk" %}
   {% endif %}
 
@@ -170,7 +170,7 @@ const run = async () => {
      UNKNOWN MODE HANDLER
      -------------------------------------------------------------------------- #}
   console.error(`Unknown CLI mode: ${cliMode}`);
-  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled===true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}{% if atom.doc.features.cli.pipeline.enabled===true %}, pipeline{% endif %}{% if atom.doc.features.cli.websocket.enabled===true %}, websocket{% endif %}{% if atom.doc.features.cli.webhook.enabled===true %}, webhook{% endif %}`);
+  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled !== false %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}{% if atom.doc.features.cli.pipeline.enabled===true %}, pipeline{% endif %}{% if atom.doc.features.cli.websocket.enabled===true %}, websocket{% endif %}{% if atom.doc.features.cli.webhook.enabled===true %}, webhook{% endif %}`);
   process.exit(1);
 };
 

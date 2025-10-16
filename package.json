@@ -47,7 +47,7 @@
     "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",
     "@fnet/up-list-files": "^0.1.14",
-    "@fnet/yaml": "^0.1.42",
+    "@fnet/yaml": "^0.1.45",
     "@node-red/util": "^4.1.1",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",

@@ -71,14 +71,14 @@
     {% if atom.doc.features.cli.enabled %}
       {% if atom.doc.features.project.format ==='cjs' %}
         ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs"
-        {% if atom.doc.features.cli.mcp.enabled===true %}
+        {% if atom.doc.features.cli.mcp.enabled !== false %}
           ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
           ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
         {% endif %}
       {% else %}
         ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}}"
         ,"cli:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}}"
-        {% if atom.doc.features.cli.mcp.enabled===true %}
+        {% if atom.doc.features.cli.mcp.enabled !== false %}
           ,"cli:mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}} --cli-mode=mcp"
           ,"cli:mcp:inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}} --cli-mode=mcp"
           ,"cli:mcp:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}} --cli-mode=mcp"

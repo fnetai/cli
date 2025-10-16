@@ -314,7 +314,7 @@ run()
     import Node from '../../../cli';
 
     {# Import dependencies based on enabled features #}
-    {% if atom.doc.features.cli.mcp.enabled===true %}
+    {% if atom.doc.features.cli.mcp.enabled !== false %}
       {{ importMcpDependencies('esm') }}
     {% elif atom.doc.features.cli.http.enabled===true %}
       // Using express for HTTP mode
@@ -327,7 +327,7 @@ run()
 
       {{ defaultModeExtend('Node') }}
 
-      {% if atom.doc.features.cli.mcp.enabled===true %}
+      {% if atom.doc.features.cli.mcp.enabled !== false %}
         {{ mcpModeCode('Node') }}
       {% endif %}
 
@@ -348,7 +348,7 @@ run()
     import Node from '../../../src';
 
     {# Import dependencies based on enabled features #}
-    {% if atom.doc.features.cli.mcp.enabled===true %}
+    {% if atom.doc.features.cli.mcp.enabled !== false %}
       {{ importMcpDependencies('esm') }}
     {% elif atom.doc.features.cli.http.enabled===true %}
       // Using express for HTTP mode
@@ -362,7 +362,7 @@ run()
 
       {{ defaultModeStandard('Node') }}
 
-      {% if atom.doc.features.cli.mcp.enabled===true %}
+      {% if atom.doc.features.cli.mcp.enabled !== false %}
         {{ mcpModeCode('Node') }}
       {% endif %}
 
@@ -393,7 +393,7 @@ run()
     const Node = require('../../../cli');
 
     {# Import dependencies based on enabled features #}
-    {% if atom.doc.features.cli.mcp.enabled===true %}
+    {% if atom.doc.features.cli.mcp.enabled !== false %}
       {{ importMcpDependencies('cjs') }}
     {% elif atom.doc.features.cli.http.enabled===true %}
       // Using express for HTTP mode
@@ -407,7 +407,7 @@ run()
 
       {{ defaultModeExtend('Node') }}
 
-      {% if atom.doc.features.cli.mcp.enabled===true %}
+      {% if atom.doc.features.cli.mcp.enabled !== false %}
         {{ mcpModeCode('Node') }}
       {% endif %}
 
@@ -428,7 +428,7 @@ run()
     const Node = require('../../../src');
 
     {# Import dependencies based on enabled features #}
-    {% if atom.doc.features.cli.mcp.enabled===true %}
+    {% if atom.doc.features.cli.mcp.enabled !== false %}
       {{ importMcpDependencies('cjs') }}
     {% elif atom.doc.features.cli.http.enabled===true %}
       // Using express for HTTP mode
@@ -442,7 +442,7 @@ run()
 
       {{ defaultModeStandard('Node') }}
 
-      {% if atom.doc.features.cli.mcp.enabled===true %}
+      {% if atom.doc.features.cli.mcp.enabled !== false %}
         {{ mcpModeCode('Node') }}
       {% endif %}
 
