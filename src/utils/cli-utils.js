@@ -17,9 +17,10 @@ import { setupSignalHandlers } from './process-manager.js';
  * @param {string} [options.name] - Command name (defaults to bin)
  * @param {string} options.bin - Binary to execute
  * @param {Array} [options.preArgs=[]] - Arguments to prepend to the command
+ * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
+export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], createContext }) {
   if (typeof bin === 'function') bin = bin();
 
   return builder.command(
@@ -83,9 +84,10 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [] }) {
  * @param {string} options.name - Command name
  * @param {string} [options.bin] - Binary to execute (defaults to name)
  * @param {Array} [options.preArgs=[]] - Arguments to prepend to the command
+ * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindCondaContextCommand(builder, { name, bin, preArgs = [] }) {
+export function bindCondaContextCommand(builder, { name, bin, preArgs = [], createContext }) {
   return builder.command(
     `${name || bin} [commands..]`, `${bin} ${preArgs.join(' ')}`,
     (yargs) => {
@@ -140,9 +142,10 @@ export function bindCondaContextCommand(builder, { name, bin, preArgs = [] }) {
  * @param {Object} options - Command options
  * @param {string} options.name - Command name
  * @param {Array} [options.preArgs=[]] - Arguments to prepend to the command
+ * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindWithContextCommand(builder, { name, preArgs = [] }) {
+export function bindWithContextCommand(builder, { name, preArgs = [], createContext }) {
   return builder.command(
     `${name} <config> <command> [options..]`, `Run a command with a config context`,
     (yargs) => {
@@ -234,9 +237,10 @@ export function bindRunContextCommand(builder, { name, projectType = 'auto' }) {
  * @param {Object} builder - Yargs builder
  * @param {Object} options - Command options
  * @param {string} options.name - Command name
+ * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindInstallCommand(builder, { name }) {
+export function bindInstallCommand(builder, { name, createContext }) {
   return builder.command(
     `${name} [options]`, `Install the project as a binary`,
     (yargs) => {
@@ -398,42 +402,4 @@ export function bindInputCommand(builder) {
       }
     }
   );
-}
-
-/**
- * Create a context object for CLI commands
- * This is a placeholder function that should be implemented by each CLI tool
- *
- * @param {Object} argv - Command line arguments
- * @returns {Promise<Object>} Context object
- */
-export async function createContext(argv) {
-  // Try to import the context from the CLI tool
-  try {
-    // Detect which CLI tool is being used
-    const cliName = process.argv[1].split('/').pop().split('.')[0];
-
-    // Import the context from the CLI tool
-    if (cliName === 'fnode') {
-      const { createContext } = await import('../fnode-cli/context.js');
-      return createContext(argv);
-    } else if (cliName === 'fnet') {
-      const { createContext } = await import('../fnet-cli/context.js');
-      return createContext(argv);
-    } else if (cliName === 'frun') {
-      const { createContext } = await import('../frun-cli/context.js');
-      return createContext(argv);
-    } else if (cliName === 'fbin') {
-      const { createContext } = await import('../fbin-cli/context.js');
-      return createContext(argv);
-    }
-  } catch (error) {
-    console.warn(`Warning: Could not import context from CLI tool: ${error.message}`);
-  }
-
-  // Fallback to a minimal context
-  return {
-    projectDir: process.cwd(),
-    tags: argv.ftag
-  };
 }

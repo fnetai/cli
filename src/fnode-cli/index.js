@@ -12,6 +12,7 @@ import {
   bindRunContextCommand,
   bindInstallCommand
 } from '../utils/cli-utils.js';
+import { createContext } from './context.js';
 
 // Import commands
 import createCmd from './create-cmd.js';
@@ -48,28 +49,28 @@ async function main() {
       .command('express', 'Create and manage express projects', expressCmd);
 
     // Add pass-through commands
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm' });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node' });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun' });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'bun', preArgs: ['run', 'serve', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'] });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'] });
-    cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install" });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx' });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk' });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws' });
-    cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with' });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm', createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node', createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun', createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'bun', preArgs: ['run', 'serve', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'], createContext });
+    cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install", createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx', createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk', createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws', createContext });
+    cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with', createContext });
     cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run', projectType: 'fnode' });
-    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python' });
-    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python3' });
-    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip' });
-    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip3' });
+    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python', createContext });
+    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python3', createContext });
+    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip', createContext });
+    cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip3', createContext });
 
     cmdBuilder
       .demandCommand(1, 'You need at least one command before moving on')
