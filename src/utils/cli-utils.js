@@ -50,13 +50,13 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
         // Prepare environment variables to isolate node_modules to projectDir
         const env = { ...process.env };
 
-        // // Set NODE_PATH to projectDir's node_modules to prevent parent node_modules lookup
-        // const projectNodeModules = path.join(projectDir, 'node_modules');
-        // env.NODE_PATH = projectNodeModules;
+        // Set NODE_PATH to projectDir's node_modules to prevent parent node_modules lookup
+        const projectNodeModules = path.join(projectDir, 'node_modules');
+        env.NODE_PATH = projectNodeModules;
 
-        // // Also set NODE_OPTIONS to disable parent node_modules lookup
-        // const existingNodeOptions = env.NODE_OPTIONS || '';
-        // env.NODE_OPTIONS = `${existingNodeOptions} --preserve-symlinks`.trim();
+        // Also set NODE_OPTIONS to disable parent node_modules lookup
+        const existingNodeOptions = env.NODE_OPTIONS || '';
+        env.NODE_OPTIONS = `${existingNodeOptions} --preserve-symlinks`.trim();
 
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
