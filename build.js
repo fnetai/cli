@@ -93,7 +93,6 @@ async function buildCLI(config) {
     if (existsSync(entryFile)) {
       const content = await Bun.file(entryFile).text();
       const withShebang = `#!/usr/bin/env bun\n${content}`;
-      // const withShebang = `#!/usr/bin/env node\n${content}`;
       await Bun.write(entryFile, withShebang);
       // Make the file executable (chmod +x)
       chmodSync(entryFile, 0o755);

@@ -336,7 +336,7 @@ export default async function initFeatures(apiContext) {
       enabled: true,
       input: features.cli.input.file,
       output_dir: features.cli.dir,
-      banner: "#!/usr/bin/env node",
+      banner: "#!/usr/bin/env bun",
       terser: true,
       output_exports: features.cli.export === false ? "none" : "auto",
     }
