@@ -1,9 +1,9 @@
 {% if atom.doc.features.project.format === 'esm' %}
-  import fnetArgs from '@fnet/args';
+  import fnetArgs,{argsParser} from '@fnet/args';
   import validate,{schema as inputSchema} from "./validate_input.js";
 
 {% elif atom.doc.features.project.format === 'cjs' %}
-  const fnetArgs = require('@fnet/args');
+  const {default:fnetArgs,argsParser} = require('@fnet/args');
   const validate,{schema as inputSchema} = require("./validate_input.js");
 {% endif %}
 
@@ -75,6 +75,7 @@
     return await fnetArgs({schema,initial,validate,packageCallback});
   };
 
+  export { argsParser };
 {% elif atom.doc.features.project.format === 'cjs' %}
 
   module.exports = async () => {
@@ -119,4 +120,6 @@
 
     return await fnetArgs({schema,initial,validate,packageCallback});
   };
+
+  module.exports.argsParser = argsParser;
 {% endif %}

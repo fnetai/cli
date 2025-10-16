@@ -93,18 +93,18 @@ export function saveServiceMetadata(metadata) {
 }
 
 /**
- * Get service definition file path
- * @param {string} name - Service definition name
- * @returns {string} Service definition file path
+ * Get service manifest file path
+ * @param {string} name - Service manifest name
+ * @returns {string} Service manifest file path
  */
 export function getServiceManifestPath(name) {
   return path.join(getServicesDirectory(), `${name}.yaml`);
 }
 
 /**
- * Check if a service definition exists
- * @param {string} name - Service definition name
- * @returns {boolean} True if the service definition exists
+ * Check if a service manifest exists
+ * @param {string} name - Service manifest name
+ * @returns {boolean} True if the service manifest exists
  */
 export function servicManifestExists(name) {
   const definitionPath = getServiceManifestPath(name);
@@ -112,12 +112,12 @@ export function servicManifestExists(name) {
 }
 
 /**
- * Load a service definition
- * @param {string} name - Service definition name
- * @returns {Object|null} Service definition or null if not found
+ * Load a service manifest
+ * @param {string} name - Service manifest name
+ * @returns {Object|null} Service manifest or null if not found
  */
 export function loadServiceManifest(name) {
-  const definitionPath = getServiceManfifestPath(name);
+  const definitionPath = getServiceManifestPath(name);
   
   if (!fs.existsSync(definitionPath)) {
     return null;
@@ -127,37 +127,37 @@ export function loadServiceManifest(name) {
     const content = fs.readFileSync(definitionPath, 'utf8');
     return yaml.parse(content);
   } catch (err) {
-    console.warn(chalk.yellow(`Failed to parse service definition file: ${err.message}`));
+    console.warn(chalk.yellow(`Failed to parse service manifest file: ${err.message}`));
     return null;
   }
 }
 
 /**
- * Save a service definition
- * @param {string} name - Service definition name
- * @param {Object} definition - Service definition
+ * Save a service manifest
+ * @param {string} name - Service manifest name
+ * @param {Object} manifest - Service manifest
  * @returns {boolean} True if successful
  */
-export function saveServiceManifest(name, definition) {
-  const definitionPath = getServiceManfifestPath(name);
+export function saveServiceManifest(name, manifest) {
+  const definitionPath = getServiceManifestPath(name);
   
   try {
-    const content = yaml.stringify(definition);
+    const content = yaml.stringify(manifest);
     fs.writeFileSync(definitionPath, content);
     return true;
   } catch (err) {
-    console.error(chalk.red(`Failed to save service definition: ${err.message}`));
+    console.error(chalk.red(`Failed to save service manifest: ${err.message}`));
     return false;
   }
 }
 
 /**
- * Delete a service definition
- * @param {string} name - Service definition name
+ * Delete a service manifest
+ * @param {string} name - Service manifest name
  * @returns {boolean} True if successful
  */
 export function deleteServiceManifest(name) {
-  const definitionPath = getServiceManfifestPath(name);
+  const definitionPath = getServiceManifestPath(name);
   
   if (!fs.existsSync(definitionPath)) {
     return false;
@@ -167,14 +167,14 @@ export function deleteServiceManifest(name) {
     fs.unlinkSync(definitionPath);
     return true;
   } catch (err) {
-    console.error(chalk.red(`Failed to delete service definition: ${err.message}`));
+    console.error(chalk.red(`Failed to delete service manifest: ${err.message}`));
     return false;
   }
 }
 
 /**
  * List all service definitions
- * @returns {Array<string>} List of service definition names
+ * @returns {Array<string>} List of service manifest names
  */
 export function listServiceManifests() {
   const servicesDir = getServicesDirectory();
@@ -194,29 +194,29 @@ export function listServiceManifests() {
 }
 
 /**
- * Validate a service definition
- * @param {Object} definition - Service definition
+ * Validate a service manifest
+ * @param {Object} manifest - Service manifest
  * @returns {Object} Validation result { valid: boolean, errors: Array }
  */
-export function validateServiceManifest(definition) {
+export function validateServiceManifest(manifest) {
   const errors = [];
   
   // Check required fields
-  if (!definition.name) {
+  if (!manifest.name) {
     errors.push('Service name is required');
   }
   
-  if (!definition.binary) {
+  if (!manifest.binary) {
     errors.push('Binary name is required');
   }
   
   // Check if binary exists
-  if (definition.binary) {
+  if (manifest.binary) {
     const binDir = binSystem.getBinDirectory();
-    const binaryPath = path.join(binDir, definition.binary);
+    const binaryPath = path.join(binDir, manifest.binary);
     
     if (!fs.existsSync(binaryPath)) {
-      errors.push(`Binary '${definition.binary}' not found in bin directory`);
+      errors.push(`Binary '${manifest.binary}' not found in bin directory`);
     }
   }
   
@@ -228,49 +228,49 @@ export function validateServiceManifest(definition) {
 
 /**
  * Register a service
- * @param {string} definitionName - Service definition name
+ * @param {string} manifestName - Service manifest name
  * @param {Object} options - Registration options
  * @returns {Promise<Object>} Registration result
  */
-export async function registerService(definitionName, options = {}) {
-  // Load service definition
-  const definition = loadServiceManifest(definitionName);
+export async function registerService(manifestName, options = {}) {
+  // Load service manifest
+  const manifest = loadServiceManifest(manifestName);
   
-  if (!definition) {
-    throw new Error(`Service definition '${definitionName}' not found`);
+  if (!manifest) {
+    throw new Error(`Service manifest '${manifestName}' not found`);
   }
   
-  // Validate service definition
-  const validation = validateServiceManifest(definition);
+  // Validate service manifest
+  const validation = validateServiceManifest(manifest);
   
   if (!validation.valid) {
-    throw new Error(`Invalid service definition: ${validation.errors.join(', ')}`);
+    throw new Error(`Invalid service manifest: ${validation.errors.join(', ')}`);
   }
   
   // Get binary path
   const binDir = binSystem.getBinDirectory();
-  const binaryPath = path.join(binDir, definition.binary);
+  const binaryPath = path.join(binDir, manifest.binary);
   
   // Register service
   try {
     await manageService({
       action: 'register',
-      name: definition.name,
-      description: definition.description || `Service for ${definition.binary}`,
-      command: [binaryPath, ...(definition.args || [])],
-      env: definition.env || {},
-      wdir: definition.workingDir,
-      system: definition.system !== false,
-      autoStart: definition.autoStart === true,
-      restartOnFailure: definition.restartOnFailure !== false,
-      user: definition.user
+      name: manifest.name,
+      description: manifest.description || `Service for ${manifest.binary}`,
+      command: [binaryPath, ...(manifest.args || [])],
+      env: manifest.env || {},
+      wdir: manifest.workingDir,
+      system: manifest.system !== false,
+      autoStart: manifest.autoStart === true,
+      restartOnFailure: manifest.restartOnFailure !== false,
+      user: manifest.user
     });
     
     // Update metadata
     const metadata = loadServiceMetadata();
-    metadata.services[definition.name] = {
-      manifest: definitionName,
-      binary: definition.binary,
+    metadata.services[manifest.name] = {
+      manifest: manifestName,
+      binary: manifest.binary,
       registered: new Date().toISOString(),
       status: 'registered'
     };
@@ -278,8 +278,8 @@ export async function registerService(definitionName, options = {}) {
     
     return {
       success: true,
-      name: definition.name,
-      manifest: definitionName
+      name: manifest.name,
+      manifest: manifestName
     };
   } catch (err) {
     throw new Error(`Failed to register service: ${err.message}`);
@@ -293,7 +293,7 @@ export default {
   createServiceDirectoryStructure,
   loadServiceMetadata,
   saveServiceMetadata,
-  getServiceManfifestPath,
+  getServiceManifestPath,
   servicManifestExists,
   loadServiceManifest,
   saveServiceManifest,

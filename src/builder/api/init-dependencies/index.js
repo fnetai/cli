@@ -36,7 +36,6 @@ export default async function initDependencies({ atom, packageDependencies, pack
 
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "@fnet/args", version: "^0.1" });
-    packageDependencies.push({ package: "yargs-parser", version: "^22.0" });
     // packageDevDependencies.push({ package: "ajv", version: "^8" });
 
     if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {

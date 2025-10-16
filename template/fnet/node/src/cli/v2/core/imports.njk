@@ -11,23 +11,21 @@
 
 {% if atom.doc.features.project.format==='esm' %}
 {# ESM Format #}
-import argv from '../default/input.args.js';
+import argv,{argsParser} from '../default/input.args.js';
 import { schema as inputSchema } from '../default/validate_input.js';
 import { default as Engine } from '../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}';
 {% if atom.doc.features.cli.extend===true %}
 import { default as runExtended } from '../../../cli/index.js';
 {% endif %}
-import argsParser from 'yargs-parser';
 
 {% elif atom.doc.features.project.format==='cjs' %}
 {# CJS Format #}
-const argv = require('../default/input.args.js');
+const { default:argv,argsParser } = require('../default/input.args.js');
 const { schema: inputSchema } = require('../default/validate_input.js');
 const { default: Engine } = require('../default/{{atom.doc.features.cli_default_entry_file or atom.doc.features.main_default_entry_file}}');
 {% if atom.doc.features.cli.extend===true %}
 const { default: runExtended } = require('../../../cli/index.js');
 {% endif %}
-const argsParser = require('yargs-parser');
 
 {% endif %}
 

@@ -181,7 +181,7 @@ async function createManifestHandler(argv) {
 
     if (success) {
       console.log(chalk.green(`Service manifest '${manifestName}' created successfully.`));
-      console.log(chalk.blue(`Location: ${serviceSystem.getServiceManfifestPath(manifestName)}`));
+      console.log(chalk.blue(`Location: ${serviceSystem.getServiceManifestPath(manifestName)}`));
     } else {
       console.error(chalk.red(`Failed to create service manifest '${manifestName}'.`));
     }

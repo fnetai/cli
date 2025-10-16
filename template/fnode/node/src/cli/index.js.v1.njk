@@ -303,7 +303,7 @@ run()
    ============================================================================ #}
 {% if atom.doc.features.project.format==='esm' %}
 
-  import argv from '../default/input.args.js';
+  import argv,{argsParser} from '../default/input.args.js';
   import { schema as inputSchema } from '../default/validate_input.js';
 
   {# --------------------------------------------------------------------------
@@ -320,7 +320,6 @@ run()
       // Using express for HTTP mode
       import express from 'express';
     {% endif %}
-    import argsParser from 'yargs-parser';
 
     const run = async () => {
       const args = argsParser(process.argv.slice(2));
@@ -356,7 +355,6 @@ run()
       import express from 'express';
     {% endif %}
 
-    import argsParser from 'yargs-parser';
 
     const run = async () => {
       const args = argsParser(process.argv.slice(2));
@@ -385,7 +383,7 @@ run()
    ============================================================================ #}
 {% elif atom.doc.features.project.format==='cjs' %}
 
-  const argv = require('../default/input.args.js');
+  const { default:argv,argsParser } = require('../default/input.args.js');
 
   {# --------------------------------------------------------------------------
      CJS - EXTEND MODE (require from cli wrapper)
@@ -402,7 +400,6 @@ run()
       const express = require('express');
     {% endif %}
 
-    const argsParser = require('yargs-parser');
 
     const run = async () => {
       const args = argsParser(process.argv.slice(2));
@@ -438,7 +435,6 @@ run()
       const express = require('express');
     {% endif %}
 
-    const argsParser = require('yargs-parser');
 
     const run = async () => {
       const args = argsParser(process.argv.slice(2));
