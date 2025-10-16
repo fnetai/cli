@@ -9,7 +9,7 @@ import { hideBin } from 'yargs/helpers';
 import chalk from 'chalk';
 
 // Import commands
-import definitionCmd from './definition-cmd.js';
+import manifestCmd from './manifest-cmd.js';
 import registerCmd from './register-cmd.js';
 import unregisterCmd from './unregister-cmd.js';
 import startCmd from './start-cmd.js';
@@ -28,7 +28,7 @@ const argv = yargs(hideBin(process.argv))
   .scriptName('fservice')
   .usage('Usage: $0 <command> [options]')
   .version(version)
-  .command(definitionCmd)
+  .command(manifestCmd)
   .command(registerCmd)
   .command(unregisterCmd)
   .command(startCmd)

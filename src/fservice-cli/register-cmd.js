@@ -1,6 +1,6 @@
 /**
  * Register command for fservice CLI
- * This module provides the register command for registering service definitions as system services
+ * This module provides the register command for registering service manifests as system services
  */
 import chalk from 'chalk';
 import { createContext } from './context.js';
@@ -11,11 +11,11 @@ import serviceSystem from '../utils/service-system.js';
  */
 const command = {
   command: 'register',
-  describe: 'Register a service definition as a system service',
+  describe: 'Register a service manifest as a system service',
   builder: (yargs) => {
     return yargs
-      .option('definition', {
-        describe: 'Service definition name',
+      .option('manifest', {
+        describe: 'Service manifest name',
         type: 'string',
         demandOption: true,
         alias: 'd'
@@ -30,16 +30,16 @@ const command = {
     try {
       const context = await createContext(argv);
       
-      // Check if definition exists
-      if (!serviceSystem.serviceDefinitionExists(argv.definition)) {
-        console.error(chalk.red(`Service definition '${argv.definition}' not found.`));
+      // Check if manifest exists
+      if (!serviceSystem.servicManifestExists(argv.manifest)) {
+        console.error(chalk.red(`Service manifest '${argv.manifest}' not found.`));
         process.exit(1);
       }
       
-      console.log(chalk.blue(`Registering service from definition '${argv.definition}'...`));
+      console.log(chalk.blue(`Registering service from manifest '${argv.manifest}'...`));
       
       // Register the service
-      const result = await serviceSystem.registerService(argv.definition);
+      const result = await serviceSystem.registerService(argv.manifest);
       
       console.log(chalk.green(`Service '${result.name}' registered successfully.`));
       

@@ -97,7 +97,7 @@ export function saveServiceMetadata(metadata) {
  * @param {string} name - Service definition name
  * @returns {string} Service definition file path
  */
-export function getServiceDefinitionPath(name) {
+export function getServiceManfifestPath(name) {
   return path.join(getServicesDirectory(), `${name}.yaml`);
 }
 
@@ -106,8 +106,8 @@ export function getServiceDefinitionPath(name) {
  * @param {string} name - Service definition name
  * @returns {boolean} True if the service definition exists
  */
-export function serviceDefinitionExists(name) {
-  const definitionPath = getServiceDefinitionPath(name);
+export function servicManifestExists(name) {
+  const definitionPath = getServiceManfifestPath(name);
   return fs.existsSync(definitionPath);
 }
 
@@ -116,8 +116,8 @@ export function serviceDefinitionExists(name) {
  * @param {string} name - Service definition name
  * @returns {Object|null} Service definition or null if not found
  */
-export function loadServiceDefinition(name) {
-  const definitionPath = getServiceDefinitionPath(name);
+export function loadServiceManifest(name) {
+  const definitionPath = getServiceManfifestPath(name);
   
   if (!fs.existsSync(definitionPath)) {
     return null;
@@ -138,8 +138,8 @@ export function loadServiceDefinition(name) {
  * @param {Object} definition - Service definition
  * @returns {boolean} True if successful
  */
-export function saveServiceDefinition(name, definition) {
-  const definitionPath = getServiceDefinitionPath(name);
+export function saveServiceManifest(name, definition) {
+  const definitionPath = getServiceManfifestPath(name);
   
   try {
     const content = yaml.stringify(definition);
@@ -156,8 +156,8 @@ export function saveServiceDefinition(name, definition) {
  * @param {string} name - Service definition name
  * @returns {boolean} True if successful
  */
-export function deleteServiceDefinition(name) {
-  const definitionPath = getServiceDefinitionPath(name);
+export function deleteServiceManifest(name) {
+  const definitionPath = getServiceManfifestPath(name);
   
   if (!fs.existsSync(definitionPath)) {
     return false;
@@ -176,7 +176,7 @@ export function deleteServiceDefinition(name) {
  * List all service definitions
  * @returns {Array<string>} List of service definition names
  */
-export function listServiceDefinitions() {
+export function listServiceManifests() {
   const servicesDir = getServicesDirectory();
   
   if (!fs.existsSync(servicesDir)) {
@@ -198,7 +198,7 @@ export function listServiceDefinitions() {
  * @param {Object} definition - Service definition
  * @returns {Object} Validation result { valid: boolean, errors: Array }
  */
-export function validateServiceDefinition(definition) {
+export function validateServiceManifest(definition) {
   const errors = [];
   
   // Check required fields
@@ -234,14 +234,14 @@ export function validateServiceDefinition(definition) {
  */
 export async function registerService(definitionName, options = {}) {
   // Load service definition
-  const definition = loadServiceDefinition(definitionName);
+  const definition = loadServiceManifest(definitionName);
   
   if (!definition) {
     throw new Error(`Service definition '${definitionName}' not found`);
   }
   
   // Validate service definition
-  const validation = validateServiceDefinition(definition);
+  const validation = validateServiceManifest(definition);
   
   if (!validation.valid) {
     throw new Error(`Invalid service definition: ${validation.errors.join(', ')}`);
@@ -293,12 +293,12 @@ export default {
   createServiceDirectoryStructure,
   loadServiceMetadata,
   saveServiceMetadata,
-  getServiceDefinitionPath,
-  serviceDefinitionExists,
-  loadServiceDefinition,
-  saveServiceDefinition,
-  deleteServiceDefinition,
-  listServiceDefinitions,
-  validateServiceDefinition,
+  getServiceManfifestPath,
+  servicManifestExists,
+  loadServiceManifest,
+  saveServiceManifest,
+  deleteServiceManifest,
+  listServiceManifests,
+  validateServiceManifest,
   registerService
 };

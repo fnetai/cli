@@ -38,18 +38,18 @@ const command = {
       const manageService = (await import('@fnet/service')).default;
 
       try {
-        // Load service definition to get system parameter
-        const definitionName = metadata.services[argv.name].definition;
-        const definition = serviceSystem.loadServiceDefinition(definitionName);
+        // Load service manifest to get system parameter
+        const manifestName = metadata.services[argv.name].manifest;
+        const manifest = serviceSystem.loadServiceManifest(manifestName);
 
-        if (!definition) {
-          throw new Error(`Service definition '${definitionName}' not found`);
+        if (!manifest) {
+          throw new Error(`Service manifest '${manifestName}' not found`);
         }
 
         await manageService({
           action: 'start',
           name: argv.name,
-          system: definition.system !== false
+          system: manifest.system !== false
         });
 
         console.log(chalk.green(`Service '${argv.name}' started successfully.`));

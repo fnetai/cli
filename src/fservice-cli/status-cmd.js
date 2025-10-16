@@ -44,18 +44,18 @@ const command = {
       const manageService = (await import('@fnet/service')).default;
 
       try {
-        // Load service definition to get system parameter
-        const definitionName = metadata.services[argv.name].definition;
-        const definition = serviceSystem.loadServiceDefinition(definitionName);
+        // Load service manifest to get system parameter
+        const manifestName = metadata.services[argv.name].manifest;
+        const manifest = serviceSystem.loadServiceManifest(manifestName);
 
-        if (!definition) {
-          throw new Error(`Service definition '${definitionName}' not found`);
+        if (!manifest) {
+          throw new Error(`Service manifest '${manifestName}' not found`);
         }
 
         const status = await manageService({
           action: 'status',
           name: argv.name,
-          system: definition.system !== false
+          system: manifest.system !== false
         });
 
         console.log(chalk.green(`Service '${argv.name}' status: ${status}`));
@@ -71,13 +71,13 @@ const command = {
           console.log(JSON.stringify({
             name: argv.name,
             status: status || 'unknown',
-            definition: metadata.services[argv.name].definition,
+            manifest: metadata.services[argv.name].manifest,
             binary: metadata.services[argv.name].binary
           }, null, 2));
         } else if (argv.format === 'text') {
           console.log(`Name: ${argv.name}`);
           console.log(`Status: ${status || 'unknown'}`);
-          console.log(`Definition: ${metadata.services[argv.name].definition}`);
+          console.log(`Definition: ${metadata.services[argv.name].manifest}`);
           console.log(`Binary: ${metadata.services[argv.name].binary}`);
         } else {
           // Table format (default)
@@ -85,7 +85,7 @@ const command = {
           console.log(chalk.bold('─'.repeat(50)));
           console.log(`${chalk.bold('Name:')} ${argv.name}`);
           console.log(`${chalk.bold('Status:')} ${getStatusColor(status)(status || 'unknown')}`);
-          console.log(`${chalk.bold('Definition:')} ${metadata.services[argv.name].definition}`);
+          console.log(`${chalk.bold('Definition:')} ${metadata.services[argv.name].manifest}`);
           console.log(`${chalk.bold('Binary:')} ${metadata.services[argv.name].binary}`);
 
           console.log(chalk.bold('─'.repeat(50)));

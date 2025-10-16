@@ -1,9 +1,7 @@
 /**
  * Definition command for fservice CLI
- * This module provides commands for managing service definitions
+ * This module provides commands for managing service manifests
  */
-import fs from 'node:fs';
-import path from 'node:path';
 import chalk from 'chalk';
 import fnetObjectFromSchema from '@fnet/object-from-schema';
 import fnetPrompt from '@fnet/prompt';
@@ -16,17 +14,17 @@ import promptUtils from '../utils/prompt-utils.js';
  * Command configuration
  */
 const command = {
-  command: 'definition <subcommand>',
-  describe: 'Manage service definitions',
+  command: 'manifest <subcommand>',
+  describe: 'Manage service manifests',
   builder: (yargs) => {
     return yargs
       .command({
         command: 'create',
-        describe: 'Create a new service definition',
+        describe: 'Create a new service manifest',
         builder: (yargs) => {
           return yargs
             .option('name', {
-              describe: 'Service definition name',
+              describe: 'Service manifest name',
               type: 'string'
             })
             .option('output', {
@@ -35,11 +33,11 @@ const command = {
               alias: 'o'
             });
         },
-        handler: createDefinitionHandler
+        handler: createManifestHandler
       })
       .command({
         command: 'list',
-        describe: 'List service definitions',
+        describe: 'List service manifests',
         builder: (yargs) => {
           return yargs
             .option('format', {
@@ -49,15 +47,15 @@ const command = {
               default: 'table'
             });
         },
-        handler: listDefinitionsHandler
+        handler: listManifestsHandler
       })
       .command({
         command: 'show [n]',
-        describe: 'Show service definition details',
+        describe: 'Show service manifest details',
         builder: (yargs) => {
           return yargs
             .positional('name', {
-              describe: 'Service definition name',
+              describe: 'Service manifest name',
               type: 'string',
               demandOption: false
             })
@@ -68,28 +66,28 @@ const command = {
               default: 'yaml'
             });
         },
-        handler: showDefinitionHandler
+        handler: showManifestHandler
       })
       .command({
         command: 'edit [n]',
-        describe: 'Edit a service definition',
+        describe: 'Edit a service manifest',
         builder: (yargs) => {
           return yargs
             .positional('name', {
-              describe: 'Service definition name',
+              describe: 'Service manifest name',
               type: 'string',
               demandOption: false
             });
         },
-        handler: editDefinitionHandler
+        handler: editManifestHandler
       })
       .command({
         command: 'delete [n]',
-        describe: 'Delete a service definition',
+        describe: 'Delete a service manifest',
         builder: (yargs) => {
           return yargs
             .positional('name', {
-              describe: 'Service definition name',
+              describe: 'Service manifest name',
               type: 'string',
               demandOption: false
             })
@@ -100,20 +98,20 @@ const command = {
               alias: 'f'
             });
         },
-        handler: deleteDefinitionHandler
+        handler: deleteManifestHandler
       })
       .command({
         command: 'validate [n]',
-        describe: 'Validate a service definition',
+        describe: 'Validate a service manifest',
         builder: (yargs) => {
           return yargs
             .positional('name', {
-              describe: 'Service definition name',
+              describe: 'Service manifest name',
               type: 'string',
               demandOption: false
             });
         },
-        handler: validateDefinitionHandler
+        handler: validateManifesrHandler
       })
       .demandCommand(1, 'You need to specify a subcommand');
   },
@@ -121,16 +119,16 @@ const command = {
 };
 
 /**
- * Create a new service definition
+ * Create a new service manifest
  */
-async function createDefinitionHandler(argv) {
+async function createManifestHandler(argv) {
   try {
     const context = await createContext(argv);
 
-    // Get service definition schema
-    const schema = serviceSchema.getServiceDefinitionSchema();
+    // Get service manifest schema
+    const schema = serviceSchema.getServiceManifestSchema();
 
-    // Generate service definition using @fnet/object-from-schema
+    // Generate service manifest using @fnet/object-from-schema
     const result = await fnetObjectFromSchema({
       schema,
       format: 'yaml'
@@ -139,36 +137,36 @@ async function createDefinitionHandler(argv) {
     console.log('Result from fnetObjectFromSchema:', result);
 
     // Parse the generated YAML
-    let definition;
+    let manifest;
 
     if (typeof result === 'string') {
       // If result is a YAML string, parse it
       try {
         const yaml = (await import('yaml')).default;
-        definition = yaml.parse(result);
+        manifest = yaml.parse(result);
       } catch (error) {
         console.warn(chalk.yellow(`Failed to parse YAML: ${error.message}`));
-        definition = { name: 'service-' + Date.now() };
+        manifest = { name: 'service-' + Date.now() };
       }
     } else if (result && typeof result === 'object') {
       // If result is an object, use it directly
-      definition = result.data || result;
+      manifest = result.data || result;
     } else {
       // Fallback
-      definition = { name: 'service-' + Date.now() };
+      manifest = { name: 'service-' + Date.now() };
     }
 
-    console.log('Generated definition:', definition);
+    console.log('Generated manifest:', manifest);
 
-    // Determine the definition name
-    const definitionName = argv.name || (definition && definition.name ? definition.name : 'service-' + Date.now());
+    // Determine the manifest name
+    const manifestName = argv.name || (manifest && manifest.name ? manifest.name : 'service-' + Date.now());
 
-    // Check if definition already exists
-    if (serviceSystem.serviceDefinitionExists(definitionName) && !argv.force) {
+    // Check if manifest already exists
+    if (serviceSystem.servicManifestExists(manifestName) && !argv.force) {
       const { confirmOverwrite } = await fnetPrompt({
         type: 'confirm',
         name: 'confirmOverwrite',
-        message: `Service definition '${definitionName}' already exists. Overwrite?`,
+        message: `Service manifest '${manifestName}' already exists. Overwrite?`,
         initial: false
       });
 
@@ -178,14 +176,14 @@ async function createDefinitionHandler(argv) {
       }
     }
 
-    // Save the service definition
-    const success = serviceSystem.saveServiceDefinition(definitionName, definition);
+    // Save the service manifest
+    const success = serviceSystem.saveServiceManifest(manifestName, manifest);
 
     if (success) {
-      console.log(chalk.green(`Service definition '${definitionName}' created successfully.`));
-      console.log(chalk.blue(`Location: ${serviceSystem.getServiceDefinitionPath(definitionName)}`));
+      console.log(chalk.green(`Service manifest '${manifestName}' created successfully.`));
+      console.log(chalk.blue(`Location: ${serviceSystem.getServiceManfifestPath(manifestName)}`));
     } else {
-      console.error(chalk.red(`Failed to create service definition '${definitionName}'.`));
+      console.error(chalk.red(`Failed to create service manifest '${manifestName}'.`));
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
@@ -194,25 +192,25 @@ async function createDefinitionHandler(argv) {
 }
 
 /**
- * List service definitions
+ * List service manifests
  */
-async function listDefinitionsHandler(argv) {
+async function listManifestsHandler(argv) {
   try {
     const context = await createContext(argv);
 
-    // Get list of service definitions
-    const definitions = serviceSystem.listServiceDefinitions();
+    // Get list of service manifests
+    const manifests = serviceSystem.listServiceManifests();
 
-    if (definitions.length === 0) {
-      console.log(chalk.yellow('No service definitions found.'));
+    if (manifests.length === 0) {
+      console.log(chalk.yellow('No service manifests found.'));
       return;
     }
 
     // Format output based on format option
     if (argv.format === 'json') {
-      console.log(JSON.stringify(definitions, null, 2));
+      console.log(JSON.stringify(manifests, null, 2));
     } else if (argv.format === 'text') {
-      definitions.forEach(name => console.log(name));
+      manifests.forEach(name => console.log(name));
     } else {
       // Table format (default)
       console.log(chalk.bold('\nService Definitions:'));
@@ -233,19 +231,19 @@ async function listDefinitionsHandler(argv) {
       });
 
       // Add rows to table
-      for (const name of definitions) {
-        const definition = serviceSystem.loadServiceDefinition(name);
-        if (definition) {
+      for (const name of manifests) {
+        const manifest = serviceSystem.loadServiceManifest(name);
+        if (manifest) {
           table.push([
             chalk.white(name),  // Ana sütun renkli
-            chalk.cyan(definition.binary || 'undefined'),  // Binary sütunu da önemli
-            definition.description || ''
+            chalk.cyan(manifest.binary || 'undefined'),  // Binary sütunu da önemli
+            manifest.description || ''
           ]);
         }
       }
 
       console.log(table.toString());
-      console.log(`Total: ${definitions.length} definition(s)`);
+      console.log(`Total: ${manifests.length} manifest(s)`);
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
@@ -254,26 +252,26 @@ async function listDefinitionsHandler(argv) {
 }
 
 /**
- * Show service definition details
+ * Show service manifest details
  */
-async function showDefinitionHandler(argv) {
+async function showManifestHandler(argv) {
   try {
     const context = await createContext(argv);
 
     // If name is not provided, prompt for selection
     if (!argv.name) {
-      // Get list of service definitions
-      const definitions = serviceSystem.listServiceDefinitions();
+      // Get list of service manifests
+      const manifests = serviceSystem.listServiceManifests();
 
-      if (definitions.length === 0) {
-        console.log(chalk.yellow('No service definitions found.'));
+      if (manifests.length === 0) {
+        console.log(chalk.yellow('No service manifests found.'));
         return;
       }
 
-      // Prompt user to select a definition
+      // Prompt user to select a manifest
       const selectedDefinition = await promptUtils.promptForSelection({
-        items: definitions,
-        message: 'Select a service definition to show:',
+        items: manifests,
+        message: 'Select a service manifest to show:',
         allowAbort: true
       });
 
@@ -285,21 +283,21 @@ async function showDefinitionHandler(argv) {
       argv.name = selectedDefinition;
     }
 
-    // Load service definition
-    const definition = serviceSystem.loadServiceDefinition(argv.name);
+    // Load service manifest
+    const manifest = serviceSystem.loadServiceManifest(argv.name);
 
-    if (!definition) {
-      console.error(chalk.red(`Service definition '${argv.name}' not found.`));
+    if (!manifest) {
+      console.error(chalk.red(`Service manifest '${argv.name}' not found.`));
       process.exit(1);
     }
 
     // Format output based on format option
     if (argv.format === 'json') {
-      console.log(JSON.stringify(definition, null, 2));
+      console.log(JSON.stringify(manifest, null, 2));
     } else {
       // YAML format (default)
       const yaml = (await import('yaml')).default;
-      console.log(yaml.stringify(definition));
+      console.log(yaml.stringify(manifest));
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
@@ -308,26 +306,26 @@ async function showDefinitionHandler(argv) {
 }
 
 /**
- * Edit a service definition
+ * Edit a service manifest
  */
-async function editDefinitionHandler(argv) {
+async function editManifestHandler(argv) {
   try {
     const context = await createContext(argv);
 
     // If name is not provided, prompt for selection
     if (!argv.name) {
-      // Get list of service definitions
-      const definitions = serviceSystem.listServiceDefinitions();
+      // Get list of service manifests
+      const manifests = serviceSystem.listServiceManifests();
 
-      if (definitions.length === 0) {
-        console.log(chalk.yellow('No service definitions found.'));
+      if (manifests.length === 0) {
+        console.log(chalk.yellow('No service manifests found.'));
         return;
       }
 
-      // Prompt user to select a definition
+      // Prompt user to select a manifest
       const selectedDefinition = await promptUtils.promptForSelection({
-        items: definitions,
-        message: 'Select a service definition to edit:',
+        items: manifests,
+        message: 'Select a service manifest to edit:',
         allowAbort: true
       });
 
@@ -339,34 +337,34 @@ async function editDefinitionHandler(argv) {
       argv.name = selectedDefinition;
     }
 
-    // Load service definition
-    const definition = serviceSystem.loadServiceDefinition(argv.name);
+    // Load service manifest
+    const manifest = serviceSystem.loadServiceManifest(argv.name);
 
-    if (!definition) {
-      console.error(chalk.red(`Service definition '${argv.name}' not found.`));
+    if (!manifest) {
+      console.error(chalk.red(`Service manifest '${argv.name}' not found.`));
       process.exit(1);
     }
 
-    // Get service definition schema
-    const schema = serviceSchema.getServiceDefinitionSchema();
+    // Get service manifest schema
+    const schema = serviceSchema.getServiceManifestSchema();
 
-    // Generate service definition using @fnet/object-from-schema
+    // Generate service manifest using @fnet/object-from-schema
     const result = await fnetObjectFromSchema({
       schema,
-      ref: definition,
+      ref: manifest,
       format: 'yaml'
     });
 
     // Parse the generated YAML
     const updatedDefinition = result.data;
 
-    // Save the service definition
-    const success = serviceSystem.saveServiceDefinition(argv.name, updatedDefinition);
+    // Save the service manifest
+    const success = serviceSystem.saveServiceManifest(argv.name, updatedDefinition);
 
     if (success) {
-      console.log(chalk.green(`Service definition '${argv.name}' updated successfully.`));
+      console.log(chalk.green(`Service manifest '${argv.name}' updated successfully.`));
     } else {
-      console.error(chalk.red(`Failed to update service definition '${argv.name}'.`));
+      console.error(chalk.red(`Failed to update service manifest '${argv.name}'.`));
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
@@ -375,26 +373,26 @@ async function editDefinitionHandler(argv) {
 }
 
 /**
- * Delete a service definition
+ * Delete a service manifest
  */
-async function deleteDefinitionHandler(argv) {
+async function deleteManifestHandler(argv) {
   try {
     const context = await createContext(argv);
 
     // If name is not provided, prompt for selection
     if (!argv.name) {
-      // Get list of service definitions
-      const definitions = serviceSystem.listServiceDefinitions();
+      // Get list of service manifests
+      const manifests = serviceSystem.listServiceManifests();
 
-      if (definitions.length === 0) {
-        console.log(chalk.yellow('No service definitions found.'));
+      if (manifests.length === 0) {
+        console.log(chalk.yellow('No service manifests found.'));
         return;
       }
 
-      // Prompt user to select a definition
+      // Prompt user to select a manifest
       const selectedDefinition = await promptUtils.promptForSelection({
-        items: definitions,
-        message: 'Select a service definition to delete:',
+        items: manifests,
+        message: 'Select a service manifest to delete:',
         allowAbort: true
       });
 
@@ -406,9 +404,9 @@ async function deleteDefinitionHandler(argv) {
       argv.name = selectedDefinition;
     }
 
-    // Check if definition exists
-    if (!serviceSystem.serviceDefinitionExists(argv.name)) {
-      console.error(chalk.red(`Service definition '${argv.name}' not found.`));
+    // Check if manifest exists
+    if (!serviceSystem.servicManifestExists(argv.name)) {
+      console.error(chalk.red(`Service manifest '${argv.name}' not found.`));
       process.exit(1);
     }
 
@@ -417,7 +415,7 @@ async function deleteDefinitionHandler(argv) {
       const { confirmDelete } = await fnetPrompt({
         type: 'confirm',
         name: 'confirmDelete',
-        message: `Are you sure you want to delete service definition '${argv.name}'?`,
+        message: `Are you sure you want to delete service manifest '${argv.name}'?`,
         initial: false
       });
 
@@ -427,13 +425,13 @@ async function deleteDefinitionHandler(argv) {
       }
     }
 
-    // Delete the service definition
-    const success = serviceSystem.deleteServiceDefinition(argv.name);
+    // Delete the service manifest
+    const success = serviceSystem.deleteServiceManifest(argv.name);
 
     if (success) {
-      console.log(chalk.green(`Service definition '${argv.name}' deleted successfully.`));
+      console.log(chalk.green(`Service manifest '${argv.name}' deleted successfully.`));
     } else {
-      console.error(chalk.red(`Failed to delete service definition '${argv.name}'.`));
+      console.error(chalk.red(`Failed to delete service manifest '${argv.name}'.`));
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
@@ -442,26 +440,26 @@ async function deleteDefinitionHandler(argv) {
 }
 
 /**
- * Validate a service definition
+ * Validate a service manifest
  */
-async function validateDefinitionHandler(argv) {
+async function validateManifesrHandler(argv) {
   try {
     const context = await createContext(argv);
 
     // If name is not provided, prompt for selection
     if (!argv.name) {
-      // Get list of service definitions
-      const definitions = serviceSystem.listServiceDefinitions();
+      // Get list of service manifests
+      const manifests = serviceSystem.listServiceManifests();
 
-      if (definitions.length === 0) {
-        console.log(chalk.yellow('No service definitions found.'));
+      if (manifests.length === 0) {
+        console.log(chalk.yellow('No service manifests found.'));
         return;
       }
 
-      // Prompt user to select a definition
+      // Prompt user to select a manifest
       const selectedDefinition = await promptUtils.promptForSelection({
-        items: definitions,
-        message: 'Select a service definition to validate:',
+        items: manifests,
+        message: 'Select a service manifest to validate:',
         allowAbort: true
       });
 
@@ -473,21 +471,21 @@ async function validateDefinitionHandler(argv) {
       argv.name = selectedDefinition;
     }
 
-    // Load service definition
-    const definition = serviceSystem.loadServiceDefinition(argv.name);
+    // Load service manifest
+    const manifest = serviceSystem.loadServiceManifest(argv.name);
 
-    if (!definition) {
-      console.error(chalk.red(`Service definition '${argv.name}' not found.`));
+    if (!manifest) {
+      console.error(chalk.red(`Service manifest '${argv.name}' not found.`));
       process.exit(1);
     }
 
-    // Validate service definition
-    const validation = serviceSystem.validateServiceDefinition(definition);
+    // Validate service manifest
+    const validation = serviceSystem.validateServiceManifest(manifest);
 
     if (validation.valid) {
-      console.log(chalk.green(`Service definition '${argv.name}' is valid.`));
+      console.log(chalk.green(`Service manifest '${argv.name}' is valid.`));
     } else {
-      console.error(chalk.red(`Service definition '${argv.name}' is invalid:`));
+      console.error(chalk.red(`Service manifest '${argv.name}' is invalid:`));
       validation.errors.forEach(error => {
         console.error(chalk.red(`- ${error}`));
       });

@@ -85,7 +85,7 @@ const command = {
             chalk.white(service.name),  // Ana sütun renkli
             statusColor(service.status || 'unknown'),  // Durum sütunu renkli (önemli bilgi)
             chalk.cyan(service.binary),  // Binary sütunu da önemli
-            service.definition
+            service.manifest
           ]);
         });
 

@@ -10,7 +10,7 @@ import binSystem from './bin-system.js';
  * @param {boolean} includeDynamicChoices - Whether to include dynamic choices for binaries
  * @returns {Object} Service definition schema
  */
-export function getServiceDefinitionSchema(includeDynamicChoices = true) {
+export function getServiceManifestSchema(includeDynamicChoices = true) {
   // Get available binaries for the binary selection prompt
   let binaryChoices = [];
 
@@ -166,5 +166,5 @@ export function getServiceDefinitionSchema(includeDynamicChoices = true) {
 }
 
 export default {
-  getServiceDefinitionSchema
+  getServiceManifestSchema
 };

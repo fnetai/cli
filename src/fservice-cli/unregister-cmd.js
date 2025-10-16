@@ -21,8 +21,8 @@ const command = {
         demandOption: true,
         alias: 'n'
       })
-      .option('keep-definition', {
-        describe: 'Keep the service definition',
+      .option('keep-manifest', {
+        describe: 'Keep the service manifest',
         type: 'boolean',
         default: true
       })
@@ -65,15 +65,15 @@ const command = {
       const manageService = (await import('@fnet/service')).default;
 
       try {
-        // Load service definition to get system parameter
-        const definitionName = metadata.services[argv.name].definition;
-        const definition = serviceSystem.loadServiceDefinition(definitionName);
+        // Load service manifest to get system parameter
+        const manifestName = metadata.services[argv.name].manifest;
+        const manifest = serviceSystem.loadServiceManifest(manifestName);
 
-        if (!definition) {
-          throw new Error(`Service definition '${definitionName}' not found`);
+        if (!manifest) {
+          throw new Error(`Service manifest '${manifestName}' not found`);
         }
 
-        const isSystemService = definition.system !== false;
+        const isSystemService = manifest.system !== false;
 
         // Stop the service first
         try {
@@ -100,14 +100,14 @@ const command = {
         delete metadata.services[argv.name];
         serviceSystem.saveServiceMetadata(metadata);
 
-        // Delete service definition if requested
-        if (!argv.keepDefinition && definitionName) {
-          if (serviceSystem.serviceDefinitionExists(definitionName)) {
-            const success = serviceSystem.deleteServiceDefinition(definitionName);
+        // Delete service manifest if requested
+        if (!argv.keepDefinition && manifestName) {
+          if (serviceSystem.servicManifestExists(manifestName)) {
+            const success = serviceSystem.deleteServiceManifest(manifestName);
             if (success) {
-              console.log(chalk.green(`Service definition '${definitionName}' deleted.`));
+              console.log(chalk.green(`Service manifest '${manifestName}' deleted.`));
             } else {
-              console.warn(chalk.yellow(`Warning: Failed to delete service definition '${definitionName}'.`));
+              console.warn(chalk.yellow(`Warning: Failed to delete service manifest '${manifestName}'.`));
             }
           }
         }
