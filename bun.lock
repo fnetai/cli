@@ -200,7 +200,7 @@
 
     "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.2.1", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.2", "nanoid": "^5.1", "semver": "^7.7", "yargs-parser": "^22.0" }, "bin": { "auto-conda-env": "dist/cli/esm/index.js" } }, "sha512-T3Kb0tjimOGZASMwMZfEj4j5+qG7TXZb9RpS61tSnaAdjuQz12sHvoVxSpmqzZZX/bu8WBuiAWe1vEqzbN9AkQ=="],
 
-    "@fnet/config": ["@fnet/config@0.2.28", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/yaml": "^0.1" } }, "sha512-XMlbqleXl9V49dWAmHcUQWhy2joUVdcEkX8rPv6uvESk10k+xDXTJdzEy53CkCVr+DgIS0oRWwVEjYoksS9ScA=="],
+    "@fnet/config": ["@fnet/config@0.2.29", "", { "dependencies": { "@fnet/yaml": "^0.1" } }, "sha512-pjRHARPGMy5JsecIVJ5WhsOZLUzM58MulO1UUGyTlooSn+103kcMlJYVvM2o2AMiHTx4dryCGYlz0wHSjr1wHQ=="],
 
     "@fnet/dir-zipper": ["@fnet/dir-zipper@0.1.8", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/list-files": "^0.1", "archiver": "^7.0", "ignore": "^7.0", "nanoid": "^5.1" }, "bin": { "fnet-dir-zipper": "dist/cli/esm/index.js" } }, "sha512-oR4QNmEjBDfa0z28DsuY5Iu8yEAuFWUwrN97e6g+wFZGgZ9V1cp/ughZOv/iOSVOpkd9iT9+C8alNGTQqlG3AQ=="],
 
@@ -326,7 +326,7 @@
 
     "@redis/time-series": ["@redis/time-series@1.1.0", "", { "peerDependencies": { "@redis/client": "^1.0.0" } }, "sha512-c1Q99M5ljsIuc4YdaCwfUEXsofakb9c8+Zse2qxTadu8TalLXuAESzLvFAvNVbkmSlvlzIQOLpBCmWI9wTOt+g=="],
 
-    "@rollup/plugin-commonjs": ["@rollup/plugin-commonjs@28.0.7", "", { "dependencies": { "@rollup/pluginutils": "^5.0.1", "commondir": "^1.0.1", "estree-walker": "^2.0.2", "fdir": "^6.2.0", "is-reference": "1.2.1", "magic-string": "^0.30.3", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^2.68.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-6cE2Wr/MkpdtTS8gXlCn9Zdmf7e9Xm96yFqOwFEXuvYLAHtjRf57/n6GEVF4K8NSesT1eKdBtcDA/SQdpW/8nA=="],
+    "@rollup/plugin-commonjs": ["@rollup/plugin-commonjs@28.0.8", "", { "dependencies": { "@rollup/pluginutils": "^5.0.1", "commondir": "^1.0.1", "estree-walker": "^2.0.2", "fdir": "^6.2.0", "is-reference": "1.2.1", "magic-string": "^0.30.3", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^2.68.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-o1Ug9PxYsF61R7/NXO/GgMZZproLd/WH2XA53Tp9ppf6bU1lMlTtC/gUM6zM3mesi2E0rypk+PNtVrELREyWEQ=="],
 
     "@rollup/plugin-json": ["@rollup/plugin-json@6.1.0", "", { "dependencies": { "@rollup/pluginutils": "^5.1.0" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-EGI2te5ENk1coGeADSIwZ7G2Q8CJS2sF120T7jLw4xFw9n7wIOXHo+kIYRAoVpJAN+kmqZSoO3Fp4JtoNF4ReA=="],
 
@@ -1230,8 +1230,6 @@
 
     "@fnet/auto-conda-env/@fnet/shell-flow": ["@fnet/shell-flow@0.2.6", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-qQGYwr/PNu+i5sUqID45zkYqsHJEIdg4xXnfd5f34btO2YuALDXqd4PqWTeLfaapEbqIWR7zK81n72rA3yNARw=="],
 
-    "@fnet/config/@fnet/yaml": ["@fnet/yaml@0.1.39", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-oZ921PlPEG2rtjdJHFAWEcm44yRq4L9jAsppe5/L8s8Lp1uT9I1Xlcrh+lQnOx/r6p/t7Zoic/+NMmSEcolIYQ=="],
-
     "@fnet/npm-list-versions/semver": ["semver@7.7.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="],
 
     "@fnet/object-from-schema/@fnet/yaml": ["@fnet/yaml@0.1.39", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-oZ921PlPEG2rtjdJHFAWEcm44yRq4L9jAsppe5/L8s8Lp1uT9I1Xlcrh+lQnOx/r6p/t7Zoic/+NMmSEcolIYQ=="],
@@ -1357,10 +1355,6 @@
     "@aws-crypto/sha256-browser/@smithy/util-utf8/@smithy/util-buffer-from": ["@smithy/util-buffer-from@2.2.0", "", { "dependencies": { "@smithy/is-array-buffer": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA=="],
 
     "@aws-crypto/util/@smithy/util-utf8/@smithy/util-buffer-from": ["@smithy/util-buffer-from@2.2.0", "", { "dependencies": { "@smithy/is-array-buffer": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA=="],
-
-    "@fnet/config/@fnet/yaml/@fnet/expression": ["@fnet/expression@0.1.29", "", {}, "sha512-06S/BUPjdcZU8IqvufTXhxzJZjlQ6i99eLECSaVkH3HUjebSxJYViQPrg/SLXF0WkxWJ7TY9q4rYmtgLTozyAw=="],
-
-    "@fnet/config/@fnet/yaml/yaml": ["yaml@2.7.1", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ=="],
 
     "@fnet/object-from-schema/@fnet/yaml/@fnet/expression": ["@fnet/expression@0.1.29", "", {}, "sha512-06S/BUPjdcZU8IqvufTXhxzJZjlQ6i99eLECSaVkH3HUjebSxJYViQPrg/SLXF0WkxWJ7TY9q4rYmtgLTozyAw=="],
 
