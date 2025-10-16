@@ -1,7 +1,6 @@
 /**
  * Project command for fnet CLI
  */
-import path from 'node:path';
 import os from 'node:os';
 import fnetRender from '@flownet/lib-render-templates-dir';
 import fnetShellJs from '@fnet/shelljs';
