@@ -1,5 +1,4 @@
-import fnetShellJs from '@fnet/shelljs';
-import which from '../../which.js';
+import { runPackageScript } from '../../../utils/run-package-script.js';
 
 export default async function runNpmBuild({ setProgress, context }) {
 
@@ -7,12 +6,15 @@ export default async function runNpmBuild({ setProgress, context }) {
 
   await setProgress({ message: "Building main project." });
 
-  if (which('bun')) {
-    const result = await fnetShellJs(context.dev ? 'bun run build:dev' : `bun run build`, { cwd: projectDir });
-    if (result.code !== 0) throw new Error('Couldnt build project.');
-  }
-  else {
-    const result = await fnetShellJs(context.dev ? 'npm run build:dev' : `npm run build`, { cwd: projectDir });
-    if (result.code !== 0) throw new Error('Couldnt build project.');
-  }
+  // Determine which script to run based on dev mode
+  const scriptName = context.dev ? 'build:dev' : 'build';
+
+  // Run the package script directly (detached, no stdio to avoid blocking)
+  await runPackageScript({
+    projectDir,
+    scriptName,
+    shell: true,
+    detached: true,
+    env: { ...process.env }
+  });
 }
