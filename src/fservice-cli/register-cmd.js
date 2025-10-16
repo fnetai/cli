@@ -5,6 +5,7 @@
 import chalk from 'chalk';
 import { createContext } from './context.js';
 import serviceSystem from '../utils/service-system.js';
+import promptUtils from '../utils/prompt-utils.js';
 
 /**
  * Command configuration
@@ -17,7 +18,7 @@ const command = {
       .option('manifest', {
         describe: 'Service manifest name',
         type: 'string',
-        demandOption: true,
+        demandOption: false,
         alias: 'd'
       })
       .option('start', {
@@ -29,17 +30,39 @@ const command = {
   handler: async (argv) => {
     try {
       const context = await createContext(argv);
-      
+
+      // If manifest not provided, prompt user to select one
+      let manifestName = argv.manifest;
+      if (!manifestName) {
+        const manifests = serviceSystem.listServiceManifests();
+
+        if (manifests.length === 0) {
+          console.log(chalk.yellow('No service manifests found. Create one first using "fservice manifest create".'));
+          process.exit(1);
+        }
+
+        manifestName = await promptUtils.promptForSelection({
+          items: manifests,
+          message: 'Select a service manifest to register:',
+          allowAbort: true
+        });
+
+        if (!manifestName) {
+          console.log(chalk.yellow('Operation cancelled.'));
+          return;
+        }
+      }
+
       // Check if manifest exists
-      if (!serviceSystem.servicManifestExists(argv.manifest)) {
-        console.error(chalk.red(`Service manifest '${argv.manifest}' not found.`));
+      if (!serviceSystem.servicManifestExists(manifestName)) {
+        console.error(chalk.red(`Service manifest '${manifestName}' not found.`));
         process.exit(1);
       }
       
-      console.log(chalk.blue(`Registering service from manifest '${argv.manifest}'...`));
-      
+      console.log(chalk.blue(`Registering service from manifest '${manifestName}'...`));
+
       // Register the service
-      const result = await serviceSystem.registerService(argv.manifest);
+      const result = await serviceSystem.registerService(manifestName);
       
       console.log(chalk.green(`Service '${result.name}' registered successfully.`));
       

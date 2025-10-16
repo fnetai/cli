@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import fnetPrompt from '@fnet/prompt';
 import { createContext } from './context.js';
 import serviceSystem from '../utils/service-system.js';
+import promptUtils from '../utils/prompt-utils.js';
 
 /**
  * Command configuration
@@ -18,7 +19,7 @@ const command = {
       .option('name', {
         describe: 'Service name',
         type: 'string',
-        demandOption: true,
+        demandOption: false,
         alias: 'n'
       })
       .option('keep-manifest', {
@@ -37,10 +38,34 @@ const command = {
     try {
       const context = await createContext(argv);
 
-      // Check if service exists in metadata
+      // Load metadata
       const metadata = serviceSystem.loadServiceMetadata();
-      if (!metadata.services[argv.name]) {
-        console.error(chalk.red(`Service '${argv.name}' not found in metadata.`));
+
+      // If name not provided, prompt user to select one
+      let serviceName = argv.name;
+      if (!serviceName) {
+        const serviceNames = Object.keys(metadata.services);
+
+        if (serviceNames.length === 0) {
+          console.log(chalk.yellow('No registered services found.'));
+          process.exit(1);
+        }
+
+        serviceName = await promptUtils.promptForSelection({
+          items: serviceNames,
+          message: 'Select a service to unregister:',
+          allowAbort: true
+        });
+
+        if (!serviceName) {
+          console.log(chalk.yellow('Operation cancelled.'));
+          return;
+        }
+      }
+
+      // Check if service exists in metadata
+      if (!metadata.services[serviceName]) {
+        console.error(chalk.red(`Service '${serviceName}' not found in metadata.`));
         process.exit(1);
       }
 
@@ -49,7 +74,7 @@ const command = {
         const { confirmUnregister } = await fnetPrompt({
           type: 'confirm',
           name: 'confirmUnregister',
-          message: `Are you sure you want to unregister service '${argv.name}'?`,
+          message: `Are you sure you want to unregister service '${serviceName}'?`,
           initial: false
         });
 
@@ -59,14 +84,14 @@ const command = {
         }
       }
 
-      console.log(chalk.blue(`Unregistering service '${argv.name}'...`));
+      console.log(chalk.blue(`Unregistering service '${serviceName}'...`));
 
       // Import manageService from @fnet/service
       const manageService = (await import('@fnet/service')).default;
 
       try {
         // Load service manifest to get system parameter
-        const manifestName = metadata.services[argv.name].manifest;
+        const manifestName = metadata.services[serviceName].manifest;
         const manifest = serviceSystem.loadServiceManifest(manifestName);
 
         if (!manifest) {
@@ -79,10 +104,10 @@ const command = {
         try {
           await manageService({
             action: 'stop',
-            name: argv.name,
+            name: serviceName,
             system: isSystemService
           });
-          console.log(chalk.blue(`Service '${argv.name}' stopped.`));
+          console.log(chalk.blue(`Service '${serviceName}' stopped.`));
         } catch (error) {
           console.warn(chalk.yellow(`Warning: Failed to stop service: ${error.message}`));
         }
@@ -90,14 +115,14 @@ const command = {
         // Unregister the service
         await manageService({
           action: 'unregister',
-          name: argv.name,
+          name: serviceName,
           system: isSystemService
         });
 
-        console.log(chalk.green(`Service '${argv.name}' unregistered successfully.`));
+        console.log(chalk.green(`Service '${serviceName}' unregistered successfully.`));
 
         // Update metadata
-        delete metadata.services[argv.name];
+        delete metadata.services[serviceName];
         serviceSystem.saveServiceMetadata(metadata);
 
         // Delete service manifest if requested

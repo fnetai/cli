@@ -5,6 +5,7 @@
 import chalk from 'chalk';
 import { createContext } from './context.js';
 import serviceSystem from '../utils/service-system.js';
+import promptUtils from '../utils/prompt-utils.js';
 
 /**
  * Command configuration
@@ -17,22 +18,46 @@ const command = {
       .option('name', {
         describe: 'Service name',
         type: 'string',
-        demandOption: true,
+        demandOption: false,
         alias: 'n'
       });
   },
   handler: async (argv) => {
     try {
       const context = await createContext(argv);
-      
-      // Check if service exists in metadata
+
+      // Load metadata
       const metadata = serviceSystem.loadServiceMetadata();
-      if (!metadata.services[argv.name]) {
-        console.error(chalk.red(`Service '${argv.name}' not found in metadata.`));
+
+      // If name not provided, prompt user to select one
+      let serviceName = argv.name;
+      if (!serviceName) {
+        const serviceNames = Object.keys(metadata.services);
+
+        if (serviceNames.length === 0) {
+          console.log(chalk.yellow('No registered services found.'));
+          process.exit(1);
+        }
+
+        serviceName = await promptUtils.promptForSelection({
+          items: serviceNames,
+          message: 'Select a service to restart:',
+          allowAbort: true
+        });
+
+        if (!serviceName) {
+          console.log(chalk.yellow('Operation cancelled.'));
+          return;
+        }
+      }
+
+      // Check if service exists in metadata
+      if (!metadata.services[serviceName]) {
+        console.error(chalk.red(`Service '${serviceName}' not found in metadata.`));
         process.exit(1);
       }
-      
-      console.log(chalk.blue(`Restarting service '${argv.name}'...`));
+
+      console.log(chalk.blue(`Restarting service '${serviceName}'...`));
       
       // Import manageService from @fnet/service
       const manageService = (await import('@fnet/service')).default;
@@ -41,22 +66,22 @@ const command = {
         // Stop the service
         await manageService({
           action: 'stop',
-          name: argv.name
+          name: serviceName
         });
-        
-        console.log(chalk.blue(`Service '${argv.name}' stopped.`));
-        
+
+        console.log(chalk.blue(`Service '${serviceName}' stopped.`));
+
         // Start the service
         await manageService({
           action: 'start',
-          name: argv.name
+          name: serviceName
         });
-        
-        console.log(chalk.green(`Service '${argv.name}' restarted successfully.`));
-        
+
+        console.log(chalk.green(`Service '${serviceName}' restarted successfully.`));
+
         // Update metadata
-        metadata.services[argv.name].status = 'running';
-        metadata.services[argv.name].lastRestarted = new Date().toISOString();
+        metadata.services[serviceName].status = 'running';
+        metadata.services[serviceName].lastRestarted = new Date().toISOString();
         serviceSystem.saveServiceMetadata(metadata);
       } catch (error) {
         console.error(chalk.red(`Failed to restart service: ${error.message}`));

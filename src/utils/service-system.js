@@ -97,7 +97,7 @@ export function saveServiceMetadata(metadata) {
  * @param {string} name - Service definition name
  * @returns {string} Service definition file path
  */
-export function getServiceManfifestPath(name) {
+export function getServiceManifestPath(name) {
   return path.join(getServicesDirectory(), `${name}.yaml`);
 }
 
@@ -107,7 +107,7 @@ export function getServiceManfifestPath(name) {
  * @returns {boolean} True if the service definition exists
  */
 export function servicManifestExists(name) {
-  const definitionPath = getServiceManfifestPath(name);
+  const definitionPath = getServiceManifestPath(name);
   return fs.existsSync(definitionPath);
 }
 
@@ -269,7 +269,7 @@ export async function registerService(definitionName, options = {}) {
     // Update metadata
     const metadata = loadServiceMetadata();
     metadata.services[definition.name] = {
-      definition: definitionName,
+      manifest: definitionName,
       binary: definition.binary,
       registered: new Date().toISOString(),
       status: 'registered'
@@ -279,7 +279,7 @@ export async function registerService(definitionName, options = {}) {
     return {
       success: true,
       name: definition.name,
-      definition: definitionName
+      manifest: definitionName
     };
   } catch (err) {
     throw new Error(`Failed to register service: ${err.message}`);

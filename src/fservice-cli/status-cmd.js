@@ -5,6 +5,7 @@
 import chalk from 'chalk';
 import { createContext } from './context.js';
 import serviceSystem from '../utils/service-system.js';
+import promptUtils from '../utils/prompt-utils.js';
 
 /**
  * Command configuration
@@ -17,7 +18,7 @@ const command = {
       .option('name', {
         describe: 'Service name',
         type: 'string',
-        demandOption: true,
+        demandOption: false,
         alias: 'n'
       })
       .option('format', {
@@ -31,21 +32,45 @@ const command = {
     try {
       const context = await createContext(argv);
 
-      // Check if service exists in metadata
+      // Load metadata
       const metadata = serviceSystem.loadServiceMetadata();
-      if (!metadata.services[argv.name]) {
-        console.error(chalk.red(`Service '${argv.name}' not found in metadata.`));
+
+      // If name not provided, prompt user to select one
+      let serviceName = argv.name;
+      if (!serviceName) {
+        const serviceNames = Object.keys(metadata.services);
+
+        if (serviceNames.length === 0) {
+          console.log(chalk.yellow('No registered services found.'));
+          process.exit(1);
+        }
+
+        serviceName = await promptUtils.promptForSelection({
+          items: serviceNames,
+          message: 'Select a service to check status:',
+          allowAbort: true
+        });
+
+        if (!serviceName) {
+          console.log(chalk.yellow('Operation cancelled.'));
+          return;
+        }
+      }
+
+      // Check if service exists in metadata
+      if (!metadata.services[serviceName]) {
+        console.error(chalk.red(`Service '${serviceName}' not found in metadata.`));
         process.exit(1);
       }
 
-      console.log(chalk.blue(`Checking status of service '${argv.name}'...`));
+      console.log(chalk.blue(`Checking status of service '${serviceName}'...`));
 
       // Import manageService from @fnet/service
       const manageService = (await import('@fnet/service')).default;
 
       try {
         // Load service manifest to get system parameter
-        const manifestName = metadata.services[argv.name].manifest;
+        const manifestName = metadata.services[serviceName].manifest;
         const manifest = serviceSystem.loadServiceManifest(manifestName);
 
         if (!manifest) {
@@ -54,39 +79,39 @@ const command = {
 
         const status = await manageService({
           action: 'status',
-          name: argv.name,
+          name: serviceName,
           system: manifest.system !== false
         });
 
-        console.log(chalk.green(`Service '${argv.name}' status: ${status}`));
+        console.log(chalk.green(`Service '${serviceName}' status: ${status}`));
 
         // Update metadata
-        metadata.services[argv.name].status = status || 'unknown';
-        metadata.services[argv.name].lastChecked = new Date().toISOString();
+        metadata.services[serviceName].status = status || 'unknown';
+        metadata.services[serviceName].lastChecked = new Date().toISOString();
         // Note: pid is not available from getServiceStatus
         serviceSystem.saveServiceMetadata(metadata);
 
         // Format output based on format option
         if (argv.format === 'json') {
           console.log(JSON.stringify({
-            name: argv.name,
+            name: serviceName,
             status: status || 'unknown',
-            manifest: metadata.services[argv.name].manifest,
-            binary: metadata.services[argv.name].binary
+            manifest: manifestName,
+            binary: metadata.services[serviceName].binary
           }, null, 2));
         } else if (argv.format === 'text') {
-          console.log(`Name: ${argv.name}`);
+          console.log(`Name: ${serviceName}`);
           console.log(`Status: ${status || 'unknown'}`);
-          console.log(`Definition: ${metadata.services[argv.name].manifest}`);
-          console.log(`Binary: ${metadata.services[argv.name].binary}`);
+          console.log(`Definition: ${manifestName}`);
+          console.log(`Binary: ${metadata.services[serviceName].binary}`);
         } else {
           // Table format (default)
           console.log(chalk.bold('\nService Status:'));
           console.log(chalk.bold('─'.repeat(50)));
-          console.log(`${chalk.bold('Name:')} ${argv.name}`);
+          console.log(`${chalk.bold('Name:')} ${serviceName}`);
           console.log(`${chalk.bold('Status:')} ${getStatusColor(status)(status || 'unknown')}`);
-          console.log(`${chalk.bold('Definition:')} ${metadata.services[argv.name].manifest}`);
-          console.log(`${chalk.bold('Binary:')} ${metadata.services[argv.name].binary}`);
+          console.log(`${chalk.bold('Definition:')} ${manifestName}`);
+          console.log(`${chalk.bold('Binary:')} ${metadata.services[serviceName].binary}`);
 
           console.log(chalk.bold('─'.repeat(50)));
         }
