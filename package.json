@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.2.11",
+  "version": "0.3.0",
   "files": [
     "dist",
     "template"
@@ -8,10 +8,10 @@
   "type": "module",
   "description": "CLI for Flownet",
   "scripts": {
-    "build": "rollup --config",
-    "build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
+    "build": "bun run build.js",
+    "build:dev": "DEVELOPMENT=1 bun run build.js",
     "deploy": "bun publish --access public",
-    "watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT"
+    "watch": "DEVELOPMENT=1 bun run build.js --watch"
   },
   "repository": {
     "type": "git",
