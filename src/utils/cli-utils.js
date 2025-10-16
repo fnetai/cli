@@ -60,14 +60,14 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
 
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
-          // stdio: 'inherit',
+          stdio: 'inherit',
           shell: true,
           detached: true,
           env
         });
 
         // Set up signal handlers and error handlers for the subprocess
-        // setupSignalHandlers(subprocess);
+        setupSignalHandlers(subprocess);
       } catch (error) {
         console.error(error.message);
         process.exit(1);

@@ -710,6 +710,20 @@ class Builder {
       }
       return atom;
     }
+    else if (parsedUrl.protocol === 'node:') {
+
+      const atom = {
+        name: parsedUrl.pathname,
+        doc: {
+          type: "workflow.lib",
+          "content-type": "javascript",
+          language: "js",
+          dependencies: [],
+        },
+        protocol: parsedUrl.protocol,
+      }
+      return atom;
+    }    
     else if (parsedUrl.protocol === 'ac:') {
       const parts = parsedUrl.pathname.split('/');
       if (parts.length === 1) {
