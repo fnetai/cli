@@ -42,7 +42,7 @@ export default [
     output: {
       format: "esm",
       exports: "auto",
-      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env bun' : '',
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fnet',
       entryFileNames: 'index.js',
       chunkFileNames: 'index.[hash].js',
@@ -55,7 +55,7 @@ export default [
     output: {
       format: "esm",
       exports: "auto",
-      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env bun' : '',
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fnode',
       entryFileNames: 'index.js',
       chunkFileNames: 'index.[hash].js',
@@ -68,7 +68,7 @@ export default [
     output: {
       format: "esm",
       exports: "auto",
-      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env bun' : '',
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/frun',
       entryFileNames: 'index.js',
       chunkFileNames: 'index.[hash].js',
@@ -84,7 +84,7 @@ export default [
     output: {
       format: "esm",
       exports: "auto",
-      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env bun' : '',
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fbin',
       entryFileNames: 'index.js',
       chunkFileNames: 'index.[hash].js',
@@ -100,7 +100,7 @@ export default [
     output: {
       format: "esm",
       exports: "auto",
-      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env bun' : '',
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fservice',
       entryFileNames: 'index.js',
       chunkFileNames: 'index.[hash].js',

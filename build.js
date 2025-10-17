@@ -64,7 +64,8 @@ async function buildCLI(config) {
     const result = await Bun.build({
       entrypoints: [entry],
       outdir,
-      target: 'bun',
+      // target: 'bun',
+      target: 'node',
       format: 'esm',
       splitting: true,
       minify: !DEVELOPMENT,
@@ -92,7 +93,7 @@ async function buildCLI(config) {
     const entryFile = join(outdir, 'index.js');
     if (existsSync(entryFile)) {
       const content = await Bun.file(entryFile).text();
-      const withShebang = `#!/usr/bin/env bun\n${content}`;
+      const withShebang = `#!/usr/bin/env node\n${content}`;
       await Bun.write(entryFile, withShebang);
       // Make the file executable (chmod +x)
       chmodSync(entryFile, 0o755);
