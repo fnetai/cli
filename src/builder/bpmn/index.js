@@ -68,10 +68,16 @@ function initNodes(context) {
     node.bpmn.width = 120;
     node.bpmn.height = 80;
 
-    // testing
+    // Special styling for different node types
     if (node.type === 'return') {
       node.bpmn.width = 36;
       node.bpmn.height = 36;
+    }
+
+    // CallActivity (subworkflow chip) - Special color!
+    if (node.bpmn.type === 'bpmn:CallActivity') {
+      node.bpmn.fill = "#E1F5FE";    // Light blue background
+      node.bpmn.stroke = "#0277BD";  // Dark blue border
     }
   });
 }
