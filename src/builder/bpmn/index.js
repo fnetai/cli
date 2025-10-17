@@ -80,13 +80,30 @@ function getBpmnType(node) {
   let bpmnType;
 
   if (node.type === 'call') {
-    bpmnType = "bpmn:ServiceTask";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  📞 CALL → ServiceTask: ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType,
-        target: node.context?.lib?.name || 'unknown'
-      });
+    // Check if calling a subworkflow (internal) or external function
+    const isSubworkflow = node.context?.lib?.type === 'subworkflow' ||
+                          node.context?.lib?.type === 'workflow';
+
+    if (isSubworkflow) {
+      bpmnType = "bpmn:CallActivity";  // ← Subworkflow = CallActivity (chip!)
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  📦 CALL → CallActivity (subworkflow): ${node.indexKey}`, {
+          nodeType: node.type,
+          bpmnType,
+          calledElement: node.context?.lib?.name || 'unknown',
+          isChip: true
+        });
+      }
+    } else {
+      bpmnType = "bpmn:ServiceTask";  // ← External function = ServiceTask
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  📞 CALL → ServiceTask (external): ${node.indexKey}`, {
+          nodeType: node.type,
+          bpmnType,
+          target: node.context?.lib?.name || 'unknown',
+          isChip: false
+        });
+      }
     }
   }
   else if (node.type === 'form') {
@@ -306,7 +323,20 @@ function createFlowNodes(context) {
     targetFlowElementsContainer.$nodes.push(flowElement);
     flowElements.push(flowElement);
 
-    if (isLogEnabled('bpmn')) {
+    // Add calledElement for CallActivity (subworkflow chip!)
+    if (child.bpmn.type === 'bpmn:CallActivity' && child.context?.lib) {
+      flowElement.calledElement = child.context.lib.name;
+
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  ✨ Created: ${child.bpmn.type} (chip!)`, {
+          id: flowElement.id,
+          name: flowElement.name,
+          calledElement: flowElement.calledElement,
+          nodeType: child.type,
+          virtual: child.virtual || false
+        });
+      }
+    } else if (isLogEnabled('bpmn')) {
       bpmnLogger.info(`  ✨ Created: ${child.bpmn.type}`, {
         id: flowElement.id,
         name: flowElement.name,
