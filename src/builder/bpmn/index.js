@@ -2,6 +2,7 @@ import BpmnModdle from 'bpmn-moddle';
 import dagre from 'dagre';
 import cloneDeep from 'lodash.clonedeep';
 import atomJson from './atom.json' with { type: 'json' };
+import { bpmnLogger, isLogEnabled } from '../logger.js';
 
 function initNodes(context) {
   const { nodes, nodeIndex, root } = context;
@@ -76,10 +77,47 @@ function initNodes(context) {
 }
 
 function getBpmnType(node) {
-  if (node.type === 'call') return "bpmn:ServiceTask";
-  else if (node.type === 'form') return "bpmn:UserTask";
-  else if (node.type === 'return') return "bpmn:EndEvent";
-  else return "bpmn:Task";
+  let bpmnType;
+
+  if (node.type === 'call') {
+    bpmnType = "bpmn:ServiceTask";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  📞 CALL → ServiceTask: ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType,
+        target: node.context?.lib?.name || 'unknown'
+      });
+    }
+  }
+  else if (node.type === 'form') {
+    bpmnType = "bpmn:UserTask";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  📝 FORM → UserTask: ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType
+      });
+    }
+  }
+  else if (node.type === 'return') {
+    bpmnType = "bpmn:EndEvent";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  🏁 RETURN → EndEvent: ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType
+      });
+    }
+  }
+  else {
+    bpmnType = "bpmn:Task";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  📋 ${node.type.toUpperCase()} → Task: ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType
+      });
+    }
+  }
+
+  return bpmnType;
 }
 
 function removeDuplicates(array, criteria) {
@@ -197,6 +235,15 @@ function createVirtualNode(context) {
 
   const index = parent.childs.filter(w => w.type === `v${type}`).length;
 
+  if (isLogEnabled('bpmn')) {
+    bpmnLogger.info(`    🔷 VIRTUAL ${type.toUpperCase()} → ${bpmnType}`, {
+      parent: parent.indexKey,
+      type: `v${type}`,
+      bpmnType,
+      name: name || `${type}${index}`
+    });
+  }
+
   const virtualNode = {
     indexKey: `${parent.indexKey}/_${type}${index}`,
     pathKey: `${parent.pathKey}._${type}${index}`,
@@ -242,6 +289,12 @@ function createFlowNodes(context) {
   const flowElements = targetFlowElementsContainer.get('flowElements');
   targetFlowElementsContainer.$nodes = targetFlowElementsContainer.$nodes || [];
 
+  if (isLogEnabled('bpmn')) {
+    bpmnLogger.info(`🎨 Creating BPMN elements for: ${targetNode.indexKey}`, {
+      childCount: targetNode.childs.length
+    });
+  }
+
   // create flow nodes
   targetNode.childs.forEach(child => {
 
@@ -252,6 +305,15 @@ function createFlowNodes(context) {
     child.$flow = flowElement;
     targetFlowElementsContainer.$nodes.push(flowElement);
     flowElements.push(flowElement);
+
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  ✨ Created: ${child.bpmn.type}`, {
+        id: flowElement.id,
+        name: flowElement.name,
+        nodeType: child.type,
+        virtual: child.virtual || false
+      });
+    }
 
     if (child.bpmn.attrs) {
       const attrKeys = Object.keys(child.bpmn.attrs);

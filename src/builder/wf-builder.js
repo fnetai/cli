@@ -7,6 +7,7 @@ import cloneDeep from 'lodash.clonedeep';
 import isObject from 'isobject';
 // import createRedisClient from '../redisClient.js';
 import { randomUUID } from 'node:crypto';
+import { treeLogger, bpmnLogger, isLogEnabled } from './logger.js';
 import Auth from './auth.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
@@ -349,6 +350,10 @@ class Builder {
 
     const workflowKeys = Object.keys(workflow);
 
+    if (isLogEnabled('tree')) {
+      treeLogger.info('🌳 Creating root node', { depth: 0 });
+    }
+
     const root = {
       definition: workflow,
       name: undefined,
@@ -366,6 +371,14 @@ class Builder {
     };
 
     workflowKeys.forEach(flowName => {
+      if (isLogEnabled('tree')) {
+        treeLogger.info(`📦 Creating ${flowName === 'main' ? 'workflow' : 'subworkflow'}: ${flowName}`, {
+          depth: 1,
+          index: root.childs.length,
+          type: flowName === 'main' ? 'workflow' : 'subworkflow'
+        });
+      }
+
       const node = {
         name: flowName,
         type: flowName === 'main' ? 'workflow' : "subworkflow",
@@ -383,7 +396,17 @@ class Builder {
     });
 
     for await (const node of root.childs) {
+      if (isLogEnabled('tree')) {
+        treeLogger.info(`🔧 Initializing node: ${node.name}`, { depth: node.depth });
+      }
       await this.initNode({ node });
+    }
+
+    if (isLogEnabled('tree')) {
+      treeLogger.info('✅ Root node tree created', {
+        depth: 0,
+        totalFlows: root.childs.length
+      });
     }
 
     return root;
@@ -396,25 +419,91 @@ class Builder {
     node.workflow = node.parent.workflow || node; //?
     node.depth = node.parent.depth + 1;
 
-    if (await tryExceptBlock.hits(api)) await tryExceptBlock.init(api);
-    else if (await forBlock.hits(api)) await forBlock.init(api);
-    else if (await switchBlock.hits(api)) await switchBlock.init(api);
-    else if (await ifBlock.hits(api)) await ifBlock.init(api);
-    else if (await parralelBlock.hits(api)) await parralelBlock.init(api);
-    else if (await callBlock.hits(api)) await callBlock.init(api);
-    else if (await newBlock.hits(api)) await newBlock.init(api);
-    else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
-    else if (await formBlock.hits(api)) await formBlock.init(api);
-    else if (await signalBlock.hits(api)) await signalBlock.init(api);
-    else if (await waitBlock.hits(api)) await waitBlock.init(api);
-    else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
-    else if (await nextBlock.hits(api)) await nextBlock.init(api);
-    else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
-    else if (await returnBlock.hits(api)) await returnBlock.init(api);
-    else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
-    else if (await assignBlock.hits(api)) await assignBlock.init(api);
-    else if (await outputBlock.hits(api)) await outputBlock.init(api);
+    let blockType = 'unknown';
+
+    if (await tryExceptBlock.hits(api)) {
+      blockType = 'tryexcept';
+      await tryExceptBlock.init(api);
+    }
+    else if (await forBlock.hits(api)) {
+      blockType = 'for';
+      await forBlock.init(api);
+    }
+    else if (await switchBlock.hits(api)) {
+      blockType = 'switch';
+      await switchBlock.init(api);
+    }
+    else if (await ifBlock.hits(api)) {
+      blockType = 'if';
+      await ifBlock.init(api);
+    }
+    else if (await parralelBlock.hits(api)) {
+      blockType = 'parallel';
+      await parralelBlock.init(api);
+    }
+    else if (await callBlock.hits(api)) {
+      blockType = 'call';
+      await callBlock.init(api);
+    }
+    else if (await newBlock.hits(api)) {
+      blockType = 'new';
+      await newBlock.init(api);
+    }
+    else if (await raiseBlock.hits(api)) {
+      blockType = 'raise';
+      await raiseBlock.init(api);
+    }
+    else if (await formBlock.hits(api)) {
+      blockType = 'form';
+      await formBlock.init(api);
+    }
+    else if (await signalBlock.hits(api)) {
+      blockType = 'signal';
+      await signalBlock.init(api);
+    }
+    else if (await waitBlock.hits(api)) {
+      blockType = 'wait';
+      await waitBlock.init(api);
+    }
+    else if (await stepsBlock.hits(api)) {
+      blockType = 'steps';
+      await stepsBlock.init(api);
+    }
+    else if (await nextBlock.hits(api)) {
+      blockType = 'next';
+      await nextBlock.init(api);
+    }
+    else if (await modulesBlock.hits(api)) {
+      blockType = 'modules';
+      await modulesBlock.init(api);
+    }
+    else if (await returnBlock.hits(api)) {
+      blockType = 'return';
+      await returnBlock.init(api);
+    }
+    else if (this.#npmBlocks.find(w => w.hits(api))) {
+      blockType = 'npm-block';
+      await (this.#npmBlocks.find(w => w.hits(api))).init(api);
+    }
+    else if (await assignBlock.hits(api)) {
+      blockType = 'assign';
+      await assignBlock.init(api);
+    }
+    else if (await outputBlock.hits(api)) {
+      blockType = 'output';
+      await outputBlock.init(api);
+    }
     else throw new Error('Undefined step type.');
+
+    if (isLogEnabled('tree')) {
+      treeLogger.info(`  ├─ ${blockType}: ${node.name}`, {
+        depth: node.depth,
+        index: node.index,
+        type: blockType,
+        hasChilds: node.childs?.length > 0,
+        childCount: node.childs?.length || 0
+      });
+    }
   }
 
   async initNodeTreeIndex({ root }) {

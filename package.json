@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "files": [
     "dist",
     "template"
@@ -67,6 +67,7 @@
     "set-value": "^4.1.0",
     "tree-kill": "^1.2.2",
     "typescript": "^5.9.3",
+    "winston": "^3.18.3",
     "yaml": "^2.8.1",
     "yargs": "^18.0.0"
   },
