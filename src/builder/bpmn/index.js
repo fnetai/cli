@@ -248,7 +248,11 @@ function createVirtualNodes(context) {
 
     if (isProcess || isSubProcess) {
 
-      const firstNode = node.childs.filter(w => w.module !== true)[0];
+      // Find first node (excluding modules and inline end events)
+      const firstNode = node.childs.filter(w =>
+        w.module !== true &&
+        !w.indexKey.endsWith('/_inline_end')
+      )[0];
 
       // Modules intermediate catch event
       const childModules = node.childs.filter(w => w.module === true);
@@ -293,6 +297,21 @@ function createVirtualNodes(context) {
         else {
           const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
           vStartNode.bpmn.edges.push({ from: vStartNode.indexKey, to: firstNode.indexKey, type: "bpmn:SequenceFlow" });
+        }
+      }
+      else {
+        // No firstNode found (only modules or inline end events)
+        // Create start event with its own inline end event
+        const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
+        const vEndNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:EndEvent", type: "end", name: "" });
+        vStartNode.bpmn.edges.push({ from: vStartNode.indexKey, to: vEndNode.indexKey, type: "bpmn:SequenceFlow" });
+
+        if (isLogEnabled('bpmn')) {
+          bpmnLogger.info(`  🏁 START EVENT → Own EndEvent (no valid firstNode)`, {
+            subprocess: node.indexKey,
+            startEvent: vStartNode.indexKey,
+            endEvent: vEndNode.indexKey
+          });
         }
       }
 
