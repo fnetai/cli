@@ -301,16 +301,11 @@ function createVirtualNodes(context) {
       }
       else {
         // No firstNode found (only modules or inline end events)
-        // Create start event with its own inline end event
-        const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
-        const vEndNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:EndEvent", type: "end", name: "" });
-        vStartNode.bpmn.edges.push({ from: vStartNode.indexKey, to: vEndNode.indexKey, type: "bpmn:SequenceFlow" });
-
+        // Don't create start event - it has nowhere to go!
         if (isLogEnabled('bpmn')) {
-          bpmnLogger.info(`  🏁 START EVENT → Own EndEvent (no valid firstNode)`, {
+          bpmnLogger.info(`  🚫 START EVENT skipped (no valid firstNode)`, {
             subprocess: node.indexKey,
-            startEvent: vStartNode.indexKey,
-            endEvent: vEndNode.indexKey
+            reason: 'Only modules or inline end events in subprocess'
           });
         }
       }
