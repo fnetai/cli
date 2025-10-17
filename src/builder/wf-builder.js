@@ -28,7 +28,7 @@ import pickNpmVersions from './api/common/pick-npm-versions.js';
 import deployTo from './deploy/deploy-to/index.js';
 import { Atom } from "@flownet/lib-atom-api-js";
 import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
-import fnetBpmnFromFlow from './bpmn/index.js';
+import fnetBpmnFromFlow, { generateBpmnModelsPerFlow } from './bpmn/index.js';
 import fnetConfig from '@fnet/config';
 import fnetParseImports from '@flownet/lib-parse-imports-js';
 import fnetExpression from '@fnet/expression';
@@ -1173,12 +1173,27 @@ class Builder {
           let bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
           bpmnDir = path.resolve(bpmnDir, 'fnet');
           if (fs.existsSync(bpmnDir)) {
-            // delete if flow.bpmn exists
+            // delete if flow.bpmn exists (old naming)
             if (fs.existsSync(path.resolve(bpmnDir, 'flow.bpmn'))) {
               fs.unlinkSync(path.resolve(bpmnDir, 'flow.bpmn'));
             }
 
+            // Write full engine BPMN (all flows)
             fs.writeFileSync(path.resolve(bpmnDir, 'flows.bpmn'), network.diagramXML, 'utf8');
+
+            // Create bpmn directory for individual flow files
+            const bpmnSubDir = path.resolve(bpmnDir, 'bpmn');
+            if (!fs.existsSync(bpmnSubDir)) {
+              fs.mkdirSync(bpmnSubDir, { recursive: true });
+            }
+
+            // Generate and write individual BPMN files for each flow
+            const perFlowBpmns = await generateBpmnModelsPerFlow({ root: this.#root });
+            for (const flowBpmn of perFlowBpmns) {
+              const flowFileName = `${flowBpmn.flowName}.bpmn`;
+              const flowFilePath = path.resolve(bpmnSubDir, flowFileName);
+              fs.writeFileSync(flowFilePath, flowBpmn.diagramXML, 'utf8');
+            }
           }
         }
 

@@ -486,6 +486,111 @@ async function modelA(context) {
   }
 }
 
+/**
+ * Generate BPMN model for a single flow
+ * @param {Object} context - Context with root and flowName
+ * @returns {Promise<Object>} Object with diagramXML
+ */
+async function generateBpmnModelForSingleFlow(context) {
+  const { root, flowName } = context;
+
+  // Clone the root to avoid modifying the original
+  const clonedRoot = cloneDeep(root);
+
+  // Filter to only include the specific flow
+  const flow = clonedRoot.childs.find(f => f.name === flowName);
+
+  if (!flow) {
+    throw new Error(`Flow "${flowName}" not found`);
+  }
+
+  // Create a new root with only this flow
+  const singleFlowRoot = {
+    ...clonedRoot,
+    childs: [flow]
+  };
+
+  const nodeIndex = singleFlowRoot.context.index;
+  const nodes = Object.keys(nodeIndex).map(key => nodeIndex[key]);
+
+  initNodes({ nodes, nodeIndex, root: singleFlowRoot });
+  createVirtualNodes({ nodes, nodeIndex, root: singleFlowRoot });
+
+  const moddle = new BpmnModdle({
+    atom: atomJson
+  });
+
+  const elementIndex = {};
+
+  // BASE - Definitions
+  const definitions = moddle.create('bpmn:Definitions', { id: `definitions_${flowName}` });
+  elementIndex[definitions.id] = definitions;
+
+  const rootElements = definitions.get('rootElements');
+  const diagrams = definitions.get('diagrams');
+
+  // PROCESS
+  const process = moddle.create('bpmn:Process', {
+    id: `process_${flow.pathKey}`,
+    name: flow.name,
+    documentation: [moddle.create('bpmn:Documentation', { text: `Workflow - ${flow.name}` })],
+  });
+  elementIndex[process.id] = process;
+
+  process.isExecutable = true;
+  rootElements.push(process);
+
+  // DIAGRAM
+  const diagram = moddle.create('bpmndi:BPMNDiagram', { id: `diagram_${flow.pathKey}` });
+  elementIndex[diagram.id] = diagram;
+  diagrams.push(diagram);
+
+  // PLANE
+  const plane = moddle.create('bpmndi:BPMNPlane', { id: `plane_${flow.pathKey}` });
+  elementIndex[plane.id] = plane;
+
+  diagram.plane = plane;
+  plane.bpmnElement = process;
+
+  // workflow or subworkflow
+  const targetNode = flow;
+  const targetFlowElementsContainer = process;
+  const targetPlaneElement = plane;
+
+  create({ targetNode, targetFlowElementsContainer, targetPlaneElement, moddle, elementIndex, nodeIndex, nodes, diagrams });
+
+  const moddleResult = await moddle.toXML(definitions, { format: true });
+
+  return {
+    diagramXML: moddleResult.xml,
+    flowName: flow.name
+  }
+}
+
+/**
+ * Generate BPMN model for all flows (full engine)
+ * @param {Object} context - Context with root
+ * @returns {Promise<Object>} Object with diagramXML
+ */
 export default async function generateBpmnModel(context = {}) {
   return await modelA(cloneDeep(context));
+}
+
+/**
+ * Generate BPMN models for each flow separately
+ * @param {Object} context - Context with root
+ * @returns {Promise<Array>} Array of objects with diagramXML and flowName
+ */
+export async function generateBpmnModelsPerFlow(context = {}) {
+  const clonedContext = cloneDeep(context);
+  const { root } = clonedContext;
+
+  const results = [];
+
+  for (const flow of root.childs) {
+    const result = await generateBpmnModelForSingleFlow({ root, flowName: flow.name });
+    results.push(result);
+  }
+
+  return results;
 }
