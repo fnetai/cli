@@ -7,6 +7,67 @@ import { bpmnLogger, isLogEnabled } from '../logger.js';
 function initNodes(context) {
   const { nodes, nodeIndex, root } = context;
 
+  // First pass: collect inline end events (only once for all nodes)
+  const inlineEndEvents = [];
+  const processedNodes = new Set();
+
+  const collectInlineEndEvents = (tempNode) => {
+    // Skip if already processed
+    if (processedNodes.has(tempNode.indexKey)) return;
+    processedNodes.add(tempNode.indexKey);
+
+    // Check for inline return (hasReturn flag on non-return nodes)
+    if (tempNode.hasReturn && tempNode.type !== 'return') {
+      const inlineEndEventKey = `${tempNode.indexKey}/_inline_end`;
+
+      // Check if inline end event already exists (from previous initNodes call)
+      if (nodeIndex[inlineEndEventKey]) {
+        // Already created, skip
+        return;
+      }
+
+      // Create inline end event (virtual node)
+      const inlineEndEvent = {
+        name: '',  // Nameless inline end event
+        type: 'return',
+        virtual: true,
+        parent: tempNode.parent,
+        childs: [],
+        definition: { return: tempNode.definition.return },
+        index: tempNode.parent.childs.length,
+        indexKey: inlineEndEventKey,
+        pathKey: `${tempNode.pathKey}._inline_end`,
+        codeKey: `${tempNode.codeKey}_inline_end`,
+        context: { next: null },  // No next for end events
+        hasReturn: true,
+        _inlineParent: tempNode  // Store reference to parent node
+      };
+
+      inlineEndEvents.push(inlineEndEvent);
+
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  🏁 INLINE RETURN → EndEvent: ${inlineEndEvent.indexKey}`, {
+          parentNode: tempNode.indexKey,
+          nodeType: tempNode.type,
+          hasReturn: true
+        });
+      }
+    }
+
+    tempNode.childs.forEach(child => collectInlineEndEvents(child));
+  };
+
+  // Collect from all nodes (only once)
+  nodes.forEach(node => collectInlineEndEvents(node));
+
+  // Add inline end events to nodes array and nodeIndex
+  inlineEndEvents.forEach(inlineEndEvent => {
+    inlineEndEvent.parent.childs.push(inlineEndEvent);
+    nodeIndex[inlineEndEvent.indexKey] = inlineEndEvent;
+    nodes.push(inlineEndEvent);
+  });
+
+  // Second pass: create edges
   nodes.forEach(node => {
 
     const all = [];
@@ -14,7 +75,21 @@ function initNodes(context) {
 
     const iterate = (tempNode) => {
 
-      if (tempNode.context.next) {
+      // Check if this node has an inline end event
+      const hasInlineEndEvent = inlineEndEvents.find(e => e._inlineParent === tempNode);
+
+      if (hasInlineEndEvent) {
+        // Create edge from tempNode to inline end event
+        all.push({
+          from: tempNode,
+          to: hasInlineEndEvent,
+          type: "bpmn:SequenceFlow",
+        });
+
+        // Don't process next for nodes with inline return
+        // (they terminate at the inline end event)
+      }
+      else if (tempNode.context.next) {
         all.push({
           from: tempNode,
           to: tempNode.context.next,
@@ -35,10 +110,15 @@ function initNodes(context) {
         // TODO: TEMP
         if (tempNode === node) {
           if (node.type === 'switch') {
-            start.push({
-              to: tempNodeChild,
-              type: "bpmn:SequenceFlow",
-            });
+            // Don't create edge to inline end events from switch
+            // (inline end events only accept edges from their parent)
+            const isInlineEndEvent = tempNodeChild.indexKey && tempNodeChild.indexKey.endsWith('/_inline_end');
+            if (!isInlineEndEvent) {
+              start.push({
+                to: tempNodeChild,
+                type: "bpmn:SequenceFlow",
+              });
+            }
           }
         }
 
