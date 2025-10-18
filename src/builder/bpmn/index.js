@@ -210,6 +210,24 @@ function getBpmnType(node) {
       });
     }
   }
+  else if (node.type === 'raise') {
+    bpmnType = "bpmn:EndEvent";  // ← Error End Event (will add ErrorEventDefinition later)
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  ⚠️ RAISE → EndEvent (error): ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType
+      });
+    }
+  }
+  else if (node.type === 'assign' || node.type === 'new') {
+    bpmnType = "bpmn:ScriptTask";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  📜 ${node.type.toUpperCase()} → ScriptTask: ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType
+      });
+    }
+  }
   else {
     bpmnType = "bpmn:Task";
     if (isLogEnabled('bpmn')) {
@@ -244,6 +262,17 @@ function createVirtualNodes(context) {
 
     if (isSubProcess) {
       node.bpmn.type = "bpmn:SubProcess";
+
+      // Add loop marker for 'for' step type
+      if (node.type === 'for') {
+        node.bpmn.loopCharacteristics = true;  // Will be converted to StandardLoopCharacteristics
+        if (isLogEnabled('bpmn')) {
+          bpmnLogger.info(`  🔁 FOR → SubProcess + Loop Marker`, {
+            subprocess: node.indexKey,
+            loopType: 'StandardLoopCharacteristics'
+          });
+        }
+      }
     }
 
     if (isProcess || isSubProcess) {
@@ -495,6 +524,18 @@ function createFlowNodes(context) {
         return temp;
       });
       flowElement.eventDefinitions = definitons;
+    }
+
+    // Add loop characteristics for 'for' step type
+    if (child.bpmn.loopCharacteristics && child.bpmn.type === 'bpmn:SubProcess') {
+      flowElement.loopCharacteristics = moddle.create('bpmn:StandardLoopCharacteristics');
+
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  🔁 Added loop marker to: ${flowElement.id}`, {
+          nodeType: child.type,
+          loopType: 'StandardLoopCharacteristics'
+        });
+      }
     }
   });
 }
