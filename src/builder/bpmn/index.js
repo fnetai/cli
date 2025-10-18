@@ -280,7 +280,39 @@ function createVirtualNodes(context) {
       }
 
       if (firstNode) {
-        if (node.bpmn.starts.length > 1) {
+        // Special handling for parallel step type
+        if (node.type === 'parallel') {
+          const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
+          const vForkNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:ParallelGateway", type: "fork" });
+          const vJoinNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:ParallelGateway", type: "join" });
+          const vEndNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:EndEvent", type: "end" });
+
+          // Start → Fork
+          vStartNode.bpmn.edges = [{ from: vStartNode.indexKey, to: vForkNode.indexKey, type: "bpmn:SequenceFlow" }];
+
+          // Fork → All children
+          const parallelChildren = node.childs.filter(w => !w.virtual && !w.module && !w.indexKey.endsWith('/_inline_end'));
+          vForkNode.bpmn.edges = parallelChildren.map(child => {
+            return { from: vForkNode.indexKey, to: child.indexKey, type: "bpmn:SequenceFlow" };
+          });
+
+          // All children → Join
+          parallelChildren.forEach(child => {
+            child.bpmn.edges = [{ from: child.indexKey, to: vJoinNode.indexKey, type: "bpmn:SequenceFlow" }];
+          });
+
+          // Join → End
+          vJoinNode.bpmn.edges = [{ from: vJoinNode.indexKey, to: vEndNode.indexKey, type: "bpmn:SequenceFlow" }];
+
+          if (isLogEnabled('bpmn')) {
+            bpmnLogger.info(`  🔀 PARALLEL → Fork/Join Gateways`, {
+              subprocess: node.indexKey,
+              childCount: parallelChildren.length,
+              pattern: 'Start → Fork → [Tasks] → Join → End'
+            });
+          }
+        }
+        else if (node.bpmn.starts.length > 1) {
 
           const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
           const vSwitchNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:ExclusiveGateway", type: "switch" });
