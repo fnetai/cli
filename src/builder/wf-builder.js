@@ -55,6 +55,7 @@ import resolveNextBlock from './block-api/resolve-next-block/index.js';
 import npmBlock from './block/npm-block/index.js';
 import newBlock from './block/new/index.js';
 import outputBlock from './block/output/index.js';
+import pipelineBlock from './block/pipeline/index.js';
 import which from './which.js';
 import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
 
@@ -440,6 +441,10 @@ class Builder {
     else if (await parralelBlock.hits(api)) {
       blockType = 'parallel';
       await parralelBlock.init(api);
+    }
+    else if (await pipelineBlock.hits(api)) {
+      blockType = 'pipeline';
+      await pipelineBlock.init(api);
     }
     else if (await callBlock.hits(api)) {
       blockType = 'call';
@@ -994,6 +999,7 @@ class Builder {
       case "wait":
       case "modules":
       case "output":
+      case "pipeline":
         this.createBlockFromTemplate({ node });
         break;
       default:

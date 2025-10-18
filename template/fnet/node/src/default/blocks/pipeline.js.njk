@@ -1,0 +1,145 @@
+{% include "src/default/macros/block-header.js.njk" %}
+
+{% include "src/default/macros/block-next-header.js.njk" %}
+
+{% include "src/default/macros/block-modules-header.js.njk" %}
+
+export default function Block(context){
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+
+  this.run= function (){
+
+    {% include "src/default/macros/block-entry-args.js.njk" %}
+
+    return new Promise(async (resolve,reject)=>{
+
+      try{
+        {% include "src/default/macros/block-run-header.js.njk" %}
+
+        {% include "src/default/macros/page.js.njk" %}
+
+        {% include "src/default/macros/block-modules.js.njk" %}
+
+        // PIPELINE EXECUTION
+        const { spawn } = await import('child_process');
+
+        const pipelineBinary = '{{ context.binaryName }}';
+        {% if context.transform.args %}
+        const pipelineArgs = {{ context.transform.args | safe }};
+        {% else %}
+        const pipelineArgs = [];
+        {% endif %}
+
+        {% if context.transform.input %}
+        const pipelineInput = {{ context.transform.input | safe }};
+        {% else %}
+        const pipelineInput = null;
+        {% endif %}
+
+        const pipelineFormat = '{{ context.format }}';
+
+        {% if context.transform.env %}
+        const pipelineEnv = {{ context.transform.env | safe }};
+        {% else %}
+        const pipelineEnv = {};
+        {% endif %}
+
+        {% if context.transform.cwd %}
+        const pipelineCwd = {{ context.transform.cwd | safe }};
+        {% else %}
+        const pipelineCwd = undefined;
+        {% endif %}
+
+        const result = await new Promise((pipelineResolve, pipelineReject) => {
+          const spawnOptions = {
+            env: { ...process.env, ...pipelineEnv }
+          };
+
+          if (pipelineCwd) {
+            spawnOptions.cwd = pipelineCwd;
+          }
+
+          const proc = spawn(pipelineBinary, pipelineArgs, spawnOptions);
+
+          let stdout = '';
+          let stderr = '';
+
+          proc.stdout.on('data', (data) => {
+            stdout += data.toString();
+          });
+
+          proc.stderr.on('data', (data) => {
+            stderr += data.toString();
+          });
+
+          proc.on('error', (error) => {
+            pipelineReject(new Error(`Failed to execute pipeline '${pipelineBinary}': ${error.message}`));
+          });
+
+          proc.on('close', (code) => {
+            if (code !== 0) {
+              pipelineReject(new Error(`Pipeline '${pipelineBinary}' exited with code ${code}: ${stderr}`));
+              return;
+            }
+
+            // Parse output based on format
+            if (pipelineFormat === 'text') {
+              // Text format: return as-is
+              pipelineResolve(stdout.trim());
+            } else {
+              // JSON format (default): parse
+              try {
+                const result = JSON.parse(stdout.trim());
+                pipelineResolve(result);
+              } catch (error) {
+                pipelineReject(new Error(`Failed to parse pipeline output as JSON: ${error.message}`));
+              }
+            }
+          });
+
+          // Write input based on type (auto-detect)
+          if (pipelineInput !== null && pipelineInput !== undefined) {
+            if (typeof pipelineInput === 'object') {
+              // Object/Array → JSON
+              proc.stdin.write(JSON.stringify(pipelineInput) + '\n');
+            } else if (typeof pipelineInput === 'string') {
+              // String → as-is (text)
+              proc.stdin.write(pipelineInput + '\n');
+            } else {
+              // Other types → JSON
+              proc.stdin.write(JSON.stringify(pipelineInput) + '\n');
+            }
+          }
+          proc.stdin.end();
+        });
+
+        {% if context.transform.result %}
+        flow.set('{{ context.transform.result }}', result);
+        {% endif %}
+
+        {% include "src/default/macros/block-assign.js.njk" %}
+
+        {% include "src/default/macros/block-signal.js.njk" %}
+
+        {% if context.transform.return %}
+          resolve({type:'return',value: {{context.transform.return | safe}}});
+        {% elseif context.next %}
+          {% include "src/default/macros/block-next.js.njk" %}
+        {% else %}
+          resolve();
+        {% endif %}
+
+        {% include "src/default/macros/block-run-footer.js.njk" %}
+      }
+      catch(error){
+          onError? onError(error) : reject(error);
+      }
+    });
+  }
+
+  Object.freeze(this);
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}
+

@@ -6,7 +6,7 @@ async function hits({ node }) {
 }
 
 async function init({ node, initNode }) {
-  if (!node.type) node.type = 'parallel';
+  node.type = 'parallel';
 
   // Parallel children should not auto-jump to siblings or parent
   // They execute concurrently and independently

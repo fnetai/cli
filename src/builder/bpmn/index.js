@@ -250,6 +250,16 @@ function getBpmnType(node) {
       }
     }
   }
+  else if (node.type === 'pipeline') {
+    bpmnType = "bpmn:ServiceTask";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  🔧 PIPELINE → ServiceTask (external binary): ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType,
+        binary: node.context?.binaryName || 'unknown'
+      });
+    }
+  }
   else if (node.type === 'assign' || node.type === 'new') {
     bpmnType = "bpmn:ScriptTask";
     if (isLogEnabled('bpmn')) {
