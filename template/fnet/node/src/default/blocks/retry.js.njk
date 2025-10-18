@@ -1,0 +1,87 @@
+{% include "src/default/macros/block-header.js.njk" %}
+
+{% include "src/default/macros/block-next-header.js.njk" %}
+
+{% include "src/default/macros/block-modules-header.js.njk" %}
+
+{% for child in childs %}
+  {% if not child.definition.dynamic %}
+    // RETRYABLE CHILD: {{child.indexKey}}
+    import {{child.codeKey}} from "./{{child.codeKey}}.js";
+  {% endif %}
+{% endfor %}
+
+export default function Block(context){
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+
+  this.run= function (){
+
+    {% include "src/default/macros/block-entry-args.js.njk" %}
+
+    return new Promise(async (resolve,reject)=>{
+      {% include "src/default/macros/block-run-header.js.njk" %}
+
+      {% include "src/default/macros/page.js.njk" %}
+
+      // Retry configuration (always an object)
+      const attempts = {{ context.transform.retry.attempts }};
+      const initialDelay = {{ context.transform.retry.delay }};
+      const backoff = "{{ context.transform.retry.backoff }}";
+      const maxDelay = {% if context.transform.retry.maxDelay %}{{ context.transform.retry.maxDelay }}{% else %}null{% endif %};
+
+      {% if childs[0] %}
+      // Create child block instance
+      const retryableBlock = new {{childs[0].codeKey}}({
+        parent: _this,
+        engine: engine,
+        flow: flow
+      });
+
+      // Retry logic with backoff
+      let lastError;
+      let currentDelay = initialDelay;
+
+      for (let attempt = 1; attempt <= attempts; attempt++) {
+        try {
+          // Execute child block
+          await retryableBlock.run();
+
+          // Success! Break out of retry loop
+          break;
+        } catch (error) {
+          lastError = error;
+
+          // Last attempt failed - throw error
+          if (attempt === attempts) {
+            throw new Error(`Retry failed after ${attempts} attempts: ${error.message}`);
+          }
+
+          // Wait before retry
+          await new Promise(resolve => setTimeout(resolve, currentDelay));
+
+          // Calculate next delay based on backoff strategy
+          if (backoff === 'exponential') {
+            currentDelay = currentDelay * 2;
+          } else if (backoff === 'linear') {
+            currentDelay = currentDelay + initialDelay;
+          }
+          // 'fixed' keeps currentDelay unchanged
+
+          // Apply maxDelay cap if specified
+          if (maxDelay && currentDelay > maxDelay) {
+            currentDelay = maxDelay;
+          }
+        }
+      }
+      {% endif %}
+
+      {% include "src/default/macros/block-next.js.njk" %}
+
+      {% include "src/default/macros/block-run-footer.js.njk" %}
+    });
+  }
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}
+

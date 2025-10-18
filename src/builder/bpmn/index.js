@@ -308,7 +308,10 @@ function createVirtualNodes(context) {
     // Force schedule blocks to be SubProcess (container for timer event)
     const isScheduleBlock = node.type === 'schedule';
 
-    if (isSubProcess || isTryExceptBlock || isScheduleBlock) {
+    // Force retry blocks to be SubProcess (container for retry logic)
+    const isRetryBlock = node.type === 'retry';
+
+    if (isSubProcess || isTryExceptBlock || isScheduleBlock || isRetryBlock) {
       node.bpmn.type = "bpmn:SubProcess";
 
       // Add loop marker for 'for' step type
@@ -426,6 +429,20 @@ function createVirtualNodes(context) {
             bpmnLogger.info(`  ⏰ SCHEDULE → Skipping normal StartEvent (using TimerStartEvent)`, {
               subprocess: node.indexKey,
               timerEvent: 'already created'
+            });
+          }
+        }
+        // Special handling for retry step type - use normal start with loop characteristics
+        else if (node.type === 'retry') {
+          // Retry uses normal StartEvent but SubProcess has loop characteristics
+          const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
+          vStartNode.bpmn.edges.push({ from: vStartNode.indexKey, to: firstNode.indexKey, type: "bpmn:SequenceFlow" });
+
+          if (isLogEnabled('bpmn')) {
+            bpmnLogger.info(`  🔁 RETRY → SubProcess with loop characteristics`, {
+              subprocess: node.indexKey,
+              attempts: node.context?.attempts,
+              backoff: node.context?.backoff
             });
           }
         }
