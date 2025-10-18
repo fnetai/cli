@@ -989,6 +989,7 @@ class Builder {
       case "next":
       case "tryexcept":
       case "for":
+      case "parallel":
       case "signal":
       case "wait":
       case "modules":
