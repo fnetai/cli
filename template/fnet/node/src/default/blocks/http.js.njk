@@ -1,0 +1,123 @@
+{% include "src/default/macros/block-header.js.njk" %}
+
+{% include "src/default/macros/block-next-header.js.njk" %}
+
+{% include "src/default/macros/block-modules-header.js.njk" %}
+
+export default function Block(context){
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+
+  this.run= function (){
+
+    {% include "src/default/macros/block-entry-args.js.njk" %}
+
+    return new Promise(async (resolve,reject)=>{
+      {% include "src/default/macros/block-run-header.js.njk" %}
+
+      {% include "src/default/macros/page.js.njk" %}
+
+      // HTTP configuration
+      const url = {{ context.transform.http.url | safe }};
+      const method = "{{ context.transform.http.method }}";
+      const headers = {{ context.transform.http.headers | dump | safe }};
+      const timeout = {{ context.transform.http.timeout }};
+      {% if context.transform.http.body !== undefined %}
+      const body = {% if context.transform.http.body is string %}{{ context.transform.http.body | safe }}{% else %}{{ context.transform.http.body | dump | safe }}{% endif %};
+      {% endif %}
+      {% if context.transform.http.params %}
+      const params = {{ context.transform.http.params | dump | safe }};
+      {% endif %}
+
+      // Build URL with query parameters if provided
+      let finalUrl = url;
+      {% if context.transform.http.params %}
+      if (params && Object.keys(params).length > 0) {
+        const queryString = new URLSearchParams(params).toString();
+        finalUrl = url + (url.includes('?') ? '&' : '?') + queryString;
+      }
+      {% endif %}
+
+      // Prepare fetch options
+      const fetchOptions = {
+        method: method,
+        headers: headers
+      };
+
+      // Add body if present (and not GET/HEAD)
+      {% if context.transform.http.body %}
+      if (body !== undefined && method !== 'GET' && method !== 'HEAD') {
+        // Auto JSON.stringify if body is object
+        if (typeof body === 'object' && body !== null) {
+          fetchOptions.body = JSON.stringify(body);
+          // Auto set Content-Type if not already set
+          if (!fetchOptions.headers['Content-Type'] && !fetchOptions.headers['content-type']) {
+            fetchOptions.headers['Content-Type'] = 'application/json';
+          }
+        } else {
+          fetchOptions.body = body;
+        }
+      }
+      {% endif %}
+
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      fetchOptions.signal = controller.signal;
+
+      try {
+        // Execute HTTP request
+        const response = await fetch(finalUrl, fetchOptions);
+        clearTimeout(timeoutId);
+
+        // Check if response is successful (2xx)
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Parse response based on Content-Type
+        const contentType = response.headers.get('content-type');
+        let result;
+        
+        if (contentType && contentType.includes('application/json')) {
+          result = await response.json();
+        } else if (contentType && contentType.includes('text/')) {
+          result = await response.text();
+        } else {
+          // Try JSON first, fallback to text
+          try {
+            result = await response.json();
+          } catch (e) {
+            result = await response.text();
+          }
+        }
+
+        // Store result in flow variable
+        flow.set('result', result);
+
+        {% include "src/default/macros/block-assign.js.njk" %}
+
+      } catch (error) {
+        clearTimeout(timeoutId);
+
+        // Handle timeout error
+        if (error.name === 'AbortError') {
+          const timeoutError = new Error(`HTTP request timeout after ${timeout}ms: ${finalUrl}`);
+          onError ? onError(timeoutError) : reject(timeoutError);
+          return;
+        }
+
+        // Handle other errors
+        onError ? onError(error) : reject(error);
+        return;
+      }
+
+      {% include "src/default/macros/block-next.js.njk" %}
+
+      {% include "src/default/macros/block-run-footer.js.njk" %}
+    });
+  }
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}
+

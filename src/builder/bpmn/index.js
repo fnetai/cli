@@ -260,6 +260,17 @@ function getBpmnType(node) {
       });
     }
   }
+  else if (node.type === 'http') {
+    bpmnType = "bpmn:ServiceTask";
+    if (isLogEnabled('bpmn')) {
+      bpmnLogger.info(`  🌐 HTTP → ServiceTask (external API): ${node.indexKey}`, {
+        nodeType: node.type,
+        bpmnType,
+        method: node.context?.http?.method || 'GET',
+        url: node.context?.http?.url || 'unknown'
+      });
+    }
+  }
   else if (node.type === 'assign' || node.type === 'new') {
     bpmnType = "bpmn:ScriptTask";
     if (isLogEnabled('bpmn')) {

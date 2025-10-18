@@ -58,6 +58,7 @@ import outputBlock from './block/output/index.js';
 import pipelineBlock from './block/pipeline/index.js';
 import retryBlock from './block/retry/index.js';
 import scheduleBlock from './block/schedule/index.js';
+import httpBlock from './block/http/index.js';
 import which from './which.js';
 import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
 
@@ -455,6 +456,10 @@ class Builder {
     else if (await pipelineBlock.hits(api)) {
       blockType = 'pipeline';
       await pipelineBlock.init(api);
+    }
+    else if (await httpBlock.hits(api)) {
+      blockType = 'http';
+      await httpBlock.init(api);
     }
     else if (await callBlock.hits(api)) {
       blockType = 'call';
@@ -1012,6 +1017,7 @@ class Builder {
       case "pipeline":
       case "retry":
       case "schedule":
+      case "http":
         this.createBlockFromTemplate({ node });
         break;
       default:
