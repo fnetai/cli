@@ -401,6 +401,11 @@ export default async function initFeatures(apiContext) {
   features.npm_install_flags = features.npm_install_flags || '';
   features.react_version = features.react_version || features.react?.version || 18;
 
+  // BPMN features
+  features.bpmn = features.bpmn || {};
+  features.bpmn.enabled = features.bpmn.enabled !== false; // Default: true
+  features.bpmn.per_flow = features.bpmn.per_flow === true; // Default: false
+
   cssFeatures(apiContext);
   copyFeatures(apiContext);
   wasmFeatures(apiContext);

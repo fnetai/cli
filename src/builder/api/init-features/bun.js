@@ -225,6 +225,11 @@ export default async function initFeaturesBun({ atom, context, setProgress }) {
   features.runtime.type = "bun";
   features.runtime.template = "bun";
 
+  // BPMN features
+  features.bpmn = features.bpmn || {};
+  features.bpmn.enabled = features.bpmn.enabled !== false; // Default: true
+  features.bpmn.per_flow = features.bpmn.per_flow === true; // Default: false
+
   // Apply other feature initializers that are compatible with Bun
   cssFeatures({ atom, context, setProgress });
   copyFeatures({ atom, context, setProgress });

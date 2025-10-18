@@ -1270,18 +1270,25 @@ class Builder {
             // Write full engine BPMN (all flows)
             fs.writeFileSync(path.resolve(bpmnDir, 'flows.bpmn'), network.diagramXML, 'utf8');
 
-            // Create bpmn directory for individual flow files
-            const bpmnSubDir = path.resolve(bpmnDir, 'bpmn');
-            if (!fs.existsSync(bpmnSubDir)) {
-              fs.mkdirSync(bpmnSubDir, { recursive: true });
-            }
+            // Check if per-flow BPMN generation is enabled
+            const features = this.#atom.doc.features || {};
+            const bpmnFeatures = features.bpmn || {};
+            const perFlowEnabled = bpmnFeatures.per_flow === true;
 
-            // Generate and write individual BPMN files for each flow
-            const perFlowBpmns = await generateBpmnModelsPerFlow({ root: this.#root });
-            for (const flowBpmn of perFlowBpmns) {
-              const flowFileName = `${flowBpmn.flowName}.bpmn`;
-              const flowFilePath = path.resolve(bpmnSubDir, flowFileName);
-              fs.writeFileSync(flowFilePath, flowBpmn.diagramXML, 'utf8');
+            if (perFlowEnabled) {
+              // Create bpmn directory for individual flow files
+              const bpmnSubDir = path.resolve(bpmnDir, 'bpmn');
+              if (!fs.existsSync(bpmnSubDir)) {
+                fs.mkdirSync(bpmnSubDir, { recursive: true });
+              }
+
+              // Generate and write individual BPMN files for each flow
+              const perFlowBpmns = await generateBpmnModelsPerFlow({ root: this.#root });
+              for (const flowBpmn of perFlowBpmns) {
+                const flowFileName = `${flowBpmn.flowName}.bpmn`;
+                const flowFilePath = path.resolve(bpmnSubDir, flowFileName);
+                fs.writeFileSync(flowFilePath, flowBpmn.diagramXML, 'utf8');
+              }
             }
           }
         }
