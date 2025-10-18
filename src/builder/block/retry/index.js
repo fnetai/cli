@@ -46,8 +46,8 @@ async function init({ node, initNode }) {
     throw new Error(`Retry step '${node.name}' has invalid backoff strategy '${retrySettings.backoff}'. Valid options: ${validBackoffs.join(', ')}`);
   }
 
-  // Store retry configuration as object in node context
-  node.context.retry = retrySettings;
+  // Store retry configuration back to definition (normalized)
+  node.definition.retry = retrySettings;
 
   // Extract child definition (decorator pattern!)
   const { retry, ...childDef } = node.definition;
@@ -71,9 +71,6 @@ async function init({ node, initNode }) {
 async function resolve({ node, transformExpression, resolveNextBlock }) {
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
-
-  // Copy retry settings from context to transform
-  transform.retry = cloneDeep(node.context.retry);
 
   // Transform expressions in retry config if they exist
   if (transform.retry.attempts && typeof transform.retry.attempts === 'string') {

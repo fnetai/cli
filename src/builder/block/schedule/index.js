@@ -8,15 +8,36 @@ async function hits({ node }) {
 async function init({ node, initNode }) {
   node.type = 'schedule';
 
-  // Get cron expression (schedule property should be a string)
-  const cronExpression = node.definition.schedule;
+  // Support shorthand (string) and full object syntax
+  const scheduleConfig = node.definition.schedule;
 
-  if (!cronExpression || typeof cronExpression !== 'string') {
-    throw new Error(`Schedule step '${node.name}' requires a cron expression string`);
+  let scheduleSettings;
+
+  if (typeof scheduleConfig === 'string') {
+    // Shorthand: schedule: "*/5 * * * *"
+    scheduleSettings = {
+      cron: scheduleConfig,
+      timezone: null,
+      enabled: true
+    };
+  } else if (typeof scheduleConfig === 'object') {
+    // Full object: schedule: { cron: "...", timezone: "...", enabled: true }
+    scheduleSettings = {
+      cron: scheduleConfig.cron,
+      timezone: scheduleConfig.timezone || null,
+      enabled: scheduleConfig.enabled !== false  // Default to true
+    };
+  } else {
+    throw new Error(`Schedule step '${node.name}' requires a cron expression string or object`);
   }
 
-  // Store cron in node context
-  node.context.cron = cronExpression;
+  // Validate cron expression
+  if (!scheduleSettings.cron || typeof scheduleSettings.cron !== 'string') {
+    throw new Error(`Schedule step '${node.name}' requires a valid cron expression`);
+  }
+
+  // Store schedule configuration back to definition (normalized)
+  node.definition.schedule = scheduleSettings;
 
   // Extract child definition (everything except 'schedule')
   const { schedule, ...childDef } = node.definition;
@@ -41,9 +62,14 @@ async function resolve({ node, transformExpression, resolveNextBlock }) {
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
-  // Transform cron expression (in case it contains variables)
+  // Transform schedule properties (in case they contain expressions)
   if (transform.schedule) {
-    transform.schedule = await transformExpression(transform.schedule);
+    if (transform.schedule.cron && typeof transform.schedule.cron === 'string') {
+      transform.schedule.cron = await transformExpression(transform.schedule.cron);
+    }
+    if (transform.schedule.timezone && typeof transform.schedule.timezone === 'string') {
+      transform.schedule.timezone = await transformExpression(transform.schedule.timezone);
+    }
   }
 
   await initCommonResolve({ node, transformExpression });

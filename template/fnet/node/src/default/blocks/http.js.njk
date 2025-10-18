@@ -17,16 +17,50 @@ export default function Block(context){
 
       {% include "src/default/macros/page.js.njk" %}
 
+      {% include "src/default/macros/block-modules.js.njk" %}
+      
       // HTTP configuration
-      const url = {{ context.transform.http.url | safe }};
-      const method = "{{ context.transform.http.method }}";
-      const headers = {{ context.transform.http.headers | dump | safe }};
-      const timeout = {{ context.transform.http.timeout }};
+      let url = {{ context.transform.http.url | safe }};
+      let method = "{{ context.transform.http.method }}";
+      let headers = {{ context.transform.http.headers | dump | safe }};
+      let timeout = {{ context.transform.http.timeout }};
       {% if context.transform.http.body !== undefined %}
-      const body = {% if context.transform.http.body is string %}{{ context.transform.http.body | safe }}{% else %}{{ context.transform.http.body | dump | safe }}{% endif %};
+      let body = {% if context.transform.http.body is string %}{{ context.transform.http.body | safe }}{% else %}{{ context.transform.http.body | dump | safe }}{% endif %};
       {% endif %}
       {% if context.transform.http.params %}
-      const params = {{ context.transform.http.params | dump | safe }};
+      let params = {{ context.transform.http.params | dump | safe }};
+      {% endif %}
+
+      // Create HTTP context for modules
+      const httpContext = { url, method, headers, timeout, params: {% if context.transform.http.params %}params{% else %}undefined{% endif %}, body: {% if context.transform.http.body !== undefined %}body{% else %}undefined{% endif %} };
+
+      // If any property is a module function (m::), call it with HTTP context
+      if (typeof url === 'function') {
+        url = await url(httpContext);
+      }
+
+      if (typeof method === 'function') {
+        method = await method(httpContext);
+      }
+
+      if (typeof headers === 'function') {
+        headers = await headers(httpContext);
+      }
+
+      if (typeof timeout === 'function') {
+        timeout = await timeout(httpContext);
+      }
+
+      {% if context.transform.http.params %}
+      if (typeof params === 'function') {
+        params = await params(httpContext);
+      }
+      {% endif %}
+
+      {% if context.transform.http.body !== undefined %}
+      if (typeof body === 'function') {
+        body = await body(httpContext);
+      }
       {% endif %}
 
       // Build URL with query parameters if provided

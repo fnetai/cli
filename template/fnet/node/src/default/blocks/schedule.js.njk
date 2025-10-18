@@ -27,7 +27,17 @@ export default function Block(context){
       // Import node-cron for scheduling
       const cron = await import('node-cron');
 
-      const cronExpression = {{ context.transform.schedule | safe }};
+      // Schedule configuration
+      const cronExpression = {{ context.transform.schedule.cron | safe }};
+      const timezone = {{ context.transform.schedule.timezone | dump | safe }};
+      const enabled = {{ context.transform.schedule.enabled | dump | safe }};
+
+      // Check if schedule is enabled
+      if (!enabled) {
+        // Schedule is disabled, skip to next block
+        {% include "src/default/macros/block-next.js.njk" %}
+        return;
+      }
 
       // Validate cron expression
       if (!cron.validate(cronExpression)) {
@@ -44,7 +54,8 @@ export default function Block(context){
       });
       {% endif %}
 
-      // Schedule the task
+      // Schedule the task with optional timezone
+      const scheduleOptions = timezone ? { timezone } : {};
       const task = cron.schedule(cronExpression, async () => {
         try {
           {% if childs[0] %}
@@ -53,7 +64,7 @@ export default function Block(context){
         } catch (error) {
           console.error(`Scheduled task '{{indexKey}}' failed:`, error);
         }
-      });
+      }, scheduleOptions);
 
       // Start the scheduled task
       task.start();
