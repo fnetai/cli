@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "files": [
     "dist",
     "template"
@@ -44,7 +44,7 @@
     "@fnet/object-from-schema": "^0.1.25",
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
-    "@fnet/service": "^0.1.7",
+    "@fnet/service": "^0.1.8",
     "@fnet/shell-flow": "^0.2.8",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.2.1",
@@ -87,6 +87,6 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.52.4"
+    "rollup": "^4.52.5"
   }
 }

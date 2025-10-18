@@ -43,7 +43,7 @@ export default async function initDependencies({ atom, packageDependencies, pack
     }
 
     // Add MCP dependencies if MCP mode is enabled
-    if (atom.doc.features.cli.mcp && atom.doc.features.cli.mcp.enabled !== false) {
+    if (atom.doc.features.cli.mcp && atom.doc.features.cli.mcp.enabled === true) {
       packageDependencies.push({ package: "@modelcontextprotocol/sdk", version: "^1.10" });
       packageDependencies.push({ package: "express", version: "^4.18" });
     }
