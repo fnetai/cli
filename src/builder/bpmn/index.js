@@ -305,7 +305,10 @@ function createVirtualNodes(context) {
     const isTryExceptBlock = (node.name === 'try' || node.name === 'except')
       && node.parent?.type === 'tryexcept';
 
-    if (isSubProcess || isTryExceptBlock) {
+    // Force schedule blocks to be SubProcess (container for timer event)
+    const isScheduleBlock = node.type === 'schedule';
+
+    if (isSubProcess || isTryExceptBlock || isScheduleBlock) {
       node.bpmn.type = "bpmn:SubProcess";
 
       // Add loop marker for 'for' step type
@@ -384,9 +387,50 @@ function createVirtualNodes(context) {
         raiseNode.bpmn.edges = [{ from: raiseNode.indexKey, to: vEndNode.indexKey, type: "bpmn:SequenceFlow" }];
       }
 
+      // scheduleNode - create virtual timer event
+      if (node.type === 'schedule') {
+        const scheduledChild = node.childs[0]; // Schedule has exactly one child
+        if (scheduledChild) {
+          // Create virtual StartEvent with TimerEventDefinition
+          const vStartNode = createVirtualNode({
+            ...context,
+            parent: node,
+            bpmnType: "bpmn:StartEvent",
+            type: "timer-start",
+            definitions: [{
+              type: "bpmn:TimerEventDefinition",
+              timerType: "timeCycle",
+              expression: node.context?.cron || '* * * * *'
+            }]
+          });
+
+          // Connect timer start to child
+          vStartNode.bpmn.edges = [{ from: vStartNode.indexKey, to: scheduledChild.indexKey, type: "bpmn:SequenceFlow" }];
+
+          if (isLogEnabled('bpmn')) {
+            bpmnLogger.info(`  ⏰ SCHEDULE → SubProcess + TimerStartEvent`, {
+              subprocess: node.indexKey,
+              timerEvent: vStartNode.indexKey,
+              child: scheduledChild.indexKey,
+              cron: node.context?.cron
+            });
+          }
+        }
+      }
+
       if (firstNode) {
+        // Special handling for schedule step type - skip normal start event (timer start already created)
+        if (node.type === 'schedule') {
+          // Timer StartEvent already created above, no need for normal StartEvent
+          if (isLogEnabled('bpmn')) {
+            bpmnLogger.info(`  ⏰ SCHEDULE → Skipping normal StartEvent (using TimerStartEvent)`, {
+              subprocess: node.indexKey,
+              timerEvent: 'already created'
+            });
+          }
+        }
         // Special handling for parallel step type
-        if (node.type === 'parallel') {
+        else if (node.type === 'parallel') {
           const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
           const vForkNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:ParallelGateway", type: "fork" });
           const vJoinNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:ParallelGateway", type: "join" });

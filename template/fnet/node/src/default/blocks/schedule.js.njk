@@ -1,0 +1,72 @@
+{% include "src/default/macros/block-header.js.njk" %}
+
+{% include "src/default/macros/block-next-header.js.njk" %}
+
+{% include "src/default/macros/block-modules-header.js.njk" %}
+
+{% for child in childs %}
+  {% if not child.definition.dynamic %}
+    // SCHEDULED CHILD: {{child.indexKey}}
+    import {{child.codeKey}} from "./{{child.codeKey}}.js";
+  {% endif %}
+{% endfor %}
+
+export default function Block(context){
+
+  {% include "src/default/macros/block-body-header.js.njk" %}
+
+  this.run= function (){
+
+    {% include "src/default/macros/block-entry-args.js.njk" %}
+
+    return new Promise(async (resolve,reject)=>{
+      {% include "src/default/macros/block-run-header.js.njk" %}
+
+      {% include "src/default/macros/page.js.njk" %}
+
+      // Import node-cron for scheduling
+      const cron = await import('node-cron');
+
+      const cronExpression = {{ context.transform.schedule | safe }};
+
+      // Validate cron expression
+      if (!cron.validate(cronExpression)) {
+        reject(new Error(`Invalid cron expression: ${cronExpression}`));
+        return;
+      }
+
+      // Get child block (the scheduled task)
+      {% if childs[0] %}
+      const scheduledTask = new {{childs[0].codeKey}}({
+        parent: _this,
+        engine: engine,
+        flow: flow
+      });
+      {% endif %}
+
+      // Schedule the task
+      const task = cron.schedule(cronExpression, async () => {
+        try {
+          {% if childs[0] %}
+          await scheduledTask.run();
+          {% endif %}
+        } catch (error) {
+          console.error(`Scheduled task '{{indexKey}}' failed:`, error);
+        }
+      });
+
+      // Start the scheduled task
+      task.start();
+
+      // Store task reference for potential cleanup
+      flow.set('{{indexKey}}_task', task);
+
+      {% include "src/default/macros/block-next.js.njk" %}
+
+      {% include "src/default/macros/block-run-footer.js.njk" %}
+    });
+  }
+}
+
+{% include "src/default/macros/block-footer.js.njk" %}
+

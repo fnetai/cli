@@ -42,14 +42,14 @@ export default async function createPackageJson({ atom, context, packageDependen
   if (atom.doc.features.app.enabled === true) {
     checkFiles.push({
       file: path.resolve(context.projectDir, `src/app/index.js`),
-      dev: atom.doc.features.app.dev !== false
+      dev: atom.doc.features.app.dev === true
     });
   }
 
   if (atom.doc.features.cli.enabled === true) {
     checkFiles.push({
       file: path.resolve(context.projectDir, `src/cli/index.js`),
-      dev: atom.doc.features.cli.dev !== false
+      dev: atom.doc.features.cli.dev === true
     });
   }
 
