@@ -211,12 +211,43 @@ function getBpmnType(node) {
     }
   }
   else if (node.type === 'raise') {
-    bpmnType = "bpmn:EndEvent";  // ← Error End Event (will add ErrorEventDefinition later)
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  ⚠️ RAISE → EndEvent (error): ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType
-      });
+    // Context-aware mapping: IntermediateThrowEvent inside try, EndEvent outside
+    // Check if this node itself is named 'try' (single-step try block) or any ancestor is a 'try' block
+    let isInsideTry = false;
+
+    // Check if this node itself is the try block (single-step try block)
+    if (node.name === 'try' && node.parent?.type === 'tryexcept') {
+      isInsideTry = true;
+    } else {
+      // Check ancestors
+      let current = node.parent;
+      while (current) {
+        if (current.name === 'try' && current.parent?.type === 'tryexcept') {
+          isInsideTry = true;
+          break;
+        }
+        current = current.parent;
+      }
+    }
+
+    if (isInsideTry) {
+      bpmnType = "bpmn:IntermediateThrowEvent";  // ← Inside try block
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  ⚡ RAISE → IntermediateThrowEvent (inside try): ${node.indexKey}`, {
+          nodeType: node.type,
+          bpmnType,
+          nodeName: node.name,
+          parent: node.parent?.indexKey
+        });
+      }
+    } else {
+      bpmnType = "bpmn:EndEvent";  // ← Outside try block
+      if (isLogEnabled('bpmn')) {
+        bpmnLogger.info(`  ⚠️ RAISE → EndEvent (error): ${node.indexKey}`, {
+          nodeType: node.type,
+          bpmnType
+        });
+      }
     }
   }
   else if (node.type === 'assign' || node.type === 'new') {
@@ -260,7 +291,11 @@ function createVirtualNodes(context) {
       && node.childs.filter(w => !w.virtual).length > 0
       ;
 
-    if (isSubProcess) {
+    // Force try/except blocks to be SubProcess (even if they have no children)
+    const isTryExceptBlock = (node.name === 'try' || node.name === 'except')
+      && node.parent?.type === 'tryexcept';
+
+    if (isSubProcess || isTryExceptBlock) {
       node.bpmn.type = "bpmn:SubProcess";
 
       // Add loop marker for 'for' step type
@@ -270,6 +305,28 @@ function createVirtualNodes(context) {
           bpmnLogger.info(`  🔁 FOR → SubProcess + Loop Marker`, {
             subprocess: node.indexKey,
             loopType: 'StandardLoopCharacteristics'
+          });
+        }
+      }
+
+      // If try block contains only a raise step (single-step try block),
+      // create a virtual IntermediateThrowEvent inside the SubProcess
+      if (node.name === 'try' && node.type === 'raise' && node.parent?.type === 'tryexcept') {
+        const vNode = createVirtualNode({
+          location: 0,
+          ...context,
+          parent: node,
+          bpmnType: "bpmn:IntermediateThrowEvent",
+          type: "raise",
+          attrs: {},
+          definitions: [{ type: "bpmn:ErrorEventDefinition" }]
+        });
+
+        if (isLogEnabled('bpmn')) {
+          bpmnLogger.info(`  ⚡ Created virtual IntermediateThrowEvent for single-step try block`, {
+            tryNode: node.indexKey,
+            virtualNode: vNode.indexKey,
+            bpmnType: vNode.bpmn.type
           });
         }
       }
