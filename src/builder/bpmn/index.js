@@ -298,6 +298,15 @@ function createVirtualNodes(context) {
         exceptNodes.forEach(exceptNode => {
           const vNode = createVirtualNode({ location: node.childs.indexOf(exceptNode), ...context, parent: node, bpmnType: "bpmn:BoundaryEvent", type: "boundary", attrs: { attachedToRef: tryNode }, definitions: [{ type: "bpmn:ErrorEventDefinition" }] });
           vNode.bpmn.edges = [{ from: vNode.indexKey, to: exceptNode.indexKey, type: "bpmn:SequenceFlow" }];
+
+          if (isLogEnabled('bpmn')) {
+            bpmnLogger.info(`  ⚡ TRY-EXCEPT → BoundaryEvent`, {
+              subprocess: node.indexKey,
+              tryNode: tryNode.indexKey,
+              exceptNode: exceptNode.indexKey,
+              boundaryEvent: vNode.indexKey
+            });
+          }
         });
       }
 
