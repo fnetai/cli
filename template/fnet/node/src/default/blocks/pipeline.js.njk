@@ -53,7 +53,8 @@ export default function Block(context){
 
         const result = await new Promise((pipelineResolve, pipelineReject) => {
           const spawnOptions = {
-            env: { ...process.env, ...pipelineEnv }
+            env: { ...process.env, ...pipelineEnv },
+            stdio: ['pipe', 'pipe', 'pipe']  // stdin, stdout, stderr as pipes (don't inherit parent)
           };
 
           if (pipelineCwd) {
