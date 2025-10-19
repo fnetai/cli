@@ -1128,9 +1128,6 @@ class Builder {
           case 'for':
           case 'm':
           case 'f':
-            // Use transformed value if available, otherwise use statement
-            value = `$::${transformed || expResult.statement}::`;
-            break;
           case 'e':
             // For e:: processor, use transformed value (nested processors already transformed)
             value = `$::${transformed || expResult.statement}::`;
