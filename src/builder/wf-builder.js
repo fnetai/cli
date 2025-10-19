@@ -429,10 +429,6 @@ class Builder {
       blockType = 'tryexcept';
       await tryExceptBlock.init(api);
     }
-    else if (await forBlock.hits(api)) {
-      blockType = 'for';
-      await forBlock.init(api);
-    }
     else if (await switchBlock.hits(api)) {
       blockType = 'switch';
       await switchBlock.init(api);
@@ -440,6 +436,10 @@ class Builder {
     else if (await ifBlock.hits(api)) {
       blockType = 'if';
       await ifBlock.init(api);
+    }
+    else if (await forBlock.hits(api)) {
+      blockType = 'for';
+      await forBlock.init(api);
     }
     else if (await retryBlock.hits(api)) {
       blockType = 'retry';
