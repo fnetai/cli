@@ -32,7 +32,7 @@ import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
 import fnetBpmnFromFlow, { generateBpmnModelsPerFlow } from './bpmn/index.js';
 import fnetConfig from '@fnet/config';
 import fnetParseImports from '@flownet/lib-parse-imports-js';
-import fnetExpression from '@fnet/expression';
+import { parseFlowExpression } from './expression/index.js';  // ← Flow-specific parser (build-time only)
 import fnetYaml from '@fnet/yaml';
 import chalk from 'chalk';
 import fnetListFiles from '@fnet/list-files';
@@ -1061,11 +1061,18 @@ class Builder {
   }
 
   async transformExpression(value) {
-    let temp = await this.transformValue(value);
-    // if(temp===value) return value;
-    temp = JSON.stringify(temp);
-    temp = this.replaceSpecialPattern(temp);
-    return temp;
+    try {
+      let temp = await this.transformValue(value);
+      // if(temp===value) return value;
+      temp = JSON.stringify(temp);
+      temp = this.replaceSpecialPattern(temp);
+      return temp;
+    } catch (error) {
+      console.error('❌ transformExpression error:', error.message);
+      console.error('   Input value:', value);
+      console.error('   Stack:', error.stack);
+      throw error;
+    }
   }
 
   async transformValue(value) {
@@ -1078,10 +1085,14 @@ class Builder {
       const keys = Object.keys(value);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        const exp = fnetExpression({ expression: key });
+        const exp = parseFlowExpression({ expression: key });
         if (exp) {
           if (exp.processor === 'e') {
-            const transformedValue = value[key].replace(/(\r\n|\n|\r)/g, "");
+            // Multiline normalization is now handled by @fnet/exp (default: true)
+            // Just use the value as-is
+            const transformedValue = typeof value[key] === 'string'
+              ? value[key]
+              : value[key];
             value[exp.statement] = `$::${transformedValue}::`;
             delete value[key];
           }
@@ -1093,9 +1104,20 @@ class Builder {
       }
     }
     else if (typeof value === 'string') {
-      const exp = fnetExpression({ expression: value });
-      if (exp) {
-        const { processor, statement } = exp;
+      // Use flow-specific parser with transform support
+      const expResult = parseFlowExpression({
+        expression: value,
+        transform: {
+          v: 'v.{stmt}',
+          for: 'c.for.{stmt}',
+          m: 'c.module?.{stmt}||flow.module?.{stmt}',
+          f: 'c.form.{stmt}'
+        }
+      });
+
+      if (expResult) {
+        const { processor, transformed } = expResult;
+
         switch (processor) {
           // @fnet/yaml reserved processors
           // s:: reserved for yaml setter
@@ -1103,19 +1125,15 @@ class Builder {
           // r:: reserved for yaml replacer
           // b:: reserved for yaml builder/blocks
           case 'v':
-            value = `$::v.${statement}::`;
+          case 'for':
+          case 'm':
+          case 'f':
+            // Use transformed value if available, otherwise use statement
+            value = `$::${transformed || expResult.statement}::`;
             break;
           case 'e':
-            value = `$::${statement}::`;
-            break;
-          case 'm':
-            value = `$::c.module?.${statement}||flow.module?.${statement}::`;
-            break;
-          case 'f':
-            value = `$::c.form.${statement}::`;
-            break;
-          case 'for':
-            value = `$::c.for.${statement}::`;
+            // For e:: processor, use transformed value (nested processors already transformed)
+            value = `$::${transformed || expResult.statement}::`;
             break;
         }
       }
@@ -1125,6 +1143,11 @@ class Builder {
   }
 
   replaceSpecialPattern(text) {
+    // Ensure text is a string
+    if (typeof text !== 'string') {
+      console.error('❌ replaceSpecialPattern received non-string:', typeof text, text);
+      return text;
+    }
     const pattern1 = /"\$::(.*?)::"/g;
     let temp = text.replace(pattern1, "$1");
     // remove new lines

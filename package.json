@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "files": [
     "dist",
     "template"
@@ -36,7 +36,6 @@
     "@fnet/auto-conda-env": "^0.2.1",
     "@fnet/config": "^0.2.29",
     "@fnet/dir-zipper": "^0.1.8",
-    "@fnet/expression": "^0.1.30",
     "@fnet/files-to-gcs": "^0.3.12",
     "@fnet/key-value-transformer": "^0.1.4",
     "@fnet/npm-list-versions": "^0.1.35",
@@ -87,6 +86,7 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
+    "peggy": "^5.0.6",
     "rollup": "^4.52.5"
   }
 }

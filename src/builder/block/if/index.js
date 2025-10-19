@@ -1,11 +1,11 @@
-import fnetExpression from '@fnet/expression';
+import { parseFlowExpression } from '../../expression/index.js';
 import switchBlock from '../switch/index.js';
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);
 
   // Check for if::expression syntax (OLD)
-  const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
+  const parsedKeys = keys.map(key => parseFlowExpression({ expression: key }));
   const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
   if (ifProcessors.length === 1) return true;
 
@@ -21,7 +21,7 @@ async function init(api) {
   const { node } = api;
 
   const keys = Object.keys(node.definition);
-  const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
+  const parsedKeys = keys.map(key => parseFlowExpression({ expression: key }));
 
   const blocks = [];
 

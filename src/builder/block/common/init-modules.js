@@ -1,5 +1,5 @@
 import fnetKvTransformer from '@fnet/key-value-transformer';
-import fnetExpression from '@fnet/expression';
+import { parseFlowExpression } from '../../expression/index.js';
 
 export default async function initModules({ node, initNode, extra = true }) {
 
@@ -30,7 +30,7 @@ export default async function initModules({ node, initNode, extra = true }) {
 
     const newOne = await fnetKvTransformer({
       data: node.definition, callback: (key, value, path) => {
-        const exp = fnetExpression({ expression: key });
+        const exp = parseFlowExpression({ expression: key });
         if (exp?.processor === 'm') {
           const newPath = path.slice(0, -1);
           newPath.push(exp.statement);
