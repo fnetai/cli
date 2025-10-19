@@ -36,19 +36,32 @@ export default function Block(context) {
       {% endif%}
 
       for await(const {{context.transform.for.value | safe}} of {{context.transform.for.in | safe}}){
-        c.for={ {{context.transform.for.value | safe}} };
+        // Create Proxy for closure-like variable resolution
+        // Local variable shadows parent, but parent scope accessible via Proxy fallback
+        const localForVar = { {{context.transform.for.value | safe}}: {{context.transform.for.value | safe}} };
+        const forProxy = new Proxy(localForVar, {
+          get(target, prop) {
+            // Check local scope first (shadowing)
+            if (prop in target) return target[prop];
+            // Fallback to parent scope
+            return c.for?.[prop];
+          }
+        });
+
+        // Create new context with updated for
+        const loopContext = { ...c, for: forProxy };
 
         {% if childs.length %}
-          let current= new {{childs[0].codeKey}}({ parent:_this, engine, flow, caller:c  });
+          let current= new {{childs[0].codeKey}}({ parent:_this, engine, flow, caller:loopContext  });
           let currentArgs=args;
 
           do {
-            
+
             {% if workflow.parent.context.atom.doc.features.print_runners %}
               console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
             {% endif %}
 
-            const nextBlock= typeof currentArgs==='undefined'? await current.run() 
+            const nextBlock= typeof currentArgs==='undefined'? await current.run()
               : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
 
             if(nextBlock?.type==='return') return resolve(nextBlock);
@@ -57,7 +70,7 @@ export default function Block(context) {
             if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
               return resolve(nextBlock);
 
-            current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, onError, error });
+            current=new nextBlock.toType({ parent:_this, engine, flow, caller:loopContext, onError, error });
             currentArgs=nextBlock.input;
             
           } while(true);

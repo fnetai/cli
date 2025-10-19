@@ -16,7 +16,19 @@ const form=null;
 {% endif %}
 
 {# closure #}
-const c={ caller, resolve, reject, args, get form(){return form||caller?.form}, get module(){return m||caller?.module} };
+const c={
+  caller,
+  resolve,
+  reject,
+  args,
+  get form(){return form||caller?.form},
+  get module(){return m||caller?.module},
+  get for(){
+    // Proxy pattern for nested loop variable resolution with closure semantics
+    // Inner loops shadow outer loops, but parent scope is accessible via fallback
+    return caller?.for || {};
+  }
+};
 
 {% if workflow.parent.context.atom.doc.features.print_steps %}
 console.log(new Date().toLocaleString(),'{{indexKey}}');
