@@ -1,5 +1,5 @@
 import fnetKvTransformer from '@fnet/key-value-transformer';
-import { parseFlowExpression } from '../../expression/index.js';
+import { getProcessor } from '../../expression/index.js';
 
 export default async function initModules({ node, initNode, extra = true }) {
 
@@ -30,16 +30,18 @@ export default async function initModules({ node, initNode, extra = true }) {
 
     const newOne = await fnetKvTransformer({
       data: node.definition, callback: (key, value, path) => {
-        const exp = parseFlowExpression({ expression: key });
-        if (exp?.processor === 'm') {
+        // Light version: Get processor and statement
+        const parsed = getProcessor(key, true);
+
+        if (parsed?.processor === 'm') {
           const newPath = path.slice(0, -1);
-          newPath.push(exp.statement);
+          newPath.push(parsed.statement);
           const name = newPath.join('_');
 
           extraModules.push({
             [name]: value
           });
-          return [exp.statement, `m::${name}`];
+          return [parsed.statement, `m::${name}`];
         }
         return [key, value];
       }

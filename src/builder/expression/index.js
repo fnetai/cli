@@ -12,6 +12,46 @@
 import { parse as grammarParse } from './grammar.js';
 
 /**
+ * Light version - Extract processor and statement
+ *
+ * Super fast, regex-only parser for when you only need the processor signal.
+ * Use this when you just need to check "does this key have a processor signal?"
+ *
+ * @param {string} expression - The expression to parse
+ * @param {boolean} [withStatement=false] - Return object with processor and statement
+ * @returns {string|object|null} - Processor name, or {processor, statement} object, or null
+ *
+ * @example
+ * getProcessor('m::headers')              // → 'm'
+ * getProcessor('m::headers', true)        // → { processor: 'm', statement: 'headers' }
+ * getProcessor('v::userId')               // → 'v'
+ * getProcessor('v::userId', true)         // → { processor: 'v', statement: 'userId' }
+ * getProcessor('e::x + y', true)          // → { processor: 'e', statement: 'x + y' }
+ * getProcessor('no-processor')            // → null
+ * getProcessor('no-processor', true)      // → null
+ */
+export function getProcessor(expression, withStatement = false) {
+  if (typeof expression !== 'string') return null;
+  const match = expression.match(/^([a-z][a-z0-9_-]*)::/);
+
+  if (!match) return null;
+
+  const processor = match[1];
+
+  if (!withStatement) {
+    return processor;
+  }
+
+  // Extract statement (everything after 'processor::')
+  const statement = expression.slice(expression.indexOf('::') + 2);
+
+  return {
+    processor,
+    statement
+  };
+}
+
+/**
  * Legacy regex-based parser (for backward compatibility)
  *
  * @param {Object} param0 - Contains the expression to be parsed and the current depth level.

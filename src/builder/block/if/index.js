@@ -1,12 +1,12 @@
-import { parseFlowExpression } from '../../expression/index.js';
+import { getProcessor } from '../../expression/index.js';
 import switchBlock from '../switch/index.js';
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);
 
   // Check for if::expression syntax (OLD)
-  const parsedKeys = keys.map(key => parseFlowExpression({ expression: key }));
-  const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
+  // Use light version - only need processor signal
+  const ifProcessors = keys.filter(key => getProcessor(key) === 'if');
   if (ifProcessors.length === 1) return true;
 
   // Check for if: {condition: ...} syntax (NEW)
@@ -21,22 +21,30 @@ async function init(api) {
   const { node } = api;
 
   const keys = Object.keys(node.definition);
-  const parsedKeys = keys.map(key => parseFlowExpression({ expression: key }));
 
   const blocks = [];
 
   // Handle if block
-  const ifProcessor = parsedKeys.find(key => key?.processor === 'if');
+  // Use light version - only need to find if:: key
+  const ifKey = keys.find(key => getProcessor(key) === 'if');
 
-  if (ifProcessor) {
+  if (ifKey) {
     // OLD SYNTAX: if::e::v.number > 100:
-    const ifDefinition = node.definition[ifProcessor.expression];
+    const ifDefinition = node.definition[ifKey];
+
+    // Get processor and statement
+    const parsed = getProcessor(ifKey, true);
+
     blocks.push({
       name: `${node.name}_if`,
       definition: ifDefinition,
-      processor: ifProcessor,
+      processor: {
+        expression: ifKey,
+        statement: parsed.statement,
+        processor: parsed.processor
+      },
     });
-    delete node.definition[ifProcessor.expression];
+    delete node.definition[ifKey];
   } else if (node.definition.if) {
     // NEW SYNTAX: if: { condition: e::v.number > 100, steps: [...] }
     const {condition, ...ifDef} = node.definition.if;
@@ -54,18 +62,26 @@ async function init(api) {
   }
 
   // Handle elseif blocks - OLD SYNTAX
-  const elseifProcessors = parsedKeys.filter(key => key?.processor === 'elseif');
+  const elseifKeys = keys.filter(key => getProcessor(key) === 'elseif');
   let elseIfIndex = 0;
 
-  for (const elseifProcessor of elseifProcessors) {
+  for (const elseifKey of elseifKeys) {
     // OLD SYNTAX: elseif::e::v.number > 10:
-    const elseifDefinition = node.definition[elseifProcessor.expression];
+    const elseifDefinition = node.definition[elseifKey];
+
+    // Get processor and statement
+    const parsed = getProcessor(elseifKey, true);
+
     blocks.push({
       name: `${node.name}_elseif_${elseIfIndex++}`,
       definition: elseifDefinition,
-      processor: elseifProcessor,
+      processor: {
+        expression: elseifKey,
+        statement: parsed.statement,
+        processor: parsed.processor
+      },
     });
-    delete node.definition[elseifProcessor.expression];
+    delete node.definition[elseifKey];
   }
 
   // Handle elseif blocks - NEW SYNTAX
