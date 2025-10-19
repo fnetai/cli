@@ -19,10 +19,10 @@ async function init({ node, initNode }) {
   // No steps property
   if (!node.definition.for.hasOwnProperty('steps')) {
     // Extract reserved properties using destructuring
-    const { value, in: inValue, ...child } = node.definition.for;
+    const { as, in: inValue, ...child } = node.definition.for;
     // Create self object with only the reserved properties
     const self = {};
-    if (value !== undefined) self.value = value;
+    if (as !== undefined) self.as = as;
     if (inValue !== undefined) self.in = inValue;
 
     node.definition.for = self;

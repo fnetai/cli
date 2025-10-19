@@ -35,10 +35,10 @@ export default function Block(context) {
         {% endif %}
       {% endif%}
 
-      for await(const {{context.transform.for.value | safe}} of {{context.transform.for.in | safe}}){
+      for await(const {{context.transform.for.as | safe}} of {{context.transform.for.in | safe}}){
         // Create Proxy for closure-like variable resolution
         // Local variable shadows parent, but parent scope accessible via Proxy fallback
-        const localForVar = { {{context.transform.for.value | safe}}: {{context.transform.for.value | safe}} };
+        const localForVar = { {{context.transform.for.as | safe}}: {{context.transform.for.as | safe}} };
         const forProxy = new Proxy(localForVar, {
           get(target, prop) {
             // Check local scope first (shadowing)
