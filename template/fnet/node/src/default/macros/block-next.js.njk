@@ -13,6 +13,7 @@ resolve ({
     fromClosure: c,
     toType:{{context.next.codeKey}},
     onError,
+    error,
     {% if context.transform.output %}
     input: {{context.transform.output | safe}},
     {% endif %}

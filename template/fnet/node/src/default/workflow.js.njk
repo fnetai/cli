@@ -96,10 +96,10 @@ export default class Workflow extends Object {
         if(nextBlock?.type==='return') return nextBlock;
         else if(nextBlock?.type!=='block') break;
 
-        if(nextBlock.toType.ParentTypeId!==this.constructor.TypeId) 
+        if(nextBlock.toType.ParentTypeId!==this.constructor.TypeId)
           throw new Error('Unknown situation');
-        
-        current=new nextBlock.toType({ parent:this, engine:this.engine, flow:this, caller:c });
+
+        current=new nextBlock.toType({ parent:this, engine:this.engine, flow:this, caller:c, onError:nextBlock.onError, error:nextBlock.error });
         currentArgs=nextBlock.input;
 
       } while(true);

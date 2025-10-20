@@ -55,20 +55,27 @@ export default function Block(context) {
       {% set strategy = context.transform.strategy | default('all') %}
       let results;
 
-      {% if strategy == 'race' %}
-        // Promise.race - first to complete wins
-        results = [await Promise.race(promises)];
-      {% elif strategy == 'any' %}
-        // Promise.any - first successful wins
-        results = [await Promise.any(promises)];
-      {% elif strategy == 'allsettled' %}
-        // Promise.allSettled - all complete, collect results
-        const settled = await Promise.allSettled(promises);
-        results = settled.map(r => r.status === 'fulfilled' ? r.value : null);
-      {% else %}
-        // Promise.all - all must succeed (default)
-        results = await Promise.all(promises);
-      {% endif %}
+      try {
+        {% if strategy == 'race' %}
+          // Promise.race - first to complete wins
+          results = [await Promise.race(promises)];
+        {% elif strategy == 'any' %}
+          // Promise.any - first successful wins
+          results = [await Promise.any(promises)];
+        {% elif strategy == 'allsettled' %}
+          // Promise.allSettled - all complete, collect results
+          const settled = await Promise.allSettled(promises);
+          results = settled.map(r => r.status === 'fulfilled' ? r.value : null);
+        {% else %}
+          // Promise.all - all must succeed (default)
+          results = await Promise.all(promises);
+        {% endif %}
+      } catch (err) {
+        if (onError) {
+          return onError(err);
+        }
+        throw err;
+      }
 
       // Check if any child returned or jumped
       for (const result of results) {

@@ -51,7 +51,14 @@ export default function Block(context) {
               console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
             {% endif %}
 
-            return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
+            try {
+              return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
+            } catch (err) {
+              if (onError) {
+                return onError(err);
+              }
+              throw err;
+            }
           }
       {% endfor%}
 

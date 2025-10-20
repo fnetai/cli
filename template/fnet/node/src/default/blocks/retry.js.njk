@@ -42,37 +42,44 @@ export default function Block(context){
       let lastError;
       let currentDelay = initialDelay;
 
-      for (let attempt = 1; attempt <= attempts; attempt++) {
-        try {
-          // Execute child block
-          await retryableBlock.run();
+      try {
+        for (let attempt = 1; attempt <= attempts; attempt++) {
+          try {
+            // Execute child block
+            await retryableBlock.run();
 
-          // Success! Break out of retry loop
-          break;
-        } catch (error) {
-          lastError = error;
+            // Success! Break out of retry loop
+            break;
+          } catch (error) {
+            lastError = error;
 
-          // Last attempt failed - throw error
-          if (attempt === attempts) {
-            throw new Error(`Retry failed after ${attempts} attempts: ${error.message}`);
-          }
+            // Last attempt failed - throw error
+            if (attempt === attempts) {
+              throw new Error(`Retry failed after ${attempts} attempts: ${error.message}`);
+            }
 
-          // Wait before retry
-          await new Promise(resolve => setTimeout(resolve, currentDelay));
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, currentDelay));
 
-          // Calculate next delay based on backoff strategy
-          if (backoff === 'exponential') {
-            currentDelay = currentDelay * 2;
-          } else if (backoff === 'linear') {
-            currentDelay = currentDelay + initialDelay;
-          }
-          // 'fixed' keeps currentDelay unchanged
+            // Calculate next delay based on backoff strategy
+            if (backoff === 'exponential') {
+              currentDelay = currentDelay * 2;
+            } else if (backoff === 'linear') {
+              currentDelay = currentDelay + initialDelay;
+            }
+            // 'fixed' keeps currentDelay unchanged
 
-          // Apply maxDelay cap if specified
-          if (maxDelay && currentDelay > maxDelay) {
-            currentDelay = maxDelay;
+            // Apply maxDelay cap if specified
+            if (maxDelay && currentDelay > maxDelay) {
+              currentDelay = maxDelay;
+            }
           }
         }
+      } catch (err) {
+        if (onError) {
+          return onError(err);
+        }
+        throw err;
       }
       {% endif %}
 
