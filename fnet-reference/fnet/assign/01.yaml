@@ -1,0 +1,17 @@
+$meta:
+  subject: assign
+  tags:
+    - primitive
+    - string
+  queries:
+    - How to assign a simple string value?
+    - Can I assign a primitive value?
+    - Show me the simplest assign example
+
+main:
+  steps:
+    - assign-string:
+        assign:
+          - message: Hello World!
+        return: v::message
+

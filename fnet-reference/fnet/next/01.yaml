@@ -1,0 +1,22 @@
+$meta:
+  subject: next
+  tags:
+    - sequential
+    - flow-control
+  queries:
+    - How to execute steps sequentially?
+    - What is next in flownet?
+    - Show me sequential step execution
+
+main:
+  steps:
+    - first-step:
+        assign:
+          - message: First step executed
+        next: second-step
+    
+    - second-step:
+        assign:
+          - result: Second step executed
+        return: v::result
+

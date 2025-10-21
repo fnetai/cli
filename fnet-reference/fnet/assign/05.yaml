@@ -1,0 +1,22 @@
+$meta:
+  subject: assign
+  tags:
+    - expression
+    - calculation
+  queries:
+    - How to assign an expression result?
+    - Can I assign calculated values?
+    - Show me expression assignment
+
+main:
+  steps:
+    - assign-expression:
+        assign:
+          - x: 10
+          - y: 20
+          - sum: e::v::x + v::y
+          - product: e::v::x * v::y
+        return:
+          sum: v::sum
+          product: v::product
+

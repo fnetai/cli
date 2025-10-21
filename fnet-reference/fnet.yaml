@@ -17,6 +17,16 @@ t::return-08::flows: g::file://./fnet/return/08.yaml
 t::return-09::flows: g::file://./fnet/return/09.yaml
 t::return-10::flows: g::file://./fnet/return/10.yaml
 
+t::assign-01::flows: g::file://./fnet/assign/01.yaml
+t::assign-02::flows: g::file://./fnet/assign/02.yaml
+t::assign-03::flows: g::file://./fnet/assign/03.yaml
+t::assign-04::flows: g::file://./fnet/assign/04.yaml
+t::assign-05::flows: g::file://./fnet/assign/05.yaml
+
+t::next-01::flows: g::file://./fnet/next/01.yaml
+t::next-02::flows: g::file://./fnet/next/02.yaml
+t::next-03::flows: g::file://./fnet/next/03.yaml
+
 commands:
   base:
     usage: frun base --category <category> --index <index>
@@ -51,3 +61,13 @@ commands:
   return-08: frun base --category return --index 08
   return-09: frun base --category return --index 09
   return-10: frun base --category return --index 10
+
+  assign-01: frun base --category assign --index 01
+  assign-02: frun base --category assign --index 02
+  assign-03: frun base --category assign --index 03
+  assign-04: frun base --category assign --index 04
+  assign-05: frun base --category assign --index 05
+
+  next-01: frun base --category next --index 01
+  next-02: frun base --category next --index 02
+  next-03: frun base --category next --index 03

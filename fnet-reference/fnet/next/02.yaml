@@ -1,0 +1,25 @@
+$meta:
+  subject: next
+  tags:
+    - sequential
+    - variable
+    - data-flow
+  queries:
+    - How to pass data between steps?
+    - Can I use variables from previous steps?
+    - Show me variable passing with next
+
+main:
+  steps:
+    - calculate:
+        assign:
+          - x: 10
+          - y: 20
+          - sum: e::v::x + v::y
+        next: display
+    
+    - display:
+        assign:
+          - message: e::`The sum is ${v::sum}`
+        return: v::message
+

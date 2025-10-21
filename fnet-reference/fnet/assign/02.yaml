@@ -1,0 +1,17 @@
+$meta:
+  subject: assign
+  tags:
+    - primitive
+    - number
+  queries:
+    - How to assign a number value?
+    - Can I assign numeric values?
+    - Show me number assignment
+
+main:
+  steps:
+    - assign-number:
+        assign:
+          - count: 42
+        return: v::count
+

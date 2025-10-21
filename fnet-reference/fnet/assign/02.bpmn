@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="definitions_0">
+  <bpmn:process id="process_0" name="main" isExecutable="true">
+    <bpmn:documentation>Workflow - main</bpmn:documentation>
+    <bpmn:startEvent id="node.0._start0">
+      <bpmn:outgoing>edge.0._start0_0.0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="node.0.0" name="assign-number">
+      <bpmn:incoming>edge.0._start0_0.0</bpmn:incoming>
+      <bpmn:outgoing>edge.0.0_0.0._inline_end</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="node.0.0._inline_end" name="">
+      <bpmn:incoming>edge.0.0_0.0._inline_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="edge.0._start0_0.0" sourceRef="node.0._start0" targetRef="node.0.0" />
+    <bpmn:sequenceFlow id="edge.0.0_0.0._inline_end" sourceRef="node.0.0" targetRef="node.0.0._inline_end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diagram_0">
+    <bpmndi:BPMNPlane id="plane_0" bpmnElement="process_0">
+      <bpmndi:BPMNShape id="shape.node.0._start0" bpmnElement="node.0._start0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="202" y="160" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.0" bpmnElement="node.0.0">
+        <dc:Bounds x="160" y="276" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.0._inline_end" bpmnElement="node.0.0._inline_end">
+        <dc:Bounds x="202" y="436" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge.node.0._start0_node.0.0" bpmnElement="edge.0._start0_0.0">
+        <di:waypoint x="220" y="196" />
+        <di:waypoint x="220" y="236" />
+        <di:waypoint x="220" y="276" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.0_node.0.0._inline_end" bpmnElement="edge.0.0_0.0._inline_end">
+        <di:waypoint x="220" y="356" />
+        <di:waypoint x="220" y="396" />
+        <di:waypoint x="220" y="436" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
