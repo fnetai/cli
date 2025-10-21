@@ -27,6 +27,14 @@ t::next-01::flows: g::file://./fnet/next/01.yaml
 t::next-02::flows: g::file://./fnet/next/02.yaml
 t::next-03::flows: g::file://./fnet/next/03.yaml
 
+t::if-01::flows: g::file://./fnet/if/01.yaml
+t::if-02::flows: g::file://./fnet/if/02.yaml
+t::if-03::flows: g::file://./fnet/if/03.yaml
+t::if-04::flows: g::file://./fnet/if/04.yaml
+t::if-05::flows: g::file://./fnet/if/05.yaml
+
+t::output-01::flows: g::file://./fnet/output/01.yaml
+
 commands:
   base:
     usage: frun base --category <category> --index <index>
@@ -51,6 +59,45 @@ commands:
       - frun return-09
       - frun return-10
 
+  return:
+    usage: frun return
+    steps:
+      - frun return-01
+      - frun return-02
+      - frun return-03
+      - frun return-04
+      - frun return-05
+      - frun return-06
+      - frun return-07
+      - frun return-08
+      - frun return-09
+      - frun return-10
+
+  assign:
+    usage: frun assign
+    steps:
+      - frun assign-01
+      - frun assign-02
+      - frun assign-03
+      - frun assign-04
+      - frun assign-05
+
+  next:
+    usage: frun next
+    steps:
+      - frun next-01
+      - frun next-02
+      - frun next-03
+
+  if:
+    usage: frun if
+    steps:
+      - frun if-01
+      - frun if-02
+      - frun if-03
+      - frun if-04
+      - frun if-05
+
   return-01: frun base --category return --index 01
   return-02: frun base --category return --index 02
   return-03: frun base --category return --index 03
@@ -71,3 +118,11 @@ commands:
   next-01: frun base --category next --index 01
   next-02: frun base --category next --index 02
   next-03: frun base --category next --index 03
+
+  if-01: frun base --category if --index 01
+  if-02: frun base --category if --index 02
+  if-03: frun base --category if --index 03
+  if-04: frun base --category if --index 04
+  if-05: frun base --category if --index 05
+
+  output-01: frun base --category output --index 01

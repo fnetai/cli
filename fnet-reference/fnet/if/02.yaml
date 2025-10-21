@@ -1,0 +1,29 @@
+$meta:
+  subject: if
+  tags:
+    - conditional
+    - if-else
+    - random
+  queries:
+    - How to use if/else?
+    - What is else branch?
+    - Show me if/else statement
+
+main:
+  steps:
+    - check-condition:
+        assign:
+          - isActive: e::Math.random() > 0.5
+
+    - check-active:
+        if::v::isActive:
+          next: success-step
+        else:
+          next: failure-step
+
+    - success-step:
+        return: Condition was true!
+
+    - failure-step:
+        return: Condition was false!
+

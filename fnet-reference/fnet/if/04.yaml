@@ -1,0 +1,44 @@
+$meta:
+  subject: if
+  tags:
+    - conditional
+    - multiple-elseif
+    - complex-conditions
+  queries:
+    - How to use multiple elseif conditions?
+    - Can I have many elseif branches?
+    - Show me if with multiple elseif
+
+main:
+  steps:
+    - check-condition:
+        assign:
+          - score: 82
+    
+    - check-grade:
+        if::e::v::score >= 90:
+          next: grade-a
+        elseif::e::v::score >= 80:
+          next: grade-b
+        elseif::e::v::score >= 70:
+          next: grade-c
+        elseif::e::v::score >= 60:
+          next: grade-d
+        else:
+          next: grade-f
+    
+    - grade-a:
+        return: Grade A - Excellent!
+    
+    - grade-b:
+        return: Grade B - Very Good!
+    
+    - grade-c:
+        return: Grade C - Good!
+    
+    - grade-d:
+        return: Grade D - Pass!
+    
+    - grade-f:
+        return: Grade F - Fail!
+

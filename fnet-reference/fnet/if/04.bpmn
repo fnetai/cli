@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="definitions_0">
+  <bpmn:process id="process_0" name="main" isExecutable="true">
+    <bpmn:documentation>Workflow - main</bpmn:documentation>
+    <bpmn:exclusiveGateway id="node.0._switch0">
+      <bpmn:incoming>edge.0.1_0._switch0</bpmn:incoming>
+      <bpmn:outgoing>edge.0._switch0_0.2</bpmn:outgoing>
+      <bpmn:outgoing>edge.0._switch0_0.3</bpmn:outgoing>
+      <bpmn:outgoing>edge.0._switch0_0.4</bpmn:outgoing>
+      <bpmn:outgoing>edge.0._switch0_0.5</bpmn:outgoing>
+      <bpmn:outgoing>edge.0._switch0_0.6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="node.0._start0">
+      <bpmn:outgoing>edge.0._start0_0.0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="node.0.0" name="check-condition">
+      <bpmn:incoming>edge.0._start0_0.0</bpmn:incoming>
+      <bpmn:outgoing>edge.0.0_0.1</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="node.0.1" name="check-grade">
+      <bpmn:incoming>edge.0.0_0.1</bpmn:incoming>
+      <bpmn:outgoing>edge.0.1_0._switch0</bpmn:outgoing>
+      <bpmn:endEvent id="node.0.1._end0" name="/main/grade-a">
+        <bpmn:incoming>edge.0.1._switch0_0.1._end0</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:exclusiveGateway id="node.0.1._switch0">
+        <bpmn:incoming>edge.0.1._start0_0.1._switch0</bpmn:incoming>
+        <bpmn:outgoing>edge.0.1._switch0_0.1._end0</bpmn:outgoing>
+        <bpmn:outgoing>edge.0.1._switch0_0.1.0</bpmn:outgoing>
+        <bpmn:outgoing>edge.0.1._switch0_0.1.1</bpmn:outgoing>
+        <bpmn:outgoing>edge.0.1._switch0_0.1.2</bpmn:outgoing>
+        <bpmn:outgoing>edge.0.1._switch0_0.1.3</bpmn:outgoing>
+        <bpmn:outgoing>edge.0.1._switch0_0.1.4</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:startEvent id="node.0.1._start0">
+        <bpmn:outgoing>edge.0.1._start0_0.1._switch0</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:task id="node.0.1.0" name="e::v::score &#62;= 90">
+        <bpmn:incoming>edge.0.1._switch0_0.1.0</bpmn:incoming>
+        <bpmn:outgoing>edge.0.1.0_0.1._end1</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:endEvent id="node.0.1._end5" name="/main/grade-f">
+        <bpmn:incoming>edge.0.1.4_0.1._end5</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="node.0.1._end4" name="/main/grade-d">
+        <bpmn:incoming>edge.0.1.3_0.1._end4</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="node.0.1._end3" name="/main/grade-c">
+        <bpmn:incoming>edge.0.1.2_0.1._end3</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="node.0.1._end2" name="/main/grade-b">
+        <bpmn:incoming>edge.0.1.1_0.1._end2</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="node.0.1._end1" name="/main/grade-a">
+        <bpmn:incoming>edge.0.1.0_0.1._end1</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:task id="node.0.1.1" name="e::v::score &#62;= 80">
+        <bpmn:incoming>edge.0.1._switch0_0.1.1</bpmn:incoming>
+        <bpmn:outgoing>edge.0.1.1_0.1._end2</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="node.0.1.2" name="e::v::score &#62;= 70">
+        <bpmn:incoming>edge.0.1._switch0_0.1.2</bpmn:incoming>
+        <bpmn:outgoing>edge.0.1.2_0.1._end3</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="node.0.1.3" name="e::v::score &#62;= 60">
+        <bpmn:incoming>edge.0.1._switch0_0.1.3</bpmn:incoming>
+        <bpmn:outgoing>edge.0.1.3_0.1._end4</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="node.0.1.4" name="default">
+        <bpmn:incoming>edge.0.1._switch0_0.1.4</bpmn:incoming>
+        <bpmn:outgoing>edge.0.1.4_0.1._end5</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="edge.0.1._switch0_0.1._end0" sourceRef="node.0.1._switch0" targetRef="node.0.1._end0" />
+      <bpmn:sequenceFlow id="edge.0.1._switch0_0.1.0" sourceRef="node.0.1._switch0" targetRef="node.0.1.0" />
+      <bpmn:sequenceFlow id="edge.0.1._switch0_0.1.1" sourceRef="node.0.1._switch0" targetRef="node.0.1.1" />
+      <bpmn:sequenceFlow id="edge.0.1._switch0_0.1.2" sourceRef="node.0.1._switch0" targetRef="node.0.1.2" />
+      <bpmn:sequenceFlow id="edge.0.1._switch0_0.1.3" sourceRef="node.0.1._switch0" targetRef="node.0.1.3" />
+      <bpmn:sequenceFlow id="edge.0.1._switch0_0.1.4" sourceRef="node.0.1._switch0" targetRef="node.0.1.4" />
+      <bpmn:sequenceFlow id="edge.0.1._start0_0.1._switch0" sourceRef="node.0.1._start0" targetRef="node.0.1._switch0" />
+      <bpmn:sequenceFlow id="edge.0.1.0_0.1._end1" sourceRef="node.0.1.0" targetRef="node.0.1._end1" />
+      <bpmn:sequenceFlow id="edge.0.1.1_0.1._end2" sourceRef="node.0.1.1" targetRef="node.0.1._end2" />
+      <bpmn:sequenceFlow id="edge.0.1.2_0.1._end3" sourceRef="node.0.1.2" targetRef="node.0.1._end3" />
+      <bpmn:sequenceFlow id="edge.0.1.3_0.1._end4" sourceRef="node.0.1.3" targetRef="node.0.1._end4" />
+      <bpmn:sequenceFlow id="edge.0.1.4_0.1._end5" sourceRef="node.0.1.4" targetRef="node.0.1._end5" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="node.0.2" name="grade-a">
+      <bpmn:incoming>edge.0._switch0_0.2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="node.0.3" name="grade-b">
+      <bpmn:incoming>edge.0._switch0_0.3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="node.0.4" name="grade-c">
+      <bpmn:incoming>edge.0._switch0_0.4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="node.0.5" name="grade-d">
+      <bpmn:incoming>edge.0._switch0_0.5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="node.0.6" name="grade-f">
+      <bpmn:incoming>edge.0._switch0_0.6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="edge.0._switch0_0.2" sourceRef="node.0._switch0" targetRef="node.0.2" />
+    <bpmn:sequenceFlow id="edge.0._switch0_0.3" sourceRef="node.0._switch0" targetRef="node.0.3" />
+    <bpmn:sequenceFlow id="edge.0._switch0_0.4" sourceRef="node.0._switch0" targetRef="node.0.4" />
+    <bpmn:sequenceFlow id="edge.0._switch0_0.5" sourceRef="node.0._switch0" targetRef="node.0.5" />
+    <bpmn:sequenceFlow id="edge.0._switch0_0.6" sourceRef="node.0._switch0" targetRef="node.0.6" />
+    <bpmn:sequenceFlow id="edge.0._start0_0.0" sourceRef="node.0._start0" targetRef="node.0.0" />
+    <bpmn:sequenceFlow id="edge.0.0_0.1" sourceRef="node.0.0" targetRef="node.0.1" />
+    <bpmn:sequenceFlow id="edge.0.1_0._switch0" sourceRef="node.0.1" targetRef="node.0._switch0" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diagram_0">
+    <bpmndi:BPMNPlane id="plane_0" bpmnElement="process_0">
+      <bpmndi:BPMNShape id="shape.node.0._switch0" bpmnElement="node.0._switch0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="472" y="596" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0._start0" bpmnElement="node.0._start0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="472" y="160" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.0" bpmnElement="node.0.0">
+        <dc:Bounds x="430" y="276" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1" bpmnElement="node.0.1">
+        <dc:Bounds x="430" y="436" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.2" bpmnElement="node.0.2">
+        <dc:Bounds x="160" y="712" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.3" bpmnElement="node.0.3">
+        <dc:Bounds x="316" y="712" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.4" bpmnElement="node.0.4">
+        <dc:Bounds x="472" y="712" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.5" bpmnElement="node.0.5">
+        <dc:Bounds x="628" y="712" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.6" bpmnElement="node.0.6">
+        <dc:Bounds x="784" y="712" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge.node.0._switch0_node.0.2" bpmnElement="edge.0._switch0_0.2">
+        <di:waypoint x="472" y="617.3461538461538" />
+        <di:waypoint x="178" y="672" />
+        <di:waypoint x="178" y="712" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0._switch0_node.0.3" bpmnElement="edge.0._switch0_0.3">
+        <di:waypoint x="472" y="620.6923076923076" />
+        <di:waypoint x="334" y="672" />
+        <di:waypoint x="334" y="712" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0._switch0_node.0.4" bpmnElement="edge.0._switch0_0.4">
+        <di:waypoint x="490" y="632" />
+        <di:waypoint x="490" y="672" />
+        <di:waypoint x="490" y="712" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0._switch0_node.0.5" bpmnElement="edge.0._switch0_0.5">
+        <di:waypoint x="508" y="620.6923076923076" />
+        <di:waypoint x="646" y="672" />
+        <di:waypoint x="646" y="712" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0._switch0_node.0.6" bpmnElement="edge.0._switch0_0.6">
+        <di:waypoint x="508" y="617.3461538461538" />
+        <di:waypoint x="802" y="672" />
+        <di:waypoint x="802" y="712" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0._start0_node.0.0" bpmnElement="edge.0._start0_0.0">
+        <di:waypoint x="490" y="196" />
+        <di:waypoint x="490" y="236" />
+        <di:waypoint x="490" y="276" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.0_node.0.1" bpmnElement="edge.0.0_0.1">
+        <di:waypoint x="490" y="356" />
+        <di:waypoint x="490" y="396" />
+        <di:waypoint x="490" y="436" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1_node.0._switch0" bpmnElement="edge.0.1_0._switch0">
+        <di:waypoint x="490" y="516" />
+        <di:waypoint x="490" y="556" />
+        <di:waypoint x="490" y="596" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="diagram_0.1">
+    <bpmndi:BPMNPlane id="plane_0.1" bpmnElement="node.0.1">
+      <bpmndi:BPMNShape id="shape.node.0.1._end0" bpmnElement="node.0.1._end0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="160" y="414" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._switch0" bpmnElement="node.0.1._switch0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="718" y="276" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._start0" bpmnElement="node.0.1._start0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="718" y="160" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1.0" bpmnElement="node.0.1.0">
+        <dc:Bounds x="316" y="392" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._end5" bpmnElement="node.0.1._end5" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="1318" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._end4" bpmnElement="node.0.1._end4" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="1078" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._end3" bpmnElement="node.0.1._end3" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="838" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._end2" bpmnElement="node.0.1._end2" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="598" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1._end1" bpmnElement="node.0.1._end1" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="358" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1.1" bpmnElement="node.0.1.1">
+        <dc:Bounds x="556" y="392" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1.2" bpmnElement="node.0.1.2">
+        <dc:Bounds x="796" y="392" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1.3" bpmnElement="node.0.1.3">
+        <dc:Bounds x="1036" y="392" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.1.4" bpmnElement="node.0.1.4">
+        <dc:Bounds x="1276" y="392" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge.node.0.1._switch0_node.0.1._end0" bpmnElement="edge.0.1._switch0_0.1._end0">
+        <di:waypoint x="718" y="295.8709677419355" />
+        <di:waypoint x="178" y="352" />
+        <di:waypoint x="178" y="414" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1._switch0_node.0.1.0" bpmnElement="edge.0.1._switch0_0.1.0">
+        <di:waypoint x="718" y="296.9" />
+        <di:waypoint x="376" y="352" />
+        <di:waypoint x="376" y="392" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1._switch0_node.0.1.1" bpmnElement="edge.0.1._switch0_0.1.1">
+        <di:waypoint x="718" y="302.7" />
+        <di:waypoint x="616" y="352" />
+        <di:waypoint x="616" y="392" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1._switch0_node.0.1.2" bpmnElement="edge.0.1._switch0_0.1.2">
+        <di:waypoint x="754" y="302.7" />
+        <di:waypoint x="856" y="352" />
+        <di:waypoint x="856" y="392" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1._switch0_node.0.1.3" bpmnElement="edge.0.1._switch0_0.1.3">
+        <di:waypoint x="754" y="296.9" />
+        <di:waypoint x="1096" y="352" />
+        <di:waypoint x="1096" y="392" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1._switch0_node.0.1.4" bpmnElement="edge.0.1._switch0_0.1.4">
+        <di:waypoint x="754" y="295.74" />
+        <di:waypoint x="1336" y="352" />
+        <di:waypoint x="1336" y="392" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1._start0_node.0.1._switch0" bpmnElement="edge.0.1._start0_0.1._switch0">
+        <di:waypoint x="736" y="196" />
+        <di:waypoint x="736" y="236" />
+        <di:waypoint x="736" y="276" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1.0_node.0.1._end1" bpmnElement="edge.0.1.0_0.1._end1">
+        <di:waypoint x="376" y="472" />
+        <di:waypoint x="376" y="512" />
+        <di:waypoint x="376" y="552" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1.1_node.0.1._end2" bpmnElement="edge.0.1.1_0.1._end2">
+        <di:waypoint x="616" y="472" />
+        <di:waypoint x="616" y="512" />
+        <di:waypoint x="616" y="552" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1.2_node.0.1._end3" bpmnElement="edge.0.1.2_0.1._end3">
+        <di:waypoint x="856" y="472" />
+        <di:waypoint x="856" y="512" />
+        <di:waypoint x="856" y="552" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1.3_node.0.1._end4" bpmnElement="edge.0.1.3_0.1._end4">
+        <di:waypoint x="1096" y="472" />
+        <di:waypoint x="1096" y="512" />
+        <di:waypoint x="1096" y="552" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.1.4_node.0.1._end5" bpmnElement="edge.0.1.4_0.1._end5">
+        <di:waypoint x="1336" y="472" />
+        <di:waypoint x="1336" y="512" />
+        <di:waypoint x="1336" y="552" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
