@@ -40,6 +40,7 @@ main:
           value: e::v::value * 2
           category: v::category
           bonus: 50
+        next: final-result
     
     - low-value:
         assign:
@@ -48,10 +49,10 @@ main:
           value: e::v::value * 1.5
           category: v::category
           bonus: 10
+        next: final-result
     
     - final-result:
         return:
           message: e::`Processing ${input.category} order`
           total: e::input.value + input.bonus
           details: e::input
-

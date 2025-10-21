@@ -75,7 +75,8 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
   await resolveTypeCommon({ node });
 
-  resolveNextBlock({ node });
+  if (!node.hasDefaultCondition)
+    resolveNextBlock({ node });
 }
 
 export default {
