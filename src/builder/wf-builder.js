@@ -355,9 +355,7 @@ class Builder {
     const reservedKeys = ['$meta'];
     const workflowKeys = Object.keys(workflow).filter(w => !reservedKeys.includes(w));
 
-    if (isLogEnabled('tree')) {
-      treeLogger.info('🌳 Creating root node', { depth: 0 });
-    }
+    if (isLogEnabled('tree')) treeLogger.info('🌳 Creating root node');
 
     const root = {
       definition: workflow,
@@ -376,13 +374,7 @@ class Builder {
     };
 
     workflowKeys.forEach(flowName => {
-      if (isLogEnabled('tree')) {
-        treeLogger.info(`📦 Creating ${flowName === 'main' ? 'workflow' : 'subworkflow'}: ${flowName}`, {
-          depth: 1,
-          index: root.childs.length,
-          type: flowName === 'main' ? 'workflow' : 'subworkflow'
-        });
-      }
+      if (isLogEnabled('tree')) treeLogger.info(`📦 Creating ${flowName === 'main' ? 'workflow' : 'subworkflow'}: ${flowName}`);
 
       const node = {
         name: flowName,
@@ -400,18 +392,11 @@ class Builder {
     });
 
     for await (const node of root.childs) {
-      if (isLogEnabled('tree')) {
-        treeLogger.info(`🔧 Initializing node: ${node.name}`, { depth: node.depth });
-      }
+      if (isLogEnabled('tree')) treeLogger.info(`🔧 Initializing node: ${node.name}`);
       await this.initNode({ node });
     }
 
-    if (isLogEnabled('tree')) {
-      treeLogger.info('✅ Root node tree created', {
-        depth: 0,
-        totalFlows: root.childs.length
-      });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`✅ Root node tree created (${root.childs.length} flows)`);
 
     return root;
   }
@@ -516,13 +501,8 @@ class Builder {
     else throw new Error('Undefined step type.');
 
     if (isLogEnabled('tree')) {
-      treeLogger.info(`  ├─ ${blockType}: ${node.name}`, {
-        depth: node.depth,
-        index: node.index,
-        type: blockType,
-        hasChilds: node.childs?.length > 0,
-        childCount: node.childs?.length || 0
-      });
+      const childInfo = node.childs?.length > 0 ? ` (${node.childs.length} childs)` : '';
+      treeLogger.info(`  ├─ ${blockType}: ${node.name}${childInfo}`);
     }
   }
 

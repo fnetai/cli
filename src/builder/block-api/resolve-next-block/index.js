@@ -4,42 +4,24 @@ export default function resolveNextBlock({ node }) {
   const definition = node.definition;
 
   if (node.hasReturn) {
-    if (isLogEnabled('tree')) {
-      treeLogger.info(`    └─ RETURN (no next)`, {
-        depth: node.depth + 1,
-        node: node.indexKey
-      });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`    └─ RETURN (no next): ${node.indexKey}`);
     return;
   }
 
-  // console.log(node.indexKey,node.hasModules,node.module, definition.next);
-
   if (definition.next === 'end') {
-    if (isLogEnabled('tree')) {
-      treeLogger.info(`    └─ EXPLICIT END`, { depth: node.depth + 1, node: node.indexKey });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`    └─ EXPLICIT END: ${node.indexKey}`);
   }
   else if (definition.next === 'stop') {
-    if (isLogEnabled('tree')) {
-      treeLogger.info(`    └─ EXPLICIT STOP`, { depth: node.depth + 1, node: node.indexKey });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`    └─ EXPLICIT STOP: ${node.indexKey}`);
   }
   else if (definition.next === 'none') {
-    if (isLogEnabled('tree')) {
-      treeLogger.info(`    └─ EXPLICIT NONE`, { depth: node.depth + 1, node: node.indexKey });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`    └─ EXPLICIT NONE: ${node.indexKey}`);
   }
   else if (definition.next) {
 
     // FIND NEXT BLOCK BY NAME
     // TRY SIBLINGS UNTIL ROOT
-    if (isLogEnabled('tree')) {
-      treeLogger.info(`    🔍 EXPLICIT NEXT: "${definition.next}" (searching...)`, {
-        depth: node.depth + 1,
-        from: node.indexKey
-      });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`    🔍 EXPLICIT NEXT: "${definition.next}" from ${node.indexKey}`);
 
     let current = node.parent;
     while (current.parent) {
@@ -47,44 +29,26 @@ export default function resolveNextBlock({ node }) {
 
       if (found) {
         node.context.next = found;
-        if (isLogEnabled('tree')) {
-          treeLogger.info(`    └─ ✅ FOUND: ${found.indexKey}`, {
-            depth: node.depth + 1,
-            nextNode: found.indexKey
-          });
-        }
+        if (isLogEnabled('tree')) treeLogger.info(`    └─ ✅ FOUND: ${found.indexKey}`);
         break;
       }
 
       current = current.parent;
     }
 
-    if (!node.context.next && isLogEnabled('tree')) {
-      treeLogger.warn(`    └─ ⚠️  NOT FOUND: "${definition.next}"`, {
-        depth: node.depth + 1
-      });
-    }
+    if (!node.context.next && isLogEnabled('tree')) treeLogger.warn(`    └─ ⚠️  NOT FOUND: "${definition.next}"`);
   }
   else {
 
     // AUTO NEXT BLOCK IS DISABLED FOR MODULE ROOT
     if (node.module === true) {
-      if (isLogEnabled('tree')) {
-        treeLogger.info(`    └─ MODULE ROOT (no auto next)`, {
-          depth: node.depth + 1,
-          node: node.indexKey
-        });
-      }
+      if (isLogEnabled('tree')) treeLogger.info(`    └─ MODULE ROOT (no auto next): ${node.indexKey}`);
       return;
     }
 
     // AUTO FINDING NEXT BLOCK
-    if (isLogEnabled('tree')) {
-      treeLogger.info(`    🐜 AUTO NEXT (karınca yürüyüşü başlıyor...)`, {
-        depth: node.depth + 1,
-        from: node.indexKey
-      });
-    }
+    if (isLogEnabled('tree')) treeLogger.info(`    🐜 AUTO NEXT from ${node.indexKey}`);
+
 
     let parent = node.parent;
     let targetIndex = node.index + 1;
@@ -93,15 +57,9 @@ export default function resolveNextBlock({ node }) {
     while (parent.parent) {
       step++;
 
-      // if (parent.module === true) break;
-
       // NEITHER JUMP TO PARENT NOR SIBLING ENABLED
       if (parent.block_child_auto_jump_to_parent && parent.block_child_auto_jump_to_sibling) {
-        if (isLogEnabled('tree')) {
-          treeLogger.info(`      ${step}. ⛔ Both jumps disabled at ${parent.indexKey}`, {
-            depth: node.depth + 2
-          });
-        }
+        if (isLogEnabled('tree')) treeLogger.info(`      ${step}. ⛔ Both jumps disabled at ${parent.indexKey}`);
         break;
       }
       else if (!Reflect.has(parent, 'block_child_auto_jump_to_parent') && !Reflect.has(parent, 'block_child_auto_jump_to_sibling')) {
@@ -110,21 +68,11 @@ export default function resolveNextBlock({ node }) {
         if (found) {
           // JUMP TO SIBLING
           node.context.next = found;
-          if (isLogEnabled('tree')) {
-            treeLogger.info(`      ${step}. ✅ SIBLING FOUND: ${found.indexKey}`, {
-              depth: node.depth + 2,
-              nextNode: found.indexKey
-            });
-          }
+          if (isLogEnabled('tree')) treeLogger.info(`      ${step}. ✅ SIBLING FOUND: ${found.indexKey}`);
           break;
         } else {
           // JUMP TO PARENT
-          if (isLogEnabled('tree')) {
-            treeLogger.info(`      ${step}. ⬆️  No sibling, climbing to parent: ${parent.parent?.indexKey}`, {
-              depth: node.depth + 2,
-              targetIndex
-            });
-          }
+          if (isLogEnabled('tree')) treeLogger.info(`      ${step}. ⬆️  No sibling, climbing to parent: ${parent.parent?.indexKey}`);
           targetIndex = parent.index + 1;
           parent = parent.parent;
           continue;
@@ -136,29 +84,16 @@ export default function resolveNextBlock({ node }) {
         const found = parent.childs.find(w => w.index === targetIndex);
         if (found) {
           node.context.next = found;
-          if (isLogEnabled('tree')) {
-            treeLogger.info(`      ${step}. ✅ SIBLING FOUND (parent jump disabled): ${found.indexKey}`, {
-              depth: node.depth + 2,
-              nextNode: found.indexKey
-            });
-          }
+          if (isLogEnabled('tree')) treeLogger.info(`      ${step}. ✅ SIBLING FOUND (parent jump disabled): ${found.indexKey}`);
         } else {
-          if (isLogEnabled('tree')) {
-            treeLogger.info(`      ${step}. ⛔ No sibling, parent jump disabled`, {
-              depth: node.depth + 2
-            });
-          }
+          if (isLogEnabled('tree')) treeLogger.info(`      ${step}. ⛔ No sibling, parent jump disabled`);
         }
         break;
       }
       else if (!parent.block_child_auto_jump_to_parent) {
         // JUMP TO PARENT ENABLED
         // SIBLING DISABLED
-        if (isLogEnabled('tree')) {
-          treeLogger.info(`      ${step}. ⬆️  Sibling disabled, climbing to parent: ${parent.parent?.indexKey}`, {
-            depth: node.depth + 2
-          });
-        }
+        if (isLogEnabled('tree')) treeLogger.info(`      ${step}. ⬆️  Sibling disabled, climbing to parent: ${parent.parent?.indexKey}`);
         targetIndex = parent.index + 1;
         parent = parent.parent;
         continue;
@@ -166,16 +101,9 @@ export default function resolveNextBlock({ node }) {
     }
 
     if (node.context.next && isLogEnabled('tree')) {
-      treeLogger.info(`    └─ 🎯 AUTO NEXT RESOLVED: ${node.context.next.indexKey}`, {
-        depth: node.depth + 1,
-        steps: step,
-        nextNode: node.context.next.indexKey
-      });
+      treeLogger.info(`    └─ 🎯 AUTO NEXT RESOLVED: ${node.context.next.indexKey} (${step} steps)`);
     } else if (isLogEnabled('tree')) {
-      treeLogger.info(`    └─ ⚠️  NO NEXT FOUND (end of flow)`, {
-        depth: node.depth + 1,
-        steps: step
-      });
+      treeLogger.info(`    └─ ⚠️  NO NEXT FOUND (end of flow, ${step} steps)`);
     }
   }
 }

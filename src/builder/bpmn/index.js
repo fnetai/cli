@@ -45,13 +45,7 @@ function initNodes(context) {
 
       inlineEndEvents.push(inlineEndEvent);
 
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  🏁 INLINE RETURN → EndEvent: ${inlineEndEvent.indexKey}`, {
-          parentNode: tempNode.indexKey,
-          nodeType: tempNode.type,
-          hasReturn: true
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  🏁 INLINE RETURN → EndEvent: ${inlineEndEvent.indexKey} (parent: ${tempNode.indexKey})`);
     }
 
     tempNode.childs.forEach(child => collectInlineEndEvents(child));
@@ -172,43 +166,19 @@ function getBpmnType(node) {
 
     if (isSubworkflow) {
       bpmnType = "bpmn:CallActivity";  // ← Subworkflow = CallActivity (chip!)
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  📦 CALL → CallActivity (subworkflow): ${node.indexKey}`, {
-          nodeType: node.type,
-          bpmnType,
-          calledElement: node.context?.lib?.name || 'unknown',
-          isChip: true
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  📦 CALL → CallActivity (subworkflow): ${node.indexKey} (${node.context?.lib?.name || 'unknown'})`);
     } else {
       bpmnType = "bpmn:ServiceTask";  // ← External function = ServiceTask
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  📞 CALL → ServiceTask (external): ${node.indexKey}`, {
-          nodeType: node.type,
-          bpmnType,
-          target: node.context?.lib?.name || 'unknown',
-          isChip: false
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  📞 CALL → ServiceTask (external): ${node.indexKey} (${node.context?.lib?.name || 'unknown'})`);
     }
   }
   else if (node.type === 'form') {
     bpmnType = "bpmn:UserTask";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  📝 FORM → UserTask: ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType
-      });
-    }
+    if (isLogEnabled('bpmn')) bpmnLogger.info(`  📝 FORM → UserTask: ${node.indexKey}`);
   }
   else if (node.type === 'return') {
     bpmnType = "bpmn:EndEvent";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  🏁 RETURN → EndEvent: ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType
-      });
-    }
+    if (isLogEnabled('bpmn')) bpmnLogger.info(`  🏁 RETURN → EndEvent: ${node.indexKey}`);
   }
   else if (node.type === 'raise') {
     // Context-aware mapping: IntermediateThrowEvent inside try, EndEvent outside
@@ -232,62 +202,27 @@ function getBpmnType(node) {
 
     if (isInsideTry) {
       bpmnType = "bpmn:IntermediateThrowEvent";  // ← Inside try block
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  ⚡ RAISE → IntermediateThrowEvent (inside try): ${node.indexKey}`, {
-          nodeType: node.type,
-          bpmnType,
-          nodeName: node.name,
-          parent: node.parent?.indexKey
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  ⚡ RAISE → IntermediateThrowEvent (inside try): ${node.indexKey}`);
     } else {
       bpmnType = "bpmn:EndEvent";  // ← Outside try block
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  ⚠️ RAISE → EndEvent (error): ${node.indexKey}`, {
-          nodeType: node.type,
-          bpmnType
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  ⚠️ RAISE → EndEvent (error): ${node.indexKey}`);
     }
   }
   else if (node.type === 'pipeline') {
     bpmnType = "bpmn:ServiceTask";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  🔧 PIPELINE → ServiceTask (external binary): ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType,
-        binary: node.context?.binaryName || 'unknown'
-      });
-    }
+    if (isLogEnabled('bpmn')) bpmnLogger.info(`  🔧 PIPELINE → ServiceTask (external binary): ${node.indexKey} (${node.context?.binaryName || 'unknown'})`);
   }
   else if (node.type === 'http') {
     bpmnType = "bpmn:ServiceTask";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  🌐 HTTP → ServiceTask (external API): ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType,
-        method: node.context?.http?.method || 'GET',
-        url: node.context?.http?.url || 'unknown'
-      });
-    }
+    if (isLogEnabled('bpmn')) bpmnLogger.info(`  🌐 HTTP → ServiceTask (external API): ${node.indexKey} (${node.context?.http?.method || 'GET'} ${node.context?.http?.url || 'unknown'})`);
   }
   else if (node.type === 'assign' || node.type === 'new') {
     bpmnType = "bpmn:ScriptTask";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  📜 ${node.type.toUpperCase()} → ScriptTask: ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType
-      });
-    }
+    if (isLogEnabled('bpmn')) bpmnLogger.info(`  📜 ${node.type.toUpperCase()} → ScriptTask: ${node.indexKey}`);
   }
   else {
     bpmnType = "bpmn:Task";
-    if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  📋 ${node.type.toUpperCase()} → Task: ${node.indexKey}`, {
-        nodeType: node.type,
-        bpmnType
-      });
-    }
+    if (isLogEnabled('bpmn')) bpmnLogger.info(`  📋 ${node.type.toUpperCase()} → Task: ${node.indexKey}`);
   }
 
   return bpmnType;
@@ -328,12 +263,7 @@ function createVirtualNodes(context) {
       // Add loop marker for 'for' step type
       if (node.type === 'for') {
         node.bpmn.loopCharacteristics = true;  // Will be converted to StandardLoopCharacteristics
-        if (isLogEnabled('bpmn')) {
-          bpmnLogger.info(`  🔁 FOR → SubProcess + Loop Marker`, {
-            subprocess: node.indexKey,
-            loopType: 'StandardLoopCharacteristics'
-          });
-        }
+        if (isLogEnabled('bpmn')) bpmnLogger.info(`  🔁 FOR → SubProcess + Loop Marker: ${node.indexKey}`);
       }
 
       // If try block contains only a raise step (single-step try block),
@@ -349,13 +279,7 @@ function createVirtualNodes(context) {
           definitions: [{ type: "bpmn:ErrorEventDefinition" }]
         });
 
-        if (isLogEnabled('bpmn')) {
-          bpmnLogger.info(`  ⚡ Created virtual IntermediateThrowEvent for single-step try block`, {
-            tryNode: node.indexKey,
-            virtualNode: vNode.indexKey,
-            bpmnType: vNode.bpmn.type
-          });
-        }
+        if (isLogEnabled('bpmn')) bpmnLogger.info(`  ⚡ Created virtual IntermediateThrowEvent for single-step try block: ${node.indexKey}`);
       }
     }
 
@@ -383,14 +307,7 @@ function createVirtualNodes(context) {
           const vNode = createVirtualNode({ location: node.childs.indexOf(exceptNode), ...context, parent: node, bpmnType: "bpmn:BoundaryEvent", type: "boundary", attrs: { attachedToRef: tryNode }, definitions: [{ type: "bpmn:ErrorEventDefinition" }] });
           vNode.bpmn.edges = [{ from: vNode.indexKey, to: exceptNode.indexKey, type: "bpmn:SequenceFlow" }];
 
-          if (isLogEnabled('bpmn')) {
-            bpmnLogger.info(`  ⚡ TRY-EXCEPT → BoundaryEvent`, {
-              subprocess: node.indexKey,
-              tryNode: tryNode.indexKey,
-              exceptNode: exceptNode.indexKey,
-              boundaryEvent: vNode.indexKey
-            });
-          }
+          if (isLogEnabled('bpmn')) bpmnLogger.info(`  ⚡ TRY-EXCEPT → BoundaryEvent: ${node.indexKey} (try: ${tryNode.indexKey}, except: ${exceptNode.indexKey})`);
         });
       }
 
@@ -421,14 +338,7 @@ function createVirtualNodes(context) {
           // Connect timer start to child
           vStartNode.bpmn.edges = [{ from: vStartNode.indexKey, to: scheduledChild.indexKey, type: "bpmn:SequenceFlow" }];
 
-          if (isLogEnabled('bpmn')) {
-            bpmnLogger.info(`  ⏰ SCHEDULE → SubProcess + TimerStartEvent`, {
-              subprocess: node.indexKey,
-              timerEvent: vStartNode.indexKey,
-              child: scheduledChild.indexKey,
-              cron: node.context?.cron
-            });
-          }
+          if (isLogEnabled('bpmn')) bpmnLogger.info(`  ⏰ SCHEDULE → SubProcess + TimerStartEvent: ${node.indexKey} (cron: ${node.context?.cron})`);
         }
       }
 
@@ -436,12 +346,7 @@ function createVirtualNodes(context) {
         // Special handling for schedule step type - skip normal start event (timer start already created)
         if (node.type === 'schedule') {
           // Timer StartEvent already created above, no need for normal StartEvent
-          if (isLogEnabled('bpmn')) {
-            bpmnLogger.info(`  ⏰ SCHEDULE → Skipping normal StartEvent (using TimerStartEvent)`, {
-              subprocess: node.indexKey,
-              timerEvent: 'already created'
-            });
-          }
+          if (isLogEnabled('bpmn')) bpmnLogger.info(`  ⏰ SCHEDULE → Skipping normal StartEvent (using TimerStartEvent): ${node.indexKey}`);
         }
         // Special handling for retry step type - use normal start with loop characteristics
         else if (node.type === 'retry') {
@@ -449,13 +354,7 @@ function createVirtualNodes(context) {
           const vStartNode = createVirtualNode({ ...context, parent: node, bpmnType: "bpmn:StartEvent", type: "start" });
           vStartNode.bpmn.edges.push({ from: vStartNode.indexKey, to: firstNode.indexKey, type: "bpmn:SequenceFlow" });
 
-          if (isLogEnabled('bpmn')) {
-            bpmnLogger.info(`  🔁 RETRY → SubProcess with loop characteristics`, {
-              subprocess: node.indexKey,
-              attempts: node.context?.attempts,
-              backoff: node.context?.backoff
-            });
-          }
+          if (isLogEnabled('bpmn')) bpmnLogger.info(`  🔁 RETRY → SubProcess with loop characteristics: ${node.indexKey} (attempts: ${node.context?.attempts})`);
         }
         // Special handling for parallel step type
         else if (node.type === 'parallel') {
@@ -481,13 +380,7 @@ function createVirtualNodes(context) {
           // Join → End
           vJoinNode.bpmn.edges = [{ from: vJoinNode.indexKey, to: vEndNode.indexKey, type: "bpmn:SequenceFlow" }];
 
-          if (isLogEnabled('bpmn')) {
-            bpmnLogger.info(`  🔀 PARALLEL → Fork/Join Gateways`, {
-              subprocess: node.indexKey,
-              childCount: parallelChildren.length,
-              pattern: 'Start → Fork → [Tasks] → Join → End'
-            });
-          }
+          if (isLogEnabled('bpmn')) bpmnLogger.info(`  🔀 PARALLEL → Fork/Join Gateways: ${node.indexKey} (${parallelChildren.length} children)`);
         }
         else if (node.bpmn.starts.length > 1) {
 
@@ -511,12 +404,7 @@ function createVirtualNodes(context) {
       else {
         // No firstNode found (only modules or inline end events)
         // Don't create start event - it has nowhere to go!
-        if (isLogEnabled('bpmn')) {
-          bpmnLogger.info(`  🚫 START EVENT skipped (no valid firstNode)`, {
-            subprocess: node.indexKey,
-            reason: 'Only modules or inline end events in subprocess'
-          });
-        }
+        if (isLogEnabled('bpmn')) bpmnLogger.info(`  🚫 START EVENT skipped (no valid firstNode): ${node.indexKey}`);
       }
 
       const outsideNodes = node.childs.filter(w =>
@@ -561,14 +449,7 @@ function createVirtualNode(context) {
 
   const index = parent.childs.filter(w => w.type === `v${type}`).length;
 
-  if (isLogEnabled('bpmn')) {
-    bpmnLogger.info(`    🔷 VIRTUAL ${type.toUpperCase()} → ${bpmnType}`, {
-      parent: parent.indexKey,
-      type: `v${type}`,
-      bpmnType,
-      name: name || `${type}${index}`
-    });
-  }
+  if (isLogEnabled('bpmn')) bpmnLogger.info(`    🔷 VIRTUAL ${type.toUpperCase()} → ${bpmnType}: ${parent.indexKey}/_${type}${index}`);
 
   const virtualNode = {
     indexKey: `${parent.indexKey}/_${type}${index}`,
@@ -615,11 +496,7 @@ function createFlowNodes(context) {
   const flowElements = targetFlowElementsContainer.get('flowElements');
   targetFlowElementsContainer.$nodes = targetFlowElementsContainer.$nodes || [];
 
-  if (isLogEnabled('bpmn')) {
-    bpmnLogger.info(`🎨 Creating BPMN elements for: ${targetNode.indexKey}`, {
-      childCount: targetNode.childs.length
-    });
-  }
+  if (isLogEnabled('bpmn')) bpmnLogger.info(`🎨 Creating BPMN elements for: ${targetNode.indexKey} (${targetNode.childs.length} children)`);
 
   // create flow nodes
   targetNode.childs.forEach(child => {
@@ -635,23 +512,9 @@ function createFlowNodes(context) {
     // Add calledElement for CallActivity (subworkflow chip!)
     if (child.bpmn.type === 'bpmn:CallActivity' && child.context?.lib) {
       flowElement.calledElement = child.context.lib.name;
-
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  ✨ Created: ${child.bpmn.type} (chip!)`, {
-          id: flowElement.id,
-          name: flowElement.name,
-          calledElement: flowElement.calledElement,
-          nodeType: child.type,
-          virtual: child.virtual || false
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  ✨ Created: ${child.bpmn.type} (chip!): ${flowElement.id} → ${flowElement.calledElement}`);
     } else if (isLogEnabled('bpmn')) {
-      bpmnLogger.info(`  ✨ Created: ${child.bpmn.type}`, {
-        id: flowElement.id,
-        name: flowElement.name,
-        nodeType: child.type,
-        virtual: child.virtual || false
-      });
+      bpmnLogger.info(`  ✨ Created: ${child.bpmn.type}: ${flowElement.id}${child.virtual ? ' (virtual)' : ''}`);
     }
 
     if (child.bpmn.attrs) {
@@ -677,13 +540,7 @@ function createFlowNodes(context) {
     // Add loop characteristics for 'for' step type
     if (child.bpmn.loopCharacteristics && child.bpmn.type === 'bpmn:SubProcess') {
       flowElement.loopCharacteristics = moddle.create('bpmn:StandardLoopCharacteristics');
-
-      if (isLogEnabled('bpmn')) {
-        bpmnLogger.info(`  🔁 Added loop marker to: ${flowElement.id}`, {
-          nodeType: child.type,
-          loopType: 'StandardLoopCharacteristics'
-        });
-      }
+      if (isLogEnabled('bpmn')) bpmnLogger.info(`  🔁 Added loop marker to: ${flowElement.id} (${child.type})`);
     }
   });
 }
