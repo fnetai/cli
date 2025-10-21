@@ -15,11 +15,11 @@ export default function Block(context){
         
         const value = {{context.transform.return | safe}};
 
-        flow.result={value: value};
-
         {% include "src/default/macros/block-assign.js.njk" %}
         
         {% include "src/default/macros/block-signal.js.njk" %}
+
+        flow.result={value: value};
 
         resolve({type:'return',value: value});
 

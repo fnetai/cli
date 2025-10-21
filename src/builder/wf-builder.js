@@ -165,7 +165,7 @@ class Builder {
     try {
       await this.setProgress({ message: "Initialization started." });
 
-      const project=this.#apiContext.context.project;
+      const project = this.#apiContext.context.project;
 
       await this.initAuth();
       await this.initWorkflow();
@@ -189,9 +189,9 @@ class Builder {
 
       await initFeatures(this.#apiContext);
 
-      if(project.runtime.type === 'bun') 
+      if (project.runtime.type === 'bun')
         await initDependenciesBun(this.#apiContext);
-      else 
+      else
         await initDependencies(this.#apiContext);
 
       await this.initAtomLibsAndDeps({ libs: root.context.libs, packageDependencies: this.#packageDependencies });
@@ -352,7 +352,8 @@ class Builder {
 
   async initNodeTree({ workflow }) {
 
-    const workflowKeys = Object.keys(workflow);
+    const reservedKeys = ['$meta'];
+    const workflowKeys = Object.keys(workflow).filter(w => !reservedKeys.includes(w));
 
     if (isLogEnabled('tree')) {
       treeLogger.info('🌳 Creating root node', { depth: 0 });
@@ -497,10 +498,6 @@ class Builder {
       blockType = 'modules';
       await modulesBlock.init(api);
     }
-    else if (await returnBlock.hits(api)) {
-      blockType = 'return';
-      await returnBlock.init(api);
-    }
     else if (this.#npmBlocks.find(w => w.hits(api))) {
       blockType = 'npm-block';
       await (this.#npmBlocks.find(w => w.hits(api))).init(api);
@@ -512,6 +509,10 @@ class Builder {
     else if (await outputBlock.hits(api)) {
       blockType = 'output';
       await outputBlock.init(api);
+    }
+    else if (await returnBlock.hits(api)) {
+      blockType = 'return';
+      await returnBlock.init(api);
     }
     else throw new Error('Undefined step type.');
 
@@ -780,7 +781,7 @@ class Builder {
     }
     else if (parsedUrl.protocol === 'npm:') {
 
-      const parsed=fnetParseNpmPath({ path: parsedUrl.pathname });
+      const parsed = fnetParseNpmPath({ path: parsedUrl.pathname });
 
       const npmVersions = await pickNpmVersions({
         name: parsed.package,
@@ -832,7 +833,7 @@ class Builder {
         protocol: parsedUrl.protocol,
       }
       return atom;
-    }    
+    }
     else if (parsedUrl.protocol === 'ac:') {
       const parts = parsedUrl.pathname.split('/');
       if (parts.length === 1) {
@@ -843,7 +844,7 @@ class Builder {
         const folder = await Atom.first({ where: { name: parts[0], parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "folder" } });
         return await Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
       }
-    }    
+    }
   }
 
   async resolveNodeTree({ root }) {
@@ -1298,7 +1299,7 @@ class Builder {
 
       if (this.#fileMode) {
 
-        const project=this.#apiContext.context.project;
+        const project = this.#apiContext.context.project;
 
         await this.initWorkflowDir();
         await this.initNunjucks();
@@ -1351,9 +1352,9 @@ class Builder {
         await createCli(this.#apiContext);
         await createApp(this.#apiContext);
 
-        if(project.runtime.type === 'bun') 
+        if (project.runtime.type === 'bun')
           await createBuildJs(this.#apiContext);
-        else 
+        else
           await createRollup(this.#apiContext);
 
         await createPackageJson(this.#apiContext);

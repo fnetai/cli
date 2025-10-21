@@ -2,7 +2,7 @@ name: fnet-reference
 
 features:
   prunt_steps: true
-  print_runners: true
+  # print_runners: true
   runtime:
     type: bun
 
@@ -12,11 +12,21 @@ t::return-03::flows: g::file://./fnet/return/03.yaml
 
 commands:
   base:
-    usage: fnet cli --reference <reference>
+    usage: frun base --category <category> --index <index>
     steps:
-      - fnet build --ftag {{args.reference}}
+      - fnet build --ftag {{args.category}}-{{args.index}}
+      - cp ./fnet/flows.bpmn ./fnet/{{args.category}}/{{args.index}}.bpmn
       - fnet cli
+    env:
+      FNET_LOG_CATEGORIES: "tree,bpmn"
 
-  return-01: frun base --reference return-01
-  return-02: frun base --reference return-02
-  return-03: frun base --reference return-03
+  all:
+    usage: frun all
+    steps:
+      - frun return-01
+      - frun return-02
+      - frun return-03
+
+  return-01: frun base --category return --index 01
+  return-02: frun base --category return --index 02
+  return-03: frun base --category return --index 03
