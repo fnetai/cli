@@ -11,8 +11,7 @@ async function init({ node, initNode }) {
 
   await initModules({ node, initNode ,extra: false });
 
-  node.blockAutoJumpToParent = false;
-  node.blockAutoJumpToSibling = true;
+  node.block_child_auto_jump_to_sibling = true;
 
   // try
   if (node.definition.try) {
@@ -64,7 +63,7 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
   await resolveTypeCommon({ node });
 
-  resolveNextBlock({ node });
+  // resolveNextBlock({ node });
 }
 
 export default {

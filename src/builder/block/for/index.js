@@ -13,8 +13,8 @@ async function init({ node, initNode }) {
 
   await initModules({ node, initNode, extra: false });
 
-  node.blockAutoJumpToParent = true;
-  node.blockAutoJumpToSibling = false;
+  node.block_child_auto_jump_to_parent = true;
+  node.block_child_auto_jump_to_sibling = true;
 
   // No steps property
   if (!node.definition.for.hasOwnProperty('steps')) {

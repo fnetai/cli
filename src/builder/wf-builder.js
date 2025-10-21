@@ -365,8 +365,8 @@ class Builder {
       type: "root",
       parent: undefined,
       childs: [],
-      blockAutoJumpToParent: true,
-      blockAutoJumpToSibling: true,
+      block_child_auto_jump_to_parent: true,
+      block_child_auto_jump_to_sibling: true,
       index: 0,
       depth: 0,
       context: {
@@ -393,8 +393,7 @@ class Builder {
         index: root.childs.length,
         depth: root.depth + 1,
         context: {},
-        blockAutoJumpToParent: true,
-        blockAutoJumpToSibling: false,
+        block_child_auto_jump_to_parent: true,
       }
 
       root.childs.push(node);

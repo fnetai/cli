@@ -96,7 +96,7 @@ export default function resolveNextBlock({ node }) {
       // if (parent.module === true) break;
 
       // NEITHER JUMP TO PARENT NOR SIBLING ENABLED
-      if (parent.blockAutoJumpToParent && parent.blockAutoJumpToSibling) {
+      if (parent.block_child_auto_jump_to_parent && parent.block_child_auto_jump_to_sibling) {
         if (isLogEnabled('tree')) {
           treeLogger.info(`      ${step}. ⛔ Both jumps disabled at ${parent.indexKey}`, {
             depth: node.depth + 2
@@ -104,7 +104,7 @@ export default function resolveNextBlock({ node }) {
         }
         break;
       }
-      else if (!Reflect.has(parent, 'blockAutoJumpToParent') && !Reflect.has(parent, 'blockAutoJumpToSibling')) {
+      else if (!Reflect.has(parent, 'block_child_auto_jump_to_parent') && !Reflect.has(parent, 'block_child_auto_jump_to_sibling')) {
 
         const found = parent.childs.find(w => w.index === targetIndex);
         if (found) {
@@ -130,7 +130,7 @@ export default function resolveNextBlock({ node }) {
           continue;
         }
       }
-      else if (parent.blockAutoJumpToParent) {
+      else if (parent.block_child_auto_jump_to_parent) {
         // JUMP TO PARENT DISABLED
         // SIBLING ENABLED
         const found = parent.childs.find(w => w.index === targetIndex);
@@ -151,7 +151,7 @@ export default function resolveNextBlock({ node }) {
         }
         break;
       }
-      else if (!parent.blockAutoJumpToParent) {
+      else if (!parent.block_child_auto_jump_to_parent) {
         // JUMP TO PARENT ENABLED
         // SIBLING DISABLED
         if (isLogEnabled('tree')) {

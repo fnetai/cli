@@ -66,8 +66,7 @@ export default async function initModules({ node, initNode, extra = true }) {
       parent: node,
       definition: temp[key],
       module: true,
-      blockAutoJumpToParent: true,
-      blockAutoJumpToSibling: false,
+      block_child_auto_jump_to_parent: true,
       index: node.childs.length,
       context: {}
     }

@@ -10,8 +10,8 @@ async function init({ node, initNode }) {
 
   // Parallel children should not auto-jump to siblings or parent
   // They execute concurrently and independently
-  node.blockAutoJumpToParent = true;   // Disable jump to parent
-  node.blockAutoJumpToSibling = true;  // Disable jump to sibling
+  node.block_child_auto_jump_to_parent = true; 
+  node.block_child_auto_jump_to_sibling = true;
 
   const parallel = node.definition.parallel || [];
 
