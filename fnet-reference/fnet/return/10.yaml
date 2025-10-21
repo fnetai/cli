@@ -1,0 +1,33 @@
+$meta:
+  subject: return
+  tags:
+    - expression
+    - variable
+    - assign
+    - function
+    - array
+    - object
+    - yaml-syntax
+    - colon-spacing
+  queries:
+    - How to assign expressions and return them?
+    - Can I assign functions and return via variables?
+    - What is the colon spacing rule in YAML expressions?
+    - When do I need double quotes for colons in expressions?
+    - Show me assign + return pattern with expressions
+
+main:
+  steps:
+    - simple-return:
+        assign:
+          - add: e::(a, b) => a + b
+          - greet: e::() => 'Hello World!'
+          - items: e::[1, 2, 3, 4, 5]
+          - person: e::() => ({ name:'John', age:30 }) # : has no space before and after so valid
+          # - person: "e::() => ({ name: 'John', age: 30 })"
+
+        return:
+          add: v::add
+          greet: v::greet
+          items: v::items
+          person: v::person

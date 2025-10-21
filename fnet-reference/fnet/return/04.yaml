@@ -1,0 +1,17 @@
+$meta:
+  subject: return
+  tags:
+    - multiple-steps
+    - sequential
+  queries:
+    - Can multiple steps use return?
+    - What happens when two steps both have return?
+    - Show me sequential returns
+
+main:
+  steps:
+    - first-step:
+        return: First!
+    - second-step:  # This step will never execute - return terminates the flow
+        return: Second!
+

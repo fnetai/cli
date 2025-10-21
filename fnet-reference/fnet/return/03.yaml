@@ -1,13 +1,12 @@
 $meta:
   tags:
-    - fnet
+    - assign
+    - variable
     - reference
-    - steps
-    - return
   queries:
-    - What is the purpose of the return step in Flownet?
-    - How does the return step work in Flownet?
-    - Can you show an example of using the return step in Flownet?
+    - How to return a variable value?
+    - Can I use assign with return?
+    - Show me how to return a variable reference
 
 main:
   steps:

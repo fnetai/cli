@@ -5,15 +5,19 @@
     <bpmn:startEvent id="node.0._start0">
       <bpmn:outgoing>edge.0._start0_0.0</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="node.0.0" name="simple-return">
+    <bpmn:subProcess id="node.0.0" name="outer-step">
       <bpmn:incoming>edge.0._start0_0.0</bpmn:incoming>
-      <bpmn:outgoing>edge.0.0_0.0._inline_end</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:endEvent id="node.0.0._inline_end" name="">
-      <bpmn:incoming>edge.0.0_0.0._inline_end</bpmn:incoming>
-    </bpmn:endEvent>
+      <bpmn:startEvent id="node.0.0._start0">
+        <bpmn:outgoing>edge.0.0._start0_0.0.0</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="node.0.0.0" name="inner-step">
+        <bpmn:incoming>edge.0.0._start0_0.0.0</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="node.0.0.1" name="unreachable-inner" />
+      <bpmn:sequenceFlow id="edge.0.0._start0_0.0.0" sourceRef="node.0.0._start0" targetRef="node.0.0.0" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="node.0.1" name="after-nested" />
     <bpmn:sequenceFlow id="edge.0._start0_0.0" sourceRef="node.0._start0" targetRef="node.0.0" />
-    <bpmn:sequenceFlow id="edge.0.0_0.0._inline_end" sourceRef="node.0.0" targetRef="node.0.0._inline_end" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="diagram_0">
     <bpmndi:BPMNPlane id="plane_0" bpmnElement="process_0">
@@ -25,8 +29,8 @@
         <dc:Bounds x="160" y="276" width="120" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="shape.node.0.0._inline_end" bpmnElement="node.0.0._inline_end">
-        <dc:Bounds x="202" y="436" width="36" height="36" />
+      <bpmndi:BPMNShape id="shape.node.0.1" bpmnElement="node.0.1">
+        <dc:Bounds x="358" y="160" width="36" height="36" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge.node.0._start0_node.0.0" bpmnElement="edge.0._start0_0.0">
@@ -35,10 +39,26 @@
         <di:waypoint x="220" y="276" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge.node.0.0_node.0.0._inline_end" bpmnElement="edge.0.0_0.0._inline_end">
-        <di:waypoint x="220" y="356" />
-        <di:waypoint x="220" y="396" />
-        <di:waypoint x="220" y="436" />
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="diagram_0.0">
+    <bpmndi:BPMNPlane id="plane_0.0" bpmnElement="node.0.0">
+      <bpmndi:BPMNShape id="shape.node.0.0._start0" bpmnElement="node.0.0._start0" bioc:stroke="#205022" bioc:fill="#c8e6c9">
+        <dc:Bounds x="160" y="160" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.0.0" bpmnElement="node.0.0.0">
+        <dc:Bounds x="160" y="276" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.0.1" bpmnElement="node.0.0.1">
+        <dc:Bounds x="316" y="160" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge.node.0.0._start0_node.0.0.0" bpmnElement="edge.0.0._start0_0.0.0">
+        <di:waypoint x="178" y="196" />
+        <di:waypoint x="178" y="236" />
+        <di:waypoint x="178" y="276" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

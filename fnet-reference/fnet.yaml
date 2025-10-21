@@ -9,6 +9,13 @@ features:
 t::return-01::flows: g::file://./fnet/return/01.yaml
 t::return-02::flows: g::file://./fnet/return/02.yaml
 t::return-03::flows: g::file://./fnet/return/03.yaml
+t::return-04::flows: g::file://./fnet/return/04.yaml
+t::return-05::flows: g::file://./fnet/return/05.yaml
+t::return-06::flows: g::file://./fnet/return/06.yaml
+t::return-07::flows: g::file://./fnet/return/07.yaml
+t::return-08::flows: g::file://./fnet/return/08.yaml
+t::return-09::flows: g::file://./fnet/return/09.yaml
+t::return-10::flows: g::file://./fnet/return/10.yaml
 
 commands:
   base:
@@ -26,7 +33,21 @@ commands:
       - frun return-01
       - frun return-02
       - frun return-03
+      - frun return-04
+      - frun return-05
+      - frun return-06
+      - frun return-07
+      - frun return-08
+      - frun return-09
+      - frun return-10
 
   return-01: frun base --category return --index 01
   return-02: frun base --category return --index 02
   return-03: frun base --category return --index 03
+  return-04: frun base --category return --index 04
+  return-05: frun base --category return --index 05
+  return-06: frun base --category return --index 06
+  return-07: frun base --category return --index 07
+  return-08: frun base --category return --index 08
+  return-09: frun base --category return --index 09
+  return-10: frun base --category return --index 10

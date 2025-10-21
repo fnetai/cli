@@ -1,0 +1,31 @@
+$meta:
+  subject: return
+  tags:
+    - expression
+    - function
+    - arrow-function
+  queries:
+    - Can I return a function?
+    - How to return an arrow function?
+    - Show me function return example
+
+main:
+  steps:
+    - return-function:
+        return:
+          # Arrow functions with different syntax variations
+          greet: e::() => 'Hello World!'
+          add: e::(a, b) => a + b
+
+          greet_v2: e::() => `${'Hello World'+'!'}`  # Template literal with expression
+          greet_v3: e::() => `Hello World!`  # Template literal
+          greet_v4: "e::() => 'Hello World!'"  # Double quotes (safe for YAML special chars)
+
+          # WHEN TO USE DOUBLE QUOTES:
+          # Use double quotes when expression contains YAML special characters:
+          # - Colon (:) - YAML key-value separator
+          # - Hash (#) - YAML comment
+          # - Brackets ([], {}) - YAML array/object
+          # - Pipe (|), Greater (>) - YAML multiline
+          # Example: "e::'Hello: ' + v::name" (colon in string requires quotes)
+          add_v2: "e::(a, b) => a + b"

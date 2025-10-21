@@ -1,13 +1,12 @@
 $meta:
+  subject: return
   tags:
-    - fnet
-    - reference
-    - steps
-    - return
+    - primitive
+    - string
   queries:
-    - What is the purpose of the return step in Flownet?
-    - How does the return step work in Flownet?
-    - Can you show an example of using the return step in Flownet?
+    - How to return a simple string value?
+    - Can I return a primitive value directly?
+    - Show me the simplest return example
 
 main:
   steps:

@@ -1,13 +1,12 @@
 $meta:
+  subject: return
   tags:
-    - fnet
-    - reference
-    - steps
-    - return
+    - object
+    - structured
   queries:
-    - What is the purpose of the return step in Flownet?
-    - How does the return step work in Flownet?
-    - Can you show an example of using the return step in Flownet?
+    - How to return an object with multiple fields?
+    - Can I return structured data?
+    - Show me how to return a JSON object
 
 main:
   steps:

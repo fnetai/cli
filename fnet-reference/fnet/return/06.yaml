@@ -1,0 +1,18 @@
+$meta:
+  subject: return
+  tags:
+    - array
+    - list
+  queries:
+    - Can I return an array?
+    - How to return a list of values?
+    - Show me array return example
+
+main:
+  steps:
+    - return-array:
+        return:
+          - First Item
+          - Second Item
+          - Third Item
+
