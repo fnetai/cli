@@ -355,7 +355,7 @@ class Builder {
     const reservedKeys = ['$meta'];
     const workflowKeys = Object.keys(workflow).filter(w => !reservedKeys.includes(w));
 
-    if (isLogEnabled('tree')) treeLogger.info('🌳 Creating root node');
+    if (isLogEnabled('tree')) treeLogger.info('[TREE] Creating root node');
 
     const root = {
       definition: workflow,
@@ -374,7 +374,7 @@ class Builder {
     };
 
     workflowKeys.forEach(flowName => {
-      if (isLogEnabled('tree')) treeLogger.info(`📦 Creating ${flowName === 'main' ? 'workflow' : 'subworkflow'}: ${flowName}`);
+      if (isLogEnabled('tree')) treeLogger.info(`[TREE] Creating ${flowName === 'main' ? 'workflow' : 'subworkflow'}: ${flowName}`);
 
       const node = {
         name: flowName,
@@ -392,11 +392,11 @@ class Builder {
     });
 
     for await (const node of root.childs) {
-      if (isLogEnabled('tree')) treeLogger.info(`🔧 Initializing node: ${node.name}`);
+      if (isLogEnabled('tree')) treeLogger.info(`[INIT] node: ${node.name}`);
       await this.initNode({ node });
     }
 
-    if (isLogEnabled('tree')) treeLogger.info(`✅ Root node tree created (${root.childs.length} flows)`);
+    if (isLogEnabled('tree')) treeLogger.info(`[TREE] Root node tree created (${root.childs.length} flows)`);
 
     return root;
   }
@@ -502,7 +502,7 @@ class Builder {
 
     if (isLogEnabled('tree')) {
       const childInfo = node.childs?.length > 0 ? ` (${node.childs.length} childs)` : '';
-      treeLogger.info(`  ├─ ${blockType}: ${node.name}${childInfo}`);
+      treeLogger.info(`[NODE] ${blockType}: ${node.name}${childInfo}`);
     }
   }
 
