@@ -34,6 +34,10 @@ t::if-04::flows: g::file://./fnet/if/04.yaml
 t::if-05::flows: g::file://./fnet/if/05.yaml
 
 t::output-01::flows: g::file://./fnet/output/01.yaml
+t::output-02::flows: g::file://./fnet/output/02.yaml
+t::output-03::flows: g::file://./fnet/output/03.yaml
+t::output-04::flows: g::file://./fnet/output/04.yaml
+t::output-05::flows: g::file://./fnet/output/05.yaml
 
 commands:
   base:
@@ -126,3 +130,16 @@ commands:
   if-05: frun base --category if --index 05
 
   output-01: frun base --category output --index 01
+  output-02: frun base --category output --index 02
+  output-03: frun base --category output --index 03
+  output-04: frun base --category output --index 04
+  output-05: frun base --category output --index 05
+
+  output:
+    usage: frun output
+    steps:
+      - frun output-01
+      - frun output-02
+      - frun output-03
+      - frun output-04
+      - frun output-05

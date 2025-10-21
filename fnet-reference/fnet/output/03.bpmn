@@ -5,25 +5,35 @@
     <bpmn:startEvent id="node.0._start0">
       <bpmn:outgoing>edge.0._start0_0.0</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="node.0.0" name="initialize">
+    <bpmn:task id="node.0.0" name="initialize">
       <bpmn:incoming>edge.0._start0_0.0</bpmn:incoming>
       <bpmn:outgoing>edge.0.0_0.1</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="node.0.1" name="step-two">
+    </bpmn:task>
+    <bpmn:task id="node.0.1" name="double-it">
       <bpmn:incoming>edge.0.0_0.1</bpmn:incoming>
       <bpmn:outgoing>edge.0.1_0.2</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="node.0.2" name="step-three">
+    </bpmn:task>
+    <bpmn:task id="node.0.2" name="square-it">
       <bpmn:incoming>edge.0.1_0.2</bpmn:incoming>
       <bpmn:outgoing>edge.0.2_0.3</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:endEvent id="node.0.3" name="final-comparison">
+    </bpmn:task>
+    <bpmn:task id="node.0.3" name="double-again">
       <bpmn:incoming>edge.0.2_0.3</bpmn:incoming>
+      <bpmn:outgoing>edge.0.3_0.4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="node.0.4" name="add-ten">
+      <bpmn:incoming>edge.0.3_0.4</bpmn:incoming>
+      <bpmn:outgoing>edge.0.4_0.5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="node.0.5" name="final-result">
+      <bpmn:incoming>edge.0.4_0.5</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="edge.0._start0_0.0" sourceRef="node.0._start0" targetRef="node.0.0" />
     <bpmn:sequenceFlow id="edge.0.0_0.1" sourceRef="node.0.0" targetRef="node.0.1" />
     <bpmn:sequenceFlow id="edge.0.1_0.2" sourceRef="node.0.1" targetRef="node.0.2" />
     <bpmn:sequenceFlow id="edge.0.2_0.3" sourceRef="node.0.2" targetRef="node.0.3" />
+    <bpmn:sequenceFlow id="edge.0.3_0.4" sourceRef="node.0.3" targetRef="node.0.4" />
+    <bpmn:sequenceFlow id="edge.0.4_0.5" sourceRef="node.0.4" targetRef="node.0.5" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="diagram_0">
     <bpmndi:BPMNPlane id="plane_0" bpmnElement="process_0">
@@ -44,7 +54,15 @@
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape.node.0.3" bpmnElement="node.0.3">
-        <dc:Bounds x="202" y="756" width="36" height="36" />
+        <dc:Bounds x="160" y="756" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.4" bpmnElement="node.0.4">
+        <dc:Bounds x="160" y="916" width="120" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape.node.0.5" bpmnElement="node.0.5">
+        <dc:Bounds x="202" y="1076" width="36" height="36" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge.node.0._start0_node.0.0" bpmnElement="edge.0._start0_0.0">
@@ -69,6 +87,18 @@
         <di:waypoint x="220" y="676" />
         <di:waypoint x="220" y="716" />
         <di:waypoint x="220" y="756" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.3_node.0.4" bpmnElement="edge.0.3_0.4">
+        <di:waypoint x="220" y="836" />
+        <di:waypoint x="220" y="876" />
+        <di:waypoint x="220" y="916" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge.node.0.4_node.0.5" bpmnElement="edge.0.4_0.5">
+        <di:waypoint x="220" y="996" />
+        <di:waypoint x="220" y="1036" />
+        <di:waypoint x="220" y="1076" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

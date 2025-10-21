@@ -1,0 +1,72 @@
+$meta:
+  subject: output
+  tags:
+    - output
+    - transformation
+    - pipeline
+    - chain
+  queries:
+    - How to create a transformation pipeline?
+    - How to chain multiple transformations?
+    - How does data flow through multiple steps?
+    - What is a transformation chain?
+  notes:
+    - |
+      OUTPUT TRANSFORMATION CHAIN demonstrates a data pipeline pattern.
+      
+      Each step:
+      1. Receives input from previous step (e::input)
+      2. Transforms the data
+      3. Produces output for next step
+      
+      This creates a powerful ETL-like pipeline:
+        {value: 1} → double → {value: 2} → square → {value: 4} → double → {value: 8}
+      
+      Real-world use cases:
+      - Data transformation pipelines
+      - ETL processes
+      - Data enrichment flows
+      - Multi-stage calculations
+
+main:
+  steps:
+    - initialize:
+        output:
+          value: 1
+          operation: initialized
+    
+    - double-it:
+        output:
+          value: e::input.value * 2
+          operation: doubled
+          previous: e::input.value
+    
+    - square-it:
+        output:
+          value: e::input.value * input.value
+          operation: squared
+          previous: e::input.value
+    
+    - double-again:
+        output:
+          value: e::input.value * 2
+          operation: doubled again
+          previous: e::input.value
+    
+    - add-ten:
+        output:
+          value: e::input.value + 10
+          operation: added 10
+          previous: e::input.value
+    
+    - final-result:
+        return:
+          finalValue: e::input.value
+          transformationChain:
+            - 1 (initialized)
+            - 2 (doubled)
+            - 4 (squared)
+            - 8 (doubled again)
+            - 18 (added 10)
+          message: e::`Transformation complete! 1 → 2 → 4 → 8 → 18 = ${input.value}`
+

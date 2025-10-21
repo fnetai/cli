@@ -1,0 +1,77 @@
+$meta:
+  subject: output
+  tags:
+    - output
+    - variable-bucket
+    - comparison
+    - scope
+  queries:
+    - What is the difference between output and assign?
+    - When to use output vs variable bucket?
+    - How does e::input differ from v::variable?
+    - What is the scope of output vs variables?
+  notes:
+    - |
+      OUTPUT vs VARIABLE BUCKET demonstrates the key differences:
+      
+      VARIABLE BUCKET (assign + v::):
+      - Global scope within the workflow
+      - Persists across all steps
+      - Accessed via v::variableName
+      - Shared state
+      
+      STEP OUTPUT (output + e::input):
+      - Local to step-to-step flow
+      - Only available to the NEXT step in execution
+      - Accessed via e::input
+      - Data pipeline pattern
+      
+      Key insight:
+      - Variables = Shared global state
+      - Output = Step-to-step data flow
+      
+      You can use BOTH in the same workflow for different purposes!
+
+main:
+  steps:
+    - initialize:
+        assign:
+          - globalCounter: 0
+          - globalMessage: Starting...
+        output:
+          localValue: 100
+          localMessage: First step output
+    
+    - step-two:
+        assign:
+          - globalCounter: e::v::globalCounter + 1
+          - globalMessage: Step 2 executed
+        output:
+          localValue: e::input.localValue * 2
+          localMessage: "e::`Previous: ${input.localMessage}, Now: Step 2`"
+          canAccessGlobal: v::globalCounter
+
+    - step-three:
+        assign:
+          - globalCounter: e::v::globalCounter + 1
+          - globalMessage: Step 3 executed
+        output:
+          localValue: e::input.localValue + 50
+          localMessage: "e::`Previous: ${input.localMessage}, Now: Step 3`"
+          canAccessGlobal: v::globalCounter
+    
+    - final-comparison:
+        return:
+          variableBucket:
+            counter: v::globalCounter
+            message: v::globalMessage
+            note: These are accessible from ANY step
+          stepOutput:
+            value: e::input.localValue
+            message: e::input.localMessage
+            note: This comes from the PREVIOUS step only
+          demonstration:
+            globalCounterWas: e::input.canAccessGlobal
+            finalCalculation: e::v::globalCounter * input.localValue
+            explanation: "We can use BOTH v:: and e::input together!"
+
