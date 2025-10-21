@@ -1,0 +1,22 @@
+name: fnet-reference
+
+features:
+  prunt_steps: true
+  print_runners: true
+  runtime:
+    type: bun
+
+t::return-01::flows: g::file://./fnet/return/01.yaml
+t::return-02::flows: g::file://./fnet/return/02.yaml
+t::return-03::flows: g::file://./fnet/return/03.yaml
+
+commands:
+  base:
+    usage: fnet cli --reference <reference>
+    steps:
+      - fnet build --ftag {{args.reference}}
+      - fnet cli
+
+  return-01: frun base --reference return-01
+  return-02: frun base --reference return-02
+  return-03: frun base --reference return-03

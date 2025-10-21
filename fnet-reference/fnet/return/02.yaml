@@ -1,0 +1,16 @@
+metadata:
+  tags:
+    - fnet
+    - reference
+    - steps
+    - return
+  queries:
+    - What is the purpose of the return step in Flownet?
+    - How does the return step work in Flownet?
+    - Can you show an example of using the return step in Flownet?
+
+main:
+  steps:
+    - hello-world:
+        return:
+          message: Hello World!
