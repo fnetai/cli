@@ -1,83 +1,66 @@
-{% include "src/default/macros/block-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{% include "src/default/macros/block-next-header.js.njk" %}
+{% call block.header() %}
+  {% for child in childs %}
+    {% if not child.definition.dynamic %}
+      // SCHEDULED CHILD: {{child.indexKey}}
+      import {{child.codeKey}} from "./{{child.codeKey}}.js";
+    {% endif %}
+  {% endfor %}
+{% endcall %}
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
+{% call block.definition() %}
+  // Import node-cron for scheduling
+  const cron = await import('node-cron');
 
-{% for child in childs %}
-  {% if not child.definition.dynamic %}
-    // SCHEDULED CHILD: {{child.indexKey}}
-    import {{child.codeKey}} from "./{{child.codeKey}}.js";
-  {% endif %}
-{% endfor %}
+  // Schedule configuration
+  const cronExpression = {{ context.transform.schedule.cron | safe }};
+  const timezone = {{ context.transform.schedule.timezone | dump | safe }};
+  const enabled = {{ context.transform.schedule.enabled | dump | safe }};
 
-export default function Block(context){
-
-  {% include "src/default/macros/block-body-header.js.njk" %}
-
-  this.run= function (){
-
-    {% include "src/default/macros/block-entry-args.js.njk" %}
-
-    return new Promise(async (resolve,reject)=>{
-      {% include "src/default/macros/block-run-header.js.njk" %}
-
-      {% include "src/default/macros/page.js.njk" %}
-
-      // Import node-cron for scheduling
-      const cron = await import('node-cron');
-
-      // Schedule configuration
-      const cronExpression = {{ context.transform.schedule.cron | safe }};
-      const timezone = {{ context.transform.schedule.timezone | dump | safe }};
-      const enabled = {{ context.transform.schedule.enabled | dump | safe }};
-
-      // Check if schedule is enabled
-      if (!enabled) {
-        // Schedule is disabled, skip to next block
-        {% include "src/default/macros/block-next.js.njk" %}
-        return;
-      }
-
-      // Validate cron expression
-      if (!cron.validate(cronExpression)) {
-        reject(new Error(`Invalid cron expression: ${cronExpression}`));
-        return;
-      }
-
-      // Get child block (the scheduled task)
-      {% if childs[0] %}
-      const scheduledTask = new {{childs[0].codeKey}}({
-        parent: _this,
-        engine: engine,
-        flow: flow
-      });
-      {% endif %}
-
-      // Schedule the task with optional timezone
-      const scheduleOptions = timezone ? { timezone } : {};
-      const task = cron.schedule(cronExpression, async () => {
-        try {
-          {% if childs[0] %}
-          await scheduledTask.run();
-          {% endif %}
-        } catch (error) {
-          console.error(`Scheduled task '{{indexKey}}' failed:`, error);
-        }
-      }, scheduleOptions);
-
-      // Start the scheduled task
-      task.start();
-
-      // Store task reference for potential cleanup
-      flow.set('{{indexKey}}_task', task);
-
-      {% include "src/default/macros/block-next.js.njk" %}
-
-      {% include "src/default/macros/block-run-footer.js.njk" %}
-    });
+  // Check if schedule is enabled
+  if (!enabled) {
+    // Schedule is disabled, skip to next block
+    {% include "src/default/macros/block-next.js.njk" %}
+    return;
   }
-}
 
-{% include "src/default/macros/block-footer.js.njk" %}
+  // Validate cron expression
+  if (!cron.validate(cronExpression)) {
+    reject(new Error(`Invalid cron expression: ${cronExpression}`));
+    return;
+  }
 
+  // Get child block (the scheduled task)
+  {% if childs[0] %}
+  const scheduledTask = new {{childs[0].codeKey}}({
+    parent: _this,
+    engine: engine,
+    flow: flow
+  });
+  {% endif %}
+
+  // Schedule the task with optional timezone
+  const scheduleOptions = timezone ? { timezone } : {};
+  const task = cron.schedule(cronExpression, async () => {
+    try {
+      {% if childs[0] %}
+      await scheduledTask.run();
+      {% endif %}
+    } catch (error) {
+      console.error(`Scheduled task '{{indexKey}}' failed:`, error);
+    }
+  }, scheduleOptions);
+
+  // Start the scheduled task
+  task.start();
+
+  // Store task reference for potential cleanup
+  flow.set('{{indexKey}}_task', task);
+
+  {% include "src/default/macros/block-next.js.njk" %}
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

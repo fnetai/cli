@@ -1,31 +1,19 @@
-{% include "src/default/macros/block-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-export default function Block(context){
+{% call block.header() %}
+{% endcall %}
 
-  {% include "src/default/macros/block-body-header.js.njk" %}
+{% call block.definition() %}
 
-  this.run= function (){
-      
-    {% include "src/default/macros/block-entry-args.js.njk" %}
+  const raise = {{context.transform.raise | safe}};
 
-    return new Promise(async (resolve,reject)=>{            
-        {% include "src/default/macros/block-run-header.js.njk" %}
+  {% include "src/default/macros/block-assign.js.njk" %}
 
-        {% include "src/default/macros/page.js.njk" %}
-        
-        const raise = {{context.transform.raise | safe}};
+  {% include "src/default/macros/block-signal.js.njk" %}
 
-        {% include "src/default/macros/block-assign.js.njk" %}
-        
-        {% include "src/default/macros/block-signal.js.njk" %}
+  reject(new Error(raise?.message||raise||"Unknown error"));
 
-        onError? onError(new Error(raise?.message||raise||"Unknown error")) : reject(new Error(raise?.message||raise||"Unknown error"));
+{% endcall %}
 
-        {% include "src/default/macros/block-run-footer.js.njk" %}
-    });
-  }
-
-  Object.freeze(this);
-}
-
-{% include "src/default/macros/block-footer.js.njk" %}
+{% call block.footer()%} 
+{% endcall %}

@@ -1,156 +1,131 @@
-{% include "src/default/macros/block-header.js.njk" %}
 
-{% include "src/default/macros/block-next-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{% include "src/default/macros/block-library-header.js.njk" %}
+{% call block.header() %}
+  {% include "src/default/macros/block-library-header.js.njk" %}
+{% endcall %}
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
+{% call block.definition() %}
 
-export default function Block(context){
-
-  {% include "src/default/macros/block-body-header.js.njk" %}
-  
-  this.run= function (){
-      
-    {% include "src/default/macros/block-entry-args.js.njk" %}
-
-    return new Promise(async (resolve,reject)=>{
-
-
-      try{
-        {% include "src/default/macros/block-run-header.js.njk" %}
-
-        {% include "src/default/macros/page.js.njk" %}
-
-        {% include "src/default/macros/block-modules.js.njk" %}
-
-        {% if context.next and context.transform.wait==='next' %}
-          flow.waitForNext({
-            key:'{{indexKey}}',
-            next: async () =>  {
-                {% include "src/default/macros/block-next.js.njk" %}
-            }
-          });
-        {% endif %}
-
-        {# NEW: Check if 'new' keyword is present for constructor call #}
-        {% if context.transform.new !== undefined %}
-          {# Constructor instantiation with 'new' keyword #}
-          {% if context.lib.type==='atom' and context.lib.atom.protocol!=='use:' %}
-            const LibClass=LIBRARY;
-          {% elseif context.lib.atom.protocol==='use:' %}
-            {# For use:e:: protocol, call value is the class name (e.g., use:e::Map → Map) #}
-            const LibClass={{context.transform.import}};
-            if(!LibClass) throw new Error('[use] Couldnt find class.');
-          {% else %}
-            throw new Error('Cannot instantiate: unsupported lib type.');
-          {% endif %}
-
-          {# Create instance with constructor args #}
-          {% if context.transform.new %}
-            const constructorArgs = {{ context.transform.new | safe }};
-            const instance = Array.isArray(constructorArgs) ? new LibClass(...constructorArgs) : new LibClass(constructorArgs);
-          {% else %}
-            const instance = new LibClass();
-          {% endif %}
-
-          {# If 'call' is specified, get the method from instance #}
-          {% if context.transform.call %}
-            const callLib = instance.{{context.transform.call}};
-          {% else %}
-            {# No method call, just return the instance #}
-            const callLib = () => instance;
-          {% endif %}
-
-        {% else %}
-          {# EXISTING: Normal function/method call (no 'new') #}
-          {% if context.lib.type==='atom'%}
-            {% if context.transform.libExp %}
-              const lib={{context.transform.libExp}};
-            {% else %}
-              const lib=LIBRARY;
-            {% endif %}
-          {% elseif context.lib.type==='subworkflow' %}
-            const lib={{context.lib.codeKey}};
-          {% elseif target.atom.protocol==='use:' %}
-            const lib={{context.transform.call}};
-            if(!lib) throw new Error('[use] Couldnt find lib.');
-          {% else %}
-            const lib=undefined;
-            throw new Error('Couldn file lib.');
-          {% endif %}
-
-          {% if context.lib.atom.doc.subtype==='workflow'%}
-            const Workflow=lib;
-            const workflow=new Workflow({app:engine.app,caller:c});
-            const callLib = workflow.run.bind(workflow);
-          {% elseif context.lib.type==='subworkflow'%}
-            const Workflow=lib;
-            const workflow=new Workflow({engine,flow,caller:c});
-            const callLib = workflow.run.bind(workflow);
-          {% else %}
-            const callLib = lib;
-          {% endif %}
-        {% endif %}
-
-        {# Execute the call #}
-        {% if context.transform.args %}
-          {% if context.lib.type==='subworkflow' %}
-            const callArgs ={ params: {{ context.transform.args | safe }} };
-          {% else %}
-            const callArgs ={{ context.transform.args | safe }} ;
-          {% endif %}
-
-          {% if context.transform.new !== undefined %}
-            {# For constructor calls, use instance as context #}
-            const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib.call(instance,callArgs);
-          {% else %}
-            {# For regular calls, use _this as context #}
-            {% if context.transform.context !== undefined %}
-              const result = Array.isArray(callArgs)?  await callLib.apply({{context.transform.context | safe}},callArgs): await callLib.call({{context.transform.context | safe}},callArgs);
-            {% else %}            
-              const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
-            {% endif %}
-
-          {% endif %}
-
-        {% else %}
-          {% if context.transform.new !== undefined %}
-            const result = await callLib.call(instance);
-          {% else %}
-            {% if context.transform.context !== undefined %}
-              const result = await callLib.call({{context.transform.context | safe}});
-            {% else %}            
-              const result = await callLib.call(_this);
-            {% endif %}
-          {% endif %}
-        {% endif %}
-
-        {% for assign in context.transform.result %}
-          flow.set({{assign.key | safe}},{{assign.value | safe}});
-        {% endfor%}
-
-        {% include "src/default/macros/block-assign.js.njk" %}
-
-        {% include "src/default/macros/block-signal.js.njk" %}
-
-        {% if context.transform.return %}
-          resolve({type:'return',value: {{context.transform.return | safe}}});
-        {% elseif context.next and context.transform.wait!=='next'%}
+  {% if context.next and context.transform.wait==='next' %}
+    flow.waitForNext({
+      key:'{{indexKey}}',
+      next: async () =>  {
           {% include "src/default/macros/block-next.js.njk" %}
-        {% elseif not context.next%}
-          resolve();
-        {% endif %}
-  
-        {% include "src/default/macros/block-run-footer.js.njk" %}
       }
-      catch(error){
-          onError? onError(error) : reject(error);
-      }      
     });
-  }
+  {% endif %}
 
-  Object.freeze(this); 
-}
+  {# NEW: Check if 'new' keyword is present for constructor call #}
+  {% if context.transform.new !== undefined %}
+    {# Constructor instantiation with 'new' keyword #}
+    {% if context.lib.type==='atom' and context.lib.atom.protocol!=='use:' %}
+      const LibClass=LIBRARY;
+    {% elseif context.lib.atom.protocol==='use:' %}
+      {# For use:e:: protocol, call value is the class name (e.g., use:e::Map → Map) #}
+      const LibClass={{context.transform.import}};
+      if(!LibClass) throw new Error('[use] Couldnt find class.');
+    {% else %}
+      throw new Error('Cannot instantiate: unsupported lib type.');
+    {% endif %}
 
-{% include "src/default/macros/block-footer.js.njk" %}
+    {# Create instance with constructor args #}
+    {% if context.transform.new %}
+      const constructorArgs = {{ context.transform.new | safe }};
+      const instance = Array.isArray(constructorArgs) ? new LibClass(...constructorArgs) : new LibClass(constructorArgs);
+    {% else %}
+      const instance = new LibClass();
+    {% endif %}
+
+    {# If 'call' is specified, get the method from instance #}
+    {% if context.transform.call %}
+      const callLib = instance.{{context.transform.call}};
+    {% else %}
+      {# No method call, just return the instance #}
+      const callLib = () => instance;
+    {% endif %}
+
+  {% else %}
+    {# EXISTING: Normal function/method call (no 'new') #}
+    {% if context.lib.type==='atom'%}
+      {% if context.transform.libExp %}
+        const lib={{context.transform.libExp}};
+      {% else %}
+        const lib=LIBRARY;
+      {% endif %}
+    {% elseif context.lib.type==='subworkflow' %}
+      const lib={{context.lib.codeKey}};
+    {% elseif target.atom.protocol==='use:' %}
+      const lib={{context.transform.call}};
+      if(!lib) throw new Error('[use] Couldnt find lib.');
+    {% else %}
+      const lib=undefined;
+      throw new Error('Couldn file lib.');
+    {% endif %}
+
+    {% if context.lib.atom.doc.subtype==='workflow'%}
+      const Workflow=lib;
+      const workflow=new Workflow({app:engine.app,caller:c});
+      const callLib = workflow.run.bind(workflow);
+    {% elseif context.lib.type==='subworkflow'%}
+      const Workflow=lib;
+      const workflow=new Workflow({engine,flow,caller:c});
+      const callLib = workflow.run.bind(workflow);
+    {% else %}
+      const callLib = lib;
+    {% endif %}
+  {% endif %}
+
+  {# Execute the call #}
+  {% if context.transform.args %}
+    {% if context.lib.type==='subworkflow' %}
+      const callArgs ={ params: {{ context.transform.args | safe }} };
+    {% else %}
+      const callArgs ={{ context.transform.args | safe }} ;
+    {% endif %}
+
+    {% if context.transform.new !== undefined %}
+      {# For constructor calls, use instance as context #}
+      const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib.call(instance,callArgs);
+    {% else %}
+      {# For regular calls, use _this as context #}
+      {% if context.transform.context !== undefined %}
+        const result = Array.isArray(callArgs)?  await callLib.apply({{context.transform.context | safe}},callArgs): await callLib.call({{context.transform.context | safe}},callArgs);
+      {% else %}            
+        const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+      {% endif %}
+
+    {% endif %}
+
+  {% else %}
+    {% if context.transform.new !== undefined %}
+      const result = await callLib.call(instance);
+    {% else %}
+      {% if context.transform.context !== undefined %}
+        const result = await callLib.call({{context.transform.context | safe}});
+      {% else %}            
+        const result = await callLib.call(_this);
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+  {% for assign in context.transform.result %}
+    flow.set({{assign.key | safe}},{{assign.value | safe}});
+  {% endfor%}
+
+  {% include "src/default/macros/block-assign.js.njk" %}
+
+  {% include "src/default/macros/block-signal.js.njk" %}
+
+  {% if context.transform.return %}
+    resolve({type:'return',value: {{context.transform.return | safe}}});
+  {% elseif context.next and context.transform.wait!=='next'%}
+    {% include "src/default/macros/block-next.js.njk" %}
+  {% elseif not context.next%}
+    resolve();
+  {% endif %}
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

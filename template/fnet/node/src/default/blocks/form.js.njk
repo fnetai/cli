@@ -1,69 +1,44 @@
-import React from "react";
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{% include "src/default/macros/block-header.js.njk" %}
+{% call block.header() %}
 
-{% include "src/default/macros/block-next-header.js.njk" %}
+  {% include "src/default/macros/block-library-header.js.njk" %}
 
-{% include "src/default/macros/block-library-header.js.njk" %}
+  import React from "react";
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
+{% endcall %}
 
-export default function Block(context){
-    
-  {% include "src/default/macros/block-body-header.js.njk" %}
+{% call block.definition() %}
 
-  this.run= function (){
-      
-    {% include "src/default/macros/block-entry-args.js.njk" %}
+  flow.waitForNext({
+    key:'{{indexKey}}',
+    next: async () => {
+      {% if context.transform.return %}
+        resolve({type:'return',value: {{context.transform.return | safe}}});
+      {% elseif context.next %}
+        {% include "src/default/macros/block-next.js.njk" %}
+      {% else %}
+        resolve();
+      {% endif %}
+    }
+  });
+  
+  {% if context.lib.type==='atom'%}
+    const formLib=LIBRARY;
+  {% elseif context.lib.type==='subworkflow' %}
+    const formLib={{context.lib.codeKey}};
+  {% else %}
+    const formLib=undefined; 
+    throw new Error('Couldnt find form.');
+  {% endif %}
 
-    return new Promise(async (resolve,reject)=>{
+  {% include "src/default/macros/block-run-form.js.njk" %}
 
+  {% include "src/default/macros/block-assign.js.njk" %}
+  
+  {% include "src/default/macros/block-signal.js.njk" %}
 
-      try{
-        {% include "src/default/macros/block-run-header.js.njk" %}
-        
-        {% include "src/default/macros/page.js.njk" %}
+{% endcall %}
 
-        {% include "src/default/macros/block-modules.js.njk" %}
-        
-        flow.waitForNext({
-          key:'{{indexKey}}',
-          next: async () => {
-            {% if context.transform.return %}
-              resolve({type:'return',value: {{context.transform.return | safe}}});
-            {% elseif context.next %}
-              {% include "src/default/macros/block-next.js.njk" %}
-            {% else %}
-              resolve();
-            {% endif %}
-          }
-        });
-        
-        {% if context.lib.type==='atom'%}
-          const formLib=LIBRARY;
-        {% elseif context.lib.type==='subworkflow' %}
-          const formLib={{context.lib.codeKey}};
-        {% else %}
-          const formLib=undefined; 
-          throw new Error('Couldnt find form.');
-        {% endif %}
-
-        {% include "src/default/macros/block-run-form.js.njk" %}
-
-        {% include "src/default/macros/block-assign.js.njk" %}
-        
-        {% include "src/default/macros/block-signal.js.njk" %}
-
-        {% include "src/default/macros/block-run-footer.js.njk" %}
-      }
-      catch(error){
-        reject(error);                
-      }
-
-    });
-  } 
-
-  Object.freeze(this);    
-}
-
-{% include "src/default/macros/block-footer.js.njk" %}
+{% call block.footer()%} 
+{% endcall %}

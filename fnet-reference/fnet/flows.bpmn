@@ -5,7 +5,7 @@
     <bpmn:startEvent id="node.0._start0">
       <bpmn:outgoing>edge.0._start0_0.0</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="node.0.0" name="simple-return">
+    <bpmn:scriptTask id="node.0.0" name="assign-string">
       <bpmn:incoming>edge.0._start0_0.0</bpmn:incoming>
       <bpmn:outgoing>edge.0.0_0.0._inline_end</bpmn:outgoing>
     </bpmn:scriptTask>

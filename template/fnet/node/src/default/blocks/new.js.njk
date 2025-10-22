@@ -1,87 +1,62 @@
-{% include "src/default/macros/block-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{% include "src/default/macros/block-next-header.js.njk" %}
+{% call block.header() %}
+  {% include "src/default/macros/block-library-header.js.njk" %}
+{% endcall %}
 
-{% include "src/default/macros/block-library-header.js.njk" %}
+{% call block.definition() %}
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
-
-export default function Block(context){
-
-  {% include "src/default/macros/block-body-header.js.njk" %}
-  
-  this.run= function (){
-      
-    {% include "src/default/macros/block-entry-args.js.njk" %}
-
-    return new Promise(async (resolve,reject)=>{
-
-      try{
-        {% include "src/default/macros/block-run-header.js.njk" %}
-
-        {% include "src/default/macros/page.js.njk" %}
-
-        {% include "src/default/macros/block-modules.js.njk" %}
-
-        {% if context.next and context.transform.wait==='next' %}
-          flow.waitForNext({
-            key:'{{indexKey}}',
-            next: async () =>  {
-                {% include "src/default/macros/block-next.js.njk" %}
-            }
-          });
-        {% endif %}
-
-        {# NEW: Check if 'new' keyword is present for constructor call #}
-        {% if context.transform.new !== undefined %}
-          {# Constructor instantiation with 'new' keyword #}
-          {% if context.lib.type==='atom' and context.lib.atom.protocol!=='use:' %}
-            const LibClass=LIBRARY;
-          {% elseif context.lib.atom.protocol==='use:' %}
-            {# For use:e:: protocol, call value is the class name (e.g., use:e::Map → Map) #}
-            const LibClass={{context.transform.import}};
-            if(!LibClass) throw new Error('[use] Couldnt find class.');
-          {% else %}
-            throw new Error('Cannot instantiate: unsupported lib type.');
-          {% endif %}
-
-          {# Create instance with constructor args #}
-          {% if context.transform.new %}
-            const constructorArgs = {{ context.transform.new | safe }};
-            const instance = Array.isArray(constructorArgs) ? new LibClass(...constructorArgs) : new LibClass(constructorArgs);
-          {% else %}
-            const instance = new LibClass();
-          {% endif %}
-
-        {% endif %}
-
-        const result = instance;
-        
-        {% for assign in context.transform.result %}
-          flow.set({{assign.key | safe}},{{assign.value | safe}});
-        {% endfor%}
-
-        {% include "src/default/macros/block-assign.js.njk" %}
-
-        {% include "src/default/macros/block-signal.js.njk" %}
-
-        {% if context.transform.return %}
-          resolve({type:'return',value: {{context.transform.return | safe}}});
-        {% elseif context.next and context.transform.wait!=='next'%}
+  {% if context.next and context.transform.wait==='next' %}
+    flow.waitForNext({
+      key:'{{indexKey}}',
+      next: async () =>  {
           {% include "src/default/macros/block-next.js.njk" %}
-        {% elseif not context.next%}
-          resolve();
-        {% endif %}
-
-        {% include "src/default/macros/block-run-footer.js.njk" %}
-      }
-      catch(error){
-          onError? onError(error) : reject(error);
       }
     });
-  }
+  {% endif %}
 
-  Object.freeze(this); 
-}
+  {# NEW: Check if 'new' keyword is present for constructor call #}
+  {% if context.transform.new !== undefined %}
+    {# Constructor instantiation with 'new' keyword #}
+    {% if context.lib.type==='atom' and context.lib.atom.protocol!=='use:' %}
+      const LibClass=LIBRARY;
+    {% elseif context.lib.atom.protocol==='use:' %}
+      {# For use:e:: protocol, call value is the class name (e.g., use:e::Map → Map) #}
+      const LibClass={{context.transform.import}};
+      if(!LibClass) throw new Error('[use] Couldnt find class.');
+    {% else %}
+      throw new Error('Cannot instantiate: unsupported lib type.');
+    {% endif %}
 
-{% include "src/default/macros/block-footer.js.njk" %}
+    {# Create instance with constructor args #}
+    {% if context.transform.new %}
+      const constructorArgs = {{ context.transform.new | safe }};
+      const instance = Array.isArray(constructorArgs) ? new LibClass(...constructorArgs) : new LibClass(constructorArgs);
+    {% else %}
+      const instance = new LibClass();
+    {% endif %}
+
+  {% endif %}
+
+  const result = instance;
+  
+  {% for assign in context.transform.result %}
+    flow.set({{assign.key | safe}},{{assign.value | safe}});
+  {% endfor%}
+
+  {% include "src/default/macros/block-assign.js.njk" %}
+
+  {% include "src/default/macros/block-signal.js.njk" %}
+
+  {% if context.transform.return %}
+    resolve({type:'return',value: {{context.transform.return | safe}}});
+  {% elseif context.next and context.transform.wait!=='next'%}
+    {% include "src/default/macros/block-next.js.njk" %}
+  {% elseif not context.next%}
+    resolve();
+  {% endif %}
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}
