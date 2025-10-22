@@ -8,21 +8,8 @@
 
 {% endcall %}
 
-{% call block.definition() %}
+{% call block.definition({autoWait:true}) %}
 
-  flow.waitForNext({
-    key:'{{indexKey}}',
-    next: async () => {
-      {% if context.transform.return %}
-        resolve({type:'return',value: {{context.transform.return | safe}}});
-      {% elseif context.next %}
-        {% include "src/default/macros/block-next.js.njk" %}
-      {% else %}
-        resolve();
-      {% endif %}
-    }
-  });
-  
   {% if context.lib.type==='atom'%}
     const formLib=LIBRARY;
   {% elseif context.lib.type==='subworkflow' %}

@@ -12,7 +12,7 @@
       const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}.js");
     {% endif %}
 
-    let current=new {{context.next.codeKey}}({ parent:_this, engine, flow, caller:c ,onError, error });
+    let current=new {{context.next.codeKey}}({ parent:_this, engine, flow, caller:c , error });
     let currentArgs=args;
 
     do {
@@ -21,29 +21,21 @@
         console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
       {% endif %}
 
-      try {
-        const nextBlock= typeof currentArgs==='undefined'? await current.run()
-          : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
+      const nextBlock= typeof currentArgs==='undefined'? await current.run()
+        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
 
-        if(nextBlock?.type==='return') return resolve(nextBlock);
-        else if(nextBlock?.type!=='block') break;
+      if(nextBlock?.type==='return') return resolve(nextBlock);
+      else if(nextBlock?.type!=='block') break;
 
-        if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
-          return resolve(nextBlock);
+      if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
+        return resolve(nextBlock);
 
-        current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, onError, error });
-        currentArgs=nextBlock.input;
-      } catch (err) {
-        if (onError) {
-          return onError(err);
-        }
-        throw err;
-      }
+      current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, error });
+      currentArgs=nextBlock.input;
 
     } while(true);
 
   {% endif %}
-
 
   {% include "src/default/macros/block-assign.js.njk" %}
 

@@ -20,7 +20,7 @@
     {% endif %}
 
     promises.push((async () => {
-      const current = new {{child.codeKey}}({ parent: _this, engine, flow, caller: c, onError, error });
+      const current = new {{child.codeKey}}({ parent: _this, engine, flow, caller: c, error });
 
       {% if workflow.parent.context.atom.doc.features.print_runners %}
         console.log(new Date().toLocaleString(), ' * ', _this.constructor.IndexKey, ' -> ', current.constructor.IndexKey);
@@ -38,27 +38,20 @@
   {% set strategy = context.transform.strategy | default('all') %}
   let results;
 
-  try {
-    {% if strategy == 'race' %}
-      // Promise.race - first to complete wins
-      results = [await Promise.race(promises)];
-    {% elif strategy == 'any' %}
-      // Promise.any - first successful wins
-      results = [await Promise.any(promises)];
-    {% elif strategy == 'allsettled' %}
-      // Promise.allSettled - all complete, collect results
-      const settled = await Promise.allSettled(promises);
-      results = settled.map(r => r.status === 'fulfilled' ? r.value : null);
-    {% else %}
-      // Promise.all - all must succeed (default)
-      results = await Promise.all(promises);
-    {% endif %}
-  } catch (err) {
-    if (onError) {
-      return onError(err);
-    }
-    throw err;
-  }
+  {% if strategy == 'race' %}
+    // Promise.race - first to complete wins
+    results = [await Promise.race(promises)];
+  {% elif strategy == 'any' %}
+    // Promise.any - first successful wins
+    results = [await Promise.any(promises)];
+  {% elif strategy == 'allsettled' %}
+    // Promise.allSettled - all complete, collect results
+    const settled = await Promise.allSettled(promises);
+    results = settled.map(r => r.status === 'fulfilled' ? r.value : null);
+  {% else %}
+    // Promise.all - all must succeed (default)
+    results = await Promise.all(promises);
+  {% endif %}
 
   // Check if any child returned or jumped
   for (const result of results) {

@@ -37,6 +37,7 @@ async function resolve({ node, transformExpression }) {
 
   await initCommonResolve({ node, transformExpression });
 
+  // resolveNextBlock({ node });
 }
 
 export default {

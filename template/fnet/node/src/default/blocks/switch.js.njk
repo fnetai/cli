@@ -33,20 +33,13 @@
           const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}.js");
         {% endif %}
 
-        const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c, onError });
+        const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c, error });
 
         {% if workflow.parent.context.atom.doc.features.print_runners %}
           console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
         {% endif %}
 
-        try {
-          return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
-        } catch (err) {
-          if (onError) {
-            return onError(err);
-          }
-          throw err;
-        }
+        return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
       }
   {% endfor%}
 

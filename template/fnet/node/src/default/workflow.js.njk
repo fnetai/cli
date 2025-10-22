@@ -99,7 +99,7 @@ export default class Workflow extends Object {
         if(nextBlock.toType.ParentTypeId!==this.constructor.TypeId)
           throw new Error('Unknown situation');
 
-        current=new nextBlock.toType({ parent:this, engine:this.engine, flow:this, caller:c, onError:nextBlock.onError, error:nextBlock.error });
+        current=new nextBlock.toType({ parent:this, engine:this.engine, flow:this, caller:c, error:nextBlock.error });
         currentArgs=nextBlock.input;
 
       } while(true);

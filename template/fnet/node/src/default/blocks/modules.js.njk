@@ -5,15 +5,6 @@
 
 {% call block.definition() %}
 
-  {% if context.next and context.transform.wait==='next' %}
-  flow.waitForNext({
-    key:'{{indexKey}}',
-    next: async () =>  {
-      {% include "src/default/macros/block-next.js.njk" %}
-    }
-  });
-  {% endif %}
-
   {% include "src/default/macros/block-assign.js.njk" %}
 
   {% include "src/default/macros/block-signal.js.njk" %}

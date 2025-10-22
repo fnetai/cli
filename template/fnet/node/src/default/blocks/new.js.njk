@@ -6,15 +6,6 @@
 
 {% call block.definition() %}
 
-  {% if context.next and context.transform.wait==='next' %}
-    flow.waitForNext({
-      key:'{{indexKey}}',
-      next: async () =>  {
-          {% include "src/default/macros/block-next.js.njk" %}
-      }
-    });
-  {% endif %}
-
   {# NEW: Check if 'new' keyword is present for constructor call #}
   {% if context.transform.new !== undefined %}
     {# Constructor instantiation with 'new' keyword #}

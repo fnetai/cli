@@ -10,7 +10,7 @@
 
 {% endmacro %}
 
-{% macro definition() %}
+{% macro definition({autoWait:false}) %}
 
   export default function Block(context){
 
@@ -29,6 +29,21 @@
               {% include "src/default/macros/page.js.njk" %}
 
               {% include "src/default/macros/block-modules.js.njk" %}
+
+              {% if (context.next and context.transform.wait==='next') or autoWait %}
+              flow.waitForNext({
+                key:'{{indexKey}}',
+                next: async () => {
+                  {% if context.transform.return %}
+                    resolve({type:'return',value: {{context.transform.return | safe}}});
+                  {% elseif context.next %}
+                    {% include "src/default/macros/block-next.js.njk" %}
+                  {% else %}
+                    resolve();
+                  {% endif %}
+                }
+              });
+              {% endif %}
 
               {{ caller() }}
 
