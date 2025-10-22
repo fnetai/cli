@@ -1,4 +1,7 @@
-{% set assign=true, signal=true, resolve=true, result=true %}
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+{% set result=true %}
 
 {% import "src/default/types/block.js.njk" as block with context %}
 
@@ -9,7 +12,7 @@
   // PIPELINE EXECUTION
   const { spawn } = await import('child_process');
 
-  const pipelineBinary = '{{ context.binaryName }}';
+  const pipelineBinary = '{{ context.transform.binaryName }}';
   {% if context.transform.args %}
   const pipelineArgs = {{ context.transform.args | safe }};
   {% else %}
@@ -22,7 +25,7 @@
   const pipelineInput = null;
   {% endif %}
 
-  const pipelineFormat = '{{ context.format }}';
+  const pipelineFormat = '{{ context.transform.format }}';
 
   {% if context.transform.env %}
   const pipelineEnv = {{ context.transform.env | safe }};

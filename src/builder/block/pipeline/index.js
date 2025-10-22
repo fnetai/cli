@@ -15,39 +15,9 @@ async function init({ node }) {
     throw new Error(`Pipeline step '${node.indexKey}' requires a binary name`);
   }
 
-  node.context.binaryName = binaryName;
-
-  // Get input expression
-  if (node.definition.input) {
-    node.context.input = node.definition.input;
-  }
-
-  // Get result variable
-  if (node.definition.result) {
-    node.context.result = node.definition.result;
-  }
-
-  // Get args if provided
-  if (node.definition.args) {
-    node.context.args = node.definition.args;
-  }
-
-  // Get format (default: json)
-  node.context.format = node.definition.format || 'json';
-
-  // Get environment variables
-  if (node.definition.env) {
-    node.context.env = node.definition.env;
-  }
-
-  // Get working directory
-  if (node.definition.cwd) {
-    node.context.cwd = node.definition.cwd;
-  }
+  node.definition.binaryName = binaryName;
 
   node.resolve = resolve;
-
-
 }
 
 async function resolve({ node, transformExpression, resolveNextBlock }) {

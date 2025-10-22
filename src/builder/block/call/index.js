@@ -57,24 +57,6 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   if (transform.context)
     transform.context = await transformExpression(transform.context);
 
-  if (transform.result) {
-    if (typeof transform.result === 'string') {
-      transform.result = [{ [transform.result]: "e::result" }];
-    }
-
-    for (let i = 0; i < transform.result?.length; i++) {
-      let assign = transform.result[i];
-      let assignKey = Object.keys(assign)[0];
-      let assingValue = assign[assignKey];
-
-      let assignTransform = {
-        key: await transformExpression(assignKey),
-        value: await transformExpression(assingValue)
-      }
-
-      transform.result[i] = assignTransform;
-    }
-  }
   const root = node.workflow.parent;
 
   node.context.lib = root.context.libs.find(w => w.name === targetLib);
