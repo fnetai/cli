@@ -1,3 +1,5 @@
+{% set resolve=true %}
+
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
@@ -57,8 +59,6 @@
 
   // Store task reference for potential cleanup
   flow.set('{{indexKey}}_task', task);
-
-  {% include "src/default/macros/block-next.js.njk" %}
 
 {% endcall %}
 

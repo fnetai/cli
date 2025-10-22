@@ -5,11 +5,11 @@
 
 {% call block.definition() %}
 
-  const value = {{context.transform.return | safe}};
-
   {% include "src/default/macros/block-assign.js.njk" %}
   
   {% include "src/default/macros/block-signal.js.njk" %}
+
+  const value = {{context.transform.return | safe}};
 
   flow.result={value: value};
 

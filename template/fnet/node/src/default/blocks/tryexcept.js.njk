@@ -1,4 +1,8 @@
 
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
@@ -70,12 +74,6 @@
 
     } while(true);
   }
-
-  {% include "src/default/macros/block-assign.js.njk" %}
-
-  {% include "src/default/macros/block-signal.js.njk" %}
-
-  resolve();
 
 {% endcall %}
 

@@ -1,3 +1,8 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+{% set result=true %}
+
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
@@ -85,6 +90,8 @@
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   fetchOptions.signal = controller.signal;
 
+  let result;
+
   try {
     // Execute HTTP request
     const response = await fetch(finalUrl, fetchOptions);
@@ -97,7 +104,6 @@
 
     // Parse response based on Content-Type
     const contentType = response.headers.get('content-type');
-    let result;
     
     if (contentType && contentType.includes('application/json')) {
       result = await response.json();
@@ -111,12 +117,6 @@
         result = await response.text();
       }
     }
-
-    // Store result in flow variable
-    flow.set('result', result);
-
-    {% include "src/default/macros/block-assign.js.njk" %}
-
   } catch (error) {
     clearTimeout(timeoutId);
 
@@ -129,9 +129,6 @@
     // Handle other errors
     return reject(error);
   }
-
-  {% include "src/default/macros/block-next.js.njk" %}
-
 {% endcall %}
 
 {% call block.footer()%} 

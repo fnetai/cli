@@ -1,3 +1,7 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+{% set result=true %}
 
 {% import "src/default/types/block.js.njk" as block with context %}
 
@@ -98,22 +102,6 @@
         const result = await callLib.call(_this);
       {% endif %}
     {% endif %}
-  {% endif %}
-
-  {% for assign in context.transform.result %}
-    flow.set({{assign.key | safe}},{{assign.value | safe}});
-  {% endfor%}
-
-  {% include "src/default/macros/block-assign.js.njk" %}
-
-  {% include "src/default/macros/block-signal.js.njk" %}
-
-  {% if context.transform.return %}
-    resolve({type:'return',value: {{context.transform.return | safe}}});
-  {% elseif context.next and context.transform.wait!=='next'%}
-    {% include "src/default/macros/block-next.js.njk" %}
-  {% elseif not context.next%}
-    resolve();
   {% endif %}
 
 {% endcall %}

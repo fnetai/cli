@@ -1,21 +1,13 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
 {% endcall %}
 
 {% call block.definition() %}
-
-  {% include "src/default/macros/block-assign.js.njk" %}
-
-  {% include "src/default/macros/block-signal.js.njk" %}
-
-  {% if context.transform.return %}
-    resolve({type:'return',value: {{context.transform.return | safe}}});
-  {% elseif context.next and context.transform.wait!=='next'%}
-    {% include "src/default/macros/block-next.js.njk" %}
-  {% elseif not context.next%}
-    resolve();
-  {% endif %}
 
 {% endcall %}
 

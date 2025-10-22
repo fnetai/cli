@@ -10,7 +10,7 @@
 
 {% endmacro %}
 
-{% macro definition({autoWait:false}) %}
+{% macro definition() %}
 
   export default function Block(context){
 
@@ -30,7 +30,7 @@
 
               {% include "src/default/macros/block-modules.js.njk" %}
 
-              {% if (context.next and context.transform.wait==='next') or autoWait %}
+              {% if (context.next and context.transform.wait==='next') or waitForNext === true %}
               flow.waitForNext({
                 key:'{{indexKey}}',
                 next: async () => {
@@ -46,6 +46,30 @@
               {% endif %}
 
               {{ caller() }}
+
+              {% if result === true %}
+                {% for assign in context.transform.result %}
+                  flow.set({{assign.key | safe}},{{assign.value | safe}});
+                {% endfor%}
+              {% endif %}
+
+              {% if assign === true %}
+                {% include "src/default/macros/block-assign.js.njk" %}
+              {% endif %}
+
+              {% if signal === true %}
+                {% include "src/default/macros/block-signal.js.njk" %}
+              {% endif %}
+
+              {% if resolve === true %}
+                {% if context.transform.return %}
+                  resolve({type:'return',value: {{context.transform.return | safe}}});
+                {% elseif context.next and context.transform.wait!=='next'%}
+                  {% include "src/default/macros/block-next.js.njk" %}
+                {% elseif not context.next%}
+                  resolve();
+                {% endif %}
+              {% endif %}
 
               {% include "src/default/macros/block-run-footer.js.njk" %}
           }
@@ -64,6 +88,31 @@
 {% macro footer() %}
   {% include "src/default/macros/block-footer.js.njk" %}
   {{ caller() }}
+{% endmacro %}
+
+{% macro runner({ step: null }) %}
+  {% if step.definition.dynamic %}
+    const { default: {{step.codeKey}} } = await import("./{{step.codeKey}}.js");
+  {% endif %}
+
+  let current=new {{step.codeKey}}({ parent:_this, engine, flow, caller:c, error });
+  let currentArgs=args;
+
+  do {
+
+    const nextBlock= typeof currentArgs==='undefined'? await current.run()
+      : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
+
+    if(nextBlock?.type==='return') return resolve(nextBlock);
+    else if(nextBlock?.type!=='block') break;
+
+    if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
+      return resolve(nextBlock);
+
+    current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, error });
+    currentArgs=nextBlock.input;
+
+  } while(true);
 {% endmacro %}
 
 {# USAGE #}

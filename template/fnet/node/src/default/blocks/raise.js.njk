@@ -7,10 +7,6 @@
 
   const raise = {{context.transform.raise | safe}};
 
-  {% include "src/default/macros/block-assign.js.njk" %}
-
-  {% include "src/default/macros/block-signal.js.njk" %}
-
   reject(new Error(raise?.message||raise||"Unknown error"));
 
 {% endcall %}

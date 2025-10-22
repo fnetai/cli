@@ -1,3 +1,5 @@
+{% set resolve=true %}
+
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
@@ -62,7 +64,6 @@
   }
   {% endif %}
 
-  {% include "src/default/macros/block-next.js.njk" %}
 {% endcall %}
 
 {% call block.footer()%} 

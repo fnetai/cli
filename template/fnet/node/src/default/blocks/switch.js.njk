@@ -1,10 +1,10 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
 
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
-  {% if not hasDefaultCondition %}
-    {% include "src/default/macros/block-next-header.js.njk" %}
-  {% endif %}
 
   {% for child in childs %}
     {% if not child.definition.dynamic %}
@@ -42,20 +42,6 @@
         return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
       }
   {% endfor%}
-
-  {% include "src/default/macros/block-assign.js.njk" %}
-
-  {% include "src/default/macros/block-signal.js.njk" %}
-
-  {% if not hasDefaultCondition %}
-    {% if context.transform.return %}
-      resolve({type:'return',value: {{context.transform.return | safe}}});
-    {% elseif context.next %}
-      {% include "src/default/macros/block-next.js.njk" %}
-    {% else %}
-      resolve();
-    {% endif %}
-  {% endif %}
 
 {% endcall %}
 

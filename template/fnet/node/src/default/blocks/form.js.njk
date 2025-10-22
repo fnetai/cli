@@ -1,3 +1,7 @@
+{% set waitForNext=true %}
+{% set assign=true %}
+{% set signal=true %}
+
 {% import "src/default/types/block.js.njk" as block with context %}
 
 {% call block.header() %}
@@ -8,7 +12,7 @@
 
 {% endcall %}
 
-{% call block.definition({autoWait:true}) %}
+{% call block.definition() %}
 
   {% if context.lib.type==='atom'%}
     const formLib=LIBRARY;
@@ -20,10 +24,6 @@
   {% endif %}
 
   {% include "src/default/macros/block-run-form.js.njk" %}
-
-  {% include "src/default/macros/block-assign.js.njk" %}
-  
-  {% include "src/default/macros/block-signal.js.njk" %}
 
 {% endcall %}
 
