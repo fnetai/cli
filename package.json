@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "files": [
     "dist",
     "template"
@@ -71,7 +71,8 @@
     "typescript": "^5.9.3",
     "winston": "^3.18.3",
     "yaml": "^2.8.1",
-    "yargs": "^18.0.0"
+    "yargs": "^18.0.0",
+    "rollup": "^4.52.5"
   },
   "bin": {
     "fnet": "dist/fnet/index.js",
@@ -86,7 +87,6 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
-    "peggy": "^5.0.6",
-    "rollup": "^4.52.5"
+    "peggy": "^5.0.6"
   }
 }

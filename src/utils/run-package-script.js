@@ -52,6 +52,7 @@ export async function runPackageScript(options) {
 
   const subprocess = spawn(fullCommand, [], {
     cwd: projectDir,
+    stdio: 'inherit',
     shell,
     detached,
     env: { ...env }
