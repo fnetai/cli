@@ -1,0 +1,30 @@
+$meta:
+  subject: enabled
+  tags:
+    - enabled
+    - disabled
+    - conditional-execution
+  queries:
+    - How to conditionally execute steps?
+    - What is enabled in flownet?
+    - Show me enabled property
+
+main:
+  steps:
+    - disabled-step-1:
+        enabled: false
+        assign:
+          - message: Hello World! I am disabled!
+        return: v::message
+    - enabled-step-1:
+        assign:
+          - message: Hello World! I am enabled!
+        return: v::message
+
+subflow: 
+  enabled: false
+  steps:
+    - subflow-step-1:
+        assign:
+          - message: Hello World! I am in subflow!
+        return: v::message

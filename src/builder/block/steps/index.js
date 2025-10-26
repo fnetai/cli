@@ -12,6 +12,8 @@ async function init({ node, initNode }) {
   
   for await (const step of steps) {
     const key = Object.keys(step)[0];
+    if (step[key].enabled === false) 
+      continue;
     const childNode = {
       name: key,
       childs: [],

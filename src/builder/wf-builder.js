@@ -379,6 +379,7 @@ class Builder {
       const node = {
         name: flowName,
         type: flowName === 'main' ? 'workflow' : "subworkflow",
+        enabled: workflow[flowName].enabled !== false,
         childs: [],
         parent: root,
         definition: workflow[flowName],
@@ -391,10 +392,22 @@ class Builder {
       root.childs.push(node);
     });
 
-    for await (const node of root.childs) {
+    for (let i = 0; i < root.childs.length; i++) {
+      const node = root.childs[i];
       if (isLogEnabled('tree')) treeLogger.info(`[INIT] node: ${node.name}`);
-      await this.initNode({ node });
+      if (node.definition.enabled === false) {
+        root.childs.splice(i, 1);
+        i--;
+        continue;
+      }
+      else
+        await this.initNode({ node });
     }
+
+    // for await (const node of root.childs) {
+    //   if (isLogEnabled('tree')) treeLogger.info(`[INIT] node: ${node.name}`);
+    //   await this.initNode({ node });
+    // }
 
     if (isLogEnabled('tree')) treeLogger.info(`[TREE] Root node tree created (${root.childs.length} flows)`);
 
@@ -504,6 +517,8 @@ class Builder {
       const childInfo = node.childs?.length > 0 ? ` (${node.childs.length} childs)` : '';
       treeLogger.info(`[NODE] ${blockType}: ${node.name}${childInfo}`);
     }
+
+    return true;
   }
 
   async initNodeTreeIndex({ root }) {

@@ -39,6 +39,8 @@ t::output-03::flows: g::file://./fnet/output/03.yaml
 t::output-04::flows: g::file://./fnet/output/04.yaml
 t::output-05::flows: g::file://./fnet/output/05.yaml
 
+t::enabled-01::flows: g::file://./fnet/enabled/01.yaml
+
 commands:
   base:
     usage: frun base --category <category> --index <index>
@@ -102,6 +104,20 @@ commands:
       - frun if-04
       - frun if-05
 
+  output:
+    usage: frun output
+    steps:
+      - frun output-01
+      - frun output-02
+      - frun output-03
+      - frun output-04
+      - frun output-05
+
+  enabled:
+    usage: frun enabled
+    steps:
+      - frun enabled-01
+
   return-01: frun base --category return --index 01
   return-02: frun base --category return --index 02
   return-03: frun base --category return --index 03
@@ -135,11 +151,4 @@ commands:
   output-04: frun base --category output --index 04
   output-05: frun base --category output --index 05
 
-  output:
-    usage: frun output
-    steps:
-      - frun output-01
-      - frun output-02
-      - frun output-03
-      - frun output-04
-      - frun output-05
+  enabled-01: frun base --category enabled --index 01
