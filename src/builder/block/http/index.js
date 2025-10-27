@@ -75,17 +75,13 @@ async function resolve({ node, transformExpression, resolveNextBlock }) {
   node.context.transform = node.context.transform || cloneDeep(node.definition);
   const transform = node.context.transform;
 
-  // Transform expressions in HTTP config
-  if (transform.http.url && typeof transform.http.url === 'string') {
+
+  if (transform.http.url) {
     transform.http.url = await transformExpression(transform.http.url);
   }
 
   if (transform.http.headers) {
-    for (const key in transform.http.headers) {
-      if (typeof transform.http.headers[key] === 'string') {
-        transform.http.headers[key] = await transformExpression(transform.http.headers[key]);
-      }
-    }
+    transform.http.headers = await transformExpression(transform.http.headers)
   }
 
   if (transform.http.body) {
@@ -93,14 +89,10 @@ async function resolve({ node, transformExpression, resolveNextBlock }) {
   }
 
   if (transform.http.params) {
-    for (const key in transform.http.params) {
-      if (typeof transform.http.params[key] === 'string') {
-        transform.http.params[key] = await transformExpression(transform.http.params[key]);
-      }
-    }
+    transform.http.params = await transformExpression(transform.http.params);
   }
 
-  if (transform.http.timeout && typeof transform.http.timeout === 'string') {
+  if (transform.http.timeout) {
     transform.http.timeout = await transformExpression(transform.http.timeout);
   }
 

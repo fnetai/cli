@@ -12,14 +12,14 @@
   
   // HTTP configuration
   let url = {{ context.transform.http.url | safe }};
-  let method = "{{ context.transform.http.method }}";
-  let headers = {{ context.transform.http.headers | dump | safe }};
+  let method = "{{ context.transform.http.method |safe }}";
+  let headers = {{ context.transform.http.headers | safe  }};
   let timeout = {{ context.transform.http.timeout }};
   {% if context.transform.http.body !== undefined %}
-  let body = {% if context.transform.http.body is string %}{{ context.transform.http.body | safe }}{% else %}{{ context.transform.http.body | dump | safe }}{% endif %};
+  let body = {% if context.transform.http.body is string %}{{ context.transform.http.body |safe }}{% else %}{{ context.transform.http.body | safe  }}{% endif %};
   {% endif %}
   {% if context.transform.http.params %}
-  let params = {{ context.transform.http.params | dump | safe }};
+  let params = {{ context.transform.http.params | safe  }};
   {% endif %}
 
   // Create HTTP context for modules
