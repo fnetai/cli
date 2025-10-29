@@ -1,7 +1,7 @@
 name: fnet-reference
 
 features:
-  prunt_steps: true
+  print_steps: true
   # print_runners: true
   runtime:
     type: bun

@@ -16,12 +16,18 @@
 
 ## Overview
 
-Flownet is a revolutionary development framework that isolates non-functional components, allowing developers to focus solely on functional code. The `@fnet/cli` package provides command-line tools to create, build, and manage Flownet projects.
+Flownet is a low-level flow framework that separates **Core** (your business logic) from **Layers** (infrastructure, dev, build, runtime, and delivery). This separation allows developers to focus on functional code while Flownet automates the surrounding infrastructure. The `@fnet/cli` package provides command-line tools to create, build, and manage Flownet projects.
+
+Flownet provides primitives for composing workflows similar to how React provides components for UI development. It emphasizes a **schema-first approach** with **deterministic core**, enabling **multi-runtime portability**.
 
 ### Key Features
 
+- **Core vs Layers Architecture**: Separate your business logic (Core) from infrastructure (Layers) for cleaner, more maintainable code
+- **Nodes & Flows**: Reusable functional units (Nodes) with explicit I/O schemas, orchestrated by Flows
+- **I/O Contracts**: Schema-first contracts define clear input/output expectations for deterministic behavior
+- **Automatic Dependency Detection**: Simplified dependency management across your project
+- **Multi-Runtime Support**: Deploy to Node.js, Bun, Deno, or Python - choose the best runtime for each task
 - **Language Agnostic**: Support for multiple programming languages (JavaScript, Python) in the same project
-- **Runtime Flexibility**: Choose the best runtime for each task (Node.js, Python, Bun)
 - **Unified Interface**: Consistent commands across different project types
 - **Tag-Based Configuration**: Powerful conditional configuration with `--ftag` parameter
 - **Isolated Workspace**: All build artifacts and dependencies are kept in `.workspace` directory
@@ -97,54 +103,95 @@ fbin list
 fbin uninstall awesome-tool --yes
 ```
 
+## Core Concepts
+
+### Nodes & Flows
+
+**Nodes** are reusable functional units that encapsulate business logic with explicit input/output schemas. Each Node:
+
+- Has a deterministic, pure function at its core
+- Defines clear I/O contracts (input and output schemas)
+- Can be composed and reused across different Flows
+- Supports automatic dependency detection
+
+**Flows** orchestrate Nodes and sub-Flows to create complex workflows. Flows:
+
+- Connect multiple Nodes with explicit data contracts
+- Enable multi-runtime portability through schema-first design
+- Support complex data transformations and conditional logic
+- Maintain deterministic behavior across different runtimes
+
+### I/O Contracts
+
+Flownet uses schema-first contracts to define clear input and output expectations. This approach:
+
+- Ensures deterministic behavior across different runtimes
+- Enables automatic validation and type checking
+- Facilitates multi-runtime portability
+- Improves code clarity and maintainability
+
 ## Project Types
 
 Flownet supports two main project types:
 
 ### fnode Project
 
-An **fnode project** (Flow Node Project) is a classic/node-style project that focuses on creating reusable components or standalone applications. These projects:
+An **fnode project** (Flow Node Project) is a classic/node-style project that focuses on creating reusable Nodes or standalone applications. These projects:
 
 - Use `fnode.yaml` as their configuration file
 - Typically contain a single code file in the `src` directory
 - Can be built with different runtimes (Node.js, Python, Bun)
 - Support multiple programming languages simultaneously
+- Ideal for creating reusable components with explicit I/O contracts
 
 ### fnet Project
 
-An **fnet project** (Flow Project) is a workflow-oriented project that focuses on orchestrating multiple components. These projects:
+An **fnet project** (Flow Project) is a workflow-oriented project that focuses on orchestrating multiple Nodes and Flows. These projects:
 
 - Use `fnet.yaml` as their configuration file
-- Define workflows that connect multiple components
+- Define workflows that connect multiple Nodes and sub-Flows
 - Support complex data flows and transformations
+- Enable multi-runtime deployment strategies
+- Ideal for building complex business logic orchestrations
 
 ## CLI Tools
 
-Flownet provides four main CLI tools:
+Flownet provides five main CLI tools:
 
-- **`fnode`**: For Node/classic projects (uses `fnode.yaml`)
-- **`fnet`**: For Workflow projects (uses `fnet.yaml`)
+- **`fnode`**: For Node/classic projects (uses `fnode.yaml`) - create and manage reusable Nodes
+- **`fnet`**: For Workflow projects (uses `fnet.yaml`) - create and manage Flows that orchestrate Nodes
 - **`frun`**: Unified interface that works with both project types (auto-detects project file)
 - **`fbin`**: Binary management system for installing, compiling, and managing CLI tools
+- **`fservice`**: Service management for deploying and running Flownet applications
 
-## Multi-Language Support
+## Multi-Language & Multi-Runtime Support
 
-Flownet supports multiple programming languages simultaneously within the same project:
+Flownet supports multiple programming languages and runtimes simultaneously within the same project:
 
 ```text
 my-project/
 ├── src/
-│   ├── index.js          # JavaScript implementation (used by both Node.js and Bun)
+│   ├── index.js          # JavaScript implementation (used by Node.js and Bun)
 │   └── index.py          # Python implementation
 ├── fnode.yaml            # Project configuration file
 └── .workspace/           # Build infrastructure (managed by CLI)
 ```
 
-This allows you to:
+### Supported Runtimes
 
-- Write your core logic once and migrate it to other languages as needed
-- Choose the best language for each specific use case
-- Use JavaScript with Node.js for quick development, Python for data processing, and JavaScript with Bun for improved performance
+- **Node.js**: JavaScript/TypeScript execution with full npm ecosystem support
+- **Bun**: Fast JavaScript runtime with improved performance
+- **Deno**: Secure JavaScript/TypeScript runtime with built-in tooling
+- **Python**: Python 3.x for data processing and scientific computing
+
+### Multi-Runtime Portability
+
+Thanks to Flownet's schema-first approach and deterministic core:
+
+- Write your core logic once and deploy to multiple runtimes
+- Choose the best runtime for each specific use case
+- Migrate between runtimes without changing your business logic
+- Use JavaScript with Node.js for quick development, Python for data processing, and Bun for improved performance
 
 ## Tag-Based Configuration
 

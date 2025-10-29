@@ -34,7 +34,7 @@ const c={
 console.log(new Date().toLocaleString(),'{{indexKey}}');
 {% endif %}
 
-{% if definition.debugger %}
+{% if context.transform.debugger %}
 debugger;
 {% endif %}
 

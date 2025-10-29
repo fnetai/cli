@@ -11,6 +11,8 @@ $meta:
 main:
   steps:
     - assign-string:
+        debugger: true
+        sleep: 1000
         assign:
           - message: Hello World!
         return: v::message
