@@ -9,8 +9,9 @@ export default async function initDependenciesBun({ atom, packageDependencies, p
   userDependencies.filter(w => w.dev).forEach(dep => packageDevDependencies.push(dep));
 
   if (atom.type === 'workflow') {
-    packageDependencies.push({ package: "get-value", version: "^3" });
-    packageDependencies.push({ package: "set-value", version: "^4" });
+    packageDependencies.push({ package: "dot-prop", version: "^10" });
+    // packageDependencies.push({ package: "get-value", version: "^3" });
+    // packageDependencies.push({ package: "set-value", version: "^4" });
   }
 
   if (atom.doc.features.form_enabled) {

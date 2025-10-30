@@ -1,4 +1,6 @@
-{% include "src/default/macros/workflow-header.js.njk" %}
+// WORKFLOW: {{ indexKey }}
+
+import Object from "../core/object.js";
 
 {% if context.next %}
   {% if not context.next.definition.dynamic %}
@@ -108,7 +110,7 @@ export default class Workflow extends Object {
 
     
     {% if context.transform.print %}
-      print({{context.transform.print | safe}});
+      console.log({{context.transform.print | safe}});
     {% endif%}
 
     {% if context.transform.assert %}
