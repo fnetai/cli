@@ -88,6 +88,8 @@
       ,"cli:compile": "fbin compile {{atom.doc.features.cli.output.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
       ,"cli:compile:dev": "fbin compile {{atom.doc.features.cli.input.file}} -o .bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"    
       ,"cli:install": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
+      ,"cli:install:symlink": "fbin install ./.bin/{{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes --symlink"
+      ,"cli:uninstall": "fbin uninstall {{atom.doc['npm::bin'] or atom.doc['name'] or atom['id']}} --yes"
     {% endif %}
 
     {% if atom.doc.features.app.enabled %}
