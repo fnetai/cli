@@ -36,6 +36,12 @@ export const builder = {
     type: 'boolean',
     default: false,
     alias: 'y'
+  },
+  symlink: {
+    describe: 'Create a symlink instead of copying the binary',
+    type: 'boolean',
+    default: false,
+    alias: 's'
   }
 };
 
@@ -83,13 +89,34 @@ export const handler = async (argv) => {
       }
     }
 
-    // Copy binary to bin directory
-    console.log(chalk.blue(`Installing ${sourcePath} to ${binPath}...`));
-    fs.copyFileSync(sourcePath, binPath);
+    // Install binary (copy or symlink)
+    if (argv.symlink) {
+      console.log(chalk.blue(`Creating symlink from ${sourcePath} to ${binPath}...`));
 
-    // Set executable permissions (not needed on Windows)
-    if (process.platform !== 'win32') {
-      fs.chmodSync(binPath, 0o755);
+      // Remove existing file/symlink if it exists
+      if (fs.existsSync(binPath)) {
+        fs.unlinkSync(binPath);
+      }
+
+      // Create symlink (Windows requires different approach)
+      if (process.platform === 'win32') {
+        // On Windows, use 'file' type for symlinks
+        fs.symlinkSync(sourcePath, binPath, 'file');
+      } else {
+        // On Unix-like systems, use default symlink
+        fs.symlinkSync(sourcePath, binPath);
+      }
+
+      // Note: Symlinks inherit permissions from the target file
+      console.log(chalk.green(`Symlink created successfully.`));
+    } else {
+      console.log(chalk.blue(`Installing ${sourcePath} to ${binPath}...`));
+      fs.copyFileSync(sourcePath, binPath);
+
+      // Set executable permissions (not needed on Windows)
+      if (process.platform !== 'win32') {
+        fs.chmodSync(binPath, 0o755);
+      }
     }
 
     // Update metadata
@@ -135,7 +162,8 @@ export const handler = async (argv) => {
       created: new Date().toISOString(),
       platform: process.platform,
       version: version,
-      project: path.basename(process.cwd())
+      project: path.basename(process.cwd()),
+      isSymlink: argv.symlink || false
     };
 
     metadata.lastUpdated = new Date().toISOString();
