@@ -9,11 +9,15 @@ $meta:
     - Show me the simplest assign example
 
 main:
+  params:
+    - message: Hello World!
+    - t::prod::message: Hello World!!!
   steps:
     - assign-string:
         # debugger: true
         # sleep: 1000
         assign:
           - message: Hello World!
+          - t::prod::message: Hello World!!!
         return: v::message
 

@@ -16,6 +16,11 @@ export default async function initCommonResolve({ node, transformExpression }) {
   if (Reflect.has(transform, 'assign')) {
     for (let i = 0; i < transform.assign?.length; i++) {
       let assign = transform.assign[i];
+      if(Object.keys(assign).length === 0) {
+        transform.assign.splice(i, 1);
+        i--;
+        continue;
+      }
       let assignKey = Object.keys(assign)[0];
       let assingValue = assign[assignKey];
 
