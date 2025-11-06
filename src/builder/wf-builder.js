@@ -297,18 +297,20 @@ class Builder {
     }
 
     // create multi-platform symlink projectSrcDir to projectDir/src/ as src-core
-    target = this.#context.projectSrcDirSymlink;
-    if (!fs.existsSync(target)) {
-      try {
-        if (os.platform() === 'win32') {
-          // Windows requires special handling
-          fs.symlinkSync(projectSrcDir, target, 'junction');
-        } else {
-          // For Unix-like systems
-          fs.symlinkSync(projectSrcDir, target, 'dir');
+    if (this.#atom.doc.features?.symlink === true) {
+      target = this.#context.projectSrcDirSymlink;
+      if (!fs.existsSync(target)) {
+        try {
+          if (os.platform() === 'win32') {
+            // Windows requires special handling
+            fs.symlinkSync(projectSrcDir, target, 'junction');
+          } else {
+            // For Unix-like systems
+            fs.symlinkSync(projectSrcDir, target, 'dir');
+          }
+        } catch (err) {
+          throw new Error(`Couldn't create symlink. Error: ${err.message}`);
         }
-      } catch (err) {
-        throw new Error(`Couldn't create symlink. Error: ${err.message}`);
       }
     }
   }
@@ -925,7 +927,8 @@ class Builder {
       const atomLib = atomLibRef.atom;
       const projectDir = this.#context.projectDir;
       if (atomLib.protocol === 'src:') {
-        const srcFilePath = path.resolve(this.#context.projectSrcDirSymlink, `${atomLib.fileName || atomLib.name}.js`);
+        let srcFilePath = this.#atom.doc.features?.symlink === true ? this.#context.projectSrcDirSymlink : this.#context.projectSrcDir;
+        srcFilePath = path.resolve(srcFilePath, `${atomLib.fileName || atomLib.name}.js`);
         // const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(`${this.#context.projectDir}/src/default/blocks`, srcFilePath);
 
