@@ -869,9 +869,10 @@ class Builder {
   async resolveTypeWorkflow({ node }) {
     node.context.transform = node.context.transform || cloneDeep(node.definition);
     const transform = node.context.transform;
-
+    // console.log('params', transform.params);
     for (let i = 0; i < transform.params?.length; i++) {
       const param = transform.params[i];
+      // console.log('param', param);
       if (typeof param === 'string') transform.params[i] = { key: param, hasDefault: false };
       else {
 
