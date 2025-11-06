@@ -54,7 +54,7 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
         const projectNodeModules = path.join(projectDir, 'node_modules');
         env.NODE_PATH = projectNodeModules;
         env.NODE_PRESERVE_SYMLINKS =1;
-        env.NODE_OPTIONS = `${env.NODE_OPTIONS || ''} --preserve-symlinks`.trim();
+        // env.NODE_OPTIONS = `${env.NODE_OPTIONS || ''} --preserve-symlinks`.trim();
         
 
 

@@ -925,8 +925,8 @@ class Builder {
       const atomLib = atomLibRef.atom;
       const projectDir = this.#context.projectDir;
       if (atomLib.protocol === 'src:') {
-        // const srcFilePath = path.resolve(this.#context.projectSrcDirSymlink, `${atomLib.fileName || atomLib.name}.js`);
-        const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
+        const srcFilePath = path.resolve(this.#context.projectSrcDirSymlink, `${atomLib.fileName || atomLib.name}.js`);
+        // const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(`${this.#context.projectDir}/src/default/blocks`, srcFilePath);
 
         if (!fs.existsSync(srcFilePath)) {
