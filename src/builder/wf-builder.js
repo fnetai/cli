@@ -297,7 +297,7 @@ class Builder {
     }
 
     // create multi-platform symlink projectSrcDir to projectDir/src/ as src-core
-    if (this.#atom.doc.features?.symlink === true) {
+    if (this.#atom.doc.features?.symlinks === true) {
       target = this.#context.projectSrcDirSymlink;
       if (!fs.existsSync(target)) {
         try {
@@ -927,7 +927,7 @@ class Builder {
       const atomLib = atomLibRef.atom;
       const projectDir = this.#context.projectDir;
       if (atomLib.protocol === 'src:') {
-        let srcFilePath = this.#atom.doc.features?.symlink === true ? this.#context.projectSrcDirSymlink : this.#context.projectSrcDir;
+        let srcFilePath = this.#atom.doc.features?.symlinks === true ? this.#context.projectSrcDirSymlink : this.#context.projectSrcDir;
         srcFilePath = path.resolve(srcFilePath, `${atomLib.fileName || atomLib.name}.js`);
         // const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(`${this.#context.projectDir}/src/default/blocks`, srcFilePath);
