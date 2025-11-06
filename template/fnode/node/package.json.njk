@@ -77,7 +77,7 @@
         {% endif %}
       {% else %}
         ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}}"
-        ,"cli:dev": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}}"
+        ,"cli:dev": "NODE_PRESERVE_SYMLINKS=1 bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}}"
         {% if atom.doc.features.cli.mcp.enabled === true %}
           ,"cli:mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}} --cli-mode=mcp"
           ,"cli:mcp:inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.output.file}} --cli-mode=mcp"

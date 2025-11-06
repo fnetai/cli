@@ -61,7 +61,7 @@ import scheduleBlock from './block/schedule/index.js';
 import httpBlock from './block/http/index.js';
 import which from './which.js';
 import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
-
+import os from 'node:os';
 class Builder {
 
   #auth;
@@ -256,6 +256,7 @@ class Builder {
     this.setProgress({ message: "Initializing library directory." });
 
     const projectDir = this.#context.projectDir;
+    const projectSrcDir = this.#context.projectSrcDir;
     const coreDir = this.#context.coreDir;
 
     this.setProgress({ message: "Cleaning project directory." });
@@ -293,6 +294,22 @@ class Builder {
     let target = path.join(projectDir, ".dev");
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
+    }
+
+    // create multi-platform symlink projectSrcDir to projectDir/src/ as src-core
+    target = this.#context.projectSrcDirSymlink;
+    if (!fs.existsSync(target)) {
+      try {
+        if (os.platform() === 'win32') {
+          // Windows requires special handling
+          fs.symlinkSync(projectSrcDir, target, 'junction');
+        } else {
+          // For Unix-like systems
+          fs.symlinkSync(projectSrcDir, target, 'dir');
+        }
+      } catch (err) {
+        throw new Error(`Couldn't create symlink. Error: ${err.message}`);
+      }
     }
   }
 
@@ -908,6 +925,7 @@ class Builder {
       const atomLib = atomLibRef.atom;
       const projectDir = this.#context.projectDir;
       if (atomLib.protocol === 'src:') {
+        // const srcFilePath = path.resolve(this.#context.projectSrcDirSymlink, `${atomLib.fileName || atomLib.name}.js`);
         const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(`${this.#context.projectDir}/src/default/blocks`, srcFilePath);
 

@@ -36,6 +36,14 @@ export async function createContext(argv) {
         templateDir: resolveTemplatePath(`./template/fnode/${template}`),
         projectDir: path.resolve(project.projectDir, './.workspace'),
         projectSrcDir: path.resolve(project.projectDir, './src'),
+        projectSrcDirSymlink: path.resolve(project.projectDir, './.workspace/src-core'),
+
+        projectAppDir: path.resolve(project.projectDir, './app'),
+        projectAppDirSymlink: path.resolve(project.projectDir, './.workspace/app'),
+
+        projectCliDir: path.resolve(project.projectDir, './cli'),
+        projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
+        
         project,
         tags: argv.ftag,
         dev: argv.dev

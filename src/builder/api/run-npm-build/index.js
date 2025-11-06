@@ -16,12 +16,8 @@ export default async function runNpmBuild({ setProgress, context }) {
   // Set NODE_PATH to projectDir's node_modules to prevent parent node_modules lookup
   const projectNodeModules = path.join(projectDir, 'node_modules');
   env.NODE_PATH = projectNodeModules;
-  env.PATH = `${path.join(projectNodeModules, '/.bin')}${path.delimiter}${env.PATH}`;
-
-  // Also set NODE_OPTIONS to disable parent node_modules lookup
-  const existingNodeOptions = env.NODE_OPTIONS || '';
-  env.NODE_OPTIONS = `${existingNodeOptions} --preserve-symlinks`.trim();
-
+  env.NODE_PRESERVE_SYMLINKS =1;
+  env.NODE_OPTIONS = `${env.NODE_OPTIONS || ''} --preserve-symlinks`.trim();
   // Run the package script directly (detached, no stdio to avoid blocking)
   await runPackageScript({
     projectDir,
