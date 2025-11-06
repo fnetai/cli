@@ -872,13 +872,15 @@ class Builder {
 
     for (let i = 0; i < transform.params?.length; i++) {
       const param = transform.params[i];
-      if(Object.keys(param).length === 0) {
-        transform.params.splice(i, 1);
-        i--;
-        continue;
-      }
       if (typeof param === 'string') transform.params[i] = { key: param, hasDefault: false };
       else {
+
+        if (Object.keys(param).length === 0) {
+          transform.params.splice(i, 1);
+          i--;
+          continue;
+        }
+        
         const paramKey = Object.keys(param)[0];
         transform.params[i] = { key: paramKey, hasDefault: true, default: param[paramKey], type: typeof param[paramKey] };
       }

@@ -11,13 +11,13 @@ $meta:
 main:
   params:
     - message: Hello World!
-    - t::prod::message: Hello World!!!
+    - t::prod::message: 6379
   steps:
     - assign-string:
         # debugger: true
         # sleep: 1000
         assign:
           - message: Hello World!
-          - t::prod::message: Hello World!!!
+          - t::prod::message: 6379
         return: v::message
 
