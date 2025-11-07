@@ -14,7 +14,6 @@ export default async function createPackageJson({ atom, context, packageDependen
     if (!packageDevDependencies.find(x => x.package === w.package)) {
       packageDevDependencies.push(w);
     }
-
     const index = packageDependencies.findIndex(x => x.package === w.package);
     packageDependencies.splice(index, 1);
   });
@@ -80,6 +79,26 @@ export default async function createPackageJson({ atom, context, packageDependen
         type: "npm"
       })
     }
+  }
+
+  for await (const dep of packageDependencies) {
+    if (dep.version !== undefined) continue;
+    const npmVersions = await pickNpmVersions({
+      name: dep.package,
+      projectDir: context.projectDir,
+      setProgress
+    });
+    dep.version = npmVersions.minorRange;
+  }
+
+  for await (const dep of packageDevDependencies) {
+    if (dep.version !== undefined) continue;
+    const npmVersions = await pickNpmVersions({
+      name: dep.package,
+      projectDir: context.projectDir,
+      setProgress
+    });
+    dep.version = npmVersions.minorRange;
   }
 
   const templateContext = {
