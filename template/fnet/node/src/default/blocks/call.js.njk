@@ -81,25 +81,25 @@
 
     {% if context.transform.new !== undefined %}
       {# For constructor calls, use instance as context #}
-      const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib.call(instance,callArgs);
+      const result = Array.isArray(callArgs)?  await callLib.apply(instance,callArgs): await callLib(callArgs);
     {% else %}
       {# For regular calls, use _this as context #}
       {% if context.transform.context !== undefined %}
         const result = Array.isArray(callArgs)?  await callLib.apply({{context.transform.context | safe}},callArgs): await callLib.call({{context.transform.context | safe}},callArgs);
       {% else %}            
-        const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib.call(_this,callArgs);
+        const result = Array.isArray(callArgs)?  await callLib.apply(_this,callArgs): await callLib(callArgs);
       {% endif %}
 
     {% endif %}
 
   {% else %}
     {% if context.transform.new !== undefined %}
-      const result = await callLib.call(instance);
+      const result = await callLib();
     {% else %}
       {% if context.transform.context !== undefined %}
         const result = await callLib.call({{context.transform.context | safe}});
       {% else %}            
-        const result = await callLib.call(_this);
+        const result = await callLib();
       {% endif %}
     {% endif %}
   {% endif %}

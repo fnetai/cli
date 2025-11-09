@@ -39,7 +39,7 @@
           console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
         {% endif %}
 
-        return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run.call(current,args));
+        return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run(args));
       }
   {% endfor%}
 

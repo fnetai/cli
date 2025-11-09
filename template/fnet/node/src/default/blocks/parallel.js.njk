@@ -33,7 +33,7 @@
 
       const nextBlock = Array.isArray(args)
         ? await current.run.apply(current, args)
-        : await current.run.call(current, args);
+        : await current.run(args);
 
       return nextBlock;
     })());

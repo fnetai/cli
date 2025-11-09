@@ -31,7 +31,7 @@
       {% endif %}
 
       const nextBlock= typeof currentArgs==='undefined'? await current.run()
-        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
+        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run(currentArgs) ;
 
       if(nextBlock?.type==='return') return resolve(nextBlock);
       else if(nextBlock?.type!=='block') break;
@@ -60,7 +60,7 @@
       {% endif %}
 
       const nextBlock= typeof currentArgs==='undefined'? await current.run()
-        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run.call(current, currentArgs) ;
+        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run(currentArgs) ;
 
       if(nextBlock?.type==='return') return resolve(nextBlock);
       else if(nextBlock?.type!=='block') break;
