@@ -371,7 +371,7 @@ class Builder {
 
   async initNodeTree({ workflow }) {
 
-    const reservedKeys = ['$meta'];
+    const reservedKeys = ['$meta', '$project', '$features', '$input', '$output', '$commands'];
     const workflowKeys = Object.keys(workflow).filter(w => !reservedKeys.includes(w));
 
     if (isLogEnabled('tree')) treeLogger.info('[TREE] Creating root node');
@@ -881,7 +881,7 @@ class Builder {
           i--;
           continue;
         }
-        
+
         const paramKey = Object.keys(param)[0];
         transform.params[i] = { key: paramKey, hasDefault: true, default: param[paramKey], type: typeof param[paramKey] };
       }
