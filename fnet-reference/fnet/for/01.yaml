@@ -10,10 +10,20 @@ main:
                   - message: e::`Number:${for::number}`
                 output:
                   message: v::message
+
             - print-number-2:
                 assign:
                   - message: e::`Number:${for::number}`
                 output:
                   message: v::message
+
+            # TODO: BUG
+            # - child-steps:
+            #     steps:
+            #       - print-number-2:
+            #           assign:
+            #             - message: e::`Number:${for::number}`
+            #           output:
+            #             message: v::message
     - final-step:
         return: Done!
