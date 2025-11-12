@@ -41,6 +41,8 @@ t::output-05::flows: g::file://./fnet/output/05.yaml
 
 t::enabled-01::flows: g::file://./fnet/enabled/01.yaml
 
+t::for-01::flows: g::file://./fnet/for/01.yaml
+
 commands:
   base:
     usage: frun base --category <category> --index <index>
@@ -152,3 +154,5 @@ commands:
   output-05: frun base --category output --index 05
 
   enabled-01: frun base --category enabled --index 01
+
+  for-01: frun base --category for --index 01

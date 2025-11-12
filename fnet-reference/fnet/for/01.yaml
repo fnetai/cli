@@ -1,0 +1,19 @@
+main:
+  steps:
+    - for-loop:
+        for:
+          in: e::[1, 2, 3, 4, 5]
+          as: number
+          steps:
+            - print-number:
+                assign:
+                  - message: e::`Number:${for::number}`
+                output:
+                  message: v::message
+            - print-number-2:
+                assign:
+                  - message: e::`Number:${for::number}`
+                output:
+                  message: v::message
+    - final-step:
+        return: Done!
