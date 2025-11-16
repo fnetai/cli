@@ -34,7 +34,7 @@
 
     {# If 'call' is specified, get the method from instance #}
     {% if context.transform.call %}
-      const callLib = instance.{{context.transform.call}};
+      const callLib = instance.{{context.transform.call}}.bind(instance);
     {% else %}
       {# No method call, just return the instance #}
       const callLib = () => instance;
