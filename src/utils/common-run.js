@@ -39,6 +39,7 @@ export async function runCommandGroup({ projectType, group, tags, args, argv }) 
 
     // Run command group
     // console.log(`Running command group '${group}' from ${projectFile.name}...`);
+    // console.log(args);
     await fnetShellFlow({
       commands: commandGroup,
       context: {

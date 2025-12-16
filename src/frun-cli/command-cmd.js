@@ -11,6 +11,21 @@ const command = {
   describe: 'Run a command group from project file',
   builder: (yargs) => {
     return yargs
+      .parserConfiguration({
+        // 'camel-case-expansion': false
+      })
+      .middleware((argv) => {
+        // Convert kebab-case to snake_case while preserving original keys
+        const kebabCasePattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)+$/;
+
+        Object.keys(argv).forEach(key => {
+          if (kebabCasePattern.test(key)) {
+            const snakeKey = key.replace(/-/g, '_');
+            argv[snakeKey] = argv[key];
+            // Keep original kebab-case key as well
+          }
+        });
+      })
       .positional('group', {
         type: 'string',
         describe: 'Command group to run'
