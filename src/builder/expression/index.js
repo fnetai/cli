@@ -194,9 +194,10 @@ export function parseFlowExpression({ expression, useGrammar = true, multiline =
     expression = String(expression);
   }
 
-  // Normalize multiline if requested
+  // Remove trailing newlines if multiline
   if (multiline) {
-    expression = expression.replace(/\s+/g, ' ').trim();
+    // expression = expression.replace(/\s+/g, ' ').trim();
+    expression = expression.replace(/\n+$/, '');
   }
 
   let result;

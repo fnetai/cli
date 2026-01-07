@@ -136,6 +136,70 @@ export function bindCondaContextCommand(builder, { name, bin, preArgs = [], crea
 }
 
 /**
+ * Bind a conda bin command to a yargs builder
+ * This allows running any binary from the conda environment
+ *
+ * @param {Object} builder - Yargs builder
+ * @param {Object} options - Command options
+ * @param {string} options.name - Command name (e.g., 'bin')
+ * @param {Function} options.createContext - Function to create context
+ * @returns {Object} Updated yargs builder
+ */
+export function bindCondaBinCommand(builder, { name, createContext }) {
+  return builder.command(
+    `${name} <binary> [commands..]`,
+    `Run a binary from conda environment`,
+    (yargs) => {
+      return yargs
+        .positional('binary', {
+          type: 'string',
+          describe: 'Binary name to run from .conda/bin'
+        })
+        .help(false)
+        .version(false);
+    },
+    async (argv) => {
+      try {
+        const context = await createContext(argv);
+        const { projectDir } = context;
+
+        const escapeArg = (arg) => {
+          if (!arg.includes(' ')) return arg;
+
+          if (process.platform === 'win32') {
+            return `"${arg.replace(/(["^])/g, '^$1')}"`;
+          } else {
+            return `"${arg.replace(/(["\\$`])/g, '\\$1')}"`;
+          }
+        };
+
+        const binaryName = argv.binary;
+        const rawArgs = process.argv.slice(4).map(escapeArg); // Skip 'fnode', 'bin', and binary name
+
+        const bin = path.join(projectDir, '.conda', 'bin', binaryName);
+
+        const subprocess = spawn(bin, rawArgs, {
+          cwd: projectDir,
+          stdio: 'inherit',
+          shell: true,
+          detached: true,
+          env: {
+            "PYTHONPATH": projectDir
+          }
+        });
+
+        // Set up signal handlers and error handlers for the subprocess
+        setupSignalHandlers(subprocess);
+
+      } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+      }
+    }
+  );
+}
+
+/**
  * Bind a with context command to a yargs builder
  *
  * @param {Object} builder - Yargs builder

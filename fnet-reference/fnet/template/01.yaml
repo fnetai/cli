@@ -1,0 +1,12 @@
+main:
+  steps:
+    - template-1:
+        assign:
+          - msg1: e::`Hello World!`
+          - msg2: "e::`Hello World!`"
+          - msg3: |
+              e::`Hello World!`
+          - msg4: |
+              e::`Hello World!
+              Baby steps!`
+        return: v::msg1

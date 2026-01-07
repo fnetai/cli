@@ -8,6 +8,7 @@ import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
 import {
   bindSimpleContextCommand,
   bindCondaContextCommand,
+  bindCondaBinCommand,
   bindWithContextCommand,
   bindRunContextCommand,
   bindInstallCommand
@@ -71,6 +72,7 @@ async function main() {
     cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python3', createContext });
     cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip', createContext });
     cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip3', createContext });
+    cmdBuilder = bindCondaBinCommand(cmdBuilder, { name: 'bin', createContext });
 
     cmdBuilder
       .demandCommand(1, 'You need at least one command before moving on')

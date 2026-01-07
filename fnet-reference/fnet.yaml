@@ -43,6 +43,8 @@ t::enabled-01::flows: g::file://./fnet/enabled/01.yaml
 
 t::for-01::flows: g::file://./fnet/for/01.yaml
 
+t::template-01::flows: g::file://./fnet/template/01.yaml
+
 commands:
   base:
     usage: frun base --category <category> --index <index>
@@ -120,6 +122,11 @@ commands:
     steps:
       - frun enabled-01
 
+  template:
+    usage: frun template
+    steps:
+      - frun template-01
+
   return-01: frun base --category return --index 01
   return-02: frun base --category return --index 02
   return-03: frun base --category return --index 03
@@ -154,5 +161,7 @@ commands:
   output-05: frun base --category output --index 05
 
   enabled-01: frun base --category enabled --index 01
+
+  template-01: frun base --category template --index 01
 
   for-01: frun base --category for --index 01
