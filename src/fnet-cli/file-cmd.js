@@ -24,6 +24,10 @@ const command = {
       .option('ftag', {
         type: 'array',
         describe: 'Tags for conditional configuration'
+      })
+      .option('flows', {
+        type: 'string',
+        describe: 'Path to flows file'
       });
   },
   handler: async (argv) => {

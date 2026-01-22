@@ -28,7 +28,7 @@ export async function createContext(argv) {
     };
   } else {
     try {
-      const project = await loadProject({ tags: argv.ftag });
+      const project = await loadProject({ tags: argv.ftag, flowsPath: argv.flows });
       return {
         buildId: argv.buildId,
         mode: argv.mode,
@@ -66,9 +66,10 @@ export async function createContext(argv) {
  *
  * @param {Object} options - Options
  * @param {Array} options.tags - Tags for conditional configuration
+ * @param {string} options.flowsPath - Optional path to flows file
  * @returns {Promise<Object>} Project information
  */
-async function loadProject({ tags }) {
+async function loadProject({ tags, flowsPath }) {
   let projectFilePath = findProjectFile(process.cwd());
   if (!fs.existsSync(projectFilePath)) {
     throw new Error('fnet.yaml file not found in current directory.');
@@ -90,7 +91,18 @@ async function loadProject({ tags }) {
   // Process flows content
   let flowsContent;
 
-  if (typeof projectFileParsed.flows === 'object') {
+  if (flowsPath) {
+    // Use explicitly provided flows path
+    const resolvedFlowsPath = path.resolve(projectDir, flowsPath);
+    if (!fs.existsSync(resolvedFlowsPath)) {
+      throw new Error(`Flows file not found: ${resolvedFlowsPath}`);
+    }
+    const { parsed: flowsParsed } = await fnetYaml({
+      file: resolvedFlowsPath,
+      tags
+    });
+    flowsContent = flowsParsed;
+  } else if (typeof projectFileParsed.flows === 'object') {
     flowsContent = projectFileParsed.flows;
   } else {
     let defaultFlowsFile = 'flow.main.yaml';

@@ -36,6 +36,10 @@ const command = {
         type: 'boolean',
         default: false,
         describe: 'Development mode'
+      })
+      .option('flows', {
+        type: 'string',
+        describe: 'Path to flows file'
       });
   },
   handler: async (argv) => {
