@@ -14,51 +14,51 @@ import resolveTemplatePath from '../utils/resolve-template-path.js';
  * @returns {Promise<Object>} Context object
  */
 export async function createContext(argv) {
-  if (argv.id) {
+  // if (argv.id) {
+  //   return {
+  //     id: argv.id,
+  //     buildId: argv.buildId,
+  //     mode: argv.mode,
+  //     protocol: argv.protocol || 'ac:',
+  //     templateDir: resolveTemplatePath('./template/fnet/node'),
+  //     coreDir: resolveTemplatePath('./template/fnet/core'),
+  //     projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
+  //     tags: argv.ftag,
+  //     dev: argv.dev
+  //   };
+  // } else {
+  try {
+    const project = await loadProject({ tags: argv.ftag, flowsPath: argv.flows });
     return {
-      id: argv.id,
       buildId: argv.buildId,
       mode: argv.mode,
-      protocol: argv.protocol || 'ac:',
-      templateDir: resolveTemplatePath('./template/fnet/node'),
+      protocol: argv.protocol || 'src:',
+      templateDir: resolveTemplatePath(`./template/fnet/node`),
       coreDir: resolveTemplatePath('./template/fnet/core'),
-      projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
+      projectDir: path.resolve(project.projectDir, './.workspace'),
+
+      projectSrcDir: path.resolve(project.projectDir, './src'),
+      projectSrcDirSymlink: path.resolve(project.projectDir, './.workspace/src-core'),
+
+      projectAppDir: path.resolve(project.projectDir, './app'),
+      projectAppDirSymlink: path.resolve(project.projectDir, './.workspace/app'),
+
+      projectCliDir: path.resolve(project.projectDir, './cli'),
+      projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
+
+      project,
       tags: argv.ftag,
       dev: argv.dev
     };
-  } else {
-    try {
-      const project = await loadProject({ tags: argv.ftag, flowsPath: argv.flows });
-      return {
-        buildId: argv.buildId,
-        mode: argv.mode,
-        protocol: argv.protocol || 'src:',
-        templateDir: resolveTemplatePath(`./template/fnet/node`),
-        coreDir: resolveTemplatePath('./template/fnet/core'),
-        projectDir: path.resolve(project.projectDir, './.workspace'),
-
-        projectSrcDir: path.resolve(project.projectDir, './src'),
-        projectSrcDirSymlink: path.resolve(project.projectDir, './.workspace/src-core'),
-
-        projectAppDir: path.resolve(project.projectDir, './app'),
-        projectAppDirSymlink: path.resolve(project.projectDir, './.workspace/app'),
-
-        projectCliDir: path.resolve(project.projectDir, './cli'),
-        projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
-
-        project,
-        tags: argv.ftag,
-        dev: argv.dev
-      };
-    } catch (error) {
-      // If project loading fails, return a minimal context
-      console.warn(`Warning: Could not load project: ${error.message}`);
-      return {
-        projectDir: process.cwd(),
-        tags: argv.ftag
-      };
-    }
+  } catch (error) {
+    // If project loading fails, return a minimal context
+    console.warn(`Warning: Could not load project: ${error.message}`);
+    return {
+      projectDir: process.cwd(),
+      tags: argv.ftag
+    };
   }
+  // }
 }
 
 /**
