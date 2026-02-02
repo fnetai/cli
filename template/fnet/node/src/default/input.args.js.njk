@@ -4,7 +4,7 @@
 
 {% elif atom.doc.features.project.format === 'cjs' %}
   const {default:fnetArgs,argsParser} = require('@fnet/args');
-  const validate,{schema as inputSchema} = require("./validate_input.js");
+  const {default:validate, schema: inputSchema} = require("./validate_input.js");
 {% endif %}
 
 {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}
@@ -78,12 +78,12 @@
   export { argsParser };
 {% elif atom.doc.features.project.format === 'cjs' %}
 
-  module.exports = async () => {
+  const defaultExport = async () => {
 
     let schema = inputSchema;
     let initial;
 
-    {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}    
+    {% if atom.doc.features.cli.fargs and atom.doc.features.cli.fargs?.enabled !== false %}
     const fargs = get_fargs(process.argv.slice(2));
     const ftags = get_ftags(process.argv.slice(2));
 
@@ -121,5 +121,7 @@
     return await fnetArgs({schema,initial,validate,packageCallback});
   };
 
+  module.exports = defaultExport;
+  module.exports.default = defaultExport;
   module.exports.argsParser = argsParser;
 {% endif %}

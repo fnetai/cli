@@ -71,6 +71,7 @@
     {% if atom.doc.features.cli.enabled %}
       {% if atom.doc.features.project.format ==='cjs' %}
         ,"cli": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs"
+        ,"cli:dev": "NODE_PRESERVE_SYMLINKS=1 bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.input.file}}"
         {% if atom.doc.features.cli.mcp.enabled === true %}
           ,"mcp": "bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
           ,"mcp-inspect": "bunx @modelcontextprotocol/inspector bun {{atom.doc.features.cli.node_options}} {{atom.doc.features.cli.dir}}/index.cjs --cli-mode=mcp"
