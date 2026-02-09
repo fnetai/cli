@@ -39,6 +39,7 @@ const command = {
       })
       .option('flows', {
         type: 'string',
+        alias: 'flow',
         describe: 'Path to flows file'
       });
   },

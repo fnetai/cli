@@ -183,13 +183,24 @@ async function loadProject({ tags, flowsPath }) {
 
 /**
  * Find project file in directory
+ * Searches for fnet.yaml first, then fnet.yml
  *
  * @param {string} dir - Directory to search in
  * @returns {string} Path to project file
  */
 function findProjectFile(dir) {
-  const fnetPath = path.resolve(dir, 'fnet.yaml');
-  return fnetPath;
+  const yamlPath = path.resolve(dir, 'fnet.yaml');
+  if (fs.existsSync(yamlPath)) {
+    return yamlPath;
+  }
+
+  const ymlPath = path.resolve(dir, 'fnet.yml');
+  if (fs.existsSync(ymlPath)) {
+    return ymlPath;
+  }
+
+  // Return .yaml path as default (error handling will occur in caller)
+  return yamlPath;
 }
 
 
