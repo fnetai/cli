@@ -6,6 +6,8 @@ import fs from 'fs-extra';
 import path from 'path';
 
 const DEVELOPMENT = process.env.DEVELOPMENT ? true : false;
+const FLOWNET_WATCH = process.env.FLOWNET_WATCH ? true : false;
+
 const extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
 
 {% if atom.doc.features.copy_enabled===true %}
@@ -88,7 +90,7 @@ const initPlugins = async (options) => {
     const {default:copy} = await import('rollup-plugin-copy');
     plugins.push(copy(options.copy.options));
 
-    if (DEVELOPMENT) watchFiles(options.copy.options.targets);
+    if (FLOWNET_WATCH) watchFiles(options.copy.options.targets);
   }
   {% endif %}
 
@@ -182,9 +184,9 @@ const initPlugins = async (options) => {
     {% if atom.doc.features.project.format ==='esm' %}
     include: /node_modules/,
     ignore: ["fsevents"],
-    {% endif %}    
+    {% endif %}
   }));
-  
+
 
   {# POLYFILL #}
   {% if atom.doc.features.polyfill_enabled===true %}
@@ -193,7 +195,7 @@ const initPlugins = async (options) => {
     plugins.push(polyfills(options.polyfill.options));
   }
   {% endif %}
-  
+
   {# WORKBOX #}
   {% if atom.doc.features.workbox_enabled===true %}
   if (options?.workbox) {
@@ -259,7 +261,7 @@ const initPlugins = async (options) => {
 
   {# BROWSERSYNC #}
   {% if atom.doc.features.browsersync_enabled===true %}
-  if (options.browsersync && DEVELOPMENT) {
+  if (options.browsersync && FLOWNET_WATCH) {
     const {default:browsersync} = await import('@fnet/rollup-plugin-browsersync');
     options.browsersync.middleware = function (req, res, next) {
       if (req.method === 'OPTIONS') {
@@ -291,7 +293,7 @@ const createConfigs = async () => {
     if (!fs.existsSync(groupDir)) {
       fs.mkdirSync(groupDir, { recursive: true });
     }
-    
+
     {% for key, value in atom.doc.features.rollup_output %}
     {% if value and value.enabled !== false %}
     {
@@ -310,17 +312,150 @@ const createConfigs = async () => {
           entryFileNames: "[name].cjs",
           chunkFileNames: "[name]-[hash].cjs",
           {% endif %}
-          {% include 'rollup_config_output_name.njk' %}
-          {% include 'rollup_config_output_globals.njk' %}
-          {% include 'rollup_config_output_banner.njk' %}
-          {% include 'rollup_config_output_footer.njk' %}
+          {# BEGIN: rollup_config_output_name #}
+          {% if value.format==='iife' or value.format==='umd'%}
+          name: "{{atom.doc.bundleName}}",
+          {% endif %}
+          {# END: rollup_config_output_name #}
+          {# BEGIN: rollup_config_output_globals #}
+          {% if value.browser===true %}
+          {% if value.globals.length %}
+          globals: {
+              {% for global in value.globals %}
+                  "{{global.key}}":"{{global.value}}" {% if not loop.last %},{% endif %}
+              {% endfor %}
+          },
+          {% endif %}
+          {% endif %}
+          {# END: rollup_config_output_globals #}
+          {# BEGIN: rollup_config_output_banner #}
+          {% if value.banner %}
+          banner:'{{value.banner}}',
+          {% endif %}
+          {# END: rollup_config_output_banner #}
+          {# BEGIN: rollup_config_output_footer #}
+          {% if value.format==='iife' %}
+              {% if atom.type==='workflow'%}
+              {# footer: "new {{atom.doc.bundleName}}().run().catch(e=>{});" #}
+              {% endif %}
+          {% endif %}
+          {# END: rollup_config_output_footer #}
         },
         {% if value.context %}
         context: "{{value.context}}",
         {% endif %}
-        {% include 'rollup_config_external.njk' %}
-        {% include 'rollup_config_onwarn.njk' %}
-        {% include 'rollup_config_plugins.njk' %}
+        {# BEGIN: rollup_config_external #}
+        {% if value.external_enabled %}
+        external: [
+            {% for external in value.external %}
+                "{{external}}" {% if not loop.last %},{% endif %}
+            {% endfor %}
+        ],
+        {% endif %}
+        {# END: rollup_config_external #}
+        {# BEGIN: rollup_config_onwarn #}
+        onwarn(warning, warn) {
+            switch (warning.code) {
+            case 'MODULE_LEVEL_DIRECTIVE':
+            case 'CIRCULAR_DEPENDENCY':
+                return;
+            default:
+                warn(warning);
+            }
+        },
+        {# END: rollup_config_onwarn #}
+        {# BEGIN: rollup_config_plugins #}
+        plugins: await initPlugins({
+            delete:{ targets: [path.normalize(groupDir + '{{key}}')], runOnce: DEVELOPMENT },
+
+            format:"{{ value.format }}",
+
+            {% if value.babel===true %}
+            babel:{{value.babel_options | dump | safe}},
+            {% endif %}
+
+            {% if value.replace ===true %}
+            replace:{{value.replace_options | dump | safe}},
+            {% endif %}
+
+            {% if value.browser===true %}
+            browser:true,
+            {% endif %}
+
+            {% if value.browsersync===true and atom.doc.features.browsersync_enabled===true%}
+            browsersync: {{value.browsersync_options | dump | safe}},
+            {% endif %}
+
+            {% if value.alias_enabled===true %}
+            alias:{{value.alias | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.css %}
+            postcss:{{value.css | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.copy %}
+            copy:{{value.copy | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if  value.terser%}
+            terser:{{value.terser | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.json %}
+            json:{{value.json | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.wasm %}
+            wasm: {{value.wasm | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.string %}
+            string:{{value.string | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.image %}
+            image:{{value.image | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.analyzer %}
+            analyzer:{{value.analyzer | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.visualizer %}
+            visualizer:{{value.visualizer | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.polyfill %}
+            polyfill:{{value.polyfill | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.nunjucks %}
+            nunjucks:{{value.nunjucks | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.workbox %}
+            workbox:{{value.workbox | dump | safe}},
+            {% endif %}
+
+            {# OK #}
+            {% if value.gzip %}
+            gzip:{{value.gzip | dump | safe}},
+            {% endif %}
+        }),
+        {# END: rollup_config_plugins #}
       }
       configs.push(config);
     }

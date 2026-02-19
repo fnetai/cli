@@ -1,50 +1,108 @@
-import fnetExpression from '@fnet/expression';
+import { getProcessor } from '../../expression/index.js';
 import switchBlock from '../switch/index.js';
 
 async function hits({ node }) {
   const keys = Object.keys(node.definition);
-  const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
 
-  const ifProcessors = parsedKeys.filter(key => key?.processor === 'if');
-  if (ifProcessors.length !== 1) return false;
+  // Check for if::expression syntax (OLD)
+  // Use light version - only need processor signal
+  const ifProcessors = keys.filter(key => getProcessor(key) === 'if');
+  if (ifProcessors.length === 1) return true;
 
-  return true;
+  // Check for if: {condition: ...} syntax (NEW)
+  if (node.definition.if && typeof node.definition.if === 'object') {
+    return true;
+  }
+
+  return false;
 }
 
 async function init(api) {
   const { node } = api;
 
   const keys = Object.keys(node.definition);
-  const parsedKeys = keys.map(key => fnetExpression({ expression: key }));
 
   const blocks = [];
 
-  // if
-  const ifProcessor = parsedKeys.find(key => key?.processor === 'if');
+  // Handle if block
+  // Use light version - only need to find if:: key
+  const ifKey = keys.find(key => getProcessor(key) === 'if');
 
-  const ifDefinition = node.definition[ifProcessor.expression];
+  if (ifKey) {
+    // OLD SYNTAX: if::e::v.number > 100:
+    const ifDefinition = node.definition[ifKey];
 
-  blocks.push({
-    name: `${node.name}_if`,
-    definition: ifDefinition,
-    processor: ifProcessor,
-  });
-  delete node.definition[ifProcessor.expression];
+    // Get processor and statement
+    const parsed = getProcessor(ifKey, true);
 
-  // else if
-  const elseifProcessors = parsedKeys.filter(key => key?.processor === 'elseif');
+    blocks.push({
+      name: `${node.name}_if`,
+      definition: ifDefinition,
+      processor: {
+        expression: ifKey,
+        statement: parsed.statement,
+        processor: parsed.processor
+      },
+    });
+    delete node.definition[ifKey];
+  } else if (node.definition.if) {
+    // NEW SYNTAX: if: { condition: e::v.number > 100, steps: [...] }
+    const {condition, ...ifDef} = node.definition.if;
+
+    blocks.push({
+      name: `${node.name}_if`,
+      definition: ifDef,
+      processor: {
+        expression: `if::${condition}`,
+        // Use process.statement to get the final statement after all processors
+        statement: condition,
+      },
+    });
+    delete node.definition.if;
+  }
+
+  // Handle elseif blocks - OLD SYNTAX
+  const elseifKeys = keys.filter(key => getProcessor(key) === 'elseif');
   let elseIfIndex = 0;
-  for (const elseifProcessor of elseifProcessors) {
-    const elseifDefinition = node.definition[elseifProcessor.expression];
+
+  for (const elseifKey of elseifKeys) {
+    // OLD SYNTAX: elseif::e::v.number > 10:
+    const elseifDefinition = node.definition[elseifKey];
+
+    // Get processor and statement
+    const parsed = getProcessor(elseifKey, true);
 
     blocks.push({
       name: `${node.name}_elseif_${elseIfIndex++}`,
       definition: elseifDefinition,
-      processor: elseifProcessor,
+      processor: {
+        expression: elseifKey,
+        statement: parsed.statement,
+        processor: parsed.processor
+      },
     });
-    delete node.definition[elseifProcessor.expression];
+    delete node.definition[elseifKey];
   }
 
+  // Handle elseif blocks - NEW SYNTAX
+  if (node.definition.elseif) {
+    // NEW SYNTAX: elseif: { condition: e::..., <any step type> }
+    // Note: Only single elseif supported in clean syntax due to YAML duplicate key limitation
+    // For multiple elseif, use double-colon syntax: elseif::e::condition:
+    const {condition, ...restDefinition} = node.definition.elseif;
+
+    blocks.push({
+      name: `${node.name}_elseif_${elseIfIndex++}`,
+      definition: restDefinition,
+      processor: {
+        expression: `elseif::${condition}`,
+        statement: condition,
+      },
+    });
+    delete node.definition.elseif;
+  }
+
+  // Transform to switch structure
   node.definition.switch = [];
 
   for (const block of blocks) {
@@ -54,7 +112,7 @@ async function init(api) {
     });
   }
 
-  // else
+  // Handle else
   if (node.definition?.else) {
     const elseDefinition = node.definition.else;
 

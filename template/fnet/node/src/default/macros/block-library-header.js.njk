@@ -1,19 +1,43 @@
 {% if context.lib.type==='atom'%}
-  // LIBRARY: {{context.lib.atom.name}}
-  {% if context.lib.atom.relativePath %}
-    {% if context.transform.import %}
-      import { {{ context.transform.call | safe  }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
-    {% else %}
-      import { default as LIBRARY } from "{{context.lib.atom.relativePath}}";
-    {% endif %}
+  {# Check if this is a use: protocol (native JS) #}
+  {% if context.lib.atom.protocol==='use:' %}
+    {# NO IMPORT for use: protocol - it's native JS #}
+    // LIBRARY: {{context.lib.atom.name}} (native)
   {% else %}
-    {% if context.transform.import %}
-      import { {{ context.transform.call | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+    // LIBRARY: {{context.lib.atom.name}}
+    {% if context.lib.atom.relativePath %}
+      {% if context.transform.from and context.transform.import %}
+        {# NEW: from + import pattern (e.g., from: npm:eventemitter3, import: EventEmitter) #}
+        import { {{ context.transform.import | safe }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
+      {% elseif context.transform.import %}
+        {# EXISTING: import pattern (e.g., import: npm:lodash, call: cloneDeep) #}
+        {% if context.transform.libExp %}
+          import { default as LIBRARY } from "{{context.lib.atom.relativePath}}";
+        {% else %}
+          import { {{ context.transform.call | safe  }} as LIBRARY } from "{{context.lib.atom.relativePath}}";
+        {% endif %}
+      {% else %}
+        {# EXISTING: default import #}
+        import { default as LIBRARY } from "{{context.lib.atom.relativePath}}";
+      {% endif %}
     {% else %}
-      import { default as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
-    {% endif %}  
+      {% if context.transform.from and context.transform.import %}
+        {# NEW: from + import pattern for non-relative paths #}
+        {% if context.transform.libExp %}
+          import { default as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+        {% else %}
+          import { {{ context.transform.import | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+        {% endif %}
+      {% elseif context.transform.import %}
+        {# EXISTING: import pattern for non-relative paths #}
+        import { {{ context.transform.call | safe }} as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+      {% else %}
+        {# EXISTING: default import for non-relative paths #}
+        import { default as LIBRARY } from "../../libs/{{context.lib.atom.id or context.lib.atom.name}}";
+      {% endif %}
+    {% endif %}
   {% endif %}
 {% elseif context.lib.type==='subworkflow' %}
   // LIBRARY: {{context.lib.indexKey}}
-  import { default as {{context.lib.codeKey}} } from "../{{context.lib.codeKey}}";
+  import { default as {{context.lib.codeKey}} } from "../{{context.lib.codeKey}}.js";
 {% endif %}

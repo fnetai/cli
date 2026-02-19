@@ -1,6 +1,4 @@
 import cloneDeep from 'lodash.clonedeep';
-import pick from 'lodash.pick';
-import omit from 'lodash.omit';
 
 import initModules from '../common/init-modules.js';
 import initCommonResolve from '../common/init-common-resolve.js';
@@ -13,15 +11,20 @@ async function init({ node, initNode }) {
 
   node.type = "for";
 
-  await initModules({ node, initNode });
+  await initModules({ node, initNode, extra: false });
 
-  node.blockAutoJumpToParent = true;
-  node.blockAutoJumpToSibling = false;
+  node.block_child_auto_jump_to_parent = true;
+  node.block_child_auto_jump_to_sibling = false;
 
   // No steps property
   if (!node.definition.for.hasOwnProperty('steps')) {
-    const reserved = ['value', 'in'];
-    const [self, child] = [pick(node.definition.for, reserved), omit(node.definition.for, reserved)];
+    // Extract reserved properties using destructuring
+    const { as, in: inValue, ...child } = node.definition.for;
+    // Create self object with only the reserved properties
+    const self = {};
+    if (as !== undefined) self.as = as;
+    if (inValue !== undefined) self.in = inValue;
+
     node.definition.for = self;
     node.definition.for.steps = [
       {
@@ -69,6 +72,7 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
   await initCommonResolve({ node, transformExpression });
 
   await resolveTypeCommon({ node });
+
   resolveNextBlock({ node });
 }
 

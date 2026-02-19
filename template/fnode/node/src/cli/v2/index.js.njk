@@ -1,0 +1,184 @@
+{# ============================================================================
+   CLI TEMPLATE V2 - MODULAR ARCHITECTURE
+   ============================================================================
+
+   This template uses a modular, registry-based approach for maximum
+   extensibility. New modes, transports, and output formats can be added
+   without modifying the core template structure.
+
+   Architecture:
+   - core/       : Base imports, argument parsing, error handling
+   - modes/      : CLI execution modes (default, mcp, http, pipeline, etc.)
+   - output/     : Output formatters (json, yaml, table, etc.)
+
+   Each mode is self-contained and can be enabled/disabled via feature flags.
+
+   Supports:
+   - ESM and CJS formats
+   - Standard and Extend modes
+   - Multiple CLI modes (default, mcp, http)
+
+   ============================================================================ #}
+
+{% if atom.doc.features.cli.enabled===true %}
+
+{# --------------------------------------------------------------------------
+   CORE IMPORTS
+   -------------------------------------------------------------------------- #}
+{% include "./core/imports.njk" %}
+
+{# --------------------------------------------------------------------------
+   SHARED IMPORTS
+   --------------------------------------------------------------------------
+   Shared dependencies used by multiple modes
+   Prevents duplicate imports when multiple modes are enabled
+   -------------------------------------------------------------------------- #}
+{% if atom.doc.features.cli.http.enabled===true or atom.doc.features.cli.webhook.enabled===true %}
+// Shared: http module (used by HTTP and Webhook modes)
+{% if atom.doc.features.project.format==='esm' %}
+import http from 'http';
+{% elif atom.doc.features.project.format==='cjs' %}
+const http = require('http');
+{% endif %}
+{% endif %}
+
+{% if atom.doc.features.cli.mcp.enabled === true or atom.doc.features.cli.webhook.enabled===true %}
+// Shared: crypto module (used by MCP and Webhook modes)
+{% if atom.doc.features.project.format==='esm' %}
+import crypto from 'crypto';
+{% elif atom.doc.features.project.format==='cjs' %}
+const crypto = require('crypto');
+{% endif %}
+{% endif %}
+
+{# --------------------------------------------------------------------------
+   MODE-SPECIFIC IMPORTS
+   --------------------------------------------------------------------------
+   Import dependencies for ALL enabled CLI modes
+   Multiple modes can be enabled simultaneously
+   -------------------------------------------------------------------------- #}
+{% if atom.doc.features.cli.mcp.enabled === true %}
+{% include "./modes/mcp/imports.njk" %}
+{% endif %}
+
+{% if atom.doc.features.cli.http.enabled===true %}
+{% include "./modes/http/imports.njk" %}
+{% endif %}
+
+{% if atom.doc.features.cli.pipeline.enabled===true %}
+{% include "./modes/pipeline/imports.njk" %}
+{% endif %}
+
+{% if atom.doc.features.cli.websocket.enabled===true %}
+{% include "./modes/websocket/imports.njk" %}
+{% endif %}
+
+{% if atom.doc.features.cli.webhook.enabled===true %}
+{% include "./modes/webhook/imports.njk" %}
+{% endif %}
+
+{# --------------------------------------------------------------------------
+   ARGUMENT PARSER
+   -------------------------------------------------------------------------- #}
+{% include "./core/args-parser.njk" %}
+
+{# --------------------------------------------------------------------------
+   MAIN RUN FUNCTION
+   --------------------------------------------------------------------------
+   Mode registry: Each mode is self-contained and handles its own logic
+   -------------------------------------------------------------------------- #}
+const run = async () => {
+  const args = parseArgs();
+  const cliMode = args['cli-mode'] || args.cli_mode || 'default';
+
+  {# --------------------------------------------------------------------------
+     DEFAULT MODE
+     --------------------------------------------------------------------------
+     Standard or extended mode based on CLI configuration
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.extend===true %}
+  {% include "./modes/default/extend.njk" %}
+  {% else %}
+  {% include "./modes/default/standard.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     MCP MODE
+     --------------------------------------------------------------------------
+     Model Context Protocol server with multiple transport options
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.mcp.enabled === true %}
+  {% include "./modes/mcp/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     HTTP MODE
+     --------------------------------------------------------------------------
+     REST API server using built-in http module
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.http.enabled===true %}
+  {% include "./modes/http/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     PIPELINE MODE
+     --------------------------------------------------------------------------
+     Unix pipeline integration via stdin/stdout
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.pipeline.enabled===true %}
+  {% include "./modes/pipeline/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     WEBSOCKET MODE
+     --------------------------------------------------------------------------
+     Real-time bidirectional communication
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.websocket.enabled===true %}
+  {% include "./modes/websocket/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     WEBHOOK MODE
+     --------------------------------------------------------------------------
+     Event-driven HTTP with HMAC signature verification
+     -------------------------------------------------------------------------- #}
+  {% if atom.doc.features.cli.webhook.enabled===true %}
+  {% include "./modes/webhook/index.njk" %}
+  {% endif %}
+
+  {# --------------------------------------------------------------------------
+     FUTURE MODES
+     --------------------------------------------------------------------------
+     Add new modes here by simply including their index.njk
+
+     Examples:
+     - gRPC mode for high-performance RPC
+     - GraphQL mode for flexible APIs
+     - SSE mode for server-sent events
+     -------------------------------------------------------------------------- #}
+
+  {# {% if atom.doc.features.cli.webhook.enabled===true %}
+  {% include "./modes/webhook/index.njk" %}
+  {% endif %} #}
+
+  {# {% if atom.doc.features.cli.grpc.enabled===true %}
+  {% include "./modes/grpc/index.njk" %}
+  {% endif %} #}
+
+  {# --------------------------------------------------------------------------
+     UNKNOWN MODE HANDLER
+     -------------------------------------------------------------------------- #}
+  console.error(`Unknown CLI mode: ${cliMode}`);
+  console.error(`Available modes: default{% if atom.doc.features.cli.mcp.enabled === true %}, mcp{% endif %}{% if atom.doc.features.cli.http.enabled===true %}, http{% endif %}{% if atom.doc.features.cli.pipeline.enabled===true %}, pipeline{% endif %}{% if atom.doc.features.cli.websocket.enabled===true %}, websocket{% endif %}{% if atom.doc.features.cli.webhook.enabled===true %}, webhook{% endif %}`);
+  process.exit(1);
+};
+
+{# --------------------------------------------------------------------------
+   ERROR HANDLER & RUN
+   -------------------------------------------------------------------------- #}
+{% include "./core/run-wrapper.njk" %}
+
+{% endif %}
+{# End of cli.enabled check #}
+

@@ -1,0 +1,17 @@
+$meta:
+  tags:
+    - assign
+    - variable
+    - reference
+  queries:
+    - How to return a variable value?
+    - Can I use assign with return?
+    - Show me how to return a variable reference
+
+main:
+  steps:
+    - hello-world:
+        assign:
+          - message: Hello World!
+        return:
+          message: v::message

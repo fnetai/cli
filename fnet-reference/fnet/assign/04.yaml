@@ -1,0 +1,22 @@
+$meta:
+  subject: assign
+  tags:
+    - multiple
+    - batch
+  queries:
+    - How to assign multiple variables at once?
+    - Can I assign several values in one step?
+    - Show me multiple assignment
+
+main:
+  steps:
+    - assign-multiple:
+        assign:
+          - firstName: John
+          - lastName: Doe
+          - age: 30
+        return:
+          firstName: v::firstName
+          lastName: v::lastName
+          age: v::age
+

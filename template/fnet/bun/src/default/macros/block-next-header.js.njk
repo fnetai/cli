@@ -1,6 +1,0 @@
-{% if context.next %}
-  {% if not context.next.definition.dynamic %}
-    // NEXT : {{context.next.indexKey}}
-    import { default as {{context.next.codeKey}} } from "./{{context.next.codeKey}}";
-  {% endif %}
-{% endif %}

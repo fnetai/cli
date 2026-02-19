@@ -2,18 +2,19 @@
 
   // NEXT : {{context.next.indexKey}}
   {% if context.next.definition.dynamic %}
-    const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}");
+    const { default: {{context.next.codeKey}} } = await import("./{{context.next.codeKey}}.js");
   {% endif %}
 
 
-return resolve ({
+resolve ({
     type: 'block',
     from: _this,
     fromType: _this.constructor,
     fromClosure: c,
     toType:{{context.next.codeKey}},
-    {% if context.transform.nextArgs %}
-    withArgs: {{context.transform.nextArgs | safe}},
+    error,
+    {% if context.transform.output %}
+    input: {{context.transform.output | safe}},
     {% endif %}
 });
 

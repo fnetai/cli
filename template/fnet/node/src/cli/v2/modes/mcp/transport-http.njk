@@ -1,0 +1,222 @@
+{# ============================================================================
+   MCP MODE - HTTP TRANSPORT
+   ============================================================================
+   Streamable HTTP transport for MCP protocol with session management
+   Official transport as of MCP 2025-03-26
+   ============================================================================ #}
+
+// Use Streamable HTTP transport (official transport as of MCP 2025-03-26)
+const app = express();
+{% if atom.doc.features.cli.mcp.ws===true %}
+// Enable WebSocket support
+expressWs(app);
+{% endif %}
+app.use(express.json());
+
+const port = args['cli-port'] || args.cli_port || 3000;
+const host = args['cli-host'] || args.cli_host || '0.0.0.0';
+const basePath = '{{atom.doc.features.cli.mcp.path or 'mcp'}}';
+const mcpEndpoint = `/${basePath}`;           // MCP protocol endpoint
+const verbose = args['cli-verbose'] || args.cli_verbose || false;
+
+// Optional endpoints (enabled via config)
+const httpEnabled = {{atom.doc.features.cli.mcp.http or false}};
+const wsEnabled = {{atom.doc.features.cli.mcp.ws or false}};
+const httpEndpoint = `/${basePath}/input`;    // HTTP input endpoint
+const wsEndpoint = `/${basePath}/ws`;         // WebSocket endpoint
+
+// Verbose logging helper
+const log = (...args) => {
+  if (verbose) {
+    console.log('[MCP]', new Date().toISOString(), ...args);
+  }
+};
+
+// Map to store transports by session ID
+const transports = {};
+
+// Handle POST requests for client-to-server communication
+app.post(mcpEndpoint, async (req, res) => {
+  // Check for existing session ID
+  const sessionId = req.get('Mcp-Session-Id');
+
+  log('POST request received');
+  log('Session ID:', sessionId || 'none');
+  log('Request body:', JSON.stringify(req.body, null, 2));
+
+  let transport;
+
+  if (sessionId && transports[sessionId]) {
+    // Reuse existing transport
+    log('Reusing existing transport for session:', sessionId);
+    transport = transports[sessionId];
+  } else if (!sessionId && req.body && (req.body.method === 'initialize' ||
+            (Array.isArray(req.body) && req.body.some(item => item.method === 'initialize')))) {
+    // New initialization request
+    log('Creating new transport for initialization');
+    transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => {
+        // Generate cryptographically secure session ID
+        return crypto.randomBytes(16).toString('hex');
+      },
+      onsessioninitialized: (sessionId) => {
+        // Store the transport by session ID
+        log('Session initialized:', sessionId);
+        transports[sessionId] = transport;
+      }
+    });
+
+    // Clean up transport when closed
+    transport.onclose = () => {
+      if (transport.sessionId) {
+        log('Transport closed, cleaning up session:', transport.sessionId);
+        delete transports[transport.sessionId];
+      }
+    };
+
+    // Connect to the MCP server
+    await server.connect(transport);
+    log('Server connected to transport');
+  } else {
+    // Invalid request
+    log('Invalid request - no valid session ID');
+    return res.status(400).json({
+      jsonrpc: '2.0',
+      error: {
+        code: -32000,
+        message: 'Bad Request: No valid session ID provided'
+      },
+      id: null
+    });
+  }
+
+  // Handle the request
+  log('Handling request with transport');
+  await transport.handleRequest(req, res, req.body);
+});
+
+// Reusable handler for GET and DELETE requests
+const handleSessionRequest = async (req, res) => {
+  const sessionId = req.get('Mcp-Session-Id');
+  log(`${req.method} request received for session:`, sessionId || 'none');
+
+  if (!sessionId || !transports[sessionId]) {
+    log('Invalid or missing session ID');
+    return res.status(400).send('Invalid or missing session ID');
+  }
+
+  const transport = transports[sessionId];
+  log('Handling request with existing transport');
+  await transport.handleRequest(req, res);
+};
+
+// Handle GET requests for server-to-client notifications via SSE
+app.get(mcpEndpoint, handleSessionRequest);
+
+// Handle DELETE requests for session termination
+app.delete(mcpEndpoint, handleSessionRequest);
+
+{% if atom.doc.features.cli.mcp.http===true %}
+// HTTP input endpoint (enabled via config: cli.mcp.http: true)
+app.post(httpEndpoint, async (req, res) => {
+  log('HTTP input request received');
+  log('Request body:', JSON.stringify(req.body, null, 2));
+
+  try {
+    // Call the Engine with the request body
+    {% if atom.doc.features.cli.extend===true %}
+    const result = await runExtended(req.body, { Engine });
+    {% else %}
+    const engine = new Engine();
+    const result = await engine.run(req.body);
+    {% endif %}
+
+    log('HTTP input processed successfully');
+    log('Result:', JSON.stringify(result, null, 2));
+
+    // Return the result as JSON
+    res.json(result);
+  } catch (error) {
+    log('HTTP input processing error:', error.message);
+
+    // Return error response
+    res.status(500).json({
+      error: error.message,
+      stack: verbose ? error.stack : undefined
+    });
+  }
+});
+{% endif %}
+
+{% if atom.doc.features.cli.mcp.ws===true %}
+// WebSocket endpoint (enabled via config: cli.mcp.ws: true)
+// Map to store WebSocket clients
+const wsClients = new Set();
+
+app.ws(wsEndpoint, (ws, req) => {
+  log('WebSocket connection established');
+  wsClients.add(ws);
+
+  // Handle incoming messages
+  ws.on('message', async (message) => {
+    log('WebSocket message received:', message);
+
+    try {
+      // Parse JSON message
+      const data = JSON.parse(message);
+
+      // Call the Engine
+      {% if atom.doc.features.cli.extend===true %}
+      const result = await runExtended(data, { Engine });
+      {% else %}
+      const engine = new Engine();
+      const result = await engine.run(data);
+      {% endif %}
+
+      log('WebSocket message processed successfully');
+      log('Result:', JSON.stringify(result, null, 2));
+
+      // Send result back to client
+      ws.send(JSON.stringify(result));
+    } catch (error) {
+      log('WebSocket message processing error:', error.message);
+
+      // Send error response
+      ws.send(JSON.stringify({
+        error: error.message,
+        stack: verbose ? error.stack : undefined
+      }));
+    }
+  });
+
+  // Handle connection close
+  ws.on('close', () => {
+    log('WebSocket connection closed');
+    wsClients.delete(ws);
+  });
+
+  // Handle errors
+  ws.on('error', (error) => {
+    log('WebSocket error:', error.message);
+    wsClients.delete(ws);
+  });
+});
+{% endif %}
+
+app.listen(port, host, () => {
+  console.log(`MCP server started with Streamable HTTP transport`);
+  console.log(`MCP endpoint: http://${host}:${port}${mcpEndpoint}`);
+  {% if atom.doc.features.cli.mcp.http===true %}
+  console.log(`HTTP endpoint: http://${host}:${port}${httpEndpoint}`);
+  {% endif %}
+  {% if atom.doc.features.cli.mcp.ws===true %}
+  console.log(`WebSocket endpoint: ws://${host}:${port}${wsEndpoint}`);
+  {% endif %}
+  console.log(`Listening on ${host}:${port}`);
+  if (verbose) {
+    console.log(`Verbose logging enabled`);
+  }
+});
+
+return;
+

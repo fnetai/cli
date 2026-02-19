@@ -14,7 +14,6 @@ export default async function createPackageJson({ atom, context, packageDependen
     if (!packageDevDependencies.find(x => x.package === w.package)) {
       packageDevDependencies.push(w);
     }
-
     const index = packageDependencies.findIndex(x => x.package === w.package);
     packageDependencies.splice(index, 1);
   });
@@ -42,14 +41,14 @@ export default async function createPackageJson({ atom, context, packageDependen
   if (atom.doc.features.app.enabled === true) {
     checkFiles.push({
       file: path.resolve(context.projectDir, `src/app/index.js`),
-      dev: atom.doc.features.app.dev !== false
+      dev: atom.doc.features.app.dev === true
     });
   }
 
   if (atom.doc.features.cli.enabled === true) {
     checkFiles.push({
       file: path.resolve(context.projectDir, `src/cli/index.js`),
-      dev: atom.doc.features.cli.dev !== false
+      dev: atom.doc.features.cli.dev === true
     });
   }
 
@@ -57,7 +56,7 @@ export default async function createPackageJson({ atom, context, packageDependen
     const srcFilePath = checkFile.file;
     if (!fs.existsSync(srcFilePath)) throw new Error(`App file not found: ${srcFilePath}`);
 
-    const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true });
+    const parsedImports = await fnetParseImports({ file: srcFilePath, recursive: true, verbose: false });
     const targetImports = parsedImports.all;
 
     for await (const parsedImport of targetImports) {
@@ -80,6 +79,26 @@ export default async function createPackageJson({ atom, context, packageDependen
         type: "npm"
       })
     }
+  }
+
+  for await (const dep of packageDependencies) {
+    if (dep.version !== undefined) continue;
+    const npmVersions = await pickNpmVersions({
+      name: dep.package,
+      projectDir: context.projectDir,
+      setProgress
+    });
+    dep.version = npmVersions.minorRange;
+  }
+
+  for await (const dep of packageDevDependencies) {
+    if (dep.version !== undefined) continue;
+    const npmVersions = await pickNpmVersions({
+      name: dep.package,
+      projectDir: context.projectDir,
+      setProgress
+    });
+    dep.version = npmVersions.minorRange;
   }
 
   const templateContext = {

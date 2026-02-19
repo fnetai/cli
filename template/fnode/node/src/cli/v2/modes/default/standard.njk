@@ -1,0 +1,19 @@
+{# ============================================================================
+   DEFAULT MODE - STANDARD
+   ============================================================================
+   Standard CLI mode that executes the Node function and prints result
+   ============================================================================ #}
+
+if (cliMode === 'default') {
+  // Default mode code
+  const result = await Node(await argv());
+
+  if (typeof result !== 'undefined') {
+    const stdout_format = args['stdout-format'] || args.stdout_format || null;
+
+    if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
+    else console.log(result);
+  }
+  return;
+}
+

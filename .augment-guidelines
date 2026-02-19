@@ -1,0 +1,21 @@
+# @fnet/cli Repository
+
+This is the main implementation repository for the Flownet CLI.
+
+## Relationship with Knowledge Repository
+
+This repository (@fnet/cli) and the knowledge repository have a symbiotic, iterative relationship:
+
+1. **@fnet/cli → knowledge**: The codebase here serves as the primary source for creating comprehensive documentation in the knowledge repository. By deeply understanding the implementation, architecture, and patterns in this codebase, high-quality documentation and guides are added to the knowledge repository.
+
+2. **knowledge → @fnet/cli**: As the knowledge repository evolves with better documentation, insights, and best practices, it informs and improves the codebase here. Better documentation leads to better code design and implementation.
+
+This creates a virtuous cycle: better code leads to better documentation, which leads to better code.
+
+## Key Points
+
+- Focus on clean, well-structured implementation
+- Code patterns and architecture here should be documented in the knowledge repository
+- Insights from knowledge documentation should guide refactoring and improvements here
+
+

@@ -1,0 +1,70 @@
+{% set resolve=true %}
+
+{% import "src/default/types/block.js.njk" as block with context %}
+
+{% call block.header() %}
+  {% for child in childs %}
+    {% if not child.definition.dynamic %}
+      // RETRYABLE CHILD: {{child.indexKey}}
+      import {{child.codeKey}} from "./{{child.codeKey}}.js";
+    {% endif %}
+  {% endfor %}
+{% endcall %}
+
+{% call block.definition() %}
+  // Retry configuration (always an object)
+  const attempts = {{ context.transform.retry.attempts }};
+  const initialDelay = {{ context.transform.retry.delay }};
+  const backoff = "{{ context.transform.retry.backoff }}";
+  const maxDelay = {% if context.transform.retry.maxDelay %}{{ context.transform.retry.maxDelay }}{% else %}null{% endif %};
+
+  {% if childs[0] %}
+  // Create child block instance
+  const retryableBlock = new {{childs[0].codeKey}}({
+    parent: _this,
+    engine: engine,
+    flow: flow
+  });
+
+  // Retry logic with backoff
+  let lastError;
+  let currentDelay = initialDelay;
+
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      // Execute child block
+      await retryableBlock.run();
+
+      // Success! Break out of retry loop
+      break;
+    } catch (error) {
+      lastError = error;
+
+      // Last attempt failed - throw error
+      if (attempt === attempts) {
+        throw new Error(`Retry failed after ${attempts} attempts: ${error.message}`);
+      }
+
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, currentDelay));
+
+      // Calculate next delay based on backoff strategy
+      if (backoff === 'exponential') {
+        currentDelay = currentDelay * 2;
+      } else if (backoff === 'linear') {
+        currentDelay = currentDelay + initialDelay;
+      }
+      // 'fixed' keeps currentDelay unchanged
+
+      // Apply maxDelay cap if specified
+      if (maxDelay && currentDelay > maxDelay) {
+        currentDelay = maxDelay;
+      }
+    }
+  }
+  {% endif %}
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

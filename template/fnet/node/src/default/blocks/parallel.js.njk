@@ -1,0 +1,64 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+{% set result=true %}
+
+{% import "src/default/types/block.js.njk" as block with context %}
+
+{% call block.header() %}
+  {% for child in childs %}
+    {% if not child.definition.dynamic %}
+      // PARALLEL CHILD: {{child.indexKey}}
+      import {{child.codeKey}} from "./{{child.codeKey}}.js";
+    {% endif %}
+  {% endfor %}
+{% endcall %}
+
+{% call block.definition() %}
+  // PARALLEL EXECUTION
+  const promises = [];
+
+  {% for child in childs %}
+    {% if child.definition.dynamic %}
+      // PARALLEL CHILD: {{child.indexKey}}
+      const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}.js");
+    {% endif %}
+
+    promises.push((async () => {
+      const current = new {{child.codeKey}}({ parent: _this, engine, flow, caller: c, error });
+
+      {% if workflow.parent.context.atom.doc.features.print_runners %}
+        console.log(new Date().toLocaleString(), ' * ', _this.constructor.IndexKey, ' -> ', current.constructor.IndexKey);
+      {% endif %}
+
+      const nextBlock = Array.isArray(args)
+        ? await current.run.apply(current, args)
+        : await current.run(args);
+
+      return nextBlock;
+    })());
+  {% endfor %}
+
+  // Execute based on strategy
+  {% set strategy = context.transform.strategy | default('all') %}
+  let result;
+
+  {% if strategy == 'race' %}
+    // Promise.race - first to complete wins
+    result = [await Promise.race(promises)];
+  {% elif strategy == 'any' %}
+    // Promise.any - first successful wins
+    result = [await Promise.any(promises)];
+  {% elif strategy == 'allsettled' %}
+    // Promise.allSettled - all complete, collect results
+    const settled = await Promise.allSettled(promises);
+    result = settled.map(r => r.status === 'fulfilled' ? r.value : null);
+  {% else %}
+    // Promise.all - all must succeed (default)
+    result = await Promise.all(promises);
+  {% endif %}
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

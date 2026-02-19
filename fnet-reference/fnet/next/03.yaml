@@ -1,0 +1,31 @@
+$meta:
+  subject: next
+  tags:
+    - sequential
+    - chain
+    - multiple-steps
+  queries:
+    - How to chain multiple steps?
+    - Can I have a long sequence of steps?
+    - Show me step chaining with next
+
+main:
+  steps:
+    - step-one:
+        assign:
+          - count: 1
+        next: step-two
+    
+    - step-two:
+        assign:
+          - count: e::v::count + 1
+        next: step-three
+    
+    - step-three:
+        assign:
+          - count: e::v::count + 1
+        next: final-step
+    
+    - final-step:
+        return: v::count  # Should be 3
+

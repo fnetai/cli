@@ -1,0 +1,11 @@
+{# ============================================================================
+   DEFAULT MODE - EXTEND
+   ============================================================================
+   Extended CLI mode for fnet: Calls runExtended with Engine context
+   ============================================================================ #}
+
+if (cliMode === 'default') {
+  // Default mode code
+  return await runExtended(await argv(), { Engine });
+}
+

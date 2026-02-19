@@ -1,0 +1,15 @@
+$meta:
+  subject: return
+  tags:
+    - object
+    - structured
+  queries:
+    - How to return an object with multiple fields?
+    - Can I return structured data?
+    - Show me how to return a JSON object
+
+main:
+  steps:
+    - hello-world:
+        return:
+          message: Hello World!

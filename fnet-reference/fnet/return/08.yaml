@@ -1,0 +1,29 @@
+$meta:
+  subject: return
+  tags:
+    - expression
+    - calculation
+    - concat
+  queries:
+    - Can I return an expression result?
+    - How to return calculated values?
+    - Show me expression in return
+
+main:
+  steps:
+    - calculate:
+        assign:
+          - x: 10
+          - y: 20
+        return:
+          # SAFE WAY - Use v:: prefix for variables in expressions
+          # v:: is abstraction layer, independent from generated layers code
+          # If layers code generation changes, v:: will still work
+          sum: e::v::x + v::y
+          product: e::v::x * v::y
+
+          # ALTERNATIVE SYNTAX - NOT RECOMMENDED
+          # v. directly couples to layers generated variable name
+          # If layers changes 'const v = flow.get()' to another name, this breaks
+          # sum: e::v.x + v.y
+          # product: e::v.x * v.y

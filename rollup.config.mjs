@@ -38,38 +38,33 @@ const commonPlugins = () => {
 // The export default syntax is already ESM compliant
 export default [
   {
-    input: `src/builder/wf-cli.js`,
+    input: `src/fnet-cli/index.js`,
     output: {
-      // file: 'dist/builder/wf-cli.js',
-      format: "esm", // Output format remains CJS as per original config
+      format: "esm",
       exports: "auto",
       banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fnet',
-      entryFileNames: 'index.js', // Output file name pattern
-      chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
-
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
     },
-    plugins: [fnetDelete({ targets: ["./dist/fnet/**"] }), ...commonPlugins('src/builder/wf-cli.js')],
-    // External function remains the same
+    plugins: [fnetDelete({ targets: ["./dist/fnet/**"] }), ...commonPlugins()],
     external: id => /node_modules/.test(id)
   },
   {
-    input: `src/builder/lib-cli.js`,
+    input: `src/fnode-cli/index.js`,
     output: {
-      // file: 'dist/builder/lib-cli.js',
-      format: "esm", // Output format remains CJS as per original config
+      format: "esm",
       exports: "auto",
       banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
       dir: 'dist/fnode',
-      entryFileNames: 'index.js', // Output file name pattern
-      chunkFileNames: 'index.[hash].js', // Output file name pattern for chunks
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
     },
     plugins: [fnetDelete({ targets: ["dist/fnode/**"] }), ...commonPlugins()],
-    // External function remains the same
     external: id => /node_modules/.test(id)
   },
   {
-    input: `src/builder/run-cli.js`,
+    input: `src/frun-cli/index.js`,
     output: {
       format: "esm",
       exports: "auto",
@@ -80,15 +75,39 @@ export default [
     },
     plugins: [
       fnetDelete({ targets: ["dist/frun/**"] }),
-      json(),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify(DEVELOPMENT ? 'development' : 'production'),
-        preventAssignment: true,
-      }),
-      resolve({
-        preferBuiltins: true,
-      }),
-      commonjs(),
+      ...commonPlugins()
+    ],
+    external: id => /node_modules/.test(id)
+  },
+  {
+    input: `src/fbin-cli/index.js`,
+    output: {
+      format: "esm",
+      exports: "auto",
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
+      dir: 'dist/fbin',
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
+    },
+    plugins: [
+      fnetDelete({ targets: ["dist/fbin/**"] }),
+      ...commonPlugins()
+    ],
+    external: id => /node_modules/.test(id)
+  },
+  {
+    input: `src/fservice-cli/index.js`,
+    output: {
+      format: "esm",
+      exports: "auto",
+      banner: (chunk) => chunk.isEntry ? '#!/usr/bin/env node' : '',
+      dir: 'dist/fservice',
+      entryFileNames: 'index.js',
+      chunkFileNames: 'index.[hash].js',
+    },
+    plugins: [
+      fnetDelete({ targets: ["dist/fservice/**"] }),
+      ...commonPlugins()
     ],
     external: id => /node_modules/.test(id)
   }

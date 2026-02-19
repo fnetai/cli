@@ -1,0 +1,58 @@
+$meta:
+  subject: output
+  tags:
+    - output
+    - conditional
+    - if-else
+    - branching
+  queries:
+    - How does output work with if/else?
+    - Can I have different outputs in different branches?
+    - How does conditional flow affect step input?
+  notes:
+    - |
+      OUTPUT with CONDITIONAL FLOW demonstrates how different branches can produce different outputs.
+      
+      Key concept: The step that receives input depends on EXECUTION FLOW, not YAML order!
+      
+      Example:
+        if-check → branch-a (output: {type: 'A'}) → final-step (input: {type: 'A'})
+        if-check → branch-b (output: {type: 'B'}) → final-step (input: {type: 'B'})
+      
+      The final-step receives different input depending on which branch was executed!
+
+main:
+  steps:
+    - setup:
+        assign:
+          - value: "e::Math.random() > 0.5 ? 100 : 50"
+    
+    - check-value:
+        if::e::v::value >= 100:
+          next: high-value
+        else:
+          next: low-value
+    
+    - high-value:
+        assign:
+          - category: Premium
+        output:
+          value: e::v::value * 2
+          category: v::category
+          bonus: 50
+        next: final-result
+    
+    - low-value:
+        assign:
+          - category: Standard
+        output:
+          value: e::v::value * 1.5
+          category: v::category
+          bonus: 10
+        next: final-result
+    
+    - final-result:
+        return:
+          message: e::`Processing ${input.category} order`
+          total: e::input.value + input.bonus
+          details: e::input

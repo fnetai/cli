@@ -1,0 +1,194 @@
+/**
+ * Install command for the bin system
+ * This module provides the install command for installing binaries to bin directory
+ */
+import path from 'node:path';
+import fs from 'node:fs';
+import os from 'node:os';
+import chalk from 'chalk';
+import fnetPrompt from '@fnet/prompt';
+import binSystem from '../utils/bin-system.js';
+import { createContext } from './context.js';
+
+export const command = 'install [source] [options]';
+export const describe = 'Install a binary to the bin directory';
+
+export const builder = {
+  source: {
+    describe: 'Source binary to install',
+    type: 'string',
+    demandOption: true
+  },
+  name: {
+    describe: 'Name to use for the installed binary',
+    type: 'string',
+    alias: 'n'
+  },
+
+  force: {
+    describe: 'Force overwrite if binary already exists',
+    type: 'boolean',
+    default: false,
+    alias: 'f'
+  },
+  yes: {
+    describe: 'Automatically answer yes to all prompts',
+    type: 'boolean',
+    default: false,
+    alias: 'y'
+  },
+  symlink: {
+    describe: 'Create a symlink instead of copying the binary',
+    type: 'boolean',
+    default: false,
+    alias: 's'
+  }
+};
+
+export const handler = async (argv) => {
+  try {
+    const context = await createContext(argv);
+    // Check if source file exists
+    const sourcePath = path.resolve(process.cwd(), argv.source);
+    if (!fs.existsSync(sourcePath)) {
+      console.error(chalk.red(`Source file not found: ${sourcePath}`));
+      process.exit(1);
+    }
+
+    // Ensure bin directory exists
+    await binSystem.createBinDirectoryStructure();
+    const binDir = binSystem.getBinDirectory();
+
+    // Determine binary name
+    let binaryName;
+    if (argv.name) {
+      binaryName = argv.name;
+    } else {
+      binaryName = path.basename(sourcePath);
+    }
+
+    // Add .exe extension for Windows if not already present
+    if (process.platform === 'win32' && !binaryName.endsWith('.exe')) {
+      binaryName = `${binaryName}.exe`;
+    }
+
+    const binPath = path.join(binDir, binaryName);
+
+    // Check if binary already exists
+    if (fs.existsSync(binPath) && !argv.force && !argv.yes) {
+      const { confirmOverwrite } = await fnetPrompt({
+        type: 'confirm',
+        name: 'confirmOverwrite',
+        message: `Binary already exists at ${binPath}. Overwrite?`,
+        initial: false
+      });
+
+      if (!confirmOverwrite) {
+        console.log(chalk.yellow('Installation cancelled.'));
+        return;
+      }
+    }
+
+    // Install binary (copy or symlink)
+    if (argv.symlink) {
+      console.log(chalk.blue(`Creating symlink from ${sourcePath} to ${binPath}...`));
+
+      // Remove existing file/symlink if it exists
+      if (fs.existsSync(binPath)) {
+        fs.unlinkSync(binPath);
+      }
+
+      // Create symlink (Windows requires different approach)
+      if (process.platform === 'win32') {
+        // On Windows, use 'file' type for symlinks
+        fs.symlinkSync(sourcePath, binPath, 'file');
+      } else {
+        // On Unix-like systems, use default symlink
+        fs.symlinkSync(sourcePath, binPath);
+      }
+
+      // Note: Symlinks inherit permissions from the target file
+      console.log(chalk.green(`Symlink created successfully.`));
+    } else {
+      console.log(chalk.blue(`Installing ${sourcePath} to ${binPath}...`));
+      fs.copyFileSync(sourcePath, binPath);
+
+      // Set executable permissions (not needed on Windows)
+      if (process.platform !== 'win32') {
+        fs.chmodSync(binPath, 0o755);
+      }
+    }
+
+    // Update metadata
+    const metadataFile = binSystem.getMetadataFilePath();
+    let metadata = { binaries: {}, lastUpdated: new Date().toISOString() };
+
+    if (fs.existsSync(metadataFile)) {
+      try {
+        metadata = JSON.parse(fs.readFileSync(metadataFile, 'utf8'));
+      } catch (err) {
+        console.warn(chalk.yellow(`Failed to parse metadata file: ${err.message}`));
+        console.warn(chalk.yellow('Creating new metadata file.'));
+      }
+    }
+
+    // Try to get version from binary itself
+    let version = '0.0.0';
+    try {
+      // Run binary with --version flag to get its version
+      const { execSync } = require('child_process');
+      const versionOutput = execSync(`"${binPath}" --version`, {
+        timeout: 5000,
+        stdio: ['ignore', 'pipe', 'ignore']
+      }).toString().trim();
+
+      // Try to extract version number (common formats: "v1.2.3", "1.2.3", "Version: 1.2.3", etc.)
+      const versionMatch = versionOutput.match(/v?(\d+\.\d+\.\d+)/);
+      if (versionMatch) {
+        version = versionMatch[1];
+        console.log(chalk.blue(`Detected binary version: ${version}`));
+      } else {
+        console.log(chalk.yellow(`Could not parse version from output: ${versionOutput}`));
+        console.log(chalk.yellow(`Using default version: ${version}`));
+      }
+    } catch (err) {
+      console.log(chalk.yellow(`Could not detect binary version, using default: ${version}`));
+    }
+
+    // Add binary to metadata
+    metadata.binaries[binaryName] = {
+      path: binPath,
+      source: sourcePath,
+      created: new Date().toISOString(),
+      platform: process.platform,
+      version: version,
+      project: path.basename(process.cwd()),
+      isSymlink: argv.symlink || false
+    };
+
+    metadata.lastUpdated = new Date().toISOString();
+
+    // Write metadata to file
+    fs.writeFileSync(metadataFile, JSON.stringify(metadata, null, 2));
+
+    console.log(chalk.green(`Binary installed successfully: ${binPath}`));
+
+    // Check if bin directory is in PATH
+    const isInPath = binSystem.checkIfInPath(binDir);
+    if (!isInPath) {
+      console.log(chalk.yellow(`Bin directory is not in PATH. Run 'fbin path' to add it.`));
+    } else {
+      console.log(chalk.green(`You can now run '${binaryName}' from anywhere.`));
+    }
+  } catch (error) {
+    console.error(chalk.red(`Failed to install binary: ${error.message}`));
+    process.exit(1);
+  }
+};
+
+export default {
+  command,
+  describe,
+  builder,
+  handler
+};

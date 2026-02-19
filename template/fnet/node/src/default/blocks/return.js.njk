@@ -1,27 +1,21 @@
-{% include "src/default/macros/block-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-export default function Block(context){
+{% call block.header() %}
+{% endcall %}
 
-  {% include "src/default/macros/block-body-header.js.njk" %}
+{% call block.definition() %}
 
-  this.run= function (){
-      
-    const args=Array.from(arguments);
+  {% include "src/default/macros/block-assign.js.njk" %}
+  
+  {% include "src/default/macros/block-signal.js.njk" %}
 
-    return new Promise(async (resolve,reject)=>{            
-        {% include "src/default/macros/block-run-header.js.njk" %}
+  const value = {{context.transform.return | safe}};
 
-        {% include "src/default/macros/page.js.njk" %}
-        
-        const value = {{context.transform.return | safe}};
+  flow.result={value: value};
 
-        flow.result={value: value};
+  resolve({type:'return',value: value});
 
-        resolve();            
-    });
-  }
+{% endcall %}
 
-  Object.freeze(this);
-}
-
-{% include "src/default/macros/block-footer.js.njk" %}
+{% call block.footer()%} 
+{% endcall %}

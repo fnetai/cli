@@ -8,11 +8,13 @@ import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
 import BuilderBase from './lib-builder-base.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
+import initDependenciesBun from "./api/init-dependencies/bun.js";
 import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
 import createRollup from "./api/create-rollup/index.js";
-import createToYargs from "./api/create-to-yargs/index.js";
+import createBuildJs from "./api/create-build-js/index.js";
+import createInputArgs from "./api/create-input-args/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
 import createProjectReadme from "./api/create-project-readme/index.js";
@@ -33,7 +35,11 @@ class NodeBuilder extends BuilderBase {
    */
   async initRuntime() {
     await initFeatures(this.apiContext);
-    await initDependencies(this.apiContext);
+    
+    const project=this.apiContext.context.project;
+    if(project.runtime.type === 'bun') await initDependenciesBun(this.apiContext);
+    else await initDependencies(this.apiContext);
+
     await this.initLibraryDir();
     await this.initNunjucks();
     await this.initLibs();
@@ -120,9 +126,9 @@ class NodeBuilder extends BuilderBase {
         return await this.apiContext.Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
       }
     }
-    else if (parsedUrl.protocol === 'local:') {
+    else if (parsedUrl.protocol === 'src:') {
       const atom = this.atom;
-      atom.protocol = "local:";
+      atom.protocol = "src:";
       atom.doc.dependencies = atom.doc.dependencies || [];
       atom.name = atom.doc.name;
 
@@ -171,13 +177,13 @@ class NodeBuilder extends BuilderBase {
 
       const atomLib = atomLibRef.atom;
       const projectDir = this.context.projectDir;
-      if (atomLib.protocol === 'local:') {
+      if (atomLib.protocol === 'src:') {
         const srcFilePath = path.resolve(this.context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(path.join(this.context.projectDir, 'src', 'default'), srcFilePath);
 
         if (!fs.existsSync(srcFilePath)) {
           fs.mkdirSync(path.dirname(srcFilePath), { recursive: true });
-          let template = 'export default async (args)=>{\n';
+          let template = 'export default async (input)=>{\n';
           template += '}';
           fs.writeFileSync(srcFilePath, template, 'utf8');
         }
@@ -225,6 +231,8 @@ class NodeBuilder extends BuilderBase {
   async build() {
     try {
       if (this.fileMode) {
+        const project=this.apiContext.context.project;
+
         await this.createAtomLibFiles({ libs: this.libs });
         await this.createEngine();
         await this.createProjectYaml();
@@ -232,10 +240,13 @@ class NodeBuilder extends BuilderBase {
         await createProjectReadme(this.apiContext);
         await createTsConfig(this.apiContext);
         await createGitIgnore(this.apiContext);
-        await createToYargs(this.apiContext);
+        await createInputArgs(this.apiContext);
         await createCli(this.apiContext);
         await createApp(this.apiContext);
-        await createRollup(this.apiContext);
+
+        if(project.runtime.type === 'bun') await createBuildJs(this.apiContext);
+        else await createRollup(this.apiContext);
+
         await createPackageJson(this.apiContext);
 
         await formatFiles(this.apiContext);
@@ -244,6 +255,7 @@ class NodeBuilder extends BuilderBase {
 
         if (this.buildMode) {
           await installNpmPackages(this.apiContext);
+
           await runNpmBuild(this.apiContext);
 
           if (this.deployMode)

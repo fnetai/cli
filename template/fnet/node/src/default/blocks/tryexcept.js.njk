@@ -1,65 +1,80 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
 
-{% include "src/default/macros/block-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{# {% include "src/default/macros/block-next-header.js.njk" %} #}
+{% call block.header() %}
+  {% for child in childs %}
+    {% if not child.definition.dynamic %}
+      // CHILD: {{child.indexKey}}
+      import {{child.codeKey}} from "./{{child.codeKey}}.js";
+    {% endif %}
+  {% endfor%}
+{% endcall %}
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
+{% call block.definition() %}
+  
+  try{
 
-{% for child in childs %}
-  {% if not child.definition.dynamic %}
-    // CHILD: {{child.indexKey}}
-    import {{child.codeKey}} from "./{{child.codeKey}}";
-  {% endif %}
-{% endfor%}
+    {% if context.try.definition.dynamic %}
+      const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}.js");
+    {% endif %}
 
-export default function Block(context) {
+    let current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c, error });
+    let currentArgs=args;
 
-  {% include "src/default/macros/block-body-header.js.njk" %}
+    do {
 
-  this.run= function (){
-      
-    const args=Array.from(arguments);
+      {% if workflow.parent.context.atom.doc.features.print_runners %}
+        console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+      {% endif %}
 
-    return new Promise(async (resolve,reject)=>{
-        
-        {% include "src/default/macros/block-run-header.js.njk" %}
+      const nextBlock= typeof currentArgs==='undefined'? await current.run()
+        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run(currentArgs) ;
 
-        {% include "src/default/macros/page.js.njk" %}
+      if(nextBlock?.type==='return') return resolve(nextBlock);
+      else if(nextBlock?.type!=='block') break;
 
-        {% include "src/default/macros/block-modules.js.njk" %}
-        
-        try{
-            
-          {% if context.try.definition.dynamic %}
-              const { default: {{context.try.codeKey}} } = await import("./{{context.try.codeKey}}");
-          {% endif %}
-          
-          const current=new {{context.try.codeKey}}({ parent:_this, engine, flow, caller:c });
+      if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
+        return resolve(nextBlock);
 
-          {% if workflow.parent.context.atom.doc.features.print_runners %}
-            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
-          {% endif %}
+      current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, error });
+      currentArgs=nextBlock.input;
 
-          return resolve(await current.run.apply(current,args));
-        }
-        catch({{context.except.context.transform.as | safe}}){
-            
-          {% if context.except.definition.dynamic %}
-              const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}");
-          {% endif %}
+    } while(true);            
+  }
+  catch(error){
 
-          const current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c });
+    {% if context.except.definition.dynamic %}
+      const { default: {{context.except.codeKey}} } = await import("./{{context.except.codeKey}}.js");
+    {% endif %}
 
-          {% if workflow.parent.context.atom.doc.features.print_runners %}
-            console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
-          {% endif %}
+    let current=new {{context.except.codeKey}}({ parent:_this, engine, flow, caller:c , error });
+    let currentArgs=args;
 
-          return resolve(await current.run.apply(current,args));
-        }
-    });
+    do {
+
+      {% if workflow.parent.context.atom.doc.features.print_runners %}
+        console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+      {% endif %}
+
+      const nextBlock= typeof currentArgs==='undefined'? await current.run()
+        : Array.isArray(currentArgs)? await current.run.apply(current,currentArgs) : await current.run(currentArgs) ;
+
+      if(nextBlock?.type==='return') return resolve(nextBlock);
+      else if(nextBlock?.type!=='block') break;
+
+      if(nextBlock.toType.ParentTypeId!==_this.constructor.TypeId)
+        return resolve(nextBlock);
+
+      current=new nextBlock.toType({ parent:_this, engine, flow, caller:c, error });
+      currentArgs=nextBlock.input;
+
+    } while(true);
   }
 
-  Object.freeze(this);
-}
+{% endcall %}
 
-{% include "src/default/macros/block-footer.js.njk" %}
+{% call block.footer()%} 
+{% endcall %}

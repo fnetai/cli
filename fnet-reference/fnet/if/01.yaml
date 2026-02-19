@@ -1,0 +1,24 @@
+$meta:
+  subject: if
+  tags:
+    - conditional
+    - single-if
+    - no-else
+  queries:
+    - How to use single if without else?
+    - What happens when if condition is true?
+    - Show me simple if statement
+
+main:
+  steps:
+    - check-condition:
+        assign:
+          - isActive: true
+
+    - check-active:
+        if::v::isActive:
+          next: success-step
+
+    - success-step:
+        return: Condition was true!
+

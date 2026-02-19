@@ -1,0 +1,34 @@
+$meta:
+  subject: if
+  tags:
+    - conditional
+    - if-elseif-else
+    - multiple-conditions
+  queries:
+    - How to use if/elseif/else?
+    - Can I have multiple conditions?
+    - Show me if/elseif/else statement
+
+main:
+  steps:
+    - check-condition:
+        assign:
+          - score: 75
+
+    - check-grade:
+        if::e::v::score >= 90:
+          next: grade-a
+        elseif::e::v::score >= 70:
+          next: grade-b
+        else:
+          next: grade-c
+
+    - grade-a:
+        return: Grade A - Excellent!
+
+    - grade-b:
+        return: Grade B - Good!
+
+    - grade-c:
+        return: Grade C - Pass!
+

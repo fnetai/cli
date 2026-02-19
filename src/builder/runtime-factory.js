@@ -9,10 +9,11 @@ class RuntimeFactory {
    * @returns {Promise<Object>} Runtime-specific builder instance
    */
   static async createBuilder(context) {
-    // If no project is provided, use the legacy builder
+    // If no project is provided, default to node runtime
     if (!context.project) {
-      const LegacyBuilder = (await import('./lib-builder.js')).default;
-      return new LegacyBuilder(context);
+      console.warn('No project provided, defaulting to node runtime');
+      const NodeBuilder = (await import('./lib-builder-node.js')).default;
+      return new NodeBuilder(context);
     }
 
     // Get the runtime type from the project
@@ -23,12 +24,7 @@ class RuntimeFactory {
       const BuilderClass = await this.loadBuilderClass(runtimeType);
       return new BuilderClass(context);
     } catch (error) {
-      console.warn(`Warning: Could not load builder for runtime '${runtimeType}'. Falling back to legacy builder.`);
-      console.warn(`Error: ${error.message}`);
-      
-      // Fall back to the legacy builder
-      const LegacyBuilder = (await import('./lib-builder.js')).default;
-      return new LegacyBuilder(context);
+      throw new Error(`Failed to create builder for runtime '${runtimeType}': ${error.message}`);
     }
   }
 
@@ -41,11 +37,10 @@ class RuntimeFactory {
   static async loadBuilderClass(runtimeType) {
     switch (runtimeType.toLowerCase()) {
       case 'node':
+      case 'bun':
         return (await import('./lib-builder-node.js')).default;
       case 'python':
         return (await import('./lib-builder-python.js')).default;
-      case 'bun':
-        return (await import('./lib-builder-bun.js')).default;
       default:
         throw new Error(`Unsupported runtime type: ${runtimeType}`);
     }

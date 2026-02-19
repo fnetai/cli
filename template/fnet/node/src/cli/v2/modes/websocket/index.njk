@@ -1,0 +1,104 @@
+{# ============================================================================
+   WEBSOCKET MODE - MAIN
+   ============================================================================
+   WebSocket server for real-time bidirectional communication
+   Supports connection handling, message processing, and heartbeat
+   ============================================================================ #}
+
+if (cliMode === 'websocket') {
+  // WebSocket mode code
+  const port = args['cli-port'] || args.cli_port || 3000;
+  const heartbeat = args['ws-heartbeat'] || args.ws_heartbeat || 30000; // 30 seconds default
+  
+  const wss = new WebSocketServer({ port });
+  
+  // Store active connections
+  const clients = new Set();
+  
+  wss.on('connection', (ws) => {
+    console.log('WebSocket client connected');
+    clients.add(ws);
+    
+    // Set up heartbeat
+    ws.isAlive = true;
+    ws.on('pong', () => {
+      ws.isAlive = true;
+    });
+    
+    // Handle incoming messages
+    ws.on('message', async (data) => {
+      try {
+        // Parse message
+        const message = data.toString();
+        let input;
+        
+        try {
+          input = JSON.parse(message);
+        } catch (e) {
+          // If not JSON, wrap in object
+          input = { data: message };
+        }
+        
+        // Validate input
+        // TODO: Add schema validation if needed
+
+        // Process with Engine
+        {% if atom.doc.features.cli.extend===true %}
+        const result = await runExtended(input, { Engine });
+        {% else %}
+        const engine = new Engine();
+        const result = await engine.run(input);
+        {% endif %}
+
+        // Send response back to client
+        ws.send(JSON.stringify(result));
+        
+      } catch (error) {
+        // Send error to client
+        ws.send(JSON.stringify({ 
+          error: error.message,
+          type: 'processing_error'
+        }));
+      }
+    });
+    
+    // Handle client disconnect
+    ws.on('close', () => {
+      console.log('WebSocket client disconnected');
+      clients.delete(ws);
+    });
+    
+    // Handle errors
+    ws.on('error', (error) => {
+      console.error('WebSocket error:', error.message);
+      clients.delete(ws);
+    });
+  });
+  
+  // Heartbeat interval
+  if (heartbeat > 0) {
+    const interval = setInterval(() => {
+      wss.clients.forEach((ws) => {
+        if (ws.isAlive === false) {
+          console.log('Terminating inactive client');
+          return ws.terminate();
+        }
+        
+        ws.isAlive = false;
+        ws.ping();
+      });
+    }, heartbeat);
+    
+    wss.on('close', () => {
+      clearInterval(interval);
+    });
+  }
+  
+  console.log(`WebSocket server started on port ${port}`);
+  if (heartbeat > 0) {
+    console.log(`Heartbeat interval: ${heartbeat}ms`);
+  }
+  
+  return;
+}
+

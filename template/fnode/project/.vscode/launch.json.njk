@@ -1,0 +1,78 @@
+{% if runtime==='node' %}
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug-fnode-cli",
+      "type": "node",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/.workspace/dist/cli/esm/index.js",
+      "cwd": "${workspaceFolder}/.workspace",
+      "preLaunchTask": "fnode-watch",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "debug-fnode-app",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000/dist/app/esm/",
+      "webRoot": "${workspaceFolder}/.workspace",
+      "preLaunchTask": "fnode-watch",
+      // "userDataDir": false,
+      // "runtimeArgs": [
+      //   "--profile-directory=<profile-name>",
+      // ]
+    },
+  ],
+  // "compounds": [
+  //   {
+  //     "name": "debug-fnode-all",
+  //     "configurations": [
+  //       "debug-fnode-cli",
+  //       "debug-fnode-app"
+  //     ]
+  //   }
+  // ]
+}
+{% elif runtime==='python' %}
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug-fnode-cli",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.workspace/src/cli/index.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/.workspace",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.workspace/src"
+      },
+      {% if platform ==='win32' %}
+      "python": "${workspaceFolder}/.workspace/.conda/python.exe",
+      {% else %}
+      "python":"${workspaceFolder}/.workspace/.conda/bin/python",
+      {% endif %}
+      "args": []
+    }
+  ]
+}
+{% else %}
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+  ]
+}
+{% endif %}

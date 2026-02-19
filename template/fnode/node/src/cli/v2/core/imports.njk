@@ -1,0 +1,29 @@
+{# ============================================================================
+   CORE IMPORTS
+   ============================================================================
+   Base imports required for all CLI modes
+   Supports both ESM and CJS formats, standard and extend modes
+   ============================================================================ #}
+
+{% if atom.doc.features.project.format==='esm' %}
+{# ESM Format #}
+import argv,{argsParser} from '../default/input.args.js';
+import { schema as inputSchema } from '../default/validate_input.js';
+{% if atom.doc.features.cli.extend===true %}
+import Node from '../../../cli';
+{% else %}
+import Node from '../../../src';
+{% endif %}
+
+{% elif atom.doc.features.project.format==='cjs' %}
+{# CJS Format #}
+const { default:argv,argsParser} = require('../default/input.args.js');
+const { schema: inputSchema } = require('../default/validate_input.js');
+{% if atom.doc.features.cli.extend===true %}
+const Node = require('../../../cli');
+{% else %}
+const Node = require('../../../src');
+{% endif %}
+
+{% endif %}
+

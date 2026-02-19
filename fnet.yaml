@@ -1,40 +1,76 @@
 name: cli
 
+# @fnet/shell-flow commands
 commands:
   build:
     - bun run build
-    - node ./dist/fnode/index.js --version
-    - node ./dist/fnet/index.js --version
-    - node ./dist/frun/index.js --version
+    - bun ./dist/fnode/index.js --version
+    - bun ./dist/fnet/index.js --version
+    - bun ./dist/frun/index.js --version
+    - bun ./dist/fbin/index.js --version
+    - bun ./dist/fservice/index.js --version
     - bun link
 
   deploy:
     - fnet build
     - bun publish --access public
 
+  compile-fservice:
+    - bun build ./dist/fservice/index.js --compile --outfile=.bin/fservice
+    - du -h .bin/fservice
+    - chmod +x .bin/fservice
+    - .bin/fservice --help
+    - otool -L .bin/fservice
+
+  compile-frun:
+    - bun build ./dist/frun/index.js --compile --outfile=.bin/frun
+    - du -h .bin/frun
+    - chmod +x .bin/frun
+    - .bin/frun --help
+    - otool -L .bin/frun
+
+  compile-fbin:
+    - bun build ./dist/fbin/index.js --compile --outfile=.bin/fbin
+    - du -h .bin/fbin
+    - chmod +x .bin/fbin
+    - .bin/fbin --help
+    - otool -L .bin/fbin
+
+  compile-fnode:
+    - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
+    - du -h .bin/fnode
+    - chmod +x .bin/fnode
+    - .bin/fnode --help
+    - otool -L .bin/fnode
+
+  compile-fnet:
+    - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
+    - du -h .bin/fnet
+    - chmod +x .bin/fnet
+    - .bin/fnet --help
+    - otool -L .bin/fnet
+
   compile:
     steps:
+      - frun compile-fservice
+      - pause: true
+
       - frun build
-      - bun build ./src/builder/lib-cli.js --compile --outfile=.bin/fnode
-      - bun build ./src/builder/wf-cli.js --compile --outfile=.bin/fnode
-      - bun build ./src/builder/run-cli.js --compile --outfile=.bin/frun
-      # - bun build ./dist/fnode/index.js --compile --outfile=.bin/fnode
-      # - bun build ./dist/fnet/index.js --compile --outfile=.bin/fnet
-      - chmod +x .bin/fnode && chmod +x .bin/fnet && chmod +x .bin/frun
+      - pause: true
 
-      - du -h .bin/fnode && du -h .bin/fnet && du -h .bin/frun
-      - .bin/fnode --version && .bin/fnet --version && .bin/frun --version
-      - .bin/fnode --help && .bin/fnet --help && .bin/frun --help
-      - otool -L .bin/fnode && otool -L .bin/fnet && otool -L .bin/frun
-      - file .bin/fnode && file .bin/fnet && file .bin/frun
-      - cp .bin/fnode /usr/local/bin/xfnode && cp .bin/fnet /usr/local/bin/xfnet && cp .bin/frun /usr/local/bin/xfrun
-      - chmod +x /usr/local/bin/xfnode && chmod +x /usr/local/bin/xfnet && chmod +x /usr/local/bin/xfrun
-      - du -h /usr/local/bin/xfnode && du -h /usr/local/bin/xfnet && du -h /usr/local/bin/xfrun
+      - frun compile-fbin
+      - pause: true
 
-    # env:
-    #   DEVELOPMENT: true
+      - frun compile-frun
+      - pause: true
 
-  test-fnode-node:
+      - frun compile-fnode
+      - pause: true
+
+      - frun compile-fnet
+      - pause: true
+
+  create-fnode-node:
     - rm -rf .tests/fnode-node
     - wdir: .tests
       steps:
@@ -44,7 +80,7 @@ commands:
             # - fnode build
             - fnode cli
 
-  test-fnet-node:
+  create-fnet-node:
     - rm -rf .tests/fnet-node
     - wdir: .tests
       steps:
@@ -54,7 +90,7 @@ commands:
             # - fnet build
             - fnet cli
 
-  test-fnode-python:
+  create-fnode-python:
     - rm -rf .tests/fnode-python
     - wdir: .tests
       steps:
@@ -64,7 +100,7 @@ commands:
             # - fnode build
             - fnode cli
 
-  test-fnode-bun:
+  create-fnode-bun:
     - rm -rf .tests/fnode-bun
     - wdir: .tests
       steps:
@@ -74,17 +110,11 @@ commands:
             # - fnode build
             - fnode cli
 
-  test-fnode-bun-build:
-      - wdir: .tests/fnode-bun
-        steps:
-          - fnode build
-          - fnode cli
-
-  test-all:
-    - frun test-fnode-node
-    - frun test-fnet-node
-    - frun test-fnode-python
-    - frun test-fnode-bun
+  create-all:
+    - xfrun create-fnode-node
+    - xfrun create-fnet-node
+    - xfrun create-fnode-python
+    - xfrun create-fnode-bun
 
   test-examples:
     - wdir: examples/fnode/node-1
@@ -103,3 +133,410 @@ commands:
       steps:
         - fnet build
         - fnet cli
+
+  # Bin system utility commands
+  bin-setup:
+    - fbin setup
+
+  bin-path:
+    - fbin path
+
+  bin-status:
+    - echo "Checking bin system status..."
+    - ls -la ~/.fnet/bin
+    - echo "Metadata file:"
+    - cat ~/.fnet/metadata/binaries.json
+    - echo "Checking if bin directory is in PATH..."
+    - echo $PATH | grep -q ~/.fnet/bin && echo "Bin directory is in PATH" || echo "Bin directory is NOT in PATH"
+
+  # Test commands for Phase 2
+  test-fnode-compile:
+    - rm -rf .tests/fnode-node-compile
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-node-compile --runtime node
+        - wdir: .tests/fnode-node-compile
+          steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (input) => {
+                        console.log("Hello from fnode-node-compile project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "index.js"
+            - fnode build
+            - cd .workspace && fbin compile ./dist/cli/esm/index.js -o .bin/fnode-node-compile
+            - wdir: .tests/fnode-node-compile/.workspace
+              steps:
+                - pwd
+                - ls -la .bin
+                - ./.bin/fnode-node-compile
+
+  test-fnet-compile:
+    - rm -rf .tests/fnet-node-compile
+    - wdir: .tests
+      steps:
+        - fnet create --name fnet-node-compile --runtime node
+        - wdir: .tests/fnet-node-compile
+          steps:
+            - filemap:
+                target: "./"
+                sources:
+                  - source: |
+                      main:
+                        steps:
+                          - hello-world:
+                              call: hello-step
+                    provider: text
+                    target: "fnet/flows.yaml"
+                  - source: |
+                      export default async (input) => {
+                        console.log("Hello from fnet-node-compile project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "src/hello-step.js"
+            - fnet build
+            - cd .workspace && fbin compile ./dist/cli/esm/index.js -o .bin/fnet-node-compile
+            - wdir: .tests/fnet-node-compile/.workspace
+              steps:
+                - pwd
+                - ls -la .bin
+                - ./.bin/fnet-node-compile
+
+  test-compile-all:
+    - frun test-fnode-compile
+    - frun test-fnet-compile
+
+  # Test commands for Phase 3
+  test-fbin-compile:
+    - rm -rf .tests/fbin-compile-test
+    - mkdir -p .tests/fbin-compile-test
+    - wdir: .tests/fbin-compile-test
+      steps:
+        - echo 'console.log("Hello from fbin-compile test!");' > test.js
+        - fbin compile test.js -o test-bin
+        - ./test-bin
+
+  test-phase3-all:
+    - frun test-fbin-compile
+    - frun test-compile-all
+
+  # Test commands for Phase 4
+  test-platform-detection:
+    - echo "Testing platform detection..."
+    - node -e "console.log('Platform:', process.platform)"
+    - node -e "console.log('Architecture:', process.arch)"
+    - node -e "console.log('OS:', require('os').type())"
+    - node -e "console.log('Shell:', process.env.SHELL)"
+
+  test-path-handling:
+    - echo "Testing path handling..."
+    - node -e "console.log('Path separator:', require('path').sep)"
+    - node -e "console.log('Delimiter:', require('path').delimiter)"
+    - node -e "console.log('Home directory:', require('os').homedir())"
+    - node -e "console.log('Temp directory:', require('os').tmpdir())"
+
+  test-fbin-platform:
+    - echo "Testing fbin commands on current platform..."
+    - fbin --version
+    - fbin setup --help
+    - fbin path --help
+    - fbin compile --help
+
+  test-phase4-all:
+    - frun test-platform-detection
+    - frun test-path-handling
+    - frun test-fbin-platform
+
+  # Run all tests
+  test-all:
+    - frun test-platform-detection
+    - frun test-path-handling
+    - frun test-fbin-platform
+    - frun test-fbin-compile
+    - frun test-compile-all
+    - frun test-examples
+    - frun test-phase3-all
+    - frun test-phase4-all
+    - frun test-phase5-all
+    - frun test-phase6-all
+    - frun test-express-all
+    - frun test-cli-modes
+
+  # Test commands for Phase 5
+  test-fbin-install:
+    - rm -rf .tests/fbin-install-test
+    - mkdir -p .tests/fbin-install-test
+    - wdir: .tests/fbin-install-test
+      steps:
+        - echo 'console.log("Hello from fbin-install test!");' > test.js
+        - fbin compile test.js -o test-bin
+        - fbin install test-bin --name test-bin-installed --yes
+        - fbin list
+        - ~/.fnet/bin/test-bin-installed
+
+  test-fbin-uninstall:
+    - fbin uninstall test-bin-installed --force --yes
+    - fbin list
+
+  test-fnode-install:
+    - rm -rf .tests/fnode-install-test
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-install-test --runtime node
+        - wdir: .tests/fnode-install-test
+          steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (input) => {
+                        console.log("Hello from fnode-install-test project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "index.js"
+            - fnode build
+            - fnode install --yes
+            - fbin list
+            - ~/.fnet/bin/fnode-install-test
+
+  test-fnet-install:
+    - rm -rf .tests/fnet-install-test
+    - wdir: .tests
+      steps:
+        - fnet create --name fnet-install-test --runtime node
+        - wdir: .tests/fnet-install-test
+          steps:
+            - filemap:
+                target: "src"
+                sources:
+                  - source: |
+                      export default async (input) => {
+                        console.log("Hello from fnet-install-test project!");
+                        return "Success!";
+                      }
+                    provider: text
+                    target: "src/hello-step.js"
+            - fnet build
+            - fnet install --yes
+            - fbin list
+            - ~/.fnet/bin/fnet-install-test
+
+  test-phase5-all:
+    - frun test-fbin-install
+    - frun test-fbin-uninstall
+    - frun test-fnode-install
+    - frun test-fnet-install
+
+  # Test commands for Phase 6
+  test-cli-config-fnode:
+    - rm -rf .tests/cli-config-fnode-test
+    - wdir: .tests
+      steps:
+        - fnode create --name cli-config-fnode-test --runtime node
+        - wdir: .tests/cli-config-fnode-test
+          steps:
+            - filemap:
+                target: "fnode.yaml"
+                sources:
+                  - source: |
+                      name: cli-config-fnode-test
+                      version: 1.0.0
+
+                      features:
+                        s::runtime.type: node
+                        cli:
+                          enabled: true
+                          bin: "custom-bin-name"
+                          installable: true
+                    provider: text
+                    target: "fnode.yaml"
+            - fnode build
+            - ls -la .workspace
+            - cat .workspace/package.json
+            - cd .workspace && mkdir -p .bin && echo '#!/bin/sh\necho "Hello from cli-config-fnode-test"' > .bin/cli-config-fnode-test && chmod +x .bin/cli-config-fnode-test && npm run install-bin
+            - fbin list
+            - ls -la ~/.fnet/bin
+            - ~/.fnet/bin/cli-config-fnode-test
+
+  test-cli-config-fnet:
+    - rm -rf .tests/cli-config-fnet-test
+    - wdir: .tests
+      steps:
+        - fnet create --name cli-config-fnet-test --runtime node
+        - wdir: .tests/cli-config-fnet-test
+          steps:
+            - filemap:
+                target: "fnet.yaml"
+                sources:
+                  - source: |
+                      name: cli-config-fnet-test
+                      version: 1.0.0
+
+                      features:
+                        cli:
+                          enabled: true
+                          bin: custom-flow-bin
+                          installable: true
+
+                      flows: g::file://./fnet/flows.yaml
+                    provider: text
+                    target: "fnet.yaml"
+            - fnet build
+            - ls -la .workspace
+            - cat .workspace/package.json
+            - cd .workspace && mkdir -p .bin && echo '#!/bin/sh\necho "Hello from cli-config-fnet-test"' > .bin/cli-config-fnet-test && chmod +x .bin/cli-config-fnet-test && npm run install-bin
+            - fbin list
+            - ls -la ~/.fnet/bin
+            - ~/.fnet/bin/cli-config-fnet-test
+
+  test-phase6-all:
+    - frun test-cli-config-fnode
+    - frun test-cli-config-fnet
+
+  # Express command tests
+  test-express-create:
+    - fnode express test-project --runtime node
+    - fnode express --runtime python
+    - fnode express test-bun --runtime bun
+    - fnet express test-workflow
+
+  # Express list command tests
+  test-express-list:
+    - fnode express list
+    - fnode express list --today
+    - fnode express list --type fnode
+    - fnode express list --type fnet
+
+  # Express open command tests
+  test-express-open:
+    - fnode express open --latest
+    - fnode express open test-project
+
+  # Express move command tests
+  test-express-move:
+    - mkdir -p ~/test-destination
+    - fnode express move --latest ~/test-destination
+    - rm -rf ~/test-destination
+
+  # Express remove command tests
+  test-express-remove:
+    - fnode express test-remove-project
+    - fnode express remove test-remove-project --yes
+    - fnet express test-remove-workflow
+    - fnet express remove test-remove-workflow --yes
+    - fnode express test-remove-cancel
+    - fnode express remove test-remove-cancel
+
+  # Express enter command tests
+  test-express-enter:
+    - fnode express test-enter-project
+    - fnode express enter test-enter-project
+    - fnet express test-enter-workflow
+    - fnet express enter test-enter-workflow
+    - fnode express enter --latest
+
+  # Comprehensive express command test
+  test-express-all:
+    - fnode express test-all-project
+    - fnode express list
+    - fnode express open test-all-project
+    - fnode express enter test-all-project
+    - mkdir -p ~/test-destination
+    - fnode express move test-all-project ~/test-destination
+    - rm -rf ~/test-destination
+    - fnet express test-all-workflow
+    - fnet express remove test-all-workflow --yes
+
+  # Test express command with --yes flag
+  test-express-yes:
+    - fnode express --yes
+    - fnode express list
+
+  # Test express command from within an express project
+  # Using wdir to change working directory for isolated execution
+  test-express-within:
+    - fnode express test-within
+    - wdir: ~/.fnet/express/$(date +%Y%m%d)/test-within
+      steps:
+        - fnode express move ~/test-destination
+        - rm -rf ~/test-destination
+
+  # Test express command with different project types
+  test-express-types:
+    - fnode express node-test
+    - fnet express flow-test
+    - fnode express list --type fnode
+    - fnode express list --type fnet
+
+  # Test express command error handling
+  test-express-errors:
+    - fnode express open non-existent-project
+    - fnode express move non-existent-project ~/test-destination
+    - mkdir -p ~/test-destination/existing-project
+    - fnode express test-project
+    - fnode express move test-project ~/test-destination/existing-project
+    - rm -rf ~/test-destination
+
+  # Test CLI modes
+  test-cli-modes:
+    - rm -rf .tests/cli-modes-test
+    - wdir: .tests
+      steps:
+        - fnode create --name cli-modes-test --runtime node
+        - wdir: .tests/cli-modes-test
+          steps:
+            - filemap:
+                target: "./"
+                sources:
+                  - source: |
+                      name: cli-modes-test
+                      version: 1.0.0
+
+                      features:
+                        s::runtime.type: node
+                        cli:
+                          enabled: true
+                          mcp:
+                            enabled: true
+                          http:
+                            enabled: true
+
+                      input:
+                        type: object
+                        description: "CLI Modes Test Input"
+                        properties:
+                          param1:
+                            type: string
+                            description: "First parameter"
+                          param2:
+                            type: string
+                            description: "Second parameter"
+                    provider: text
+                    target: "fnode.yaml"
+                  - source: |
+                      export default async (input) => {
+                        console.log("CLI Modes Test Project");
+                        console.log("Arguments:", JSON.stringify(input, null, 2));
+                        return {
+                          message: "CLI modes test successful",
+                          mode: input.cli_mode || "default",
+                          input
+                        };
+                      }
+                    provider: text
+                    target: "src/index.js"
+            - fnode build
+            - echo "Testing cli modes..."
+            - fork:
+                - fnode cli --param1 value1 --param2 value2
+                - fnode cli --cli_mode mcp --param1 value1 --param2 value2
+                - fnode cli --cli_mode http --param1 value1 --param2 value2
+            - sleep: 3
+            - pause: "Press any key to exit..."
+            - exit: 0

@@ -1,0 +1,22 @@
+$meta:
+  subject: return
+  tags:
+    - nested
+    - steps
+    - scope
+  queries:
+    - How does return work in nested steps?
+    - Does return in nested steps terminate only that level?
+    - How to return a value from nested steps?
+
+main:
+  steps:
+    - outer-step:
+        steps:
+          - inner-step:
+              return: Returned from nested steps!
+          - unreachable-inner:  # This will never execute
+              return: Never reached!
+    - after-nested:  # Will this execute?
+        return: After nested steps!
+

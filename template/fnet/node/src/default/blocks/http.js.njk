@@ -1,0 +1,135 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+{% set result=true %}
+
+{% import "src/default/types/block.js.njk" as block with context %}
+
+{% call block.header() %}
+{% endcall %}
+
+{% call block.definition() %}
+  
+  // HTTP configuration
+  let url = {{ context.transform.http.url | safe }};
+  let method = "{{ context.transform.http.method |safe }}";
+  let headers = {{ context.transform.http.headers | safe  }};
+  let timeout = {{ context.transform.http.timeout }};
+  {% if context.transform.http.body !== undefined %}
+  let body = {% if context.transform.http.body is string %}{{ context.transform.http.body |safe }}{% else %}{{ context.transform.http.body | safe  }}{% endif %};
+  {% endif %}
+  {% if context.transform.http.params %}
+  let params = {{ context.transform.http.params | safe  }};
+  {% endif %}
+
+  // Create HTTP context for modules
+  const httpContext = { url, method, headers, timeout, params: {% if context.transform.http.params %}params{% else %}undefined{% endif %}, body: {% if context.transform.http.body !== undefined %}body{% else %}undefined{% endif %} };
+
+  // If any property is a module function (m::), call it with HTTP context
+  if (typeof url === 'function') {
+    url = await url(httpContext);
+  }
+
+  if (typeof method === 'function') {
+    method = await method(httpContext);
+  }
+
+  if (typeof headers === 'function') {
+    headers = await headers(httpContext);
+  }
+
+  if (typeof timeout === 'function') {
+    timeout = await timeout(httpContext);
+  }
+
+  {% if context.transform.http.params %}
+  if (typeof params === 'function') {
+    params = await params(httpContext);
+  }
+  {% endif %}
+
+  {% if context.transform.http.body !== undefined %}
+  if (typeof body === 'function') {
+    body = await body(httpContext);
+  }
+  {% endif %}
+
+  // Build URL with query parameters if provided
+  let finalUrl = url;
+  {% if context.transform.http.params %}
+  if (params && Object.keys(params).length > 0) {
+    const queryString = new URLSearchParams(params).toString();
+    finalUrl = url + (url.includes('?') ? '&' : '?') + queryString;
+  }
+  {% endif %}
+
+  // Prepare fetch options
+  const fetchOptions = {
+    method: method,
+    headers: headers
+  };
+
+  // Add body if present (and not GET/HEAD)
+  {% if context.transform.http.body %}
+  if (body !== undefined && method !== 'GET' && method !== 'HEAD') {
+    // Auto JSON.stringify if body is object
+    if (typeof body === 'object' && body !== null) {
+      fetchOptions.body = JSON.stringify(body);
+      // Auto set Content-Type if not already set
+      if (!fetchOptions.headers['Content-Type'] && !fetchOptions.headers['content-type']) {
+        fetchOptions.headers['Content-Type'] = 'application/json';
+      }
+    } else {
+      fetchOptions.body = body;
+    }
+  }
+  {% endif %}
+
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  fetchOptions.signal = controller.signal;
+
+  let result;
+
+  try {
+    // Execute HTTP request
+    const response = await fetch(finalUrl, fetchOptions);
+    clearTimeout(timeoutId);
+
+    // Check if response is successful (2xx)
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // Parse response based on Content-Type
+    const contentType = response.headers.get('content-type');
+    
+    if (contentType && contentType.includes('application/json')) {
+      result = await response.json();
+    } else if (contentType && contentType.includes('text/')) {
+      result = await response.text();
+    } else {
+      // Try JSON first, fallback to text
+      try {
+        result = await response.json();
+      } catch (e) {
+        result = await response.text();
+      }
+    }
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    // Handle timeout error
+    if (error.name === 'AbortError') {
+      const timeoutError = new Error(`HTTP request timeout after ${timeout}ms: ${finalUrl}`);
+      return reject(timeoutError);
+    }
+
+    // Handle other errors
+    return reject(error);
+  }
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

@@ -7,8 +7,8 @@ npm-default:
     # bin: some-bin-name
     name: "{{npm.name or "@fnet/"+name}}"
 {% elif runtime==='bun' %}
-bun-default:
-  type: bun
+npm-default:
+  type: npm
   enabled: false
   version: "{{npm.version or "0.1.0"}}"  
   params:

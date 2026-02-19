@@ -1,0 +1,55 @@
+$meta:
+  subject: output
+  tags:
+    - output
+    - input
+    - step-io
+    - data-flow
+    - execution-flow
+  queries:
+    - What is output in Flownet?
+    - How does step input/output work?
+    - What is the difference between variable bucket and step input?
+    - How does e::input work?
+    - What happens when there is no explicit next?
+  notes:
+    - |
+      OUTPUT defines the data that a step produces and passes to the NEXT step in the execution flow.
+
+      CRITICAL: "next step" means the next step in EXECUTION FLOW, NOT in YAML file order!
+
+      When there is NO explicit "next:", the flow continues to the next sibling step (auto-next/karınca yürüyüşü).
+      In this case, the previous step's OUTPUT becomes the current step's INPUT automatically.
+
+      Example flow:
+        step-1 (output: {a: 1}) → step-2 (input: {a: 1}) → step-3 (input: step-2's output)
+
+      Key concepts:
+      - output: Defines what data this step produces
+      - e::input: Reads data from the PREVIOUS step in execution (not YAML order!)
+      - Variable bucket: Global state (assign/v::)
+      - Step I/O: Local data flow between steps
+
+      This creates a pipeline where each step can transform the data from the previous step!
+
+main:
+  steps:
+    - some-step-1:
+        assign:
+          - number: 42
+          - message: Hello World
+        output:
+          number: v::number*2
+          message: v::message + '!'
+    
+    - some-step-2:
+        output:
+          number: e::input.number*2
+          message: e::input.message + '!'
+    
+    - finish:
+        return:
+          original:
+            number: v::number
+            message: v::message
+          modified: e::input

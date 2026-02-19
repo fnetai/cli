@@ -1,7 +1,7 @@
 import fnetKvTransformer from '@fnet/key-value-transformer';
-import fnetExpression from '@fnet/expression';
+import { getProcessor } from '../../expression/index.js';
 
-export default async function initModules({ node, initNode }) {
+export default async function initModules({ node, initNode, extra = true }) {
 
   if (Reflect.has(node.definition, 'modules') && !Array.isArray(node.definition.modules)) {
     const modules = node.definition.modules;
@@ -13,9 +13,11 @@ export default async function initModules({ node, initNode }) {
         ...modules[key]
       }
 
-      if (node.type === 'modules') {
-        transformed.export = transformed.export || key;
-      }
+      if (typeof transformed.export === 'boolean')
+        transformed.export = transformed.export === true ? key : false;
+      else if (typeof transformed.export === 'string')
+        transformed.export = transformed.export;
+      else delete transformed.export;
 
       node.definition.modules.push({
         [key]: transformed
@@ -23,34 +25,33 @@ export default async function initModules({ node, initNode }) {
     });
   }
 
-  const extraModules = [];
+  if (extra) {
+    const extraModules = [];
 
-  const newOne = await fnetKvTransformer({
-    data: node.definition, callback: (key, value, path) => {
-      // if (typeof key === 'number') {
-      //   debugger;
-      // }
+    const newOne = await fnetKvTransformer({
+      data: node.definition, callback: (key, value, path) => {
+        // Light version: Get processor and statement
+        const parsed = getProcessor(key, true);
 
-      const exp = fnetExpression({ expression: key });
-      if (exp?.processor === 'm') {
-        const newPath = path.slice(0, -1);
-        newPath.push(exp.statement);
-        const name = newPath.join('_');
+        if (parsed?.processor === 'm') {
+          const newPath = path.slice(0, -1);
+          newPath.push(parsed.statement);
+          const name = newPath.join('_');
 
-        extraModules.push({
-          [name]: value
-        });
-
-        return [exp.statement, `m::${name}`];
+          extraModules.push({
+            [name]: value
+          });
+          return [parsed.statement, `m::${name}`];
+        }
+        return [key, value];
       }
-      return [key, value];
-    }
-  });
+    });
 
-  if (extraModules.length > 0) {
-    node.definition = newOne;
-    node.definition.modules = node.definition.modules || [];
-    node.definition.modules = node.definition.modules.concat(extraModules);
+    if (extraModules.length > 0) {
+      node.definition = newOne;
+      node.definition.modules = node.definition.modules || [];
+      node.definition.modules = node.definition.modules.concat(extraModules);
+    }
   }
 
   node.hasModules = node.definition.modules?.length > 0;
@@ -65,8 +66,7 @@ export default async function initModules({ node, initNode }) {
       parent: node,
       definition: temp[key],
       module: true,
-      blockAutoJumpToParent: true,
-      blockAutoJumpToSibling: false,
+      block_child_auto_jump_to_parent: true,
       index: node.childs.length,
       context: {}
     }

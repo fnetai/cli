@@ -1,6 +1,6 @@
-import Object from "../core/object";
+import Object from "../core/object.js";
 
-import { default as Workflow } from "./{{flow.codeKey}}";
+import { default as Workflow } from "./{{flow.codeKey}}.js";
 
 {% set form_enabled = false if flow.name === 'cli' else flow.parent.context.atom.doc.features.form_enabled %}
 

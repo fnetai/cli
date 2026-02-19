@@ -1,0 +1,167 @@
+name: fnet-reference
+
+features:
+  print_steps: true
+  # print_runners: true
+  runtime:
+    type: bun
+
+t::return-01::flows: g::file://./fnet/return/01.yaml
+t::return-02::flows: g::file://./fnet/return/02.yaml
+t::return-03::flows: g::file://./fnet/return/03.yaml
+t::return-04::flows: g::file://./fnet/return/04.yaml
+t::return-05::flows: g::file://./fnet/return/05.yaml
+t::return-06::flows: g::file://./fnet/return/06.yaml
+t::return-07::flows: g::file://./fnet/return/07.yaml
+t::return-08::flows: g::file://./fnet/return/08.yaml
+t::return-09::flows: g::file://./fnet/return/09.yaml
+t::return-10::flows: g::file://./fnet/return/10.yaml
+
+t::assign-01::flows: g::file://./fnet/assign/01.yaml
+t::assign-02::flows: g::file://./fnet/assign/02.yaml
+t::assign-03::flows: g::file://./fnet/assign/03.yaml
+t::assign-04::flows: g::file://./fnet/assign/04.yaml
+t::assign-05::flows: g::file://./fnet/assign/05.yaml
+
+t::next-01::flows: g::file://./fnet/next/01.yaml
+t::next-02::flows: g::file://./fnet/next/02.yaml
+t::next-03::flows: g::file://./fnet/next/03.yaml
+
+t::if-01::flows: g::file://./fnet/if/01.yaml
+t::if-02::flows: g::file://./fnet/if/02.yaml
+t::if-03::flows: g::file://./fnet/if/03.yaml
+t::if-04::flows: g::file://./fnet/if/04.yaml
+t::if-05::flows: g::file://./fnet/if/05.yaml
+
+t::output-01::flows: g::file://./fnet/output/01.yaml
+t::output-02::flows: g::file://./fnet/output/02.yaml
+t::output-03::flows: g::file://./fnet/output/03.yaml
+t::output-04::flows: g::file://./fnet/output/04.yaml
+t::output-05::flows: g::file://./fnet/output/05.yaml
+
+t::enabled-01::flows: g::file://./fnet/enabled/01.yaml
+
+t::for-01::flows: g::file://./fnet/for/01.yaml
+
+t::template-01::flows: g::file://./fnet/template/01.yaml
+
+commands:
+  base:
+    usage: frun base --category <category> --index <index>
+    steps:
+      - fnet build --ftag {{args.category}}-{{args.index}}
+      - cp ./fnet/flows.bpmn ./fnet/{{args.category}}/{{args.index}}.bpmn
+      - fnet cli
+    env:
+      FNET_LOG_CATEGORIES: "tree,bpmn"
+
+  all:
+    usage: frun all
+    steps:
+      - frun return-01
+      - frun return-02
+      - frun return-03
+      - frun return-04
+      - frun return-05
+      - frun return-06
+      - frun return-07
+      - frun return-08
+      - frun return-09
+      - frun return-10
+
+  return:
+    usage: frun return
+    steps:
+      - frun return-01
+      - frun return-02
+      - frun return-03
+      - frun return-04
+      - frun return-05
+      - frun return-06
+      - frun return-07
+      - frun return-08
+      - frun return-09
+      - frun return-10
+
+  assign:
+    usage: frun assign
+    steps:
+      - frun assign-01
+      - frun assign-02
+      - frun assign-03
+      - frun assign-04
+      - frun assign-05
+
+  next:
+    usage: frun next
+    steps:
+      - frun next-01
+      - frun next-02
+      - frun next-03
+
+  if:
+    usage: frun if
+    steps:
+      - frun if-01
+      - frun if-02
+      - frun if-03
+      - frun if-04
+      - frun if-05
+
+  output:
+    usage: frun output
+    steps:
+      - frun output-01
+      - frun output-02
+      - frun output-03
+      - frun output-04
+      - frun output-05
+
+  enabled:
+    usage: frun enabled
+    steps:
+      - frun enabled-01
+
+  template:
+    usage: frun template
+    steps:
+      - frun template-01
+
+  return-01: frun base --category return --index 01
+  return-02: frun base --category return --index 02
+  return-03: frun base --category return --index 03
+  return-04: frun base --category return --index 04
+  return-05: frun base --category return --index 05
+  return-06: frun base --category return --index 06
+  return-07: frun base --category return --index 07
+  return-08: frun base --category return --index 08
+  return-09: frun base --category return --index 09
+  return-10: frun base --category return --index 10
+
+  assign-01: frun base --category assign --index 01
+  assign-02: frun base --category assign --index 02
+  assign-03: frun base --category assign --index 03
+  assign-04: frun base --category assign --index 04
+  assign-05: frun base --category assign --index 05
+
+  next-01: frun base --category next --index 01
+  next-02: frun base --category next --index 02
+  next-03: frun base --category next --index 03
+
+  if-01: frun base --category if --index 01
+  if-02: frun base --category if --index 02
+  if-03: frun base --category if --index 03
+  if-04: frun base --category if --index 04
+  if-05: frun base --category if --index 05
+
+  output-01: frun base --category output --index 01
+  output-02: frun base --category output --index 02
+  output-03: frun base --category output --index 03
+  output-04: frun base --category output --index 04
+  output-05: frun base --category output --index 05
+
+  enabled-01: frun base --category enabled --index 01
+
+  template-01: frun base --category template --index 01
+
+  for-01: frun base --category for --index 01

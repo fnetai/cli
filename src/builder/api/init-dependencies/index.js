@@ -9,8 +9,9 @@ export default async function initDependencies({ atom, packageDependencies, pack
   userDependencies.filter(w => w.dev).forEach(dep => packageDevDependencies.push(dep));
 
   if (atom.type === 'workflow') {
-    packageDependencies.push({ package: "get-value", version: "^3" });
-    packageDependencies.push({ package: "set-value", version: "^4" });
+    packageDependencies.push({ package: "dot-prop", version: "^10" });
+    // packageDependencies.push({ package: "get-value", version: "^3" });
+    // packageDependencies.push({ package: "set-value", version: "^4" });
   }
 
   if (atom.doc.features.form_enabled) {
@@ -36,11 +37,19 @@ export default async function initDependencies({ atom, packageDependencies, pack
 
   if (atom.doc.features.cli.enabled === true) {
     packageDependencies.push({ package: "@fnet/args", version: "^0.1" });
-    packageDevDependencies.push({ package: "ajv", version: "^8" });
+    // packageDevDependencies.push({ package: "ajv", version: "^8" });
 
     if (atom.doc.features.cli.fargs && atom.doc.features.cli.fargs?.enabled !== false) {
       packageDependencies.push({ package: "@fnet/config", version: "0.2.21" });
     }
+
+    // Add MCP dependencies if MCP mode is enabled
+    if (atom.doc.features.cli.mcp && atom.doc.features.cli.mcp.enabled === true) {
+      packageDependencies.push({ package: "@modelcontextprotocol/sdk", version: "^1.10" });
+      packageDependencies.push({ package: "express", version: "^4.18" });
+    }
+
+    // HTTP mode uses Node.js built-in http module, no additional dependencies needed
   }
 
   if (atom.doc.features.render && atom.doc.features.render.enabled !== false) {

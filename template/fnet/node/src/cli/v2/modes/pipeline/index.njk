@@ -1,0 +1,113 @@
+{# ============================================================================
+   PIPELINE MODE - MAIN
+   ============================================================================
+   Unix pipeline integration via stdin/stdout
+   Supports line-by-line processing and full input mode
+   ============================================================================ #}
+
+if (cliMode === 'pipeline') {
+  // Pipeline mode code
+  const pipelineMode = args['pipeline-mode'] || args.pipeline_mode || 'lines';
+  const pipelineFormat = args['pipeline-format'] || args.pipeline_format || 'json';
+  
+  if (pipelineMode === 'lines') {
+    // Line-by-line processing (default)
+{% if atom.doc.features.project.format==='esm' %}
+    const readline = await import('readline');
+{% elif atom.doc.features.project.format==='cjs' %}
+    const readline = require('readline');
+{% endif %}
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      terminal: false
+    });
+
+    rl.on('line', async (line) => {
+      try {
+        // Parse input based on format
+        let input;
+        if (pipelineFormat === 'json') {
+          input = JSON.parse(line);
+        } else {
+          input = { data: line };
+        }
+
+        // Validate input
+        // TODO: Add schema validation if needed
+
+        // Process with Engine
+        {% if atom.doc.features.cli.extend===true %}
+        const result = await runExtended(input, { Engine });
+        {% else %}
+        const engine = new Engine();
+        const result = await engine.run(input);
+        {% endif %}
+
+        // Output result
+        if (pipelineFormat === 'json') {
+          console.log(JSON.stringify(result));
+        } else {
+          console.log(result);
+        }
+      } catch (error) {
+        console.error(`Error processing line: ${error.message}`);
+      }
+    });
+
+    rl.on('close', () => {
+      process.exit(0);
+    });
+
+  } else if (pipelineMode === 'full') {
+    // Full input processing
+    let inputData = '';
+
+    process.stdin.on('data', (chunk) => {
+      inputData += chunk;
+    });
+
+    process.stdin.on('end', async () => {
+      try {
+        // Parse input based on format
+        let input;
+        if (pipelineFormat === 'json') {
+          input = JSON.parse(inputData);
+        } else {
+          input = { data: inputData };
+        }
+
+        // Validate input
+        // TODO: Add schema validation if needed
+
+        // Process with Engine
+        {% if atom.doc.features.cli.extend===true %}
+        const result = await runExtended(input, { Engine });
+        {% else %}
+        const engine = new Engine();
+        const result = await engine.run(input);
+        {% endif %}
+
+        // Output result
+        if (pipelineFormat === 'json') {
+          console.log(JSON.stringify(result, null, 2));
+        } else {
+          console.log(result);
+        }
+
+        process.exit(0);
+      } catch (error) {
+        console.error(`Error processing input: ${error.message}`);
+        process.exit(1);
+      }
+    });
+
+  } else {
+    console.error(`Unknown pipeline mode: ${pipelineMode}`);
+    console.error(`Supported modes: lines, full`);
+    process.exit(1);
+  }
+
+  return;
+}
+

@@ -2,7 +2,7 @@ name: {{name}}
 
 {% if runtime === 'node' %}
 features:
-  iife: false
+  s::runtime.type: node
 {% elif runtime === 'python' %}
 features:
   s::runtime.type: python

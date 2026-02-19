@@ -1,81 +1,9 @@
 {% if atom.doc.features.cli.enabled===true %}
 
-{% if atom.doc.features.project.format==='esm' %}
-
-import argv from '../default/to.args.js';
-
-{% if atom.doc.features.cli.extend===true %}
-
-import Node from '../../../cli';
-const run=async ()=>await Node(await argv());
-run()
-  .then(() => {    
-    {# process.exit(0);     #}
-  })
-  .catch((error) => {    
-    console.error(error.message);
-    process.exit(1);
-  });
-
-{% else %}
-import Node from '../../../src';
-const run=async ()=>await Node(await argv());
-
-run()
-  .then((result) => {
-    if (typeof result !== 'undefined')
-    {
-      // TODO: REMOVE THIS LINE
-      const stdout_format=process.argv.slice(2).indexOf()!==-1? process.argv.slice(2)[process.argv.slice(2).indexOf('--stdout_format')+1]:null;
-      if(stdout_format==='json') console.log(JSON.stringify(result,null,2));
-      else console.log(result);
-    }
-    {# process.exit(0); #}
-  })
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
-{% endif %}
-
-{% elif atom.doc.features.project.format==='cjs' %}
-
-const argv = require('../default/to.args.js');
-
-{% if atom.doc.features.cli.extend===true %}
-
-const Node = require('../../../cli');
-const run = async () => await Node(await argv());
-
-run()
-  .then(() => {
-    {# process.exit(0); #}
-  })
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
-
-{% else %}
-const Node = require('../../../src');
-const run = async () => await Node(await argv());
-
-run()
-  .then((result) => {
-    if (typeof result !== 'undefined') {
-      // TODO: REMOVE THIS LINE
-      const stdout_format=process.argv.slice(2).indexOf()!==-1? process.argv.slice(2)[process.argv.slice(2).indexOf('--stdout_format')+1]:null;
-      if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
-      else console.log(result);
-    }
-    {# process.exit(0); #}
-  })
-  .catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
-{% endif %}
-
-{% endif %}
+  {% if atom.doc.features.cli.template.version ==='v1' %}
+    {% include "./index.js.v1.njk" %}
+  {% else %}
+    {% include "./v2/index.js.njk" %}
+  {% endif %}
 
 {% endif %}

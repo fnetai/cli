@@ -1,0 +1,7 @@
+{% if context.transform.print %}
+console.log({{context.transform.print | safe}});
+{% endif%}
+
+{% if context.transform.assert %}
+assert({{context.transform.assert | safe}});
+{% endif%}

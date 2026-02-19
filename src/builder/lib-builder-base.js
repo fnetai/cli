@@ -10,7 +10,7 @@ import { Atom } from "@flownet/lib-atom-api-js";
 import fnetConfig from '@fnet/config';
 import fnetListFiles from '@fnet/list-files';
 
-import createRedisClient from '../redisClient.js';
+// import createRedisClient from '../redisClient.js';
 import Auth from './auth.js';
 import deployTo from './deploy/deploy-to/index.js';
 
@@ -130,13 +130,13 @@ class BuilderBase {
    * @private
    */
   async _cache_set(key, value, expire_ttl) {
-    if (!this._redis_client) return;
+    // if (!this._redis_client) return;
 
-    await this._redis_client.SETEX(
-      key,
-      expire_ttl || this._expire_ttl,
-      JSON.stringify(value),
-    ).catch(console.error);
+    // await this._redis_client.SETEX(
+    //   key,
+    //   expire_ttl || this._expire_ttl,
+    //   JSON.stringify(value),
+    // ).catch(console.error);
   }
 
   /**
@@ -174,7 +174,7 @@ class BuilderBase {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin', '.dev'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -196,6 +196,12 @@ class BuilderBase {
 
     // default
     target = path.join(projectDir, "src", "default");
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
+    }
+
+    // .dev
+    target = path.join(projectDir, ".dev");
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
     }
@@ -225,25 +231,9 @@ class BuilderBase {
 
     const { content: main, ...content } = this.#atom.doc;
 
-    const templateContext = { content: yaml.stringify(content) }
-
-    const templateDir = this.#context.templateDir;
-    const templatePath = path.resolve(templateDir, `${fileBase}.njk`);
-
-    if (!fs.existsSync(templatePath)) {
-      throw new Error(`fnode.yaml.njk template not found in ${templateDir}`);
-    }
-
-    const template = nunjucks.compile(
-      fs.readFileSync(templatePath, "utf8"),
-      this.#njEnv
-    );
-
-    const templateRender = template.render(templateContext);
-
     const projectDir = this.#context.projectDir;
     const filePath = path.resolve(projectDir, `${fileBase}`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');
+    fs.writeFileSync(filePath, yaml.stringify(content), 'utf8');
   }
 
   /**
@@ -350,7 +340,7 @@ class BuilderBase {
    * @returns {Promise<void>}
    */
   async init() {
-    this._redis_client = await createRedisClient();
+    // this._redis_client = await createRedisClient();
 
     this.#buildId = this.#context.buildId || randomUUID();
     this.#apiContext.buildId = this.#buildId;
@@ -370,7 +360,7 @@ class BuilderBase {
 
       await this.initAuth();
       await this.initLibrary();
-      
+
       // Call the runtime-specific initialization method
       await this.initRuntime();
     }

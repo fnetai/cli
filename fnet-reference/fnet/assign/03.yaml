@@ -1,0 +1,19 @@
+$meta:
+  subject: assign
+  tags:
+    - object
+    - structured-data
+  queries:
+    - How to assign an object?
+    - Can I assign structured data?
+    - Show me object assignment
+
+main:
+  steps:
+    - assign-object:
+        assign:
+          - user:
+              name: John Doe
+              age: 30
+        return: v::user
+

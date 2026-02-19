@@ -1,0 +1,15 @@
+$meta:
+  subject: return
+  tags:
+    - null
+    - empty
+  queries:
+    - Can I return null?
+    - How to return empty value?
+    - What happens with empty return?
+
+main:
+  steps:
+    - return-null:
+        return: null
+

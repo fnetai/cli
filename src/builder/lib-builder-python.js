@@ -39,7 +39,7 @@ class PythonBuilder extends BuilderBase {
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin', '.dev'], absolute: true });
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
     }
@@ -72,6 +72,13 @@ class PythonBuilder extends BuilderBase {
         throw new Error(`Couldn't create symlink. Error: ${err.message}`);
       }
     }
+
+    // .dev
+    target = path.join(projectDir, ".dev");
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
+    }
+
   }
 
   /**
@@ -82,7 +89,7 @@ class PythonBuilder extends BuilderBase {
     this.setProgress({ message: "Initializing external libs." });
 
     const atom = this.atom;
-    atom.protocol = "local:";
+    atom.protocol = "src:";
     atom.doc.dependencies = atom.doc.dependencies || [];
     atom.name = atom.doc.name;
 
@@ -110,7 +117,7 @@ class PythonBuilder extends BuilderBase {
       const atomLibRef = atomLibRefs[i];
 
       const atomLib = atomLibRef.atom;
-      if (atomLib.protocol === 'local:') {
+      if (atomLib.protocol === 'src:') {
         const srcFilePath = path.resolve(this.context.projectSrcDir, `${atomLib.fileName || atomLib.name}.py`);
         if (!fs.existsSync(srcFilePath)) {
           fs.mkdirSync(path.dirname(srcFilePath), { recursive: true });

@@ -5,6 +5,8 @@ export default function initCopyFeature(apiContext) {
   const { atom, packageDevDependencies } = apiContext;
   const features = atom.doc.features;
 
+  if(features.runtime.type === 'bun') return;
+  
   const options = {};
 
   // TODO: remove it later
@@ -18,10 +20,6 @@ export default function initCopyFeature(apiContext) {
       }
     }
   }
-
-  // const extraCheck = () => {
-  //   return features.app_enabled;
-  // }
 
   featureTemplate({
     feature: {

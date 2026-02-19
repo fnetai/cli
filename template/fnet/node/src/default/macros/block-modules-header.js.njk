@@ -2,7 +2,7 @@
   {% if child.module===true%}
     {% if not child.definition.dynamic %}
     // MODULE : {{child.indexKey}}
-    import { default as {{child.codeKey}} } from "./{{child.codeKey}}";
+    import { default as {{child.codeKey}} } from "./{{child.codeKey}}.js";
     {% endif %}
   {% endif %}
 {% endfor%}

@@ -1,0 +1,109 @@
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
+{% set result=true %}
+
+{% import "src/default/types/block.js.njk" as block with context %}
+
+{% call block.header() %}
+{% endcall %}
+
+{% call block.definition() %}
+  // PIPELINE EXECUTION
+  const { spawn } = await import('child_process');
+
+  const pipelineBinary = '{{ context.transform.binaryName }}';
+  {% if context.transform.args %}
+  const pipelineArgs = {{ context.transform.args | safe }};
+  {% else %}
+  const pipelineArgs = [];
+  {% endif %}
+
+  {% if context.transform.input %}
+  const pipelineInput = {{ context.transform.input | safe }};
+  {% else %}
+  const pipelineInput = null;
+  {% endif %}
+
+  const pipelineFormat = '{{ context.transform.format }}';
+
+  {% if context.transform.env %}
+  const pipelineEnv = {{ context.transform.env | safe }};
+  {% else %}
+  const pipelineEnv = {};
+  {% endif %}
+
+  {% if context.transform.cwd %}
+  const pipelineCwd = {{ context.transform.cwd | safe }};
+  {% else %}
+  const pipelineCwd = undefined;
+  {% endif %}
+
+  const result = await new Promise((pipelineResolve, pipelineReject) => {
+    const spawnOptions = {
+      env: { ...process.env, ...pipelineEnv },
+      stdio: ['pipe', 'pipe', 'pipe']  // stdin, stdout, stderr as pipes (don't inherit parent)
+    };
+
+    if (pipelineCwd) {
+      spawnOptions.cwd = pipelineCwd;
+    }
+
+    const proc = spawn(pipelineBinary, pipelineArgs, spawnOptions);
+
+    let stdout = '';
+    let stderr = '';
+
+    proc.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    proc.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    proc.on('error', (error) => {
+      pipelineReject(new Error(`Failed to execute pipeline '${pipelineBinary}': ${error.message}`));
+    });
+
+    proc.on('close', (code) => {
+      if (code !== 0) {
+        pipelineReject(new Error(`Pipeline '${pipelineBinary}' exited with code ${code}: ${stderr}`));
+        return;
+      }
+
+      // Parse output based on format
+      if (pipelineFormat === 'text') {
+        // Text format: return as-is
+        pipelineResolve(stdout.trim());
+      } else {
+        // JSON format (default): parse
+        try {
+          const result = JSON.parse(stdout.trim());
+          pipelineResolve(result);
+        } catch (error) {
+          pipelineReject(new Error(`Failed to parse pipeline output as JSON: ${error.message}`));
+        }
+      }
+    });
+
+    // Write input based on type (auto-detect)
+    if (pipelineInput !== null && pipelineInput !== undefined) {
+      if (typeof pipelineInput === 'object') {
+        // Object/Array → JSON
+        proc.stdin.write(JSON.stringify(pipelineInput) + '\n');
+      } else if (typeof pipelineInput === 'string') {
+        // String → as-is (text)
+        proc.stdin.write(pipelineInput + '\n');
+      } else {
+        // Other types → JSON
+        proc.stdin.write(JSON.stringify(pipelineInput) + '\n');
+      }
+    }
+    proc.stdin.end();
+  });
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

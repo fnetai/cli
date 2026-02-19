@@ -4,7 +4,7 @@ import { default as Engine } from "../default/{{ atom.doc.features.app_default_e
 
   {% if atom.doc.features.app.export===true %}
     {% if atom.doc.features.app.extend===true %}
-      import { default as init } from '../../../app';
+      import { default as init } from '../../../app/index.js';
     {% endif %}
     const createApp = ({ container }) => {
         {% if atom.doc.features.app.extend===true %}
@@ -21,7 +21,7 @@ import { default as Engine } from "../default/{{ atom.doc.features.app_default_e
     export { createApp };
   {% else %}
       {% if atom.doc.features.app.extend===true %}
-        import { default as run } from '../../../app';
+        import { default as run } from '../../../app/index.js';
         run({ Engine }).catch((error) => {
             console.log(error.message)
         });

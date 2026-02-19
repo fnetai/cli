@@ -1,65 +1,31 @@
-import React from "react";
+{% set waitForNext=true %}
+{% set assign=true %}
+{% set signal=true %}
 
-{% include "src/default/macros/block-header.js.njk" %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{% include "src/default/macros/block-next-header.js.njk" %}
+{% call block.header() %}
 
-{% include "src/default/macros/block-library-header.js.njk" %}
+  {% include "src/default/macros/block-library-header.js.njk" %}
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
+  import React from "react";
 
-export default function Block(context){
-    
-  {% include "src/default/macros/block-body-header.js.njk" %}
+{% endcall %}
 
-  this.run= function (){
-      
-    const args=Array.from(arguments);
+{% call block.definition() %}
 
-    return new Promise(async (resolve,reject)=>{
+  {% if context.lib.type==='atom'%}
+    const formLib=LIBRARY;
+  {% elseif context.lib.type==='subworkflow' %}
+    const formLib={{context.lib.codeKey}};
+  {% else %}
+    const formLib=undefined; 
+    throw new Error('Couldnt find form.');
+  {% endif %}
 
-      try{
-        {% include "src/default/macros/block-run-header.js.njk" %}
-        
-        {% include "src/default/macros/page.js.njk" %}
+  {% include "src/default/macros/block-run-form.js.njk" %}
 
-        {% include "src/default/macros/block-modules.js.njk" %}
-        
-        flow.waitForNext({
-          key:'{{indexKey}}',
-          next: async () => {
-            {% if context.transform.return %}
-              resolve({type:'return',value: {{context.transform.return | safe}}});
-            {% elseif context.next %}
-              {% include "src/default/macros/block-next.js.njk" %}
-            {% else %}
-              resolve();
-            {% endif %}
-          }
-        });
-        
-        {% if context.lib.type==='atom'%}
-          const formLib=LIBRARY;
-        {% elseif context.lib.type==='subworkflow' %}
-          const formLib={{context.lib.codeKey}};
-        {% else %}
-          const formLib=undefined; 
-          throw new Error('Couldnt find form.');
-        {% endif %}
+{% endcall %}
 
-        {% include "src/default/macros/block-run-form.js.njk" %}
-        
-        {% if context.transform.operation==='continue-for-next' %}
-          flow.continueForNext({key:'{{indexKey}}'});
-        {% endif %}
-      }
-      catch(error){
-        reject(error);                
-      }
-    });
-  } 
-
-  Object.freeze(this);    
-}
-
-{% include "src/default/macros/block-footer.js.njk" %}
+{% call block.footer()%} 
+{% endcall %}

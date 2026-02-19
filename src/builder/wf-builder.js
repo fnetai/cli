@@ -5,16 +5,19 @@ import fnetShellJs from '@fnet/shelljs';
 import nunjucks from "nunjucks";
 import cloneDeep from 'lodash.clonedeep';
 import isObject from 'isobject';
-import createRedisClient from '../redisClient.js';
+// import createRedisClient from '../redisClient.js';
 import { randomUUID } from 'node:crypto';
+import { treeLogger, bpmnLogger, isLogEnabled } from './logger.js';
 import Auth from './auth.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
+import initDependenciesBun from "./api/init-dependencies/bun.js";
 import createApp from "./api/create-app/index.js";
 import createPackageJson from "./api/create-package-json/index.js";
 import createCli from "./api/create-cli/index.js";
 import createRollup from "./api/create-rollup/index.js";
-import createToYargs from "./api/create-to-yargs/index.js";
+import createBuildJs from "./api/create-build-js/index.js";
+import createInputArgs from "./api/create-input-args/index.js";
 import createGitIgnore from "./api/create-git-ignore/index.js";
 import createTsConfig from "./api/create-ts-config/index.js";
 import createProjectReadme from "./api/create-project-readme/index.js";
@@ -26,10 +29,10 @@ import pickNpmVersions from './api/common/pick-npm-versions.js';
 import deployTo from './deploy/deploy-to/index.js';
 import { Atom } from "@flownet/lib-atom-api-js";
 import fnetParseNodeUrl from '@flownet/lib-parse-node-url';
-import fnetBpmnFromFlow from './bpmn/index.js';
+import fnetBpmnFromFlow, { generateBpmnModelsPerFlow } from './bpmn/index.js';
 import fnetConfig from '@fnet/config';
 import fnetParseImports from '@flownet/lib-parse-imports-js';
-import fnetExpression from '@fnet/expression';
+import { parseFlowExpression } from './expression/index.js';  // ← Flow-specific parser (build-time only)
 import fnetYaml from '@fnet/yaml';
 import chalk from 'chalk';
 import fnetListFiles from '@fnet/list-files';
@@ -44,13 +47,21 @@ import returnBlock from './block/return/index.js';
 import callBlock from './block/call/index.js';
 import stepsBlock from './block/steps/index.js';
 import formBlock from './block/form/index.js';
-import operationBlock from './block/operation/index.js';
-import jumpBlock from './block/jump/index.js';
+import signalBlock from './block/signal/index.js';
+import waitBlock from './block/wait/index.js';
+import nextBlock from './block/next/index.js';
 import modulesBlock from './block/modules/index.js';
 import resolveNextBlock from './block-api/resolve-next-block/index.js';
 import npmBlock from './block/npm-block/index.js';
+import newBlock from './block/new/index.js';
+import outputBlock from './block/output/index.js';
+import pipelineBlock from './block/pipeline/index.js';
+import retryBlock from './block/retry/index.js';
+import scheduleBlock from './block/schedule/index.js';
+import httpBlock from './block/http/index.js';
 import which from './which.js';
-
+import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
+import os from 'node:os';
 class Builder {
 
   #auth;
@@ -124,18 +135,18 @@ class Builder {
   }
 
   async _cache_set(key, value, expire_ttl) {
-    if (!this._redis_client) return;
+    // if (!this._redis_client) return;
 
-    await this._redis_client.SETEX(
-      key,
-      expire_ttl || this._expire_ttl,
-      JSON.stringify(value),
-    ).catch(console.error);
+    // await this._redis_client.SETEX(
+    //   key,
+    //   expire_ttl || this._expire_ttl,
+    //   JSON.stringify(value),
+    // ).catch(console.error);
   }
 
   async init() {
 
-    this._redis_client = await createRedisClient();
+    // this._redis_client = await createRedisClient();
 
     this.#buildId = this.#context.buildId || randomUUID();
     this.#apiContext.buildId = this.#buildId;
@@ -153,6 +164,8 @@ class Builder {
 
     try {
       await this.setProgress({ message: "Initialization started." });
+
+      const project = this.#apiContext.context.project;
 
       await this.initAuth();
       await this.initWorkflow();
@@ -175,7 +188,11 @@ class Builder {
       await this.initFeaturesFromNodes({ childs: root.childs, features: this.#atom.doc.features });
 
       await initFeatures(this.#apiContext);
-      await initDependencies(this.#apiContext);
+
+      if (project.runtime.type === 'bun')
+        await initDependenciesBun(this.#apiContext);
+      else
+        await initDependencies(this.#apiContext);
 
       await this.initAtomLibsAndDeps({ libs: root.context.libs, packageDependencies: this.#packageDependencies });
 
@@ -239,11 +256,12 @@ class Builder {
     this.setProgress({ message: "Initializing library directory." });
 
     const projectDir = this.#context.projectDir;
+    const projectSrcDir = this.#context.projectSrcDir;
     const coreDir = this.#context.coreDir;
 
     this.setProgress({ message: "Cleaning project directory." });
 
-    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda'], absolute: true });
+    const assets = fnetListFiles({ dir: projectDir, ignore: ['.cache', 'node_modules', '.conda', '.bin', '.dev'], absolute: true });
 
     for (const asset of assets) {
       fs.rmSync(asset, { recursive: true, force: true });
@@ -270,6 +288,30 @@ class Builder {
     const blocksDir = path.join(srcDir, 'default', 'blocks');
     if (!fs.existsSync(blocksDir)) {
       fs.mkdirSync(blocksDir, { recursive: true });
+    }
+
+    // .dev
+    let target = path.join(projectDir, ".dev");
+    if (!fs.existsSync(target)) {
+      fs.mkdirSync(target, { recursive: true });
+    }
+
+    // create multi-platform symlink projectSrcDir to projectDir/src/ as src-core
+    if (this.#atom.doc.features?.symlinks === true) {
+      target = this.#context.projectSrcDirSymlink;
+      if (!fs.existsSync(target)) {
+        try {
+          if (os.platform() === 'win32') {
+            // Windows requires special handling
+            fs.symlinkSync(projectSrcDir, target, 'junction');
+          } else {
+            // For Unix-like systems
+            fs.symlinkSync(projectSrcDir, target, 'dir');
+          }
+        } catch (err) {
+          throw new Error(`Couldn't create symlink. Error: ${err.message}`);
+        }
+      }
     }
   }
 
@@ -329,7 +371,10 @@ class Builder {
 
   async initNodeTree({ workflow }) {
 
-    const workflowKeys = Object.keys(workflow);
+    const reservedKeys = ['$meta', '$project', '$features', '$input', '$output', '$commands'];
+    const workflowKeys = Object.keys(workflow).filter(w => !reservedKeys.includes(w));
+
+    if (isLogEnabled('tree')) treeLogger.info('[TREE] Creating root node');
 
     const root = {
       definition: workflow,
@@ -337,8 +382,8 @@ class Builder {
       type: "root",
       parent: undefined,
       childs: [],
-      blockAutoJumpToParent: true,
-      blockAutoJumpToSibling: true,
+      block_child_auto_jump_to_parent: true,
+      block_child_auto_jump_to_sibling: true,
       index: 0,
       depth: 0,
       context: {
@@ -348,25 +393,42 @@ class Builder {
     };
 
     workflowKeys.forEach(flowName => {
+      if (isLogEnabled('tree')) treeLogger.info(`[TREE] Creating ${flowName === 'main' ? 'workflow' : 'subworkflow'}: ${flowName}`);
+
       const node = {
         name: flowName,
         type: flowName === 'main' ? 'workflow' : "subworkflow",
+        enabled: workflow[flowName].enabled !== false,
         childs: [],
         parent: root,
         definition: workflow[flowName],
         index: root.childs.length,
         depth: root.depth + 1,
         context: {},
-        blockAutoJumpToParent: true,
-        blockAutoJumpToSibling: false,
+        block_child_auto_jump_to_parent: true,
       }
 
       root.childs.push(node);
     });
 
-    for await (const node of root.childs) {
-      await this.initNode({ node });
+    for (let i = 0; i < root.childs.length; i++) {
+      const node = root.childs[i];
+      if (isLogEnabled('tree')) treeLogger.info(`[INIT] node: ${node.name}`);
+      if (node.definition.enabled === false) {
+        root.childs.splice(i, 1);
+        i--;
+        continue;
+      }
+      else
+        await this.initNode({ node });
     }
+
+    // for await (const node of root.childs) {
+    //   if (isLogEnabled('tree')) treeLogger.info(`[INIT] node: ${node.name}`);
+    //   await this.initNode({ node });
+    // }
+
+    if (isLogEnabled('tree')) treeLogger.info(`[TREE] Root node tree created (${root.childs.length} flows)`);
 
     return root;
   }
@@ -378,22 +440,104 @@ class Builder {
     node.workflow = node.parent.workflow || node; //?
     node.depth = node.parent.depth + 1;
 
-    if (await tryExceptBlock.hits(api)) await tryExceptBlock.init(api);
-    else if (await forBlock.hits(api)) await forBlock.init(api);
-    else if (await switchBlock.hits(api)) await switchBlock.init(api);
-    else if (await ifBlock.hits(api)) await ifBlock.init(api);
-    else if (await parralelBlock.hits(api)) await parralelBlock.init(api);
-    else if (await assignBlock.hits(api)) await assignBlock.init(api);
-    else if (await raiseBlock.hits(api)) await raiseBlock.init(api);
-    else if (await callBlock.hits(api)) await callBlock.init(api);
-    else if (this.#npmBlocks.find(w => w.hits(api))) await (this.#npmBlocks.find(w => w.hits(api))).init(api);
-    else if (await formBlock.hits(api)) await formBlock.init(api);
-    else if (await operationBlock.hits(api)) await operationBlock.init(api);
-    else if (await stepsBlock.hits(api)) await stepsBlock.init(api);
-    else if (await jumpBlock.hits(api)) await jumpBlock.init(api);
-    else if (await modulesBlock.hits(api)) await modulesBlock.init(api);
-    else if (await returnBlock.hits(api)) await returnBlock.init(api);
+    let blockType = 'unknown';
+
+    if (await tryExceptBlock.hits(api)) {
+      blockType = 'tryexcept';
+      await tryExceptBlock.init(api);
+    }
+    else if (await switchBlock.hits(api)) {
+      blockType = 'switch';
+      await switchBlock.init(api);
+    }
+    else if (await ifBlock.hits(api)) {
+      blockType = 'if';
+      await ifBlock.init(api);
+    }
+    else if (await forBlock.hits(api)) {
+      blockType = 'for';
+      await forBlock.init(api);
+    }
+    else if (await retryBlock.hits(api)) {
+      blockType = 'retry';
+      await retryBlock.init(api);
+    }
+    else if (await scheduleBlock.hits(api)) {
+      blockType = 'schedule';
+      await scheduleBlock.init(api);
+    }
+    else if (await parralelBlock.hits(api)) {
+      blockType = 'parallel';
+      await parralelBlock.init(api);
+    }
+    else if (await pipelineBlock.hits(api)) {
+      blockType = 'pipeline';
+      await pipelineBlock.init(api);
+    }
+    else if (await httpBlock.hits(api)) {
+      blockType = 'http';
+      await httpBlock.init(api);
+    }
+    else if (await callBlock.hits(api)) {
+      blockType = 'call';
+      await callBlock.init(api);
+    }
+    else if (await newBlock.hits(api)) {
+      blockType = 'new';
+      await newBlock.init(api);
+    }
+    else if (await raiseBlock.hits(api)) {
+      blockType = 'raise';
+      await raiseBlock.init(api);
+    }
+    else if (await formBlock.hits(api)) {
+      blockType = 'form';
+      await formBlock.init(api);
+    }
+    else if (await signalBlock.hits(api)) {
+      blockType = 'signal';
+      await signalBlock.init(api);
+    }
+    else if (await waitBlock.hits(api)) {
+      blockType = 'wait';
+      await waitBlock.init(api);
+    }
+    else if (await stepsBlock.hits(api)) {
+      blockType = 'steps';
+      await stepsBlock.init(api);
+    }
+    else if (await nextBlock.hits(api)) {
+      blockType = 'next';
+      await nextBlock.init(api);
+    }
+    else if (await modulesBlock.hits(api)) {
+      blockType = 'modules';
+      await modulesBlock.init(api);
+    }
+    else if (this.#npmBlocks.find(w => w.hits(api))) {
+      blockType = 'npm-block';
+      await (this.#npmBlocks.find(w => w.hits(api))).init(api);
+    }
+    else if (await assignBlock.hits(api)) {
+      blockType = 'assign';
+      await assignBlock.init(api);
+    }
+    else if (await outputBlock.hits(api)) {
+      blockType = 'output';
+      await outputBlock.init(api);
+    }
+    else if (await returnBlock.hits(api)) {
+      blockType = 'return';
+      await returnBlock.init(api);
+    }
     else throw new Error('Undefined step type.');
+
+    if (isLogEnabled('tree')) {
+      const childInfo = node.childs?.length > 0 ? ` (${node.childs.length} childs)` : '';
+      treeLogger.info(`[NODE] ${blockType}: ${node.name}${childInfo}`);
+    }
+
+    return true;
   }
 
   async initNodeTreeIndex({ root }) {
@@ -439,7 +583,7 @@ class Builder {
     const callNodes = [];
     for await (const indexKey of Object.keys(index)) {
       const node = index[indexKey];
-      if (node.type !== 'call') continue;
+      if (node.type !== 'call' && node.type !== 'new') continue;
 
       callNodes.push(node);
     }
@@ -454,7 +598,7 @@ class Builder {
     const calls = root.context.calls;
 
     for await (const node of calls) {
-      const callName = node.definition.import || node.definition.call;
+      const callName = node.definition.from || node.definition.import || node.definition.call;
 
       const targetNode =
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||
@@ -509,7 +653,7 @@ class Builder {
     const forms = root.context.forms;
 
     for await (const node of forms) {
-      const formName = node.definition.import || node.definition.form;
+      const formName = node.definition.from || node.definition.import || node.definition.form;
 
       const targetNode =
         await this.findNodeCallTarget({ refNode: node, curNode: node.parent }) ||
@@ -609,18 +753,7 @@ class Builder {
 
     if (!parsedUrl.protocol) parsedUrl.protocol = this.#protocol;
 
-    if (parsedUrl.protocol === 'ac:') {
-      const parts = parsedUrl.pathname.split('/');
-      if (parts.length === 1) {
-        return await Atom.first({ where: { name: url, parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "workflow.lib" } });
-      }
-
-      if (parts.length === 2) {
-        const folder = await Atom.first({ where: { name: parts[0], parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "folder" } });
-        return await Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
-      }
-    }
-    else if (parsedUrl.protocol === 'local:') {
+    if (parsedUrl.protocol === 'src:') {
 
       const srcFilePath = path.resolve(this.#context.projectSrcDir, `${parsedUrl.pathname}.js`);
       const dependencies = [];
@@ -661,8 +794,11 @@ class Builder {
     }
     else if (parsedUrl.protocol === 'npm:') {
 
+      const parsed = fnetParseNpmPath({ path: parsedUrl.pathname });
+
       const npmVersions = await pickNpmVersions({
-        name: parsedUrl.pathname,
+        name: parsed.package,
+        subpath: parsed.subpath,
         projectDir: this.#context.projectDir,
         setProgress: this.#apiContext.setProgress
       });
@@ -676,7 +812,7 @@ class Builder {
           language: "js",
           dependencies: [
             {
-              package: parsedUrl.pathname,
+              package: parsed.package,
               version: npmVersions.minorRange,
               type: "npm"
             }
@@ -697,6 +833,31 @@ class Builder {
       }
       return atom;
     }
+    else if (parsedUrl.protocol === 'node:') {
+
+      const atom = {
+        name: parsedUrl.pathname,
+        doc: {
+          type: "workflow.lib",
+          "content-type": "javascript",
+          language: "js",
+          dependencies: [],
+        },
+        protocol: parsedUrl.protocol,
+      }
+      return atom;
+    }
+    else if (parsedUrl.protocol === 'ac:') {
+      const parts = parsedUrl.pathname.split('/');
+      if (parts.length === 1) {
+        return await Atom.first({ where: { name: url, parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "workflow.lib" } });
+      }
+
+      if (parts.length === 2) {
+        const folder = await Atom.first({ where: { name: parts[0], parent_id: this.#atomConfig.env.ATOM_LIBRARIES_ID, type: "folder" } });
+        return await Atom.first({ where: { name: parts[1], parent_id: folder.id, type: "workflow.lib" } });
+      }
+    }
   }
 
   async resolveNodeTree({ root }) {
@@ -708,11 +869,19 @@ class Builder {
   async resolveTypeWorkflow({ node }) {
     node.context.transform = node.context.transform || cloneDeep(node.definition);
     const transform = node.context.transform;
-
+    // console.log('params', transform.params);
     for (let i = 0; i < transform.params?.length; i++) {
       const param = transform.params[i];
+      // console.log('param', param);
       if (typeof param === 'string') transform.params[i] = { key: param, hasDefault: false };
       else {
+
+        if (Object.keys(param).length === 0) {
+          transform.params.splice(i, 1);
+          i--;
+          continue;
+        }
+
         const paramKey = Object.keys(param)[0];
         transform.params[i] = { key: paramKey, hasDefault: true, default: param[paramKey], type: typeof param[paramKey] };
       }
@@ -738,9 +907,6 @@ class Builder {
 
   async resolveTypeCommon({ node }) {
     const transform = node.context.transform;
-
-    if (transform.hasOwnProperty('operation'))
-      transform.operation = await this.transformExpression(transform.operation);
 
     if (transform.hasOwnProperty('page'))
       transform.page = await this.transformExpression(transform.page);
@@ -768,13 +934,15 @@ class Builder {
 
       const atomLib = atomLibRef.atom;
       const projectDir = this.#context.projectDir;
-      if (atomLib.protocol === 'local:') {
-        const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
+      if (atomLib.protocol === 'src:') {
+        let srcFilePath = this.#atom.doc.features?.symlinks === true ? this.#context.projectSrcDirSymlink : this.#context.projectSrcDir;
+        srcFilePath = path.resolve(srcFilePath, `${atomLib.fileName || atomLib.name}.js`);
+        // const srcFilePath = path.resolve(this.#context.projectSrcDir, `${atomLib.fileName || atomLib.name}.js`);
         const relativePath = path.relative(`${this.#context.projectDir}/src/default/blocks`, srcFilePath);
 
         if (!fs.existsSync(srcFilePath)) {
           fs.mkdirSync(path.dirname(srcFilePath), { recursive: true });
-          let template = 'export default async (args)=>{\n';
+          let template = 'export default async (input)=>{\n';
           template += '}';
           fs.writeFileSync(srcFilePath, template, 'utf8');
         }
@@ -787,8 +955,13 @@ class Builder {
         // nothing
         atomLib.relativePath = atomLib.name;
       }
+      else if (atomLib.protocol === 'node:') {
+        // nothing
+        atomLib.relativePath = atomLib.name;
+      }
       else if (atomLib.protocol === 'use:') {
         // nothing
+        // console.log('USE:', atomLib.name);
       }
       else {
         const atomLibPath = `${projectDir}/src/libs/${atomLib.id}.js`;
@@ -853,14 +1026,22 @@ class Builder {
       case "steps":
       case "return":
       case "call":
+      case "new":
       case "form":
       case "raise":
       case "switch":
-      case "jump":
+      case "next":
       case "tryexcept":
       case "for":
-      case "operation":
+      case "parallel":
+      case "signal":
+      case "wait":
       case "modules":
+      case "output":
+      case "pipeline":
+      case "retry":
+      case "schedule":
+      case "http":
         this.createBlockFromTemplate({ node });
         break;
       default:
@@ -904,11 +1085,18 @@ class Builder {
   }
 
   async transformExpression(value) {
-    let temp = await this.transformValue(value);
-    temp = JSON.stringify(temp);
-    // temp = this.replaceExpressionLegacy(temp);
-    temp = this.replaceSpecialPattern(temp);
-    return temp;
+    try {
+      let temp = await this.transformValue(value);
+      // if(temp===value) return value;
+      temp = JSON.stringify(temp);
+      temp = this.replaceSpecialPattern(temp);
+      return temp;
+    } catch (error) {
+      console.error('❌ transformExpression error:', error.message);
+      console.error('   Input value:', value);
+      console.error('   Stack:', error.stack);
+      throw error;
+    }
   }
 
   async transformValue(value) {
@@ -921,10 +1109,14 @@ class Builder {
       const keys = Object.keys(value);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        const exp = fnetExpression({ expression: key });
+        const exp = parseFlowExpression({ expression: key });
         if (exp) {
           if (exp.processor === 'e') {
-            const transformedValue = value[key].replace(/(\r\n|\n|\r)/g, "");
+            // Multiline normalization is now handled by @fnet/exp (default: true)
+            // Just use the value as-is
+            const transformedValue = typeof value[key] === 'string'
+              ? value[key]
+              : value[key];
             value[exp.statement] = `$::${transformedValue}::`;
             delete value[key];
           }
@@ -936,9 +1128,20 @@ class Builder {
       }
     }
     else if (typeof value === 'string') {
-      const exp = fnetExpression({ expression: value });
-      if (exp) {
-        const { processor, statement } = exp;
+      // Use flow-specific parser with transform support
+      const expResult = parseFlowExpression({
+        expression: value,
+        transform: {
+          v: 'v.{stmt}',
+          for: 'c.for.{stmt}',
+          m: 'c.module?.{stmt}||flow.module?.{stmt}',
+          f: 'c.form.{stmt}'
+        }
+      });
+
+      if (expResult) {
+        const { processor, transformed } = expResult;
+
         switch (processor) {
           // @fnet/yaml reserved processors
           // s:: reserved for yaml setter
@@ -946,22 +1149,12 @@ class Builder {
           // r:: reserved for yaml replacer
           // b:: reserved for yaml builder/blocks
           case 'v':
-            value = `$::v.${statement}::`;
-            break;
-          case 'e':
-            value = `$::${statement}::`;
-            break;
-          case 'm':
-            value = `$::c.module['${statement}']::`;
-            break;
-          case 'fm':
-            value = `$::flow.getModule('${statement}')::`;
-            break;
-          case 'f':
-            value = `$::c.form.${statement}::`;
-            break;
           case 'for':
-            value = `$::caller.for.${statement}::`;
+          case 'm':
+          case 'f':
+          case 'e':
+            // For e:: processor, use transformed value (nested processors already transformed)
+            value = `$::${transformed || expResult.statement}::`;
             break;
         }
       }
@@ -971,6 +1164,11 @@ class Builder {
   }
 
   replaceSpecialPattern(text) {
+    // Ensure text is a string
+    if (typeof text !== 'string') {
+      console.error('❌ replaceSpecialPattern received non-string:', typeof text, text);
+      return text;
+    }
     const pattern1 = /"\$::(.*?)::"/g;
     let temp = text.replace(pattern1, "$1");
     // remove new lines
@@ -993,19 +1191,9 @@ class Builder {
 
     const { content: main, ...content } = this.#atom.doc;
 
-    const templateContext = { content: yaml.stringify(content) }
-
-    const templateDir = this.#context.templateDir;
-    const template = nunjucks.compile(
-      fs.readFileSync(path.resolve(templateDir, `${fileBase}.njk`), "utf8"),
-      this.#njEnv
-    );
-
-    const templateRender = template.render(templateContext);
-
     const projectDir = this.#context.projectDir;
     const filePath = path.resolve(projectDir, `${fileBase}`);
-    fs.writeFileSync(filePath, templateRender, 'utf8');
+    fs.writeFileSync(filePath, yaml.stringify(content), 'utf8');
   }
 
   async createProjectMainYaml() {
@@ -1036,11 +1224,11 @@ class Builder {
     const projectDir = this.#context.projectDir;
 
     if (which('bun')) {
-      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src")});
+      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
       if (result.code !== 0) throw new Error(result.stderr);
     }
     else {
-      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src")});
+      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
       if (result.code !== 0) throw new Error(result.stderr);
     }
   }
@@ -1134,6 +1322,8 @@ class Builder {
 
       if (this.#fileMode) {
 
+        const project = this.#apiContext.context.project;
+
         await this.initWorkflowDir();
         await this.initNunjucks();
 
@@ -1141,7 +1331,34 @@ class Builder {
           let bpmnDir = this.#context.project?.projectDir || this.#context.projectDir;
           bpmnDir = path.resolve(bpmnDir, 'fnet');
           if (fs.existsSync(bpmnDir)) {
-            fs.writeFileSync(path.resolve(bpmnDir, 'flow.bpmn'), network.diagramXML, 'utf8');
+            // delete if flow.bpmn exists (old naming)
+            if (fs.existsSync(path.resolve(bpmnDir, 'flow.bpmn'))) {
+              fs.unlinkSync(path.resolve(bpmnDir, 'flow.bpmn'));
+            }
+
+            // Write full engine BPMN (all flows)
+            fs.writeFileSync(path.resolve(bpmnDir, 'flows.bpmn'), network.diagramXML, 'utf8');
+
+            // Check if per-flow BPMN generation is enabled
+            const features = this.#atom.doc.features || {};
+            const bpmnFeatures = features.bpmn || {};
+            const perFlowEnabled = bpmnFeatures.per_flow === true;
+
+            if (perFlowEnabled) {
+              // Create bpmn directory for individual flow files
+              const bpmnSubDir = path.resolve(bpmnDir, 'bpmn');
+              if (!fs.existsSync(bpmnSubDir)) {
+                fs.mkdirSync(bpmnSubDir, { recursive: true });
+              }
+
+              // Generate and write individual BPMN files for each flow
+              const perFlowBpmns = await generateBpmnModelsPerFlow({ root: this.#root });
+              for (const flowBpmn of perFlowBpmns) {
+                const flowFileName = `${flowBpmn.flowName}.bpmn`;
+                const flowFilePath = path.resolve(bpmnSubDir, flowFileName);
+                fs.writeFileSync(flowFilePath, flowBpmn.diagramXML, 'utf8');
+              }
+            }
           }
         }
 
@@ -1154,10 +1371,15 @@ class Builder {
         await createProjectReadme(this.#apiContext);
         await createTsConfig(this.#apiContext);
         await createGitIgnore(this.#apiContext);
-        await createToYargs(this.#apiContext);
+        await createInputArgs(this.#apiContext);
         await createCli(this.#apiContext);
         await createApp(this.#apiContext);
-        await createRollup(this.#apiContext);
+
+        if (project.runtime.type === 'bun')
+          await createBuildJs(this.#apiContext);
+        else
+          await createRollup(this.#apiContext);
+
         await createPackageJson(this.#apiContext);
 
         await formatFiles(this.#apiContext);

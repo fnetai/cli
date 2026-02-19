@@ -1,0 +1,36 @@
+$meta:
+  subject: assign
+  tags:
+    - primitive
+    - string
+  queries:
+    - How to assign a simple string value?
+    - Can I assign a primitive value?
+    - Show me the simplest assign example
+
+main:
+  params:
+    - pair: BTC/USDT
+    - startDate: 2020-01-01T00:00:00Z
+    - limit: 500
+    - tool
+    - crypto
+    - apiKey
+    - db_host: pg.svc.joinnet.pro
+    - db_port: 443
+    - db_database: crypto
+    - db_user: crypto
+    - db_password: "152540"
+    - redis_host: localhost
+    - redis_port: 6380
+    - t::prod::redis_port: 6379
+    - variant: 1
+  steps:
+    - assign-string:
+        # debugger: true
+        # sleep: 1000
+        assign:
+          - message: Hello World!
+          - t::prod::message: 6379
+        return: v::message
+

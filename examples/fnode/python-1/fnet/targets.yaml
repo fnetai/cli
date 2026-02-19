@@ -1,8 +1,0 @@
-
-pypi-default:
-  type: pypi
-  enabled: false
-  version: "0.1.0"  
-  params:
-    # bin: some-bin-name
-    name: "@fnet/python-1"

@@ -1,73 +1,49 @@
-{% include "src/default/macros/block-header.js.njk" %}
+{% set assign=true %}
+{% set signal=true %}
+{% set resolve=true %}
 
-{% if not hasDefaultCondition %}
-  {% include "src/default/macros/block-next-header.js.njk" %}
-{% endif %}
+{% import "src/default/types/block.js.njk" as block with context %}
 
-{% include "src/default/macros/block-modules-header.js.njk" %}
+{% call block.header() %}
 
-{% for child in childs %}
-  {% if not child.definition.dynamic %}
-    // CHILD: {{child.indexKey}}
-    import {{child.codeKey}} from "./{{child.codeKey}}";
-  {% endif %}
-{% endfor%}
+  {% for child in childs %}
+    {% if not child.definition.dynamic %}
+      // CHILD: {{child.indexKey}}
+      import {{child.codeKey}} from "./{{child.codeKey}}.js";
+    {% endif %}
+  {% endfor%}
 
-export default function Block(context) {
+{% endcall %}
 
-  {% include "src/default/macros/block-body-header.js.njk" %}
+{% call block.definition() %}
   
-  this.run= function (){
-      
-    const args=Array.from(arguments);
-
-    return new Promise(async (resolve,reject)=>{
-        
-      {% include "src/default/macros/block-run-header.js.njk" %}
-
-      {% include "src/default/macros/page.js.njk" %}
-
-      {% include "src/default/macros/block-modules.js.njk" %}
-      
-      {% for child in childs %}
-        {% if loop.first %}
-          if ({{child.context.transform.condition | safe}}) 
-        {% else %}
-          {%if child.context.transform.condition %}
-            else if ({{child.context.transform.condition | safe}}) 
-          {% else %}
-            else
-          {% endif %}
-        {% endif %} 
-          {
-            {% if child.definition.dynamic %}
-              // CHILD: {{child.indexKey}}
-              const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}");
-            {% endif %}
-
-            const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c });
-
-            {% if workflow.parent.context.atom.doc.features.print_runners %}
-              console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
-            {% endif %}
-
-            return resolve(await current.run.apply(current,args));
-          }
-      {% endfor%}
-
-      {% if not hasDefaultCondition %}
-        {% if context.transform.return %}
-          resolve({type:'return',value: {{context.transform.return | safe}}});
-        {% elseif context.next %}
-          {% include "src/default/macros/block-next.js.njk" %}
-        {% else %}
-          resolve();
-        {% endif %}
+  {% for child in childs %}
+    {% if loop.first %}
+      if ({{child.context.transform.condition | safe}}) 
+    {% else %}
+      {%if child.context.transform.condition %}
+        else if ({{child.context.transform.condition | safe}}) 
+      {% else %}
+        else
       {% endif %}
-    });
-  }  
+    {% endif %} 
+      {
+        {% if child.definition.dynamic %}
+          // CHILD: {{child.indexKey}}
+          const { default: {{child.codeKey}} } = await import("./{{child.codeKey}}.js");
+        {% endif %}
 
-  Object.freeze(this);
-}
+        const current=new {{child.codeKey}}({ parent:_this, engine, flow, caller:c, error });
 
-{% include "src/default/macros/block-footer.js.njk" %}
+        {% if workflow.parent.context.atom.doc.features.print_runners %}
+          console.log(new Date().toLocaleString(),' * ',_this.constructor.IndexKey,' -> ',current.constructor.IndexKey);
+        {% endif %}
+
+        return resolve(Array.isArray(args)? await current.run.apply(current,args) : await current.run(args));
+      }
+  {% endfor%}
+
+{% endcall %}
+
+{% call block.footer()%} 
+{% endcall %}

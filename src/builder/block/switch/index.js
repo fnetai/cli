@@ -28,10 +28,9 @@ async function init({ node, initNode }) {
 
   node.hasDefaultCondition = defaultChilds.length === 1;
 
-  await initModules({ node, initNode });
+  await initModules({ node, initNode, extra: false });
 
-  node.blockAutoJumpToParent = false;
-  node.blockAutoJumpToSibling = true;
+  node.block_child_auto_jump_to_sibling = true;
 
   for (let i = 0; i < node.definition.switch.length; i++) {
     let temp = node.definition.switch[i];
@@ -75,7 +74,8 @@ async function resolve({ node, resolveTypeCommon, resolveNextBlock, transformExp
 
   await resolveTypeCommon({ node });
 
-  resolveNextBlock({ node });
+  if (!node.hasDefaultCondition)
+    resolveNextBlock({ node });
 }
 
 export default {

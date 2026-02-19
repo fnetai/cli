@@ -1,0 +1,80 @@
+$meta:
+  subject: output
+  tags:
+    - output
+    - complex-objects
+    - nested
+    - arrays
+  queries:
+    - How to output complex objects?
+    - Can I output nested objects?
+    - How to transform arrays in output?
+    - How to work with complex data structures?
+  notes:
+    - |
+      OUTPUT with COMPLEX OBJECTS demonstrates working with nested structures and arrays.
+      
+      You can output:
+      - Nested objects
+      - Arrays
+      - Mixed structures
+      - Transformed collections
+      
+      This is useful for:
+      - API response transformation
+      - Data aggregation
+      - Complex business logic
+      - Multi-level data processing
+
+main:
+  steps:
+    - create-user:
+        output:
+          user:
+            id: 1
+            name: John Doe
+            email: john@example.com
+          timestamp: e::Date.now()
+    
+    - enrich-user:
+        output:
+          user:
+            id: e::input.user.id
+            name: e::input.user.name
+            email: e::input.user.email
+            profile:
+              age: 30
+              country: USA
+              verified: true
+          metadata:
+            createdAt: e::input.timestamp
+            updatedAt: e::Date.now()
+    
+    - add-orders:
+        output:
+          user: e::input.user
+          metadata: e::input.metadata
+          orders:
+            - id: 101
+              amount: 250
+              status: completed
+            - id: 102
+              amount: 180
+              status: pending
+    
+    - calculate-summary:
+        output:
+          user: e::input.user
+          metadata: e::input.metadata
+          orders: e::input.orders
+          summary:
+            totalOrders: e::input.orders.length
+            totalAmount: e::input.orders.reduce((sum, o) => sum + o.amount, 0)
+            averageOrder: e::input.orders.reduce((sum, o) => sum + o.amount, 0) / input.orders.length
+    
+    - final-result:
+        return:
+          profile: e::input.user
+          orderSummary: e::input.summary
+          fullData: e::input
+

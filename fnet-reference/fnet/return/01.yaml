@@ -1,0 +1,14 @@
+$meta:
+  subject: return
+  tags:
+    - primitive
+    - string
+  queries:
+    - How to return a simple string value?
+    - Can I return a primitive value directly?
+    - Show me the simplest return example
+
+main:
+  steps:
+    - hello-world:
+        return: Hello World!

@@ -1,0 +1,20 @@
+{# ============================================================================
+   DEFAULT MODE - STANDARD
+   ============================================================================
+   Standard CLI mode for fnet: Creates engine instance and runs workflow
+   ============================================================================ #}
+
+if (cliMode === 'default') {
+  // Default mode code
+  const engine = new Engine();
+  const result = await engine.run(await argv());
+
+  if (typeof result !== 'undefined') {
+    const stdout_format = args['stdout-format'] || args.stdout_format || null;
+
+    if (stdout_format === 'json') console.log(JSON.stringify(result, null, 2));
+    else console.log(result);
+  }
+  return;
+}
+

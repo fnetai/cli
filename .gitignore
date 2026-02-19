@@ -1,5 +1,4 @@
 node_modules
-.vscode
 .env
 .env.local
 secrets
@@ -9,9 +8,22 @@ dist
 .output
 .temp
 .fnet
-.vscode
 .npmrc
 .package-lock.json
 .bin
 .workspace
 .tests
+.archive
+# Exclude .vscode directories in general
+.vscode
+
+# But include .vscode directories in template folders
+!template/**/.vscode
+!template/**/project/.vscode
+
+.examples
+.puppet-page
+examples
+.DS_Store
+knowledge
+packages
