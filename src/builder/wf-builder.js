@@ -8,7 +8,6 @@ import isObject from 'isobject';
 // import createRedisClient from '../redisClient.js';
 import { randomUUID } from 'node:crypto';
 import { treeLogger, bpmnLogger, isLogEnabled } from './logger.js';
-import Auth from './auth.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
 import initDependenciesBun from "./api/init-dependencies/bun.js";
@@ -64,7 +63,6 @@ import fnetParseNpmPath from '@flownet/lib-parse-npm-path';
 import os from 'node:os';
 class Builder {
 
-  #auth;
   #context;
   #atom;
   #workflow;
@@ -72,7 +70,6 @@ class Builder {
   #packageDependencies;
   #packageDevDependencies;
   #stepTemplateCache;
-  #atomAccessToken;
   #root;
   #buildId;
   #buildKey;
@@ -90,7 +87,6 @@ class Builder {
 
   constructor(context) {
 
-    this.#auth = new Auth();
     this.#context = context;
     this.#packageDependencies = [];
     this.#packageDevDependencies = [];
@@ -167,7 +163,6 @@ class Builder {
 
       const project = this.#apiContext.context.project;
 
-      await this.initAuth();
       await this.initWorkflow();
 
       // await initFeatures(this.#apiContext);
@@ -206,15 +201,8 @@ class Builder {
     }
   }
 
-  async initAuth() {
-    if (!this.#context.id) return;
-    this.#atomAccessToken = await this.#auth.init({ config: this.#atomConfig });
-    this.#apiContext.atomAccessToken = this.#atomAccessToken;
-  }
-
   async initWorkflow() {
-    const workflowId = this.#context.id;
-    this.#atom = this.#context.project?.workflowAtom || await Atom.get({ id: workflowId });
+    this.#atom = this.#context.project.workflowAtom;
     this.#workflow = typeof this.#atom.doc.content === 'string' ? (await fnetYaml({ content: this.#atom.doc.content, tags: this.#context.tags })).parsed : this.#atom.doc.content;
     let bundleName = this.#atom.doc.bundleName;
     bundleName = bundleName || (this.#atom.doc.name || "").toUpperCase().replace(/[^A-Z0-9]/g, "_");
@@ -1278,31 +1266,8 @@ class Builder {
     }
   }
 
-  async registerToPackageManager(context) {
-    const { target, packageJSON } = context;
-
-    if (!this.#context.id) return;
-
-    // update
-    let packageAtom = await Atom.first({ name: target.params.name, parent_id: this.#atomConfig.env.ATOM_PACKAGES_ID });
-
-    if (!packageAtom) {
-      // create new
-      packageAtom = await Atom.create({
-        parent_id: this.#atomConfig.env.ATOM_PACKAGES_ID,
-        doc: {
-          name: target.params.name,
-          type: "pm",
-          versions: [{ v: packageJSON.version }]
-        }
-      });
-    }
-    else {
-      // update existing
-      packageAtom.doc.versions.splice(0, 0, { v: packageJSON.version });
-
-      await Atom.update(packageAtom, { id: packageAtom.id });
-    }
+  async registerToPackageManager(_context) {
+    // No-op: online package manager registration has been removed.
   }
 
   async setProgress(args) {

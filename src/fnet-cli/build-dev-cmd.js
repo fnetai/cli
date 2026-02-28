@@ -13,10 +13,6 @@ const command = {
   describe: 'Build flownet project',
   builder: (yargs) => {
     return yargs
-      .option('id', {
-        type: 'string',
-        describe: 'Project ID'
-      })
       .option('buildId', {
         type: 'string',
         alias: 'bid',
