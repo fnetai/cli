@@ -12,6 +12,10 @@ const command = {
   describe: 'Build and deploy fnode project',
   builder: (yargs) => {
     return yargs
+      .option('id', {
+        type: 'string',
+        describe: 'Project ID'
+      })
       .option('buildId', {
         type: 'string',
         alias: 'bid',

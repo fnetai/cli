@@ -14,36 +14,50 @@ import resolveTemplatePath from '../utils/resolve-template-path.js';
  * @returns {Promise<Object>} Context object
  */
 export async function createContext(argv) {
-  try {
-    const project = await loadProject({ tags: argv.ftag });
-    const template = project.runtime.type === 'bun' ? 'node' : project.runtime.type;
+  if (argv.id) {
     return {
+      id: argv.id,
       buildId: argv.buildId,
       mode: argv.mode,
-      protocol: argv.protocol || 'src:',
-      templateDir: resolveTemplatePath(`./template/fnode/${template}`),
-      projectDir: path.resolve(project.projectDir, './.workspace'),
-      projectSrcDir: path.resolve(project.projectDir, './src'),
-      projectSrcDirSymlink: path.resolve(project.projectDir, './.workspace/src-core'),
-
-      projectAppDir: path.resolve(project.projectDir, './app'),
-      projectAppDirSymlink: path.resolve(project.projectDir, './.workspace/app'),
-
-      projectCliDir: path.resolve(project.projectDir, './cli'),
-      projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
-
-      project,
+      protocol: argv.protocol || 'ac:',
+      templateDir: resolveTemplatePath('./template/fnode/node'),
+      projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
       tags: argv.ftag,
       dev: argv.dev,
       bpmn: argv.bpmn === true
     };
-  } catch (error) {
-    // If project loading fails, return a minimal context
-    console.warn(`Warning: Could not load project: ${error.message}`);
-    return {
-      projectDir: process.cwd(),
-      tags: argv.ftag
-    };
+  } else {
+    try {
+      const project = await loadProject({ tags: argv.ftag });
+      const template = project.runtime.type === 'bun' ? 'node' : project.runtime.type;
+      return {
+        buildId: argv.buildId,
+        mode: argv.mode,
+        protocol: argv.protocol || 'src:',
+        templateDir: resolveTemplatePath(`./template/fnode/${template}`),
+        projectDir: path.resolve(project.projectDir, './.workspace'),
+        projectSrcDir: path.resolve(project.projectDir, './src'),
+        projectSrcDirSymlink: path.resolve(project.projectDir, './.workspace/src-core'),
+
+        projectAppDir: path.resolve(project.projectDir, './app'),
+        projectAppDirSymlink: path.resolve(project.projectDir, './.workspace/app'),
+
+        projectCliDir: path.resolve(project.projectDir, './cli'),
+        projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
+        
+        project,
+        tags: argv.ftag,
+        dev: argv.dev,
+        bpmn: argv.bpmn === true
+      };
+    } catch (error) {
+      // If project loading fails, return a minimal context
+      console.warn(`Warning: Could not load project: ${error.message}`);
+      return {
+        projectDir: process.cwd(),
+        tags: argv.ftag
+      };
+    }
   }
 }
 

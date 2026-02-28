@@ -14,6 +14,19 @@ import resolveTemplatePath from '../utils/resolve-template-path.js';
  * @returns {Promise<Object>} Context object
  */
 export async function createContext(argv) {
+  // if (argv.id) {
+  //   return {
+  //     id: argv.id,
+  //     buildId: argv.buildId,
+  //     mode: argv.mode,
+  //     protocol: argv.protocol || 'ac:',
+  //     templateDir: resolveTemplatePath('./template/fnet/node'),
+  //     coreDir: resolveTemplatePath('./template/fnet/core'),
+  //     projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
+  //     tags: argv.ftag,
+  //     dev: argv.dev
+  //   };
+  // } else {
   try {
     const project = await loadProject({ tags: argv.ftag, flowsPath: argv.flows });
     return {
@@ -46,6 +59,7 @@ export async function createContext(argv) {
       tags: argv.ftag
     };
   }
+  // }
 }
 
 /**
