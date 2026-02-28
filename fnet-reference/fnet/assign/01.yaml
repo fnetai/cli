@@ -16,11 +16,11 @@ main:
     - tool
     - crypto
     - apiKey
-    - db_host: pg.svc.joinnet.pro
-    - db_port: 443
-    - db_database: crypto
-    - db_user: crypto
-    - db_password: "152540"
+    - db_host: your_db_host
+    - db_port: your_db_port
+    - db_database: your_db_database
+    - db_user: your_db_user
+    - db_password: your_db_password
     - redis_host: localhost
     - redis_port: 6380
     - t::prod::redis_port: 6379
