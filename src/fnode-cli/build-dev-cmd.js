@@ -35,6 +35,11 @@ const command = {
         type: 'boolean',
         default: false,
         describe: 'Development mode'
+      })
+      .option('bpmn', {
+        type: 'boolean',
+        default: false,
+        describe: 'Generate BPMN diagram'
       });
   },
   handler: async (argv) => {

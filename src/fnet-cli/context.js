@@ -48,7 +48,8 @@ export async function createContext(argv) {
 
       project,
       tags: argv.ftag,
-      dev: argv.dev
+      dev: argv.dev,
+      bpmn: argv.bpmn === true
     };
   } catch (error) {
     // If project loading fails, return a minimal context

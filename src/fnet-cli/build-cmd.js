@@ -41,6 +41,11 @@ const command = {
         type: 'string',
         alias: 'flow',
         describe: 'Path to flows file'
+      })
+      .option('bpmn', {
+        type: 'boolean',
+        default: false,
+        describe: 'Generate BPMN diagram'
       });
   },
   handler: async (argv) => {

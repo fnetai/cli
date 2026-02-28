@@ -155,7 +155,7 @@ class Builder {
     this.#fileMode = ['all', 'deploy', 'build', 'file'].includes(this.#mode);
     this.#buildMode = ['all', 'deploy', 'build'].includes(this.#mode);
     this.#deployMode = ['all', 'deploy'].includes(this.#mode);
-    this.#bpmnMode = ['all', 'deploy', 'build', 'file', 'bpmn'].includes(this.#mode);
+    this.#bpmnMode = this.#mode === 'bpmn' || this.#context.bpmn === true;
 
     this.#protocol = this.#context.protocol;
     this.#buildKey = "BUILD:" + this.#buildId;

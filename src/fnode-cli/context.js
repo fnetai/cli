@@ -23,7 +23,8 @@ export async function createContext(argv) {
       templateDir: resolveTemplatePath('./template/fnode/node'),
       projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
       tags: argv.ftag,
-      dev: argv.dev
+      dev: argv.dev,
+      bpmn: argv.bpmn === true
     };
   } else {
     try {
@@ -46,7 +47,8 @@ export async function createContext(argv) {
         
         project,
         tags: argv.ftag,
-        dev: argv.dev
+        dev: argv.dev,
+        bpmn: argv.bpmn === true
       };
     } catch (error) {
       // If project loading fails, return a minimal context
