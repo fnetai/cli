@@ -8,11 +8,9 @@
 if (cliMode === 'mcp') {
   // MCP mode code
   {% include "./server-setup.njk" %}
-  {% include "./tool-handlers.njk" %}
 
   // Get transport type from arguments
   const transportType = args['mcp-transport'] || args.mcp_transport || 'stdio';
-  let transport;
 
   if (transportType === 'stdio') {
     {% include "./transport-stdio.njk" %}
@@ -23,8 +21,5 @@ if (cliMode === 'mcp') {
     console.error(`Supported types: stdio, http`);
     process.exit(1);
   }
-
-  await server.connect(transport);
-  return;
 }
 

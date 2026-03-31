@@ -52,8 +52,8 @@ app.post(mcpEndpoint, async (req, res) => {
     transport = transports[sessionId];
   } else if (!sessionId && req.body && (req.body.method === 'initialize' ||
             (Array.isArray(req.body) && req.body.some(item => item.method === 'initialize')))) {
-    // New initialization request
-    log('Creating new transport for initialization');
+    // New initialization request - create new server and transport per session
+    log('Creating new transport and server for initialization');
     transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => {
         // Generate cryptographically secure session ID
@@ -74,9 +74,10 @@ app.post(mcpEndpoint, async (req, res) => {
       }
     };
 
-    // Connect to the MCP server
-    await server.connect(transport);
-    log('Server connected to transport');
+    // Create a new MCP server instance for this session
+    const mcpServer = createMcpServer();
+    await mcpServer.connect(transport);
+    log('New MCP server connected to transport');
   } else {
     // Invalid request
     log('Invalid request - no valid session ID');

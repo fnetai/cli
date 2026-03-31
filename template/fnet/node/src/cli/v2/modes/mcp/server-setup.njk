@@ -1,15 +1,23 @@
 {# ============================================================================
    MCP MODE - SERVER SETUP
    ============================================================================
-   Initialize MCP server with capabilities
+   Factory function to create configured MCP server instances.
+   Each HTTP session gets its own server instance to avoid
+   "Already connected to a transport" errors on reconnection.
    ============================================================================ #}
 
-const server = new Server({
-  name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
-  version: "{{atom.doc.version or '0.0.1'}}"
-}, {
-  capabilities: {
-    tools: {}
-  }
-});
+function createMcpServer() {
+  const server = new Server({
+    name: "{{atom.doc.features.cli.mcp.name or atom.doc.name}}",
+    version: "{{atom.doc.version or '0.0.1'}}"
+  }, {
+    capabilities: {
+      tools: {}
+    }
+  });
+
+  {% include "./tool-handlers.njk" %}
+
+  return server;
+}
 
