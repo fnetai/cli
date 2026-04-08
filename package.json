@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "files": [
     "dist",
     "template"
@@ -34,7 +34,7 @@
     "@flownet/lib-to-nextjs": "^0.3.10",
     "@flownet/lib-to-webos": "^0.3.16",
     "@fnet/auto-conda-env": "^0.2.4",
-    "@fnet/config": "^0.2.31",
+    "@fnet/config": "^0.2.32",
     "@fnet/dir-zipper": "^0.1.8",
     "@fnet/files-to-gcs": "^0.3.12",
     "@fnet/key-value-transformer": "^0.1.4",
@@ -44,13 +44,13 @@
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
     "@fnet/service": "^0.1.8",
-    "@fnet/shell-flow": "^0.3.2",
+    "@fnet/shell-flow": "^0.3.5",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",
     "@fnet/up-list-files": "^0.1.14",
     "@fnet/yaml": "^0.1.46",
-    "@node-red/util": "^4.1.5",
+    "@node-red/util": "^4.1.8",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "bpmn-moddle": "^9.0.4",
@@ -65,13 +65,13 @@
     "nunjucks": "^3.2.4",
     "object-hash": "^3.0.0",
     "prettier": "^3.8.1",
-    "rollup": "^4.57.1",
+    "rollup": "^4.60.1",
     "semver": "^7.7.4",
     "set-value": "^4.1.0",
     "tree-kill": "^1.2.2",
     "typescript": "^5.9.3",
     "winston": "^3.19.0",
-    "yaml": "^2.8.2",
+    "yaml": "^2.8.3",
     "yargs": "^18.0.0"
   },
   "bin": {
@@ -87,6 +87,6 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "peggy": "^5.0.6"
+    "peggy": "^5.1.0"
   }
 }
