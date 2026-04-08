@@ -262,9 +262,10 @@ export function bindWithContextCommand(builder, { name, preArgs = [], createCont
  * @param {Object} options - Command options
  * @param {string} options.name - Command name
  * @param {string} [options.projectType='auto'] - Project type ('fnode', 'fnet', or 'auto')
+ * @param {Object} [options.processManager] - External ProcessManager for centralized process lifecycle management
  * @returns {Object} Updated yargs builder
  */
-export function bindRunContextCommand(builder, { name, projectType = 'auto' }) {
+export function bindRunContextCommand(builder, { name, projectType = 'auto', processManager }) {
   return builder.command(
     `${name} group [options..]`, `Run a command group.`,
     (yargs) => {
@@ -279,13 +280,14 @@ export function bindRunContextCommand(builder, { name, projectType = 'auto' }) {
         // Import the common run utility
         const { runCommandGroup } = await import('./common-run.js');
 
-        // Run command group using the common utility
+        // Run command group with centralized process management
         await runCommandGroup({
-          projectType: projectType, // Use the provided project type
+          projectType: projectType,
           group: argv.group,
           tags: argv.ftag,
           args: argv,
-          argv: process.argv
+          argv: process.argv,
+          processManager
         });
       } catch (error) {
         console.error(error.message);

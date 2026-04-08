@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import fnetYaml from '@fnet/yaml';
-import fnetShellFlow from '@fnet/shell-flow';
+import fnetShellFlow, { ProcessManager } from '@fnet/shell-flow';
 
 /**
  * Run a command group from a project file
@@ -12,9 +12,10 @@ import fnetShellFlow from '@fnet/shell-flow';
  * @param {Array} options.tags - Tags for conditional configuration
  * @param {Object} options.args - Command line arguments
  * @param {Array} options.argv - Raw command line arguments
+ * @param {ProcessManager} [options.processManager] - External ProcessManager for centralized process lifecycle management
  * @returns {Promise<void>}
  */
-export async function runCommandGroup({ projectType, group, tags, args, argv }) {
+export async function runCommandGroup({ projectType, group, tags, args, argv, processManager }) {
   try {
     // Detect project file based on project type
     const projectFile = await detectProjectFile(projectType);
@@ -37,16 +38,15 @@ export async function runCommandGroup({ projectType, group, tags, args, argv }) 
       throw new Error(`Command group '${group}' not found in ${projectFile.name}`);
     }
 
-    // Run command group
-    // console.log(`Running command group '${group}' from ${projectFile.name}...`);
-    // console.log(args);
+    // Run command group with centralized process management
     await fnetShellFlow({
       commands: commandGroup,
       context: {
         args,
         argv,
         projectType: projectFile.type
-      }
+      },
+      processManager
     });
   } catch (error) {
     console.error(`Error: ${error.message}`);

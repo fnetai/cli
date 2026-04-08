@@ -4,7 +4,7 @@
  */
 import yargs from 'yargs';
 import chalk from 'chalk';
-import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
+import { ProcessManager } from '@fnet/shell-flow';
 import {
   bindSimpleContextCommand,
   bindCondaContextCommand,
@@ -26,8 +26,8 @@ import inputCmd from './input-cmd.js';
 import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
-// Set up global error handlers
-setupGlobalErrorHandlers();
+// Create a single ProcessManager for the entire fnode lifecycle
+const processManager = new ProcessManager();
 
 // Set up environment
 setupEnvironment();
@@ -67,7 +67,7 @@ async function main() {
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk', createContext });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws', createContext });
     cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with', createContext });
-    cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run', projectType: 'fnode' });
+    cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run', projectType: 'fnode', processManager });
     cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python', createContext });
     cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'python3', createContext });
     cmdBuilder = bindCondaContextCommand(cmdBuilder, { name: 'pip', createContext });
@@ -81,12 +81,14 @@ async function main() {
       .argv;
   } catch (error) {
     console.error(chalk.red(`Fatal error: ${error.message}`));
+    await processManager.dispose();
     process.exit(1);
   }
 }
 
 // Run main function
-main().catch(error => {
+main().catch(async error => {
   console.error(chalk.red(`Fatal error: ${error.message}`));
+  await processManager.dispose();
   process.exit(1);
 });

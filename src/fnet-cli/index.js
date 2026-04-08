@@ -4,7 +4,7 @@
  */
 import yargs from 'yargs';
 import chalk from 'chalk';
-import { setupGlobalErrorHandlers } from '../utils/process-manager.js';
+import { ProcessManager } from '@fnet/shell-flow';
 import {
   bindSimpleContextCommand,
   bindWithContextCommand,
@@ -24,8 +24,8 @@ import inputCmd from './input-cmd.js';
 import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
-// Set up global error handlers
-setupGlobalErrorHandlers();
+// Create a single ProcessManager for the entire fnet lifecycle
+const processManager = new ProcessManager();
 
 // Set up environment
 setupEnvironment();
@@ -71,7 +71,7 @@ async function main() {
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk', createContext });
     cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws', createContext });
     cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with', createContext });
-    cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run', projectType: 'fnet' });
+    cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run', projectType: 'fnet', processManager });
 
     cmdBuilder
       .demandCommand(1, 'You need at least one command before moving on')
@@ -80,12 +80,14 @@ async function main() {
       .argv;
   } catch (error) {
     console.error(chalk.red(`Fatal error: ${error.message}`));
+    await processManager.dispose();
     process.exit(1);
   }
 }
 
 // Run main function
-main().catch(error => {
+main().catch(async error => {
   console.error(chalk.red(`Fatal error: ${error.message}`));
+  await processManager.dispose();
   process.exit(1);
 });
