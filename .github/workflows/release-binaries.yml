@@ -1,0 +1,112 @@
+name: Release Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target:
+          - bun-darwin-arm64
+          - bun-darwin-x64
+          - bun-linux-x64
+          - bun-linux-arm64
+          - bun-windows-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build project
+        run: bun run build.js
+
+      - name: Set platform variables
+        id: platform
+        run: |
+          TARGET="${{ matrix.target }}"
+          # Extract os and arch from target (e.g., bun-darwin-arm64 -> darwin, arm64)
+          OS=$(echo "$TARGET" | cut -d'-' -f2)
+          ARCH=$(echo "$TARGET" | cut -d'-' -f3)
+
+          EXT=""
+          ARCHIVE_EXT="tar.gz"
+          if [ "$OS" = "windows" ]; then
+            EXT=".exe"
+            ARCHIVE_EXT="zip"
+          fi
+
+          echo "os=$OS" >> $GITHUB_OUTPUT
+          echo "arch=$ARCH" >> $GITHUB_OUTPUT
+          echo "ext=$EXT" >> $GITHUB_OUTPUT
+          echo "archive_ext=$ARCHIVE_EXT" >> $GITHUB_OUTPUT
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+
+      - name: Compile binaries
+        run: |
+          mkdir -p release
+          TARGET="${{ steps.platform.outputs.target }}"
+          OS="${{ steps.platform.outputs.os }}"
+          ARCH="${{ steps.platform.outputs.arch }}"
+          EXT="${{ steps.platform.outputs.ext }}"
+
+          for CLI in frun fbin fservice; do
+            echo "Compiling $CLI for $TARGET..."
+            bun build ./dist/$CLI/index.js \
+              --compile \
+              --target=$TARGET \
+              --outfile=release/${CLI}${EXT}
+          done
+
+      - name: Package binaries (tar.gz)
+        if: steps.platform.outputs.os != 'windows'
+        run: |
+          OS="${{ steps.platform.outputs.os }}"
+          ARCH="${{ steps.platform.outputs.arch }}"
+          TAG="${{ github.ref_name }}"
+
+          cd release
+          for CLI in frun fbin fservice; do
+            chmod +x $CLI
+            tar -czf "${CLI}-${OS}-${ARCH}.tar.gz" $CLI
+            rm $CLI
+          done
+
+      - name: Package binaries (zip)
+        if: steps.platform.outputs.os == 'windows'
+        run: |
+          OS="${{ steps.platform.outputs.os }}"
+          ARCH="${{ steps.platform.outputs.arch }}"
+
+          cd release
+          for CLI in frun.exe fbin.exe fservice.exe; do
+            NAME="${CLI%.exe}"
+            zip "${NAME}-${OS}-${ARCH}.zip" $CLI
+            rm $CLI
+          done
+
+      - name: Generate checksums
+        run: |
+          cd release
+          sha256sum * > checksums.txt
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true
