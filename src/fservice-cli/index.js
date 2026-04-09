@@ -22,7 +22,7 @@ import listCmd from './list-cmd.js';
 const argv = yargs(hideBin(process.argv))
   .scriptName('fservice')
   .usage('Usage: $0 <command> [options]')
-  .version()
+  .version(process.env.FNET_CLI_VERSION || 'unknown')
   .command(manifestCmd)
   .command(registerCmd)
   .command(unregisterCmd)

@@ -14,9 +14,6 @@ import { createWriteStream, mkdirSync, chmodSync, existsSync, unlinkSync } from 
 import { join } from 'path';
 import { homedir, platform, arch } from 'os';
 import { execSync } from 'child_process';
-import { createReadStream } from 'fs';
-import { pipeline } from 'stream/promises';
-import { createGunzip } from 'zlib';
 
 const REPO = 'fnetai/cli';
 const BINARIES = ['frun', 'fbin', 'fservice'];

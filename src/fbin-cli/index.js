@@ -42,7 +42,7 @@ async function main() {
       .command(cleanupCommand)
       .demandCommand(1, 'You need to specify a command')
       .help()
-      .version()
+      .version(process.env.FNET_CLI_VERSION || 'unknown')
       .argv;
   } catch (error) {
     console.error(chalk.red(`Fatal error: ${error.message}`));

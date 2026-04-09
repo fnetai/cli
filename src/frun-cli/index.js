@@ -21,7 +21,7 @@ async function main() {
       .usage('Usage: $0 <command> [options]')
       .command(createCommandCmd({ processManager }))
       .help()
-      .version()
+      .version(process.env.FNET_CLI_VERSION || 'unknown')
       .argv;
   } catch (error) {
     console.error(`Fatal error: ${error.message}`);

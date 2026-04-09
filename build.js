@@ -78,6 +78,7 @@ async function buildCLI(config) {
       },
       define: {
         'process.env.NODE_ENV': JSON.stringify(DEVELOPMENT ? 'development' : 'production'),
+        'process.env.FNET_CLI_VERSION': JSON.stringify(pkg.version),
       },
     });
 
