@@ -18,16 +18,11 @@ import restartCmd from './restart-cmd.js';
 import statusCmd from './status-cmd.js';
 import listCmd from './list-cmd.js';
 
-// Import version from package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const { version } = require('../../package.json');
-
 // Configure yargs
 const argv = yargs(hideBin(process.argv))
   .scriptName('fservice')
   .usage('Usage: $0 <command> [options]')
-  .version(version)
+  .version()
   .command(manifestCmd)
   .command(registerCmd)
   .command(unregisterCmd)
