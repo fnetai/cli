@@ -3,17 +3,23 @@ name: cli
 # @fnet/shell-flow commands
 commands:
   build:
-    - bun run build
-    - bun ./dist/fnode/index.js --version
-    - bun ./dist/fnet/index.js --version
-    - bun ./dist/frun/index.js --version
-    - bun ./dist/fbin/index.js --version
-    - bun ./dist/fservice/index.js --version
-    - bun link
+    description: Build all CLIs (fnet, fnode, frun, fbin, fservice) and link
+    usage: frun build
+    steps:
+      - bun run build
+      - bun ./dist/fnode/index.js --version
+      - bun ./dist/fnet/index.js --version
+      - bun ./dist/frun/index.js --version
+      - bun ./dist/fbin/index.js --version
+      - bun ./dist/fservice/index.js --version
+      - bun link
 
   deploy:
-    - fnet build
-    - bun publish --access public
+    description: Build and publish package to npm
+    usage: frun deploy
+    steps:
+      - fnet build
+      - bun publish --access public
 
   compile-fservice:
     - bun build ./dist/fservice/index.js --compile --outfile=.bin/fservice

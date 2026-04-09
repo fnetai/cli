@@ -1,7 +1,7 @@
 /**
  * Command handler for the frun command
  */
-import { runCommandGroup } from '../utils/common-run.js';
+import { runCommandGroup, listCommandGroups } from '../utils/common-run.js';
 
 /**
  * Create command configuration with centralized ProcessManager
@@ -11,7 +11,7 @@ import { runCommandGroup } from '../utils/common-run.js';
  */
 export default function createCommandCmd({ processManager }) {
   return {
-    command: '$0 <group> [options..]',
+    command: '$0 [group] [options..]',
     describe: 'Run a command group from project file',
     builder: (yargs) => {
       return yargs
@@ -34,15 +34,36 @@ export default function createCommandCmd({ processManager }) {
           type: 'string',
           describe: 'Command group to run'
         })
+        .option('list', {
+          type: 'boolean',
+          describe: 'List all available command groups',
+          alias: 'l'
+        })
         .option('ftag', {
           type: 'array',
           describe: 'Tags for conditional configuration'
         })
         .example('$0 build', 'Run the build command group')
+        .example('$0 --list', 'List all available command groups')
         .example('$0 test --ftag dev', 'Run the test command group with dev tag');
     },
     handler: async (argv) => {
       try {
+        // Handle --list flag
+        if (argv.list) {
+          await listCommandGroups({
+            projectType: 'auto',
+            tags: argv.ftag
+          });
+          return;
+        }
+
+        // Require group when not listing
+        if (!argv.group) {
+          console.error('Error: Please specify a command group or use --list to see available commands.');
+          process.exit(1);
+        }
+
         // Run command group with centralized process management
         await runCommandGroup({
           projectType: 'auto',

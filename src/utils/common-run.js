@@ -1,7 +1,25 @@
 import fs from 'fs';
 import path from 'path';
+import chalk from 'chalk';
 import fnetYaml from '@fnet/yaml';
 import fnetShellFlow, { ProcessManager } from '@fnet/shell-flow';
+
+/**
+ * Resolve a command group value into its steps (command array).
+ * Supports both array format and object format with steps/description/usage.
+ *
+ * @param {Array|Object} commandGroup - The command group value
+ * @returns {Array} The command steps array
+ */
+function resolveCommandSteps(commandGroup) {
+  if (Array.isArray(commandGroup)) {
+    return commandGroup;
+  }
+  if (commandGroup && typeof commandGroup === 'object' && commandGroup.steps) {
+    return commandGroup.steps;
+  }
+  return commandGroup;
+}
 
 /**
  * Run a command group from a project file
@@ -38,9 +56,12 @@ export async function runCommandGroup({ projectType, group, tags, args, argv, pr
       throw new Error(`Command group '${group}' not found in ${projectFile.name}`);
     }
 
+    // Resolve steps from command group (supports both array and object format)
+    const steps = resolveCommandSteps(commandGroup);
+
     // Run command group with centralized process management
     await fnetShellFlow({
-      commands: commandGroup,
+      commands: steps,
       context: {
         args,
         argv,
@@ -48,6 +69,66 @@ export async function runCommandGroup({ projectType, group, tags, args, argv, pr
       },
       processManager
     });
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+/**
+ * List all available command groups from the project file
+ *
+ * @param {Object} options - Options
+ * @param {string} options.projectType - Type of project ('fnode', 'fnet', or 'auto')
+ * @param {Array} [options.tags] - Tags for conditional configuration
+ * @returns {Promise<void>}
+ */
+export async function listCommandGroups({ projectType, tags }) {
+  try {
+    const projectFile = await detectProjectFile(projectType);
+
+    const { parsed: projectFileParsed } = await fnetYaml({
+      file: projectFile.path,
+      tags
+    });
+
+    const commands = projectFileParsed.commands;
+    if (!commands) {
+      console.log(chalk.yellow(`No commands found in ${projectFile.name}`));
+      return;
+    }
+
+    console.log(`\n${chalk.bold('Available commands')} ${chalk.dim(`(${projectFile.name})`)}:\n`);
+
+    const entries = Object.entries(commands);
+    const maxNameLen = Math.max(...entries.map(([name]) => name.length));
+    let prevHadMeta = false;
+
+    for (const [name, value] of entries) {
+      const isObject = value && typeof value === 'object' && !Array.isArray(value);
+      const description = isObject ? value.description || '' : '';
+      const usage = isObject ? value.usage || '' : '';
+      const hasMeta = !!(description || usage);
+
+      // Add blank line before entries with metadata for visual grouping
+      if (hasMeta && prevHadMeta) {
+        console.log('');
+      }
+
+      const paddedName = name.padEnd(maxNameLen);
+
+      if (hasMeta) {
+        console.log(`  ${chalk.bold.cyan(paddedName)}  ${description}`);
+        if (usage) {
+          console.log(`  ${''.padEnd(maxNameLen)}  ${chalk.dim('$ ' + usage)}`);
+        }
+        console.log('');
+      } else {
+        console.log(`  ${chalk.cyan(paddedName)}`);
+      }
+
+      prevHadMeta = hasMeta;
+    }
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
