@@ -9,9 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         target:
@@ -40,30 +39,22 @@ jobs:
         id: platform
         run: |
           TARGET="${{ matrix.target }}"
-          # Extract os and arch from target (e.g., bun-darwin-arm64 -> darwin, arm64)
           OS=$(echo "$TARGET" | cut -d'-' -f2)
           ARCH=$(echo "$TARGET" | cut -d'-' -f3)
-
           EXT=""
-          ARCHIVE_EXT="tar.gz"
-          if [ "$OS" = "windows" ]; then
-            EXT=".exe"
-            ARCHIVE_EXT="zip"
-          fi
-
+          if [ "$OS" = "windows" ]; then EXT=".exe"; fi
           echo "os=$OS" >> $GITHUB_OUTPUT
           echo "arch=$ARCH" >> $GITHUB_OUTPUT
           echo "ext=$EXT" >> $GITHUB_OUTPUT
-          echo "archive_ext=$ARCHIVE_EXT" >> $GITHUB_OUTPUT
           echo "target=$TARGET" >> $GITHUB_OUTPUT
 
       - name: Compile binaries
         run: |
           mkdir -p release
           TARGET="${{ steps.platform.outputs.target }}"
+          EXT="${{ steps.platform.outputs.ext }}"
           OS="${{ steps.platform.outputs.os }}"
           ARCH="${{ steps.platform.outputs.arch }}"
-          EXT="${{ steps.platform.outputs.ext }}"
 
           for CLI in frun fbin fservice; do
             echo "Compiling $CLI for $TARGET..."
@@ -78,8 +69,6 @@ jobs:
         run: |
           OS="${{ steps.platform.outputs.os }}"
           ARCH="${{ steps.platform.outputs.arch }}"
-          TAG="${{ github.ref_name }}"
-
           cd release
           for CLI in frun fbin fservice; do
             chmod +x $CLI
@@ -92,7 +81,6 @@ jobs:
         run: |
           OS="${{ steps.platform.outputs.os }}"
           ARCH="${{ steps.platform.outputs.arch }}"
-
           cd release
           for CLI in frun.exe fbin.exe fservice.exe; do
             NAME="${CLI%.exe}"
@@ -100,12 +88,28 @@ jobs:
             rm $CLI
           done
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ steps.platform.outputs.os }}-${{ steps.platform.outputs.arch }}
+          path: release/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          merge-multiple: true
+
       - name: Generate checksums
         run: |
           cd release
           sha256sum * > checksums.txt
 
-      - name: Upload to Release
+      - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: release/*
