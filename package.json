@@ -1,9 +1,10 @@
 {
   "name": "@fnet/cli",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "files": [
     "dist",
-    "template"
+    "template",
+    "scripts"
   ],
   "type": "module",
   "description": "CLI for Flownet",
@@ -12,6 +13,7 @@
     "build:dev": "DEVELOPMENT=1 bun run build.js",
     "watch": "DEVELOPMENT=1 bun run build.js --watch",
     "deploy": "bun publish --access public",
+    "postinstall": "node scripts/postinstall.js",
     "old:build": "rollup --config",
     "old:build:dev": "rollup --config --sourcemap --environment DEVELOPMENT",
     "old:watch": "rollup --config --watch --sourcemap --environment DEVELOPMENT --environment FLOWNET_WATCH"
