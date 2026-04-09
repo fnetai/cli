@@ -8,31 +8,18 @@ import { ProcessManager } from '@fnet/shell-flow';
 import createCommandCmd from './command-cmd.js';
 
 // Create a single ProcessManager for the entire frun lifecycle
-// This ensures all child processes are tracked and cleaned up centrally
 const processManager = new ProcessManager();
 
-/**
- * Main function
- */
-async function main() {
-  try {
-    // Create the yargs instance with centralized process manager
-    const argv = yargs(hideBin(process.argv))
-      .usage('Usage: $0 <command> [options]')
-      .command(createCommandCmd({ processManager }))
-      .help()
-      .version(process.env.FNET_CLI_VERSION || 'unknown')
-      .argv;
-  } catch (error) {
-    console.error(`Fatal error: ${error.message}`);
+yargs(hideBin(process.argv))
+  .scriptName('frun')
+  .usage('Usage: $0 <command> [options]')
+  .command(createCommandCmd({ processManager }))
+  .help()
+  .version(process.env.FNET_CLI_VERSION || 'unknown')
+  .fail(async (msg, err) => {
+    if (err) console.error(`Error: ${err.message}`);
+    else if (msg) console.error(`Error: ${msg}`);
     await processManager.dispose();
     process.exit(1);
-  }
-}
-
-// Run main function
-main().catch(async error => {
-  console.error(`Fatal error: ${error.message}`);
-  await processManager.dispose();
-  process.exit(1);
-});
+  })
+  .parse();

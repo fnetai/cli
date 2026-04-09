@@ -39,7 +39,8 @@ async function main() {
   try {
     // Create the yargs instance
     let cmdBuilder = yargs(process.argv.slice(2))
-      .usage('Usage: $0 <command> [options]')
+      .scriptName('fnode')
+      .usage('Usage: fnode <command> [options]')
       .command(createCmd)
       .command(projectCmd)
       .command(buildCmd)
@@ -78,7 +79,7 @@ async function main() {
       .demandCommand(1, 'You need at least one command before moving on')
       .help()
       .version(process.env.FNET_CLI_VERSION || 'unknown')
-      .argv;
+      .parse();
   } catch (error) {
     console.error(chalk.red(`Fatal error: ${error.message}`));
     await processManager.dispose();

@@ -29,7 +29,8 @@ setupEnvironment();
 async function main() {
   try {
     // Create the yargs instance
-    const argv = yargs(hideBin(process.argv))
+    yargs(hideBin(process.argv))
+      .scriptName('fbin')
       .usage('Usage: $0 <command> [options]')
       .command(setupCommand)
       .command(pathCommand)
@@ -43,7 +44,7 @@ async function main() {
       .demandCommand(1, 'You need to specify a command')
       .help()
       .version(process.env.FNET_CLI_VERSION || 'unknown')
-      .argv;
+      .parse();
   } catch (error) {
     console.error(chalk.red(`Fatal error: ${error.message}`));
     process.exit(1);
