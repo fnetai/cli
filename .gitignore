@@ -27,3 +27,5 @@ examples
 .DS_Store
 knowledge
 packageshomebrew-tap
+homebrew-tap
+packages/expression
