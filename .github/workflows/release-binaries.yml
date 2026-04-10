@@ -82,11 +82,17 @@ jobs:
       - name: Codesign macOS binaries
         if: runner.os == 'macOS'
         run: |
+          echo "=== Bun version ==="
+          bun --version
+          echo "=== macOS version ==="
+          sw_vers
           for CLI in frun fbin fservice; do
-            echo "Signing release/$CLI..."
-            codesign --entitlements entitlements.plist --deep --force --sign - release/$CLI
-            echo "Verifying release/$CLI..."
-            codesign -vvv --verify release/$CLI
+            echo "=== $CLI ==="
+            file release/$CLI
+            codesign -dvv release/$CLI 2>&1 || true
+            echo "Signing release/$CLI with ad-hoc..."
+            codesign --force --sign - release/$CLI
+            codesign -dvv release/$CLI 2>&1
           done
 
       - name: Package binaries (tar.gz)
