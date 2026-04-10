@@ -34,7 +34,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.3.11
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -79,19 +79,11 @@ jobs:
             fi
           done
 
-      - name: Codesign macOS binaries
+      - name: Verify macOS binary signatures
         if: runner.os == 'macOS'
         run: |
-          echo "=== Bun version ==="
-          bun --version
-          echo "=== macOS version ==="
-          sw_vers
           for CLI in frun fbin fservice; do
-            echo "=== $CLI ==="
-            file release/$CLI
-            codesign -dvv release/$CLI 2>&1 || true
-            echo "Signing release/$CLI with ad-hoc..."
-            codesign --force --sign - release/$CLI
+            echo "Verifying release/$CLI..."
             codesign -dvv release/$CLI 2>&1
           done
 
