@@ -18,7 +18,7 @@ jobs:
           - target: bun-darwin-arm64
             runner: macos-latest
           - target: bun-darwin-x64
-            runner: macos-13
+            runner: macos-latest
           - target: bun-linux-x64
             runner: ubuntu-latest
           - target: bun-linux-arm64
