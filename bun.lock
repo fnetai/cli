@@ -244,7 +244,7 @@
 
     "@fnet/xcode-cert-inspector": ["@fnet/xcode-cert-inspector@0.1.10", "", { "dependencies": { "node-forge": "^1.3" } }, "sha512-Ca2n2jJthiEGw/KZGgB6jJTHSxcy4M1BKbKBMn08qq2ra+L0tixS5k3M1FPS3MVOXcI2yFcxm22gsDaCnaOYyQ=="],
 
-    "@fnet/yaml": ["@fnet/yaml@0.1.46", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.8" } }, "sha512-k9TOSMoy/CATsENb8Z2oylGD547AJZ4FZaysUcoA2qnVt4YpSxwOexHs09AQcK0cBDYiMzkXLYV9UI2jS/iL1A=="],
+    "@fnet/yaml": ["@fnet/yaml@0.1.47", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.8" } }, "sha512-3484Qdy168FMPDrp9cxO10lm4yctLJC1t7z6FDC/hwnk0/EVP7sQqYegrCOS5PYojO6EZSOsmXBlvNKHepmu8Q=="],
 
     "@google-cloud/paginator": ["@google-cloud/paginator@5.0.2", "", { "dependencies": { "arrify": "^2.0.0", "extend": "^3.0.2" } }, "sha512-DJS3s0OVH4zFDB1PzjxAsHqJT6sKVbRwwML0ZBP9PbU7Yebtu/7SWMRzvO2J3nUi9pRNITCfu4LJeooM2w4pjg=="],
 
@@ -876,7 +876,7 @@
 
     "picomatch": ["picomatch@4.0.2", "", {}, "sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg=="],
 
-    "prettier": ["prettier@3.8.1", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg=="],
+    "prettier": ["prettier@3.8.2", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-8c3mgTe0ASwWAJK+78dpviD+A8EqhndQPUBpNUIPt6+xWlIigCwfN01lWr9MAede4uqXGTEKeQWTvzb3vjia0Q=="],
 
     "process": ["process@0.11.10", "", {}, "sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A=="],
 
@@ -1054,6 +1054,8 @@
 
     "@fnet/auto-conda-env/@fnet/shell-flow": ["@fnet/shell-flow@0.2.9", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" }, "bin": { "fnet-shell-flow": "dist/cli/esm/index.js" } }, "sha512-JW1ONh+iujDs4zbEUVrIwrw3WYRacvvz+TL3boZLCInpFTgFWO4n0w+mnJ41fcokMkDBYnIXPwrJVCvehP1BLA=="],
 
+    "@fnet/config/@fnet/yaml": ["@fnet/yaml@0.1.46", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.8" } }, "sha512-k9TOSMoy/CATsENb8Z2oylGD547AJZ4FZaysUcoA2qnVt4YpSxwOexHs09AQcK0cBDYiMzkXLYV9UI2jS/iL1A=="],
+
     "@fnet/npm-list-versions/semver": ["semver@7.7.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="],
 
     "@fnet/object-from-schema/@fnet/yaml": ["@fnet/yaml@0.1.39", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.7" } }, "sha512-oZ921PlPEG2rtjdJHFAWEcm44yRq4L9jAsppe5/L8s8Lp1uT9I1Xlcrh+lQnOx/r6p/t7Zoic/+NMmSEcolIYQ=="],
@@ -1061,8 +1063,6 @@
     "@fnet/object-from-schema/yaml": ["yaml@2.7.1", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ=="],
 
     "@fnet/to-pyip/@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.2.1", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.2", "nanoid": "^5.1", "semver": "^7.7", "yargs-parser": "^22.0" }, "bin": { "auto-conda-env": "dist/cli/esm/index.js" } }, "sha512-T3Kb0tjimOGZASMwMZfEj4j5+qG7TXZb9RpS61tSnaAdjuQz12sHvoVxSpmqzZZX/bu8WBuiAWe1vEqzbN9AkQ=="],
-
-    "@fnet/yaml/yaml": ["yaml@2.8.2", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A=="],
 
     "@isaacs/cliui/string-width": ["string-width@5.1.2", "", { "dependencies": { "eastasianwidth": "^0.2.0", "emoji-regex": "^9.2.2", "strip-ansi": "^7.0.1" } }, "sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA=="],
 
@@ -1141,6 +1141,8 @@
     "@aws-crypto/sha256-browser/@smithy/util-utf8/@smithy/util-buffer-from": ["@smithy/util-buffer-from@2.2.0", "", { "dependencies": { "@smithy/is-array-buffer": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA=="],
 
     "@aws-crypto/util/@smithy/util-utf8/@smithy/util-buffer-from": ["@smithy/util-buffer-from@2.2.0", "", { "dependencies": { "@smithy/is-array-buffer": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA=="],
+
+    "@fnet/config/@fnet/yaml/yaml": ["yaml@2.8.2", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A=="],
 
     "@fnet/object-from-schema/@fnet/yaml/@fnet/expression": ["@fnet/expression@0.1.29", "", {}, "sha512-06S/BUPjdcZU8IqvufTXhxzJZjlQ6i99eLECSaVkH3HUjebSxJYViQPrg/SLXF0WkxWJ7TY9q4rYmtgLTozyAw=="],
 

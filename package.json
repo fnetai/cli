@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "files": [
     "dist",
     "template",
@@ -51,7 +51,7 @@
     "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",
     "@fnet/up-list-files": "^0.1.14",
-    "@fnet/yaml": "^0.1.46",
+    "@fnet/yaml": "^0.1.47",
     "@node-red/util": "^4.1.8",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
@@ -66,7 +66,7 @@
     "lodash.merge": "^4.6.2",
     "nunjucks": "^3.2.4",
     "object-hash": "^3.0.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.2",
     "rollup": "^4.60.1",
     "semver": "^7.7.4",
     "set-value": "^4.1.0",
