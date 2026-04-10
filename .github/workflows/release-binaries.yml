@@ -18,7 +18,7 @@ jobs:
           - target: bun-darwin-arm64
             runner: macos-latest
           - target: bun-darwin-x64
-            runner: macos-latest
+            runner: ubuntu-latest
           - target: bun-linux-x64
             runner: ubuntu-latest
           - target: bun-linux-arm64
@@ -62,13 +62,21 @@ jobs:
           EXT="${{ steps.platform.outputs.ext }}"
           OS="${{ steps.platform.outputs.os }}"
           ARCH="${{ steps.platform.outputs.arch }}"
+          RUNNER_OS="${{ runner.os }}"
 
           for CLI in frun fbin fservice; do
             echo "Compiling $CLI for $TARGET..."
-            bun build ./dist/$CLI/index.js \
-              --compile \
-              --target=$TARGET \
-              --outfile=release/${CLI}${EXT}
+            if [ "$RUNNER_OS" = "macOS" ]; then
+              # Build natively on macOS to get proper code signing
+              bun build ./dist/$CLI/index.js \
+                --compile \
+                --outfile=release/${CLI}${EXT}
+            else
+              bun build ./dist/$CLI/index.js \
+                --compile \
+                --target=$TARGET \
+                --outfile=release/${CLI}${EXT}
+            fi
           done
 
       - name: Package binaries (tar.gz)
