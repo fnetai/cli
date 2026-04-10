@@ -79,6 +79,15 @@ jobs:
             fi
           done
 
+      - name: Codesign macOS binaries
+        if: runner.os == 'macOS'
+        run: |
+          for CLI in frun fbin fservice; do
+            echo "Signing release/$CLI..."
+            codesign --sign - --force --preserve-metadata=entitlements release/$CLI
+            codesign -vvv --verify release/$CLI
+          done
+
       - name: Package binaries (tar.gz)
         if: steps.platform.outputs.os != 'windows'
         run: |
