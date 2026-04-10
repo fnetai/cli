@@ -12,15 +12,20 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        target:
-          - bun-darwin-arm64
-          - bun-darwin-x64
-          - bun-linux-x64
-          - bun-linux-arm64
-          - bun-windows-x64
+        include:
+          - target: bun-darwin-arm64
+            runner: macos-latest
+          - target: bun-darwin-x64
+            runner: macos-13
+          - target: bun-linux-x64
+            runner: ubuntu-latest
+          - target: bun-linux-arm64
+            runner: ubuntu-latest
+          - target: bun-windows-x64
+            runner: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout
