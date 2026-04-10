@@ -84,7 +84,8 @@ jobs:
         run: |
           for CLI in frun fbin fservice; do
             echo "Signing release/$CLI..."
-            codesign --sign - --force --preserve-metadata=entitlements release/$CLI
+            codesign --entitlements entitlements.plist --deep --force --sign - release/$CLI
+            echo "Verifying release/$CLI..."
             codesign -vvv --verify release/$CLI
           done
 
