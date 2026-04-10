@@ -122,7 +122,7 @@ export async function listCommandGroups({ projectType, tags }) {
         if (usage) {
           console.log(`  ${''.padEnd(maxNameLen)}  ${chalk.dim('$ ' + usage)}`);
         }
-        console.log('');
+        // console.log('');
       } else {
         console.log(`  ${chalk.cyan(paddedName)}`);
       }
