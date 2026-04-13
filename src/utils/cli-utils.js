@@ -62,7 +62,6 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
           cwd: projectDir,
           stdio: 'inherit',
           shell: true,
-          detached: true,
           env
         });
 
@@ -127,7 +126,6 @@ export function bindCondaContextCommand(builder, { name, bin, preArgs = [], crea
           cwd: projectDir,
           stdio: 'inherit',
           shell: true,
-          detached: true,
           env: {
             "PYTHONPATH": projectDir
           }
@@ -199,7 +197,6 @@ export function bindCondaBinCommand(builder, { name, createContext, processManag
           cwd: projectDir,
           stdio: 'inherit',
           shell: true,
-          detached: true,
           env: {
             "PYTHONPATH": projectDir
           }
@@ -263,7 +260,6 @@ export function bindWithContextCommand(builder, { name, preArgs = [], createCont
           cwd: fs.existsSync(projectDir) ? projectDir : process.cwd(),
           stdio: 'inherit',
           shell: true,
-          detached: true,
           env: {
             ...process.env,
             ...env
