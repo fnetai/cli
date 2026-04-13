@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import fnetYaml from '@fnet/yaml';
 import yaml from 'yaml';
 import resolveTemplatePath from '../utils/resolve-template-path.js';
+import { withSystemTags } from '../utils/auto-tags.js';
 
 /**
  * Create a context object for CLI commands
@@ -14,6 +15,7 @@ import resolveTemplatePath from '../utils/resolve-template-path.js';
  * @returns {Promise<Object>} Context object
  */
 export async function createContext(argv) {
+  const tags = withSystemTags(argv.ftag);
   if (argv.id) {
     return {
       id: argv.id,
@@ -22,13 +24,13 @@ export async function createContext(argv) {
       protocol: argv.protocol || 'ac:',
       templateDir: resolveTemplatePath('./template/fnode/node'),
       projectDir: path.resolve(process.cwd(), `./.output/${argv.id}`),
-      tags: argv.ftag,
+      tags,
       dev: argv.dev,
       bpmn: argv.bpmn === true
     };
   } else {
     try {
-      const project = await loadProject({ tags: argv.ftag });
+      const project = await loadProject({ tags });
       const template = project.runtime.type === 'bun' ? 'node' : project.runtime.type;
       return {
         buildId: argv.buildId,
@@ -44,9 +46,9 @@ export async function createContext(argv) {
 
         projectCliDir: path.resolve(project.projectDir, './cli'),
         projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
-        
+
         project,
-        tags: argv.ftag,
+        tags,
         dev: argv.dev,
         bpmn: argv.bpmn === true
       };
@@ -55,7 +57,7 @@ export async function createContext(argv) {
       console.warn(`Warning: Could not load project: ${error.message}`);
       return {
         projectDir: process.cwd(),
-        tags: argv.ftag
+        tags
       };
     }
   }

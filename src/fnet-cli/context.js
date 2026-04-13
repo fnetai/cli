@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import fnetYaml from '@fnet/yaml';
 import yaml from 'yaml';
 import resolveTemplatePath from '../utils/resolve-template-path.js';
+import { withSystemTags } from '../utils/auto-tags.js';
 
 /**
  * Create a context object for CLI commands
@@ -27,8 +28,9 @@ export async function createContext(argv) {
   //     dev: argv.dev
   //   };
   // } else {
+  const tags = withSystemTags(argv.ftag);
   try {
-    const project = await loadProject({ tags: argv.ftag, flowsPath: argv.flows });
+    const project = await loadProject({ tags, flowsPath: argv.flows });
     return {
       buildId: argv.buildId,
       mode: argv.mode,
@@ -47,7 +49,7 @@ export async function createContext(argv) {
       projectCliDirSymlink: path.resolve(project.projectDir, './.workspace/cli'),
 
       project,
-      tags: argv.ftag,
+      tags,
       dev: argv.dev,
       bpmn: argv.bpmn === true
     };
@@ -56,7 +58,7 @@ export async function createContext(argv) {
     console.warn(`Warning: Could not load project: ${error.message}`);
     return {
       projectDir: process.cwd(),
-      tags: argv.ftag
+      tags
     };
   }
   // }

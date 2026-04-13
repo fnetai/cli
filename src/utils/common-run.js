@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import fnetYaml from '@fnet/yaml';
 import fnetShellFlow, { ProcessManager } from '@fnet/shell-flow';
-import os from 'os';
+import { withSystemTags } from './auto-tags.js';
 
 /**
  * Run a command group from a project file
@@ -21,11 +21,7 @@ export async function runCommandGroup({ projectType, group, tags, args, argv, pr
   try {
     // Detect project file based on project type
     const projectFile = await detectProjectFile(projectType);
-    tags = tags || [];
-    const platform = os.platform();
-    if (!tags.includes(platform)) {
-      tags.push(platform);
-    }
+    tags = withSystemTags(tags);
 
     // Load project file
     const { parsed: projectFileParsed } = await fnetYaml({
