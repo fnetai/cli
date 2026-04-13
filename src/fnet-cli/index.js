@@ -48,30 +48,29 @@ async function main() {
       .command(inputCmd)
       .command('express', 'Create and manage express projects', expressCmd);
 
-    // Add pass-through commands
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm', createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node', createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun', createContext });
+    // Add pass-through commands (all use centralized processManager)
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npm', createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'node', createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'bun', createContext, processManager });
 
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'bun', preArgs: ['run', 'serve', '--'], createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "serve", bin: 'bun', preArgs: ['run', 'serve', '--'], createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "watch", bin: 'bun', preArgs: ['run', 'watch', '--'], createContext, processManager });
 
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "app", bin: 'bun', preArgs: ['run', 'app', '--'], createContext, processManager });
 
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'], createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'], createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'], createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'], createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'], createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli", bin: 'bun', preArgs: ['run', 'cli', '--'], createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:dev", bin: 'bun', preArgs: ['run', 'cli:dev', '--'], createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile", bin: 'bun', preArgs: ['run', 'cli:compile', '--'], createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:compile:dev", bin: 'bun', preArgs: ['run', 'cli:compile:dev', '--'], createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "cli:install", bin: 'bun', preArgs: ['run', 'cli:install', '--'], createContext, processManager });
 
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'], createContext, processManager });
+    cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install", createContext, processManager });
 
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { name: "compile", bin: 'bun', preArgs: ['run', 'compile', '--'], createContext });
-    cmdBuilder = bindInstallCommand(cmdBuilder, { name: "install", createContext });
-
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx', createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk', createContext });
-    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws', createContext });
-    cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with', createContext });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'npx', createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'cdk', createContext, processManager });
+    cmdBuilder = bindSimpleContextCommand(cmdBuilder, { bin: 'aws', createContext, processManager });
+    cmdBuilder = bindWithContextCommand(cmdBuilder, { name: 'with', createContext, processManager });
     cmdBuilder = bindRunContextCommand(cmdBuilder, { name: 'run', projectType: 'fnet', processManager });
 
     cmdBuilder

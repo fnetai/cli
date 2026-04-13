@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import chalk from 'chalk';
 import fnetConfig from '@fnet/config';
-import { setupSignalHandlers } from './process-manager.js';
+
 
 /**
  * Bind a simple context command to a yargs builder
@@ -20,7 +20,7 @@ import { setupSignalHandlers } from './process-manager.js';
  * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], createContext }) {
+export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], createContext, processManager }) {
   if (typeof bin === 'function') bin = bin();
 
   return builder.command(
@@ -66,8 +66,17 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
           env
         });
 
-        // Set up signal handlers and error handlers for the subprocess
-        setupSignalHandlers(subprocess);
+        // Track subprocess with centralized ProcessManager
+        if (processManager) {
+          processManager.track(subprocess);
+        }
+
+        // Wait for subprocess to complete
+        await new Promise((resolve) => {
+          subprocess.on('close', (code) => {
+            resolve(code);
+          });
+        });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -87,7 +96,7 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
  * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindCondaContextCommand(builder, { name, bin, preArgs = [], createContext }) {
+export function bindCondaContextCommand(builder, { name, bin, preArgs = [], createContext, processManager }) {
   return builder.command(
     `${name || bin} [commands..]`, `${bin} ${preArgs.join(' ')}`,
     (yargs) => {
@@ -124,9 +133,17 @@ export function bindCondaContextCommand(builder, { name, bin, preArgs = [], crea
           }
         });
 
-        // Set up signal handlers and error handlers for the subprocess
-        setupSignalHandlers(subprocess);
+        // Track subprocess with centralized ProcessManager
+        if (processManager) {
+          processManager.track(subprocess);
+        }
 
+        // Wait for subprocess to complete
+        await new Promise((resolve) => {
+          subprocess.on('close', (code) => {
+            resolve(code);
+          });
+        });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -145,7 +162,7 @@ export function bindCondaContextCommand(builder, { name, bin, preArgs = [], crea
  * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindCondaBinCommand(builder, { name, createContext }) {
+export function bindCondaBinCommand(builder, { name, createContext, processManager }) {
   return builder.command(
     `${name} <binary> [commands..]`,
     `Run a binary from conda environment`,
@@ -188,9 +205,17 @@ export function bindCondaBinCommand(builder, { name, createContext }) {
           }
         });
 
-        // Set up signal handlers and error handlers for the subprocess
-        setupSignalHandlers(subprocess);
+        // Track subprocess with centralized ProcessManager
+        if (processManager) {
+          processManager.track(subprocess);
+        }
 
+        // Wait for subprocess to complete
+        await new Promise((resolve) => {
+          subprocess.on('close', (code) => {
+            resolve(code);
+          });
+        });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -209,7 +234,7 @@ export function bindCondaBinCommand(builder, { name, createContext }) {
  * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindWithContextCommand(builder, { name, preArgs = [], createContext }) {
+export function bindWithContextCommand(builder, { name, preArgs = [], createContext, processManager }) {
   return builder.command(
     `${name} <config> <command> [options..]`, `Run a command with a config context`,
     (yargs) => {
@@ -245,8 +270,17 @@ export function bindWithContextCommand(builder, { name, preArgs = [], createCont
           }
         });
 
-        // Set up signal handlers and error handlers for the subprocess
-        setupSignalHandlers(subprocess);
+        // Track subprocess with centralized ProcessManager
+        if (processManager) {
+          processManager.track(subprocess);
+        }
+
+        // Wait for subprocess to complete
+        await new Promise((resolve) => {
+          subprocess.on('close', (code) => {
+            resolve(code);
+          });
+        });
       } catch (error) {
         console.error(error.message);
         process.exit(1);
@@ -306,7 +340,7 @@ export function bindRunContextCommand(builder, { name, projectType = 'auto', pro
  * @param {Function} options.createContext - Function to create context
  * @returns {Object} Updated yargs builder
  */
-export function bindInstallCommand(builder, { name, createContext }) {
+export function bindInstallCommand(builder, { name, createContext, processManager }) {
   return builder.command(
     `${name} [options]`, `Install the project as a binary`,
     (yargs) => {
@@ -364,6 +398,11 @@ export function bindInstallCommand(builder, { name, createContext }) {
           shell: true
         });
 
+        // Track with centralized ProcessManager
+        if (processManager) {
+          processManager.track(compileProcess);
+        }
+
         // Wait for compilation to complete
         await new Promise((resolve, reject) => {
           compileProcess.on('close', (code) => {
@@ -400,6 +439,11 @@ export function bindInstallCommand(builder, { name, createContext }) {
           stdio: 'inherit',
           shell: true
         });
+
+        // Track with centralized ProcessManager
+        if (processManager) {
+          processManager.track(installProcess);
+        }
 
         // Wait for installation to complete
         await new Promise((resolve, reject) => {
