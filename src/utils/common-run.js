@@ -3,23 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import fnetYaml from '@fnet/yaml';
 import fnetShellFlow, { ProcessManager } from '@fnet/shell-flow';
-
-/**
- * Resolve a command group value into its steps (command array).
- * Supports both array format and object format with steps/description/usage.
- *
- * @param {Array|Object} commandGroup - The command group value
- * @returns {Array} The command steps array
- */
-function resolveCommandSteps(commandGroup) {
-  if (Array.isArray(commandGroup)) {
-    return commandGroup;
-  }
-  if (commandGroup && typeof commandGroup === 'object' && commandGroup.steps) {
-    return commandGroup.steps;
-  }
-  return commandGroup;
-}
+import os from 'os';
 
 /**
  * Run a command group from a project file
@@ -37,6 +21,11 @@ export async function runCommandGroup({ projectType, group, tags, args, argv, pr
   try {
     // Detect project file based on project type
     const projectFile = await detectProjectFile(projectType);
+    tags = tags || [];
+    const platform = os.platform();
+    if (!tags.includes(platform)) {
+      tags.push(platform);
+    }
 
     // Load project file
     const { parsed: projectFileParsed } = await fnetYaml({
@@ -56,12 +45,9 @@ export async function runCommandGroup({ projectType, group, tags, args, argv, pr
       throw new Error(`Command group '${group}' not found in ${projectFile.name}`);
     }
 
-    // Resolve steps from command group (supports both array and object format)
-    const steps = resolveCommandSteps(commandGroup);
-
     // Run command group with centralized process management
     await fnetShellFlow({
-      commands: steps,
+      commands: commandGroup,
       context: {
         args,
         argv,
