@@ -27,7 +27,7 @@
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
         "@fnet/service": "^0.1.8",
-        "@fnet/shell-flow": "^0.3.7",
+        "@fnet/shell-flow": "^0.3.8",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.2.1",
         "@fnet/to-rust": "^0.1.14",
@@ -230,7 +230,7 @@
 
     "@fnet/rollup-plugin-delete": ["@fnet/rollup-plugin-delete@0.1.10", "", { "dependencies": { "del": "^8.0" } }, "sha512-P4Ntl/QeUfkGWaDzx/oOHvRpG/mnS14ksyZBu2A5ntwaq0SsH3WkjTJ1moKUgPnRmelJsYCa2rSf+up/R73KXQ=="],
 
-    "@fnet/service": ["@fnet/service@0.1.8", "", {}, "sha512-/yIhR7nKd3aLRBfhtQBxzq6vT0iUGKCw39KtElPZNKpM+y0F8qnkKdJSxT3g4p1nb/+58KZ9lhJ4wQiuhzkIsQ=="],
+    "@fnet/service": ["@fnet/service@0.1.9", "", {}, "sha512-ULYNne8mi5nxtPaiXbIuH5gLgU3WlzBPwx8xD5PkbqF07IwGatJY7d6osLGIuyiyNKsy/sax/C6zqsohCh4xuA=="],
 
     "@fnet/shell-flow": ["@fnet/shell-flow@0.3.8", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" } }, "sha512-GpPwaeSRuChldbPN8G/oI4tN2Ti3vELSaMbMAVTggZ/F2osw4rR/c4YgoX1vVgadg9G8Lny+rDRCeXJuCN3hug=="],
 
@@ -244,7 +244,7 @@
 
     "@fnet/xcode-cert-inspector": ["@fnet/xcode-cert-inspector@0.1.10", "", { "dependencies": { "node-forge": "^1.3" } }, "sha512-Ca2n2jJthiEGw/KZGgB6jJTHSxcy4M1BKbKBMn08qq2ra+L0tixS5k3M1FPS3MVOXcI2yFcxm22gsDaCnaOYyQ=="],
 
-    "@fnet/yaml": ["@fnet/yaml@0.1.47", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.8" } }, "sha512-3484Qdy168FMPDrp9cxO10lm4yctLJC1t7z6FDC/hwnk0/EVP7sQqYegrCOS5PYojO6EZSOsmXBlvNKHepmu8Q=="],
+    "@fnet/yaml": ["@fnet/yaml@0.1.49", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.8" } }, "sha512-BBZixFGdWQ/fbNDas0gv6aqzI0XdJhlWS7tIBt94HRLfPvEvNeI9i1zyLN5JOBmL3Mo/E6YRDNTGyZIIIOKj+A=="],
 
     "@google-cloud/paginator": ["@google-cloud/paginator@5.0.2", "", { "dependencies": { "arrify": "^2.0.0", "extend": "^3.0.2" } }, "sha512-DJS3s0OVH4zFDB1PzjxAsHqJT6sKVbRwwML0ZBP9PbU7Yebtu/7SWMRzvO2J3nUi9pRNITCfu4LJeooM2w4pjg=="],
 

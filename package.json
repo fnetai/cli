@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "files": [
     "dist",
     "template",
@@ -45,13 +45,13 @@
     "@fnet/object-from-schema": "^0.1.25",
     "@fnet/prompt": "^0.2.16",
     "@fnet/rollup-plugin-delete": "^0.1.10",
-    "@fnet/service": "^0.1.8",
+    "@fnet/service": "^0.1.9",
     "@fnet/shell-flow": "^0.3.8",
     "@fnet/shelljs": "^0.2.4",
     "@fnet/to-pyip": "^0.2.1",
     "@fnet/to-rust": "^0.1.14",
     "@fnet/up-list-files": "^0.1.14",
-    "@fnet/yaml": "^0.1.47",
+    "@fnet/yaml": "^0.1.49",
     "@node-red/util": "^4.1.8",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
