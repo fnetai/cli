@@ -27,12 +27,12 @@
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
         "@fnet/service": "^0.1.8",
-        "@fnet/shell-flow": "^0.3.6",
+        "@fnet/shell-flow": "^0.3.7",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.2.1",
         "@fnet/to-rust": "^0.1.14",
         "@fnet/up-list-files": "^0.1.14",
-        "@fnet/yaml": "^0.1.46",
+        "@fnet/yaml": "^0.1.47",
         "@node-red/util": "^4.1.8",
         "ajv": "^8.18.0",
         "ajv-formats": "^3.0.1",
@@ -47,7 +47,7 @@
         "lodash.merge": "^4.6.2",
         "nunjucks": "^3.2.4",
         "object-hash": "^3.0.0",
-        "prettier": "^3.8.1",
+        "prettier": "^3.8.2",
         "rollup": "^4.60.1",
         "semver": "^7.7.4",
         "set-value": "^4.1.0",
@@ -232,7 +232,7 @@
 
     "@fnet/service": ["@fnet/service@0.1.8", "", {}, "sha512-/yIhR7nKd3aLRBfhtQBxzq6vT0iUGKCw39KtElPZNKpM+y0F8qnkKdJSxT3g4p1nb/+58KZ9lhJ4wQiuhzkIsQ=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.3.6", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" } }, "sha512-QWyCJncAeqvqAccHojpD+mq+dgRngS0zQbygU5JK4HOm/YvD92gnC9p8/0jVReV0QvYdFnylZ8Ucla4AZyC0Dw=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.3.8", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" } }, "sha512-GpPwaeSRuChldbPN8G/oI4tN2Ti3vELSaMbMAVTggZ/F2osw4rR/c4YgoX1vVgadg9G8Lny+rDRCeXJuCN3hug=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
