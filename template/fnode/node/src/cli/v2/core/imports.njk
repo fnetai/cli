@@ -10,9 +10,9 @@
 import argv,{argsParser} from '../default/input.args.js';
 import { schema as inputSchema } from '../default/validate_input.js';
 {% if atom.doc.features.cli.extend===true %}
-import Node from '../../../cli';
+import Node from '../../../cli/index.js';
 {% else %}
-import Node from '../../../src';
+import Node from '../../../src/index.js';
 {% endif %}
 
 {% elif atom.doc.features.project.format==='cjs' %}
@@ -20,9 +20,9 @@ import Node from '../../../src';
 const { default:argv,argsParser} = require('../default/input.args.js');
 const { schema: inputSchema } = require('../default/validate_input.js');
 {% if atom.doc.features.cli.extend===true %}
-const Node = require('../../../cli');
+const Node = require('../../../cli/index.js');
 {% else %}
-const Node = require('../../../src');
+const Node = require('../../../src/index.js');
 {% endif %}
 
 {% endif %}
