@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <b>Focus on functional code, let Flownet handle the rest</b>
+  <b>Give developers primitives. Trust them to compose. Make the tooling excellent.</b>
 </p>
 
 <p align="center">
@@ -14,285 +14,334 @@
   <a href="https://github.com/fnetai/cli/blob/main/LICENSE"><img src="https://img.shields.io/github/license/fnetai/cli.svg" alt="license"></a>
 </p>
 
-## Overview
+---
 
-Flownet is a low-level flow framework that separates **Core** (your business logic) from **Layers** (infrastructure, dev, build, runtime, and delivery). This separation allows developers to focus on functional code while Flownet automates the surrounding infrastructure. The `@fnet/cli` package provides command-line tools to create, build, and manage Flownet projects.
+## Why Flownet?
 
-Flownet provides primitives for composing workflows similar to how React provides components for UI development. It emphasizes a **schema-first approach** with **deterministic core**, enabling **multi-runtime portability**.
+Most developers spend the majority of their time on things that aren't their actual problem: build configuration, bundling, runtime wiring, deployment pipelines, service setup. The ratio of "infrastructure work" to "actual logic" is often 80/20 in the wrong direction.
 
-### Key Features
+Flownet exists to flip that ratio. It separates what you write (**Core**) from what surrounds it (**Layers**), then automates the Layers so you can focus on the Core.
 
-- **Core vs Layers Architecture**: Separate your business logic (Core) from infrastructure (Layers) for cleaner, more maintainable code
-- **Nodes & Flows**: Reusable functional units (Nodes) with explicit I/O schemas, orchestrated by Flows
-- **I/O Contracts**: Schema-first contracts define clear input/output expectations for deterministic behavior
-- **Automatic Dependency Detection**: Simplified dependency management across your project
-- **Multi-Runtime Support**: Deploy to Node.js, Bun, Deno, or Python - choose the best runtime for each task
-- **Language Agnostic**: Support for multiple programming languages (JavaScript, Python) in the same project
-- **Unified Interface**: Consistent commands across different project types
-- **Tag-Based Configuration**: Powerful conditional configuration with `--ftag` parameter
-- **Isolated Workspace**: All build artifacts and dependencies are kept in `.workspace` directory
-- **Binary System**: Compile, install, and manage CLI tools with the integrated binary system
-- **Project File Configuration**: Configure CLI features directly in your project files
-- **Fast Startup**: Pre-compiled binaries start much faster than interpreted scripts
+- **Core**: Your functional, minimal, deterministic logic and its I/O contracts
+- **Layers**: Dev experience, build pipelines, runtime wiring, delivery/packaging
+
+You write the Core. Flownet generates, manages, and updates the Layers automatically. Update all Layer infrastructure across every project by updating the CLI.
+
+| Project Type | Core (you write)  | Layers (Flownet handles)        |
+| ------------ | ----------------- | ------------------------------- |
+| CLI          | Command logic     | Binary + PATH/runtime + publish |
+| App          | UI/flows          | Bundling + hosting/CDN + deploy |
+| Component    | API/behavior      | ESM/CJS/types + publish         |
+
+This is the same philosophy that made React successful for UI: provide primitives, trust developers to compose, make the tooling excellent. Flownet applies it to the entire development lifecycle.
+
+## What You Get
+
+```text
+@fnet/cli (npm package)
+    |
+    |- fnode ---------> Node/Classic Projects (fnode.yaml)
+    |                   Create, build, deploy reusable Nodes
+    |
+    |- fnet ----------> Workflow Projects (fnet.yaml)
+    |                   Create, build, deploy Flows
+    |
+    |- frun ----------> Unified Command Runner
+    |                   Auto-detect project type, run command groups
+    |                   Powered by @fnet/shell-flow
+    |
+    |- fbin ----------> Binary Management
+    |                   Compile JS to native binaries
+    |                   Install to ~/.fnet/bin/
+    |
+    '- fservice ------> Service Management
+                        Cross-platform system services
+                        (systemd, launchd, Windows Services)
+```
+
+Five CLI tools that work together to cover the full development lifecycle: create, develop, build, distribute, and run as a service.
 
 ## Installation
 
 ```bash
-# Using npm
 npm install -g @fnet/cli
-
-# Using yarn
-yarn global add @fnet/cli
-
-# Using bun
-bun install -g @fnet/cli
 ```
 
-## Quick Start
+On first install, pre-compiled native binaries (`frun`, `fbin`, `fservice`) are downloaded for your platform (macOS/Linux/Windows, arm64/x64). If the download fails, the JavaScript versions work as a fallback.
 
-### Create a New Project
+### Homebrew (macOS/Linux)
+
+Native binaries for `frun`, `fbin`, and `fservice` are also available via Homebrew:
 
 ```bash
-# Create a Node.js project
-fnode create my-node-project
-
-# Create a Python project
-fnode create my-python-project --runtime python
-
-# Create a Bun project
-fnode create my-bun-project --runtime bun
-
-# Create a workflow project
-fnet create my-workflow-project
+brew tap fnetai/tap
+brew install fnet
 ```
 
-### Build and Run
-
-```bash
-# Build the project
-frun build
-
-# Run the project
-fnode cli
-
-# Execute a command group from project file
-frun <command-group> [--ftag <tags>]
-```
-
-### Compile and Install
-
-```bash
-# Compile a JavaScript file to a binary
-fbin compile script.js -o my-tool
-
-# Install a compiled binary
-fbin install ./my-tool --name awesome-tool
-
-# Install a CLI-enabled project
-cd my-project
-fnode install --yes
-
-# Or use npm scripts in your project
-npm run compile
-npm run install-bin
-
-# List installed binaries
-fbin list
-
-# Uninstall a binary
-fbin uninstall awesome-tool --yes
-```
+> **Note:** Homebrew installs only the pre-compiled native binaries (`frun`, `fbin`, `fservice`). For the full CLI including `fnode` and `fnet`, use `npm install -g @fnet/cli`.
 
 ## Core Concepts
 
 ### Nodes & Flows
 
-**Nodes** are reusable functional units that encapsulate business logic with explicit input/output schemas. Each Node:
+**Nodes** are reusable functional units with explicit input/output schemas. Each Node has a deterministic, pure function at its core with clear I/O contracts. Think of them as the building blocks.
 
-- Has a deterministic, pure function at its core
-- Defines clear I/O contracts (input and output schemas)
-- Can be composed and reused across different Flows
-- Supports automatic dependency detection
+**Flows** orchestrate Nodes and sub-Flows into workflows. They define how capabilities connect, transform, and execute - composition and control flow over the primitives that Nodes provide.
 
-**Flows** orchestrate Nodes and sub-Flows to create complex workflows. Flows:
+|             | fnode Project                   | fnet Project          |
+| ----------- | ------------------------------- | --------------------- |
+| Config file | `fnode.yaml`                    | `fnet.yaml`           |
+| Purpose     | Reusable Nodes, standalone apps | Workflow orchestration |
+| CLI         | `fnode`                         | `fnet`                |
+| Runtimes    | Node.js, Bun, Python            | Node.js, Bun          |
 
-- Connect multiple Nodes with explicit data contracts
-- Enable multi-runtime portability through schema-first design
-- Support complex data transformations and conditional logic
-- Maintain deterministic behavior across different runtimes
+### Schema-First & Multi-Runtime
 
-### I/O Contracts
+Flownet uses schema-first contracts (I/O schemas) to define clear expectations. This enables:
 
-Flownet uses schema-first contracts to define clear input and output expectations. This approach:
-
-- Ensures deterministic behavior across different runtimes
-- Enables automatic validation and type checking
-- Facilitates multi-runtime portability
-- Improves code clarity and maintainability
-
-## Project Types
-
-Flownet supports two main project types:
-
-### fnode Project
-
-An **fnode project** (Flow Node Project) is a classic/node-style project that focuses on creating reusable Nodes or standalone applications. These projects:
-
-- Use `fnode.yaml` as their configuration file
-- Typically contain a single code file in the `src` directory
-- Can be built with different runtimes (Node.js, Python, Bun)
-- Support multiple programming languages simultaneously
-- Ideal for creating reusable components with explicit I/O contracts
-
-### fnet Project
-
-An **fnet project** (Flow Project) is a workflow-oriented project that focuses on orchestrating multiple Nodes and Flows. These projects:
-
-- Use `fnet.yaml` as their configuration file
-- Define workflows that connect multiple Nodes and sub-Flows
-- Support complex data flows and transformations
-- Enable multi-runtime deployment strategies
-- Ideal for building complex business logic orchestrations
-
-## CLI Tools
-
-Flownet provides five main CLI tools:
-
-- **`fnode`**: For Node/classic projects (uses `fnode.yaml`) - create and manage reusable Nodes
-- **`fnet`**: For Workflow projects (uses `fnet.yaml`) - create and manage Flows that orchestrate Nodes
-- **`frun`**: Unified interface that works with both project types (auto-detects project file)
-- **`fbin`**: Binary management system for installing, compiling, and managing CLI tools
-- **`fservice`**: Service management for deploying and running Flownet applications
-
-## Multi-Language & Multi-Runtime Support
-
-Flownet supports multiple programming languages and runtimes simultaneously within the same project:
+- **Multi-runtime portability**: Same Core logic deploys to Node.js, Bun, or Python
+- **Deterministic behavior**: Clear contracts across different runtimes
+- **Automatic validation**: Schemas drive type checking and validation
 
 ```text
 my-project/
-├── src/
-│   ├── index.js          # JavaScript implementation (used by Node.js and Bun)
-│   └── index.py          # Python implementation
-├── fnode.yaml            # Project configuration file
-└── .workspace/           # Build infrastructure (managed by CLI)
+|- src/
+|  |- index.js          # JavaScript (Node.js / Bun)
+|  '- index.py          # Python
+|- fnode.yaml
+'- .workspace/           # Layers (managed by CLI, not your concern)
 ```
 
-### Supported Runtimes
+### Documentation That Never Lies
 
-- **Node.js**: JavaScript/TypeScript execution with full npm ecosystem support
-- **Bun**: Fast JavaScript runtime with improved performance
-- **Deno**: Secure JavaScript/TypeScript runtime with built-in tooling
-- **Python**: Python 3.x for data processing and scientific computing
+Flownet automatically generates BPMN 2.0 (Business Process Model and Notation) diagrams from your Flow definitions on every build. Your YAML is the single source of truth - diagrams are derived, never hand-maintained.
 
-### Multi-Runtime Portability
+- **Developers** read YAML (code-like, version controlled)
+- **Stakeholders** view BPMN (visual, business-friendly)
+- **Tools** analyze BPMN (process mining, compliance)
 
-Thanks to Flownet's schema-first approach and deterministic core:
+This solves the eternal problem of documentation going stale. With Flownet, it can't - diagrams regenerate on every `fnet build`.
 
-- Write your core logic once and deploy to multiple runtimes
-- Choose the best runtime for each specific use case
-- Migrate between runtimes without changing your business logic
-- Use JavaScript with Node.js for quick development, Python for data processing, and Bun for improved performance
+### AI-Native: MCP Integration
+
+Every Flownet project can be exposed as an AI-compatible tool server via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io). Both `fnode` and `fnet` projects support MCP mode with STDIO and HTTP transports:
+
+```bash
+# Expose as MCP tool for Claude Desktop or any AI assistant
+fnode cli --cli-mode mcp
+
+# Or over HTTP for remote AI integrations
+fnet cli --cli-mode mcp --mcp-transport http --cli-port 3003
+```
+
+This means any Flownet project - a data processor, a CLI tool, a workflow - can become a tool that AI assistants discover, understand, and invoke. It's not a bolt-on feature; it's a first-class runtime mode alongside CLI, HTTP, WebSocket, and Pipeline modes.
+
+## Quick Start
+
+### Create a Project
+
+```bash
+# Node.js project (default runtime)
+fnode create --name my-project
+
+# Python project
+fnode create --name my-project --runtime python
+
+# Bun project
+fnode create --name my-project --runtime bun
+
+# Workflow project
+fnet create --name my-workflow
+```
+
+### Quick Test Projects
+
+Rapid prototyping without thinking about names:
+
+```bash
+fnode express --yes  # Creates fnode-1, fnode-2, fnode-3...
+fnet express --yes   # Creates fnet-1, fnet-2, fnet-3...
+```
+
+### Build and Run
+
+```bash
+frun build                          # Run 'build' command group
+fnode cli                           # Run as CLI
+frun <command-group> [--ftag <tags>] # Execute command group with tags
+frun list                           # List available command groups
+```
+
+## CLI Tools
+
+### fnode - Node/Classic Projects
+
+```bash
+fnode create --name my-project       # Create a new project
+fnode build                          # Build the project
+fnode cli                            # Run as CLI
+fnode cli --cli-mode http            # Run as HTTP server
+fnode compile                        # Compile to binary
+fnode install                        # Install compiled binary
+```
+
+**Passthrough commands** execute tools in the project's `.workspace` context:
+
+```bash
+fnode npm install lodash             # npm in workspace
+fnode node script.js                 # node in workspace
+fnode bun run dev                    # bun in workspace
+fnode python script.py               # python in workspace
+fnode cdk deploy                     # AWS CDK in workspace
+fnode aws s3 ls                      # AWS CLI in workspace
+```
+
+**Runtime modes** - one project, multiple deployment targets:
+
+| Mode      | Command                          | Use case                          |
+| --------- | -------------------------------- | --------------------------------- |
+| CLI       | `fnode cli`                      | Terminal executable               |
+| HTTP      | `fnode cli --cli-mode http`      | REST API server                   |
+| WebSocket | `fnode cli --cli-mode websocket` | Real-time bidirectional           |
+| Pipeline  | `echo data \| fnode cli`         | Unix-style stdin/stdout streaming |
+| MCP       | `fnode cli --cli-mode mcp`       | AI-compatible tool server         |
+
+### fnet - Workflow Projects
+
+```bash
+fnet create --name my-workflow       # Create a workflow project
+fnet build                           # Build (+ auto-generate BPMN)
+fnet npm install                     # npm in workspace
+fnet cdk deploy                      # AWS CDK in workspace
+```
+
+### frun - Unified Command Runner
+
+Auto-detects project type and runs command groups. Powered by [`@fnet/shell-flow`](https://www.npmjs.com/package/@fnet/shell-flow).
+
+```bash
+frun build                           # Run 'build' command group
+frun deploy                          # Run 'deploy' command group
+frun dev --ftag local                # Run with tags
+frun list                            # List available command groups
+```
+
+Define command groups in your project YAML:
+
+```yaml
+commands:
+  build:
+    usage: frun build
+    description: Build the project
+    steps:
+      - npm install
+      - npm run build
+
+  test:
+    usage: frun test
+    description: Run all tests
+    parallel:
+      - npm run test:unit
+      - npm run test:integration
+
+  dev:
+    usage: frun dev
+    description: Start dev servers
+    fork:
+      - npm run watch:css
+      - npm run watch:js
+      - npm run dev-server
+```
+
+The `commands:` section is `@fnet/shell-flow` input schema in YAML format. This gives you sequential execution, parallel execution, background processes, environment variables, template variables (`{{var}}`), output capture, retry with exponential backoff, timeouts, and a full set of expression builtins (`json::`, `http::`, `file::`, `txt::`, `encode::`, `hash::`, `time::`, `capture::`, `pause::`, and more).
+
+### fbin - Binary Management
+
+Compile JavaScript to native binaries and manage installations:
+
+```bash
+fbin setup                           # Initialize the bin system
+fbin path                            # Add ~/.fnet/bin to PATH
+fbin compile script.js -o my-tool    # Compile JS to binary
+fbin install ./my-tool --name app    # Install a binary
+fbin list                            # List installed binaries
+fbin uninstall app --yes             # Remove a binary
+fbin backup                          # Backup binaries and shell config
+fbin restore                         # Restore from backup
+```
+
+Pre-compiled binaries for all platforms are built via GitHub Actions and distributed through GitHub Releases.
+
+### fservice - Service Management
+
+Deploy projects as system services across platforms:
+
+```bash
+fservice manifest create             # Create a service definition
+fservice register -d my-api          # Register with OS service manager
+fservice start my-api                # Start service
+fservice stop my-api                 # Stop service
+fservice restart my-api              # Restart service
+fservice status my-api               # Check status
+fservice list                        # List all services
+fservice unregister my-api           # Remove service
+```
+
+**Supported platforms**: macOS (launchd), Linux (systemd), Windows (Windows Services)
 
 ## Tag-Based Configuration
 
-Both CLI tools support the `--ftag` parameter for powerful conditional configuration:
+The `--ftag` parameter enables conditional configuration from a single project file:
 
 ```bash
 frun build --ftag dev --ftag local
 ```
 
-This activates sections in your project file marked with `t::dev::` or `t::local::` tags:
-
 ```yaml
-# Base configuration
 name: my-project
 
-# Development environment configuration
+database:
+  port: 5432
+
 t::dev::database:
   url: "mongodb://localhost:27017"
 
-# Production environment configuration
 t::prod::database:
   url: "mongodb://production-server:27017"
 ```
 
-## Binary System
+One file, multiple environments. Tags enable environment-specific commands, feature flags, and platform-specific configurations.
 
-Flownet includes a powerful binary system that makes it easy to create, distribute, and manage CLI tools:
+## Project Structure
 
-### Binary System Features
-
-- **Fast Startup**: Pre-compiled binaries start much faster than interpreted scripts
-- **Cross-Platform Support**: Works on macOS, Linux, and Windows
-- **Multiple Shell Support**: Compatible with Bash, Zsh, Fish, PowerShell, and more
-- **Version Management**: Keeps track of binary versions and metadata
-- **Project Integration**: Easily compile and install CLI-enabled projects
-- **Automation Support**: All commands support the `--yes` flag for scripting
-
-### Setup and Usage
-
-```bash
-# Initialize the bin system
-fbin setup
-
-# Add bin directory to PATH
-fbin path
-
-# Compile a JavaScript file to a binary
-fbin compile script.js -o my-tool
-
-# Install a binary to the bin directory
-fbin install ./my-tool --name awesome-tool
-
-# List installed binaries
-fbin list
-
-# Uninstall a binary
-fbin uninstall awesome-tool
+```text
+my-project/
+|- src/                  # Core - your code
+|- fnode.yaml            # or fnet.yaml - project configuration
+|- .workspace/           # Layers - managed by CLI
+'- .fnet/                # Local configuration
 ```
 
-### Project Integration
+**Global directories**:
 
-The binary system integrates seamlessly with Flownet projects:
+- `~/.fnet/bin/` - Installed binaries
+- `~/.fnet/services/` - Service definitions
 
-```bash
-# Compile and install a CLI-enabled fnode project
-fnode compile
-fnode install
+## Comparison
 
-# Compile and install a CLI-enabled fnet project
-fnet compile
-fnet install
+| Aspect         | Traditional Workflow Engines | Flownet                           |
+| -------------- | ---------------------------- | --------------------------------- |
+| Syntax         | Proprietary DSL              | YAML + JavaScript                 |
+| Development    | Special IDE required         | Any IDE (VS Code, etc.)           |
+| Debugging      | Limited or proprietary       | Standard (Chrome DevTools)        |
+| Testing        | Proprietary tools            | Standard test frameworks          |
+| Visualization  | Manual diagram creation      | Auto-generated BPMN               |
+| Runtime        | Vendor-specific              | Multi-runtime (Node/Bun/Python)   |
+| Learning Curve | Steep (new DSL + tools)      | Gentle (YAML + JavaScript)        |
+| Flexibility    | Opinionated, limited         | Primitives, compose freely        |
+| Ecosystem      | Vendor packages              | npm ecosystem                     |
+| AI Integration | Separate system              | Built-in MCP mode                 |
 
-# Using npm scripts in your project
-npm run compile
-npm run install-bin
-```
+## License
 
-This makes it easy to distribute your Flownet projects as standalone CLI tools.
-
-### CLI Configuration in Project Files
-
-You can configure CLI features directly in your project files:
-
-```yaml
-# In fnode.yaml or fnet.yaml
-name: my-project
-
-features:
-  # For fnode projects
-  s::runtime.type: node  # or python, bun
-
-  # CLI configuration
-  cli:
-    enabled: true
-    bin: custom-bin-name  # Name of the binary (defaults to project name)
-    installable: true     # Enable 'fnode install' or 'fnet install' command
-```
-
-This configuration will:
-
-1. Enable CLI functionality for your project
-2. Set the binary name to `custom-bin-name`
-3. Add `compile` and `install-bin` scripts to your package.json
-4. Allow you to install the binary with `fnode install` or `npm run install-bin`
+MIT
