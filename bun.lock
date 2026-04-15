@@ -26,13 +26,13 @@
         "@fnet/object-from-schema": "^0.1.25",
         "@fnet/prompt": "^0.2.16",
         "@fnet/rollup-plugin-delete": "^0.1.10",
-        "@fnet/service": "^0.1.8",
+        "@fnet/service": "^0.1.9",
         "@fnet/shell-flow": "^0.3.8",
         "@fnet/shelljs": "^0.2.4",
         "@fnet/to-pyip": "^0.2.1",
         "@fnet/to-rust": "^0.1.14",
         "@fnet/up-list-files": "^0.1.14",
-        "@fnet/yaml": "^0.1.47",
+        "@fnet/yaml": "^0.1.49",
         "@node-red/util": "^4.1.8",
         "ajv": "^8.18.0",
         "ajv-formats": "^3.0.1",
@@ -232,7 +232,7 @@
 
     "@fnet/service": ["@fnet/service@0.1.9", "", {}, "sha512-ULYNne8mi5nxtPaiXbIuH5gLgU3WlzBPwx8xD5PkbqF07IwGatJY7d6osLGIuyiyNKsy/sax/C6zqsohCh4xuA=="],
 
-    "@fnet/shell-flow": ["@fnet/shell-flow@0.3.8", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" } }, "sha512-GpPwaeSRuChldbPN8G/oI4tN2Ti3vELSaMbMAVTggZ/F2osw4rR/c4YgoX1vVgadg9G8Lny+rDRCeXJuCN3hug=="],
+    "@fnet/shell-flow": ["@fnet/shell-flow@0.3.9", "", { "dependencies": { "@fnet/expression": "^0.1", "@fnet/filemap": "^0.1", "nanoid": "^5.1", "tree-kill": "^1.2" } }, "sha512-SElIsyd71Fd3PTZ4zvw2h0aQavyBkCVOz6w6Uy6dfRT+Y95U/JJN2G3hi0AzscyJRTocfcua9qNounwo0LWHNg=="],
 
     "@fnet/shelljs": ["@fnet/shelljs@0.2.4", "", {}, "sha512-mAthkkKbvdDsLIOIbp5hl9l3ODAkSgwdS1OQnmRpGIFhWPSNKhqSXaHKm+aYSjyxgkpMBto2EyNWbAH2DLdtUA=="],
 
@@ -876,7 +876,7 @@
 
     "picomatch": ["picomatch@4.0.2", "", {}, "sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg=="],
 
-    "prettier": ["prettier@3.8.2", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-8c3mgTe0ASwWAJK+78dpviD+A8EqhndQPUBpNUIPt6+xWlIigCwfN01lWr9MAede4uqXGTEKeQWTvzb3vjia0Q=="],
+    "prettier": ["prettier@3.8.3", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw=="],
 
     "process": ["process@0.11.10", "", {}, "sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A=="],
 
