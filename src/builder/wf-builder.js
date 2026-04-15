@@ -1224,11 +1224,11 @@ class Builder {
     const projectDir = this.#context.projectDir;
 
     if (which('bun')) {
-      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
+      const result = await fnetShellJs(`bunx prettier --write .`, { cwd: path.resolve(projectDir, "src") });
       if (result.code !== 0) throw new Error(result.stderr);
     }
     else {
-      const result = await fnetShellJs(`prettier --write .`, { cwd: path.resolve(projectDir, "src") });
+      const result = await fnetShellJs(`npx prettier --write .`, { cwd: path.resolve(projectDir, "src") });
       if (result.code !== 0) throw new Error(result.stderr);
     }
   }
