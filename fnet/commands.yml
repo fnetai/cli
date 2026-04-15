@@ -21,3 +21,100 @@ deploy:
   steps:
     - fnet build
     - bun publish --access public
+
+# --- Test commands ---
+
+test-create:
+  description: Test fnode/fnet project creation (node, python, bun)
+  usage: frun test-create
+  steps:
+    - rm -rf .tests
+    - mkdir -p .tests
+    # fnode projects
+    - wdir: .tests
+      steps:
+        - fnodex create --name test-node --runtime node --no-vscode
+        - fnodex create --name test-python --runtime python --no-vscode
+        - fnodex create --name test-bun --runtime bun --no-vscode
+        - fnetx create --name test-flow --no-vscode
+    - echo: "All projects created successfully"
+
+test-build:
+  description: Test fnode/fnet project build and run
+  usage: frun test-build
+  steps:
+    - wdir: .tests/test-node
+      steps:
+        - fnodex build
+        - fnodex cli
+    - wdir: .tests/test-python
+      steps:
+        - fnodex build
+        - fnodex cli
+    - wdir: .tests/test-bun
+      steps:
+        - fnodex build
+        - fnodex cli
+    - wdir: .tests/test-flow
+      steps:
+        - fnetx build
+        - fnetx cli
+    - echo: "All projects built and ran successfully"
+
+test-compile-setup:
+  description: Compile fnode/fnet to native binaries (fnodex/fnetx) and install templates
+  usage: frun test-compile-setup
+  steps:
+    - bun run build
+    - echo: "Compiling fnodex and fnetx native binaries..."
+    - bun build ./dist/fnode/index.js --compile --outfile=$HOME/.fnet/bin/fnodex
+    - bun build ./dist/fnet/index.js --compile --outfile=$HOME/.fnet/bin/fnetx
+    - echo: "Copying templates to ~/.fnet/template/..."
+    - rm -rf $HOME/.fnet/template
+    - mkdir -p $HOME/.fnet/template
+    - cp -r ./template/fnode $HOME/.fnet/template/fnode
+    - cp -r ./template/fnet $HOME/.fnet/template/fnet
+    - cp -r ./template/schemas $HOME/.fnet/template/schemas
+    - echo: "Setup complete. fnodex/fnetx and templates installed."
+
+test-compiled:
+  description: Test compiled fnodex/fnetx binaries
+  usage: frun test-compiled
+  steps:
+    - rm -rf .tests
+    - mkdir -p .tests
+    - echo: "Testing compiled fnodex..."
+    - fnodex --version
+    - fnetx --version
+    - wdir: .tests
+      steps:
+        - fnodex create --name compiled-node --runtime node --no-vscode
+        - fnetx create --name compiled-flow --no-vscode
+    - wdir: .tests/compiled-node
+      steps:
+        - fnodex build
+        - fnodex cli
+    - wdir: .tests/compiled-flow
+      steps:
+        - fnetx build
+        - fnetx cli
+    - echo: "Compiled binaries working correctly!"
+
+test-clean:
+  description: Clean up test artifacts
+  usage: frun test-clean
+  steps:
+    - rm -rf .tests
+    - echo: "Test artifacts cleaned"
+
+test:
+  description: Run full test suite (create, build, compile, test compiled, clean)
+  usage: frun test
+  steps:
+    - frun test-create
+    - frun test-build
+    - frun test-clean
+    - frun test-compile-setup
+    - frun test-compiled
+    - frun test-clean
+    - echo: "All tests passed!"
