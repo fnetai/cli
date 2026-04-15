@@ -1,0 +1,23 @@
+build:
+  description: Build all CLIs, link, and compile native binaries to ~/.fnet/bin/
+  usage: frun build
+  steps:
+    - bun run build
+    - bun ./dist/fnode/index.js --version
+    - bun ./dist/fnet/index.js --version
+    - bun ./dist/frun/index.js --version
+    - bun ./dist/fbin/index.js --version
+    - bun ./dist/fservice/index.js --version
+    - bun link
+    - echo: "Compiling native binaries..."
+    - bun build ./dist/frun/index.js --compile --outfile=$HOME/.fnet/bin/frun
+    - bun build ./dist/fbin/index.js --compile --outfile=$HOME/.fnet/bin/fbin
+    - bun build ./dist/fservice/index.js --compile --outfile=$HOME/.fnet/bin/fservice
+    - echo: "Native binaries installed to ~/.fnet/bin/"
+
+deploy:
+  description: Build and publish package to npm
+  usage: frun deploy
+  steps:
+    - fnet build
+    - bun publish --access public
