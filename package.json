@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "files": [
     "dist",
     "template",
@@ -28,6 +28,8 @@
     "@flownet/lib-is-redis-online": "^0.1.15",
     "@flownet/lib-parse-imports-js": "0.4.6",
     "@flownet/lib-parse-node-url": "^0.1.18",
+    "@flownet/lib-create-ios-icons": "^0.2.3",
+    "@flownet/lib-create-ios-launch-screens": "^0.2.3",
     "@flownet/lib-render-templates-dir": "^0.1.19",
     "@fnet/auto-conda-env": "^0.2.4",
     "@fnet/config": "^0.2.32",
@@ -42,6 +44,7 @@
     "@fnet/service": "^0.1.9",
     "@fnet/shell-flow": "0.4.1",
     "@fnet/shelljs": "^0.2.4",
+    "@fnet/xcode-cert-inspector": "^0.1.10",
     "@fnet/up-list-files": "^0.1.14",
     "@fnet/yaml": "^0.1.49",
     "@node-red/util": "^4.1.8",
