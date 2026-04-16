@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "1.16.0",
+  "version": "1.16.1",
   "files": [
     "bin",
     "dist",
@@ -60,7 +60,7 @@
     "isobject": "^4.0.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
-    "nanoid": "^5.1",
+    "nanoid": "^5.1.9",
     "nunjucks": "^3.2.4",
     "object-hash": "^3.0.0",
     "prettier": "^3.8.3",
