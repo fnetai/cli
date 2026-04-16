@@ -9,6 +9,8 @@ build:
     - bun ./dist/fbin/index.js --version
     - bun ./dist/fservice/index.js --version
     - bun link
+    - echo: "Restoring bin/ shims (in case bun update overwrote them with compiled binaries)..."
+    - git checkout bin/
     - echo: "Build complete. Use 'bun link @fnet/cli' in projects to test."
 
 deploy:
