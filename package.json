@@ -73,11 +73,11 @@
     "yargs": "^18.0.0"
   },
   "bin": {
-    "fnet": "dist/fnet/index.js",
-    "fnode": "dist/fnode/index.js",
-    "frun": "dist/frun/index.js",
-    "fbin": "dist/fbin/index.js",
-    "fservice": "dist/fservice/index.js"
+    "fnet": "scripts/bin/fnet",
+    "fnode": "scripts/bin/fnode",
+    "frun": "scripts/bin/frun",
+    "fbin": "scripts/bin/fbin",
+    "fservice": "scripts/bin/fservice"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.9",

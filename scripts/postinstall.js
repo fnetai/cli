@@ -4,24 +4,22 @@
  * Postinstall script for @fnet/cli
  *
  * Downloads pre-compiled native binaries from GitHub Releases
- * and installs them to ~/.fnet/bin/
+ * and installs them to the package's own bin/ directory.
  *
  * Fail-safe: if download fails (offline, CI, etc.), silently continues.
  * The JS-based CLI commands will still work as fallback.
  */
 
-import { createWriteStream, mkdirSync, chmodSync, existsSync, unlinkSync, cpSync } from 'fs';
+import { createWriteStream, mkdirSync, chmodSync, existsSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
-import { homedir, platform, arch } from 'os';
+import { platform, arch } from 'os';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = 'fnetai/cli';
 const BINARIES = ['frun', 'fbin', 'fservice', 'fnode', 'fnet'];
-const INSTALL_DIR = join(homedir(), '.fnet', 'bin');
-const TEMPLATE_SRC = join(__dirname, '..', 'template');
-const TEMPLATE_DEST = join(homedir(), '.fnet', 'template');
+const INSTALL_DIR = join(__dirname, '..', 'bin');
 
 function getPlatform() {
   const p = platform();
@@ -60,7 +58,7 @@ async function download(url, dest) {
   }
 }
 
-async function extractTarGz(archive, destDir, binaryName) {
+async function extractTarGz(archive, destDir) {
   execSync(`tar -xzf "${archive}" -C "${destDir}"`, { stdio: 'ignore' });
 }
 
@@ -73,7 +71,6 @@ async function main() {
   const architecture = getArch();
 
   if (!os || !architecture) {
-    // Unsupported platform, skip silently
     return;
   }
 
@@ -85,13 +82,13 @@ async function main() {
     const pkg = require('../package.json');
     version = pkg.version;
   } catch {
-    return; // Can't determine version, skip
+    return;
   }
 
   const tag = `v${version}`;
   const ext = os === 'windows' ? 'zip' : 'tar.gz';
 
-  // Create install directory
+  // Create install directory inside the package
   mkdirSync(INSTALL_DIR, { recursive: true });
 
   const baseUrl = `https://github.com/${REPO}/releases/download/${tag}`;
@@ -109,7 +106,7 @@ async function main() {
       await download(url, tmpFile);
 
       if (ext === 'tar.gz') {
-        await extractTarGz(tmpFile, INSTALL_DIR, bin);
+        await extractTarGz(tmpFile, INSTALL_DIR);
       } else {
         await extractZip(tmpFile, INSTALL_DIR);
       }
@@ -129,28 +126,8 @@ async function main() {
     }
   }
 
-  // Copy templates to ~/.fnet/template/
-  try {
-    if (existsSync(TEMPLATE_SRC)) {
-      cpSync(TEMPLATE_SRC, TEMPLATE_DEST, { recursive: true, force: true });
-      console.log(`    ✓ templates`);
-      installed++;
-    }
-  } catch {
-    // Fail silently
-  }
-
   if (installed > 0) {
-    console.log(`\n  ${installed} items installed to ~/.fnet/`);
-
-    // Check PATH
-    const pathDirs = (process.env.PATH || '').split(':');
-    if (!pathDirs.includes(INSTALL_DIR)) {
-      console.log(`\n  Add to your shell profile for native binary support:`);
-      console.log(`    export PATH="${INSTALL_DIR}:$PATH"\n`);
-    } else {
-      console.log('');
-    }
+    console.log(`\n  ${installed} binaries installed.\n`);
   }
 }
 

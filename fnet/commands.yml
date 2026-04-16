@@ -1,5 +1,5 @@
 build:
-  description: Build all CLIs, link, and compile native binaries to ~/.fnet/bin/
+  description: Build all CLIs and link for local development
   usage: frun build
   steps:
     - bun run build
@@ -9,19 +9,7 @@ build:
     - bun ./dist/fbin/index.js --version
     - bun ./dist/fservice/index.js --version
     - bun link
-    - echo: "Compiling native binaries..."
-    - bun build ./dist/frun/index.js --compile --outfile=$HOME/.fnet/bin/frun
-    - bun build ./dist/fbin/index.js --compile --outfile=$HOME/.fnet/bin/fbin
-    - bun build ./dist/fservice/index.js --compile --outfile=$HOME/.fnet/bin/fservice
-    - bun build ./dist/fnode/index.js --compile --outfile=$HOME/.fnet/bin/fnode
-    - bun build ./dist/fnet/index.js --compile --outfile=$HOME/.fnet/bin/fnet
-    - echo: "Copying templates to ~/.fnet/template/..."
-    - rm -rf $HOME/.fnet/template
-    - mkdir -p $HOME/.fnet/template
-    - cp -r ./template/fnode $HOME/.fnet/template/fnode
-    - cp -r ./template/fnet $HOME/.fnet/template/fnet
-    - cp -r ./template/schemas $HOME/.fnet/template/schemas
-    - echo: "Native binaries and templates installed to ~/.fnet/"
+    - echo: "Build complete. Use 'bun link @fnet/cli' in projects to test."
 
 deploy:
   description: Build and publish package to npm
