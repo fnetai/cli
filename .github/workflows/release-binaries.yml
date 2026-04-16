@@ -114,7 +114,7 @@ jobs:
       - name: Package templates (once per platform)
         if: steps.platform.outputs.os != 'windows' && steps.platform.outputs.arch == 'arm64'
         run: |
-          tar -czf release/fnet-templates.tar.gz template/
+          cd template && tar -czf ../release/fnet-templates.tar.gz . && cd ..
         # Templates are platform-independent, only package once (arm64 job)
 
       - name: Upload artifacts
@@ -309,7 +309,7 @@ jobs:
               resource("fnet-cli").stage { bin.install "fnet" }
 
               resource("templates").stage do
-                (share/"fnet").install "template"
+                (share/"fnet/template").install Dir["*"]
               end
             end
 
@@ -324,7 +324,7 @@ jobs:
               end
 
               rm_rf template_dir
-              cp_r "#{share}/fnet/template", template_dir
+              cp_r "#{share}/fnet/template/.", template_dir
             end
 
             test do
