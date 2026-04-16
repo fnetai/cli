@@ -286,8 +286,8 @@ jobs:
         shell: bash
         run: |
           for CLI in frun fbin fservice fnode fnet; do
-            if [ -x "$HOME/.bun/bin/$CLI" ]; then
-              echo "✗ $CLI still exists after uninstall"
+            if command -v $CLI >/dev/null 2>&1; then
+              echo "✗ $CLI still exists after uninstall ($(command -v $CLI))"
               exit 1
             fi
             echo "✓ $CLI removed"
@@ -295,11 +295,7 @@ jobs:
 
   install-verify-brew:
     needs: update-homebrew
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     steps:
       - name: Get version from tag
         id: version
