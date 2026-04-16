@@ -78,7 +78,15 @@ Installs all 5 CLI tools (`frun`, `fbin`, `fservice`, `fnode`, `fnet`) as native
 npm install -g @fnet/cli
 ```
 
-On first install, pre-compiled native binaries (`frun`, `fbin`, `fservice`) are downloaded for your platform. If the download fails, the JavaScript versions work as a fallback.
+### bun
+
+```bash
+bun install -g @fnet/cli
+```
+
+For both npm and bun installs, pre-compiled native binaries for all 5 CLI tools are downloaded for your platform on first install. If the download fails, the JavaScript versions work as a fallback.
+
+Each installation method is **fully isolated** — binaries and templates live in the package manager's own space (Homebrew cellar, npm/bun global). User data (`fbin`-installed binaries, services, express projects) stays in `~/.fnet/` across all installations.
 
 ## Core Concepts
 
