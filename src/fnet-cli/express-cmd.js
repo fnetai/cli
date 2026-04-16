@@ -447,7 +447,7 @@ async function handleExpressList(argv) {
 
     // Display the table
     console.log(table.toString());
-    console.log(chalk.blue(`\nTotal: ${projects.length} projects`));
+    console.log(chalk.blue(`\nTotal: ${projects.length} fnet ${projects.length === 1 ? 'project' : 'projects'}`));
   } catch (error) {
     console.error(chalk.red(`Error listing express projects: ${error.message}`));
     process.exit(1);
@@ -634,38 +634,41 @@ async function handleExpressMove(argv) {
 }
 
 /**
- * Find the latest express project
+ * Check if a project matches this CLI's type (fnet)
+ */
+function isOwnType(projectPath, projectName) {
+  if (projectName.startsWith('fnet-') || fs.existsSync(path.join(projectPath, 'fnet.yaml'))) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Find the latest express project (of own type)
  */
 async function findLatestProject() {
   // Get all date directories
   const dateDirs = fs.readdirSync(EXPRESS_BASE_DIR)
-    .filter(name => /^\d{8}$/.test(name)) // Only include YYYYMMDD format directories
-    .sort((a, b) => b.localeCompare(a)); // Sort in descending order (newest first)
+    .filter(name => /^\d{8}$/.test(name))
+    .sort((a, b) => b.localeCompare(a));
 
-  if (dateDirs.length === 0) {
-    return null;
-  }
-
-  // Get projects from the newest date directory
-  const newestDateDir = dateDirs[0];
-  const datePath = path.join(EXPRESS_BASE_DIR, newestDateDir);
-  const projectNames = fs.readdirSync(datePath);
-
-  if (projectNames.length === 0) {
-    return null;
-  }
-
-  // Find the newest project by creation time
+  // Find the newest project of own type across all date dirs
   let newestProject = null;
   let newestTime = 0;
 
-  for (const projectName of projectNames) {
-    const projectPath = path.join(datePath, projectName);
-    const stats = fs.statSync(projectPath);
+  for (const dateDir of dateDirs) {
+    const datePath = path.join(EXPRESS_BASE_DIR, dateDir);
+    const projectNames = fs.readdirSync(datePath);
 
-    if (stats.birthtimeMs > newestTime) {
-      newestTime = stats.birthtimeMs;
-      newestProject = projectPath;
+    for (const projectName of projectNames) {
+      const projectPath = path.join(datePath, projectName);
+      if (!isOwnType(projectPath, projectName)) continue;
+
+      const stats = fs.statSync(projectPath);
+      if (stats.birthtimeMs > newestTime) {
+        newestTime = stats.birthtimeMs;
+        newestProject = projectPath;
+      }
     }
   }
 
@@ -683,7 +686,8 @@ async function findProjectByName(projectName) {
 
   for (const dateDir of dateDirs) {
     const datePath = path.join(EXPRESS_BASE_DIR, dateDir);
-    const projectNames = fs.readdirSync(datePath);
+    const projectNames = fs.readdirSync(datePath)
+      .filter(name => isOwnType(path.join(datePath, name), name));
 
     // Check for exact match first
     if (projectNames.includes(projectName)) {
@@ -742,6 +746,8 @@ async function selectProjectInteractively() {
 
     for (const projectName of projectNames) {
       const projectPath = path.join(datePath, projectName);
+      if (!isOwnType(projectPath, projectName)) continue;
+
       const stats = fs.statSync(projectPath);
 
       // Use YYYYMMDD/folder-name format for value
