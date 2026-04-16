@@ -64,7 +64,7 @@ jobs:
           ARCH="${{ steps.platform.outputs.arch }}"
           RUNNER_OS="${{ runner.os }}"
 
-          for CLI in frun fbin fservice; do
+          for CLI in frun fbin fservice fnode fnet; do
             echo "Compiling $CLI for $TARGET..."
             if [ "$RUNNER_OS" = "macOS" ]; then
               # Build natively on macOS to get proper code signing
@@ -82,7 +82,7 @@ jobs:
       - name: Verify macOS binary signatures
         if: runner.os == 'macOS'
         run: |
-          for CLI in frun fbin fservice; do
+          for CLI in frun fbin fservice fnode fnet; do
             echo "Verifying release/$CLI..."
             codesign -dvv release/$CLI 2>&1
           done
@@ -93,7 +93,7 @@ jobs:
           OS="${{ steps.platform.outputs.os }}"
           ARCH="${{ steps.platform.outputs.arch }}"
           cd release
-          for CLI in frun fbin fservice; do
+          for CLI in frun fbin fservice fnode fnet; do
             chmod +x $CLI
             tar -czf "${CLI}-${OS}-${ARCH}.tar.gz" $CLI
             rm $CLI
@@ -105,11 +105,17 @@ jobs:
           OS="${{ steps.platform.outputs.os }}"
           ARCH="${{ steps.platform.outputs.arch }}"
           cd release
-          for CLI in frun.exe fbin.exe fservice.exe; do
+          for CLI in frun.exe fbin.exe fservice.exe fnode.exe fnet.exe; do
             NAME="${CLI%.exe}"
             zip "${NAME}-${OS}-${ARCH}.zip" $CLI
             rm $CLI
           done
+
+      - name: Package templates (once per platform)
+        if: steps.platform.outputs.os != 'windows' && steps.platform.outputs.arch == 'arm64'
+        run: |
+          tar -czf release/fnet-templates.tar.gz template/
+        # Templates are platform-independent, only package once (arm64 job)
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v5
@@ -161,18 +167,14 @@ jobs:
         id: sha
         run: |
           get_sha() { grep "$1" checksums.txt | awk '{print $1}'; }
-          echo "frun_darwin_arm64=$(get_sha frun-darwin-arm64)" >> $GITHUB_OUTPUT
-          echo "frun_darwin_x64=$(get_sha frun-darwin-x64)" >> $GITHUB_OUTPUT
-          echo "frun_linux_arm64=$(get_sha frun-linux-arm64)" >> $GITHUB_OUTPUT
-          echo "frun_linux_x64=$(get_sha frun-linux-x64)" >> $GITHUB_OUTPUT
-          echo "fbin_darwin_arm64=$(get_sha fbin-darwin-arm64)" >> $GITHUB_OUTPUT
-          echo "fbin_darwin_x64=$(get_sha fbin-darwin-x64)" >> $GITHUB_OUTPUT
-          echo "fbin_linux_arm64=$(get_sha fbin-linux-arm64)" >> $GITHUB_OUTPUT
-          echo "fbin_linux_x64=$(get_sha fbin-linux-x64)" >> $GITHUB_OUTPUT
-          echo "fservice_darwin_arm64=$(get_sha fservice-darwin-arm64)" >> $GITHUB_OUTPUT
-          echo "fservice_darwin_x64=$(get_sha fservice-darwin-x64)" >> $GITHUB_OUTPUT
-          echo "fservice_linux_arm64=$(get_sha fservice-linux-arm64)" >> $GITHUB_OUTPUT
-          echo "fservice_linux_x64=$(get_sha fservice-linux-x64)" >> $GITHUB_OUTPUT
+          for CLI in frun fbin fservice fnode fnet; do
+            for PLATFORM in darwin_arm64 darwin_x64 linux_arm64 linux_x64; do
+              KEY="${CLI}_${PLATFORM}"
+              FILE="${CLI}-$(echo $PLATFORM | tr '_' '-')"
+              echo "${KEY}=$(get_sha $FILE)" >> $GITHUB_OUTPUT
+            done
+          done
+          echo "templates=$(get_sha fnet-templates)" >> $GITHUB_OUTPUT
 
       - name: Checkout homebrew-tap
         uses: actions/checkout@v5
@@ -180,72 +182,119 @@ jobs:
           repository: fnetai/homebrew-tap
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
-      - name: Update formula
+      - name: Generate formula
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          cat > Formula/fnet.rb << 'EOF'
+          DL="https://github.com/fnetai/cli/releases/download/v${VERSION}"
+
+          cat > Formula/fnet.rb << EOF
           class Fnet < Formula
-            desc "Flownet CLI tools - shell workflow orchestration, binary management, and service control"
+            desc "Flownet CLI - development framework that separates Core from Layers"
             homepage "https://github.com/fnetai/cli"
-            version "VERSION_PLACEHOLDER"
+            version "${VERSION}"
             license "MIT"
+
+            resource "templates" do
+              url "${DL}/fnet-templates.tar.gz"
+              sha256 "${{ steps.sha.outputs.templates }}"
+            end
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/frun-darwin-arm64.tar.gz"
-                sha256 "SHA_FRUN_DARWIN_ARM64"
+                url "${DL}/frun-darwin-arm64.tar.gz"
+                sha256 "${{ steps.sha.outputs.frun_darwin_arm64 }}"
 
                 resource "fbin" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fbin-darwin-arm64.tar.gz"
-                  sha256 "SHA_FBIN_DARWIN_ARM64"
+                  url "${DL}/fbin-darwin-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fbin_darwin_arm64 }}"
                 end
 
                 resource "fservice" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fservice-darwin-arm64.tar.gz"
-                  sha256 "SHA_FSERVICE_DARWIN_ARM64"
+                  url "${DL}/fservice-darwin-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fservice_darwin_arm64 }}"
+                end
+
+                resource "fnode" do
+                  url "${DL}/fnode-darwin-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnode_darwin_arm64 }}"
+                end
+
+                resource "fnet-cli" do
+                  url "${DL}/fnet-darwin-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnet_darwin_arm64 }}"
                 end
               else
-                url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/frun-darwin-x64.tar.gz"
-                sha256 "SHA_FRUN_DARWIN_X64"
+                url "${DL}/frun-darwin-x64.tar.gz"
+                sha256 "${{ steps.sha.outputs.frun_darwin_x64 }}"
 
                 resource "fbin" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fbin-darwin-x64.tar.gz"
-                  sha256 "SHA_FBIN_DARWIN_X64"
+                  url "${DL}/fbin-darwin-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fbin_darwin_x64 }}"
                 end
 
                 resource "fservice" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fservice-darwin-x64.tar.gz"
-                  sha256 "SHA_FSERVICE_DARWIN_X64"
+                  url "${DL}/fservice-darwin-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fservice_darwin_x64 }}"
+                end
+
+                resource "fnode" do
+                  url "${DL}/fnode-darwin-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnode_darwin_x64 }}"
+                end
+
+                resource "fnet-cli" do
+                  url "${DL}/fnet-darwin-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnet_darwin_x64 }}"
                 end
               end
             end
 
             on_linux do
               if Hardware::CPU.arm?
-                url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/frun-linux-arm64.tar.gz"
-                sha256 "SHA_FRUN_LINUX_ARM64"
+                url "${DL}/frun-linux-arm64.tar.gz"
+                sha256 "${{ steps.sha.outputs.frun_linux_arm64 }}"
 
                 resource "fbin" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fbin-linux-arm64.tar.gz"
-                  sha256 "SHA_FBIN_LINUX_ARM64"
+                  url "${DL}/fbin-linux-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fbin_linux_arm64 }}"
                 end
 
                 resource "fservice" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fservice-linux-arm64.tar.gz"
-                  sha256 "SHA_FSERVICE_LINUX_ARM64"
+                  url "${DL}/fservice-linux-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fservice_linux_arm64 }}"
+                end
+
+                resource "fnode" do
+                  url "${DL}/fnode-linux-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnode_linux_arm64 }}"
+                end
+
+                resource "fnet-cli" do
+                  url "${DL}/fnet-linux-arm64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnet_linux_arm64 }}"
                 end
               else
-                url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/frun-linux-x64.tar.gz"
-                sha256 "SHA_FRUN_LINUX_X64"
+                url "${DL}/frun-linux-x64.tar.gz"
+                sha256 "${{ steps.sha.outputs.frun_linux_x64 }}"
 
                 resource "fbin" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fbin-linux-x64.tar.gz"
-                  sha256 "SHA_FBIN_LINUX_X64"
+                  url "${DL}/fbin-linux-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fbin_linux_x64 }}"
                 end
 
                 resource "fservice" do
-                  url "https://github.com/fnetai/cli/releases/download/vVERSION_PLACEHOLDER/fservice-linux-x64.tar.gz"
-                  sha256 "SHA_FSERVICE_LINUX_X64"
+                  url "${DL}/fservice-linux-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fservice_linux_x64 }}"
+                end
+
+                resource "fnode" do
+                  url "${DL}/fnode-linux-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnode_linux_x64 }}"
+                end
+
+                resource "fnet-cli" do
+                  url "${DL}/fnet-linux-x64.tar.gz"
+                  sha256 "${{ steps.sha.outputs.fnet_linux_x64 }}"
                 end
               end
             end
@@ -253,40 +302,41 @@ jobs:
             def install
               bin.install "frun"
 
-              resource("fbin").stage do
-                bin.install "fbin"
+              %w[fbin fservice fnode].each do |cli|
+                resource(cli).stage { bin.install cli }
               end
 
-              resource("fservice").stage do
-                bin.install "fservice"
+              resource("fnet-cli").stage { bin.install "fnet" }
+
+              resource("templates").stage do
+                (share/"fnet").install "template"
               end
             end
 
+            def post_install
+              fnet_dir = "#{Dir.home}/.fnet"
+              bin_dir = "#{fnet_dir}/bin"
+              template_dir = "#{fnet_dir}/template"
+
+              mkdir_p bin_dir
+              %w[frun fbin fservice fnode fnet].each do |cli|
+                ln_sf "#{bin}/#{cli}", "#{bin_dir}/#{cli}"
+              end
+
+              rm_rf template_dir
+              cp_r "#{share}/fnet/template", template_dir
+            end
+
             test do
-              assert_match version.to_s, shell_output("#{bin}/frun --version")
-              assert_match version.to_s, shell_output("#{bin}/fbin --version")
-              assert_match version.to_s, shell_output("#{bin}/fservice --version")
+              %w[frun fbin fservice fnode fnet].each do |cli|
+                assert_match version.to_s, shell_output("#{bin}/#{cli} --version")
+              end
             end
           end
           EOF
 
           # Remove leading whitespace from heredoc
           sed -i 's/^          //' Formula/fnet.rb
-
-          # Replace placeholders
-          sed -i "s/VERSION_PLACEHOLDER/${VERSION}/g" Formula/fnet.rb
-          sed -i "s/SHA_FRUN_DARWIN_ARM64/${{ steps.sha.outputs.frun_darwin_arm64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FRUN_DARWIN_X64/${{ steps.sha.outputs.frun_darwin_x64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FRUN_LINUX_ARM64/${{ steps.sha.outputs.frun_linux_arm64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FRUN_LINUX_X64/${{ steps.sha.outputs.frun_linux_x64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FBIN_DARWIN_ARM64/${{ steps.sha.outputs.fbin_darwin_arm64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FBIN_DARWIN_X64/${{ steps.sha.outputs.fbin_darwin_x64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FBIN_LINUX_ARM64/${{ steps.sha.outputs.fbin_linux_arm64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FBIN_LINUX_X64/${{ steps.sha.outputs.fbin_linux_x64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FSERVICE_DARWIN_ARM64/${{ steps.sha.outputs.fservice_darwin_arm64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FSERVICE_DARWIN_X64/${{ steps.sha.outputs.fservice_darwin_x64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FSERVICE_LINUX_ARM64/${{ steps.sha.outputs.fservice_linux_arm64 }}/g" Formula/fnet.rb
-          sed -i "s/SHA_FSERVICE_LINUX_X64/${{ steps.sha.outputs.fservice_linux_x64 }}/g" Formula/fnet.rb
 
           echo "=== Generated Formula ==="
           cat Formula/fnet.rb

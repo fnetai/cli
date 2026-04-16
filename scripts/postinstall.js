@@ -10,14 +10,18 @@
  * The JS-based CLI commands will still work as fallback.
  */
 
-import { createWriteStream, mkdirSync, chmodSync, existsSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { createWriteStream, mkdirSync, chmodSync, existsSync, unlinkSync, cpSync } from 'fs';
+import { join, dirname } from 'path';
 import { homedir, platform, arch } from 'os';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = 'fnetai/cli';
-const BINARIES = ['frun', 'fbin', 'fservice'];
+const BINARIES = ['frun', 'fbin', 'fservice', 'fnode', 'fnet'];
 const INSTALL_DIR = join(homedir(), '.fnet', 'bin');
+const TEMPLATE_SRC = join(__dirname, '..', 'template');
+const TEMPLATE_DEST = join(homedir(), '.fnet', 'template');
 
 function getPlatform() {
   const p = platform();
@@ -125,8 +129,19 @@ async function main() {
     }
   }
 
+  // Copy templates to ~/.fnet/template/
+  try {
+    if (existsSync(TEMPLATE_SRC)) {
+      cpSync(TEMPLATE_SRC, TEMPLATE_DEST, { recursive: true, force: true });
+      console.log(`    ✓ templates`);
+      installed++;
+    }
+  } catch {
+    // Fail silently
+  }
+
   if (installed > 0) {
-    console.log(`\n  ${installed} binary installed to ${INSTALL_DIR}`);
+    console.log(`\n  ${installed} items installed to ~/.fnet/`);
 
     // Check PATH
     const pathDirs = (process.env.PATH || '').split(':');

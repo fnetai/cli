@@ -63,22 +63,22 @@ Five CLI tools that work together to cover the full development lifecycle: creat
 
 ## Installation
 
-```bash
-npm install -g @fnet/cli
-```
-
-On first install, pre-compiled native binaries (`frun`, `fbin`, `fservice`) are downloaded for your platform (macOS/Linux/Windows, arm64/x64). If the download fails, the JavaScript versions work as a fallback.
-
-### Homebrew (macOS/Linux)
-
-Native binaries for `frun`, `fbin`, and `fservice` are also available via Homebrew:
+### Homebrew (recommended, macOS/Linux)
 
 ```bash
 brew tap fnetai/tap
 brew install fnet
 ```
 
-> **Note:** Homebrew installs only the pre-compiled native binaries (`frun`, `fbin`, `fservice`). For the full CLI including `fnode` and `fnet`, use `npm install -g @fnet/cli`.
+Installs all 5 CLI tools (`frun`, `fbin`, `fservice`, `fnode`, `fnet`) as native binaries plus templates. No Node.js or npm required.
+
+### npm
+
+```bash
+npm install -g @fnet/cli
+```
+
+On first install, pre-compiled native binaries (`frun`, `fbin`, `fservice`) are downloaded for your platform. If the download fails, the JavaScript versions work as a fallback.
 
 ## Core Concepts
 
