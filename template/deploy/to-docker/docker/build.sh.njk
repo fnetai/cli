@@ -1,0 +1,48 @@
+#!/bin/bash
+set -e # Exit immediately if any command fails
+
+# Image name
+IMAGE_NAME="{{ params.image_name }}"
+
+# Generate image tag with current date and time
+{# IMAGE_TAG=$(date "+%Y%m%d.%H%M") #}
+IMAGE_TAG="{{ params.version }}"
+
+# Builder name
+BUILDER_NAME="multi-arch-builder"
+
+# Check if the builder already exists
+if ! docker buildx inspect $BUILDER_NAME > /dev/null 2>&1; then
+    # Create a new Docker Buildx builder instance if it does not exist
+    docker buildx create --name $BUILDER_NAME --use
+else
+    # Use the existing builder
+    docker buildx use $BUILDER_NAME
+fi
+
+# Start up the builder instance
+docker buildx inspect --bootstrap
+
+# Build arguments
+BUILD_ARGS=""
+
+# Add build arguments from config.env
+{% if config.env %}
+{% for key, value in config.env %}
+BUILD_ARGS="$BUILD_ARGS --build-arg {{ key }}='{{ value }}'"
+{% endfor %}
+{% endif %}
+
+# Add build arguments from config.args
+{% if config.args %}
+{% for key, value in config.args %}
+BUILD_ARGS="$BUILD_ARGS --build-arg {{ key }}='{{ value }}'"
+{% endfor %}
+{% endif %}
+
+# Build and push the image for multiple platforms
+{% if params.push == true %}
+docker buildx build --platform linux/arm64,linux/amd64 $BUILD_ARGS -t ${IMAGE_NAME}:latest -t ${IMAGE_NAME}:${IMAGE_TAG} --push .
+{% else %}
+docker buildx build --platform linux/arm64,linux/amd64 $BUILD_ARGS -t ${IMAGE_NAME}:latest -t ${IMAGE_NAME}:${IMAGE_TAG} --load .
+{% endif %}

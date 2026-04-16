@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetDeploy from '@fnet/to-rust';
+import fnetDeploy from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

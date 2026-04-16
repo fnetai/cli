@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetToIOSApp from '@flownet/lib-to-ios-app';
+import fnetToIOSApp from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

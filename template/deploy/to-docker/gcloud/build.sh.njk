@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e # Exit immediately if any command fails
+
+# Set Google Cloud project
+gcloud config set project "{{ config.gcloud.project_id }}"
+
+# Set Google Cloud compute zone (optional, if relevant)
+{% if config.gcloud.compute_zone %}
+gcloud config set compute/zone "{{ config.gcloud.compute_zone }}"
+{% else %}
+echo "No compute zone specified, using the default."
+{% endif %}
+
+# Image name in GCR format
+IMAGE_NAME="gcr.io/{{ config.gcloud.project_id }}/{{ params.image_name }}"
+
+# Generate image tag, typically using the version or a timestamp
+IMAGE_TAG="{{ params.version }}"
+
+# Build arguments
+BUILD_ARGS=""
+
+# Add build arguments from config.env
+{% if config.env %}
+{% for key, value in config.env %}
+BUILD_ARGS="$BUILD_ARGS --build-arg {{ key }}='{{ value }}'"
+{% endfor %}
+{% endif %}
+
+# Add build arguments from config.args
+{% if config.args %}
+{% for key, value in config.args %}
+BUILD_ARGS="$BUILD_ARGS --build-arg {{ key }}='{{ value }}'"
+{% endfor %}
+{% endif %}
+
+# Google Cloud Build command to build the Docker image
+# Build and push the image to GCR
+gcloud builds submit --tag ${IMAGE_NAME}:${IMAGE_TAG} --project {{ config.gcloud.project_id }} {{ BUILD_ARGS }}

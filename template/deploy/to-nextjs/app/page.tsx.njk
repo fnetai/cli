@@ -1,0 +1,28 @@
+"use client";
+
+import React, { useEffect, useRef } from 'react';
+
+import { createApp } from '../dist/{{params.entry}}';
+
+{% if params.include_css===true %}
+import from '../dist/{{params.entry}}/index.css'
+{% endif %}
+
+export default function Page() {
+
+  const containerRef = useRef();
+
+  useEffect(() => {
+      const run = createApp({
+        container: containerRef.current,
+      });
+      const dispose = run();
+      return () => {
+        console.log('dispose', dispose);
+      };
+  }, []);
+
+  return (
+    <div ref={containerRef} id='container' style={ { height: "100%", padding: 0, overflow: "hidden", boxSizing: "border-box" } }></div>
+  )
+}

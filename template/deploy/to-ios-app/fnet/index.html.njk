@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{params.title}}</title>
+    {% if params.include_css===true %}
+    <link rel="stylesheet" href='./dist/{{params.entry}}/index.css' />
+    {% endif %}
+    <script src="./dist/{{params.entry}}/index.js"></script>
+  </head>
+  <body style="height:100vh;margin:0;padding:0;background-color: #eeeeee;">
+    <div id="container" style="height:100%;"></div>
+    <script>
+      const { createApp } = window['{{params.bundle_name}}'];
+      const run = createApp({
+        container: document.getElementById("container"),
+      });
+      const dispose = run();
+    </script>
+  </body>
+</html>

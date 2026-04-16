@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetToMacOSApp from '@flownet/lib-to-macos-app';
+import fnetToMacOSApp from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

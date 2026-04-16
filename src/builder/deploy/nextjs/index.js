@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetToNextJs from '@flownet/lib-to-nextjs';
+import fnetToNextJs from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

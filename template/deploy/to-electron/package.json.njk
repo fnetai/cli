@@ -1,0 +1,36 @@
+{
+  "name": "{{params.package_name}}",
+  "version": "{{params.version}}",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "description": "{{params.description}}",
+  "author": "{{params.author}}",
+  "build": {
+    "appId": "{{params.id}}",
+    "directories": {
+      "output": "{{params.package_dir}}"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "entitlements": "./mac/entitlements.plist"
+    }
+    {% if params.protocol.enabled %}
+    ,"protocols": [
+      {
+        "name": "{{params.protocol.name}}",
+        "schemes": [
+          "{{params.protocol.scheme}}"
+        ]
+      }
+    ]
+    {% endif %}
+  },
+  "devDependencies": {
+    "electron": "^26.1",
+    "electron-builder": "^24.6"
+  }
+}

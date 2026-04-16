@@ -1,0 +1,20 @@
+{
+  "name": "{{params.name}}",
+  "version": "{{params.version}}",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    {% for dep in params.dependencies %}
+    "{{dep.package}}":"{{dep.version}}" {% if not loop.last%},{%endif%}
+    {% endfor %}
+  },
+  "devDependencies": {
+    "@types/node": "^20.7",
+    "@types/react": "^18.2",
+    "typescript": "^5.2"
+  }
+}

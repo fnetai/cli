@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e # Exit immediately if any command fails
+
+# Image name
+IMAGE_NAME="{{ params.image_name }}"
+
+# Generate image tag with current date and time
+IMAGE_TAG="{{ params.version }}"
+
+# Manifest name (based on the image name and tag)
+MANIFEST_NAME="${IMAGE_NAME}:${IMAGE_TAG}-multi-arch"
+
+# Build arguments
+BUILD_ARGS=""
+
+# Add build arguments from config.env
+{% if config.env %}
+{% for key, value in config.env %}
+BUILD_ARGS="$BUILD_ARGS --build-arg {{ key }}='{{ value }}'"
+{% endfor %}
+{% endif %}
+
+# Add build arguments from config.args
+{% if config.args %}
+{% for key, value in config.args %}
+BUILD_ARGS="$BUILD_ARGS --build-arg {{ key }}='{{ value }}'"
+{% endfor %}
+{% endif %}
+
+# Create or reset the Podman manifest
+if podman manifest inspect $MANIFEST_NAME > /dev/null 2>&1; then
+    echo "Manifest $MANIFEST_NAME already exists, resetting..."
+    podman manifest rm $MANIFEST_NAME
+fi
+podman manifest create $MANIFEST_NAME
+
+# Build and push the image for multiple platforms
+{% if params.push == true %}
+podman build --platform linux/arm64,linux/amd64 $BUILD_ARGS --manifest $MANIFEST_NAME -t ${IMAGE_NAME}:latest -t ${IMAGE_NAME}:${IMAGE_TAG} .
+podman manifest push $MANIFEST_NAME docker://${IMAGE_NAME}:${IMAGE_TAG}
+{% else %}
+podman build --platform linux/arm64,linux/amd64 $BUILD_ARGS --manifest $MANIFEST_NAME -t ${IMAGE_NAME}:latest -t ${IMAGE_NAME}:${IMAGE_TAG} .
+echo "Manifest created locally. To push, use: podman manifest push $MANIFEST_NAME docker://${IMAGE_NAME}:${IMAGE_TAG}"
+{% endif %}

@@ -1,0 +1,417 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4518F7822AB4BA77007E9F7C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4518F7812AB4BA77007E9F7C /* LaunchScreen.storyboard */; };
+		45BE3DE32AB48A1200D2EAE3 /* fnet_ios_appApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BE3DE22AB48A1200D2EAE3 /* fnet_ios_appApp.swift */; };
+		45BE3DE52AB48A1200D2EAE3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BE3DE42AB48A1200D2EAE3 /* ContentView.swift */; };
+		45BE3DE72AB48A1300D2EAE3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45BE3DE62AB48A1300D2EAE3 /* Assets.xcassets */; };
+		45BE3DEA2AB48A1300D2EAE3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45BE3DE92AB48A1300D2EAE3 /* Preview Assets.xcassets */; };
+		45BE3DF12AB48A3C00D2EAE3 /* fnet in Resources */ = {isa = PBXBuildFile; fileRef = 45BE3DF02AB48A3C00D2EAE3 /* fnet */; };
+		45BE3DF32AB48A7400D2EAE3 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BE3DF22AB48A7400D2EAE3 /* WebView.swift */; };
+		45BE3DF62AB48A9700D2EAE3 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45BE3DF52AB48A9700D2EAE3 /* WebKit.framework */; };
+		45BE3DF82AB48A9F00D2EAE3 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45BE3DF72AB48A9F00D2EAE3 /* Speech.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4518F7812AB4BA77007E9F7C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4518F7832AB4BBA1007E9F7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		45BE3DDF2AB48A1200D2EAE3 /* fnet-ios-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fnet-ios-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		45BE3DE22AB48A1200D2EAE3 /* fnet_ios_appApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fnet_ios_appApp.swift; sourceTree = "<group>"; };
+		45BE3DE42AB48A1200D2EAE3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		45BE3DE62AB48A1300D2EAE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		45BE3DE92AB48A1300D2EAE3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		45BE3DF02AB48A3C00D2EAE3 /* fnet */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fnet; sourceTree = SOURCE_ROOT; };
+		45BE3DF22AB48A7400D2EAE3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		45BE3DF52AB48A9700D2EAE3 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		45BE3DF72AB48A9F00D2EAE3 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		45BE3DDC2AB48A1200D2EAE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45BE3DF82AB48A9F00D2EAE3 /* Speech.framework in Frameworks */,
+				45BE3DF62AB48A9700D2EAE3 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		45BE3DD62AB48A1200D2EAE3 = {
+			isa = PBXGroup;
+			children = (
+				45BE3DE12AB48A1200D2EAE3 /* fnet-ios-app */,
+				45BE3DE02AB48A1200D2EAE3 /* Products */,
+				45BE3DF42AB48A9700D2EAE3 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		45BE3DE02AB48A1200D2EAE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				45BE3DDF2AB48A1200D2EAE3 /* fnet-ios-app.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		45BE3DE12AB48A1200D2EAE3 /* fnet-ios-app */ = {
+			isa = PBXGroup;
+			children = (
+				4518F7832AB4BBA1007E9F7C /* Info.plist */,
+				45BE3DF02AB48A3C00D2EAE3 /* fnet */,
+				45BE3DE22AB48A1200D2EAE3 /* fnet_ios_appApp.swift */,
+				45BE3DE42AB48A1200D2EAE3 /* ContentView.swift */,
+				45BE3DE62AB48A1300D2EAE3 /* Assets.xcassets */,
+				45BE3DE82AB48A1300D2EAE3 /* Preview Content */,
+				45BE3DF22AB48A7400D2EAE3 /* WebView.swift */,
+				4518F7812AB4BA77007E9F7C /* LaunchScreen.storyboard */,
+			);
+			path = "fnet-ios-app";
+			sourceTree = "<group>";
+		};
+		45BE3DE82AB48A1300D2EAE3 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				45BE3DE92AB48A1300D2EAE3 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		45BE3DF42AB48A9700D2EAE3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				45BE3DF72AB48A9F00D2EAE3 /* Speech.framework */,
+				45BE3DF52AB48A9700D2EAE3 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		45BE3DDE2AB48A1200D2EAE3 /* fnet-ios-app */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 45BE3DED2AB48A1300D2EAE3 /* Build configuration list for PBXNativeTarget "fnet-ios-app" */;
+			buildPhases = (
+				45BE3DDB2AB48A1200D2EAE3 /* Sources */,
+				45BE3DDC2AB48A1200D2EAE3 /* Frameworks */,
+				45BE3DDD2AB48A1200D2EAE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "fnet-ios-app";
+			productName = "fnet-ios-app";
+			productReference = 45BE3DDF2AB48A1200D2EAE3 /* fnet-ios-app.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		45BE3DD72AB48A1200D2EAE3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					45BE3DDE2AB48A1200D2EAE3 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 45BE3DDA2AB48A1200D2EAE3 /* Build configuration list for PBXProject "fnet-ios-app" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 45BE3DD62AB48A1200D2EAE3;
+			productRefGroup = 45BE3DE02AB48A1200D2EAE3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				45BE3DDE2AB48A1200D2EAE3 /* fnet-ios-app */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		45BE3DDD2AB48A1200D2EAE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45BE3DEA2AB48A1300D2EAE3 /* Preview Assets.xcassets in Resources */,
+				45BE3DF12AB48A3C00D2EAE3 /* fnet in Resources */,
+				4518F7822AB4BA77007E9F7C /* LaunchScreen.storyboard in Resources */,
+				45BE3DE72AB48A1300D2EAE3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		45BE3DDB2AB48A1200D2EAE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45BE3DF32AB48A7400D2EAE3 /* WebView.swift in Sources */,
+				45BE3DE52AB48A1200D2EAE3 /* ContentView.swift in Sources */,
+				45BE3DE32AB48A1200D2EAE3 /* fnet_ios_appApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		45BE3DEB2AB48A1300D2EAE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		45BE3DEC2AB48A1300D2EAE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		45BE3DEE2AB48A1300D2EAE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+        {% if params.code_sign_style ==='Automatic' %}
+        CODE_SIGN_IDENTITY = "{{params.code_sign_identity}}";
+        {% else %}
+        CODE_SIGN_IDENTITY = "{{params.code_sign_identity}}";
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+        {% endif%}
+
+				CODE_SIGN_STYLE = {{params.code_sign_style}};
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "\"fnet-ios-app/Preview Content\"";
+				DEVELOPMENT_TEAM = {{params.development_team}};
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "fnet-ios-app/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to recognize and process voice commands within the app.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We need access to speech recognition to process voice commands.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = {{params.version}};
+				PRODUCT_BUNDLE_IDENTIFIER = "{{params.product_bundle_identifier}}";
+				{# PRODUCT_NAME = "$(TARGET_NAME)"; #}
+				PRODUCT_NAME = "{{params.product_name}}";
+        {% if params.code_sign_style ==='Automatic' %}
+        PROVISIONING_PROFILE_SPECIFIER = "";
+        {% else %}
+				PROVISIONING_PROFILE_SPECIFIER = "";
+        "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "{{params.provisioning_profile_specifier}}";
+        {% endif%}
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		45BE3DEF2AB48A1300D2EAE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+        {% if params.code_sign_style ==='Automatic' %}
+        CODE_SIGN_IDENTITY = "{{params.code_sign_identity}}";
+        {% else %}
+        CODE_SIGN_IDENTITY = "{{params.code_sign_identity}}";
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+        {% endif%}
+				CODE_SIGN_STYLE = {{params.code_sign_style}};
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "\"fnet-ios-app/Preview Content\"";
+				DEVELOPMENT_TEAM = {{params.development_team}};
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "fnet-ios-app/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to recognize and process voice commands within the app.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We need access to speech recognition to process voice commands.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = {{params.version}};
+				PRODUCT_BUNDLE_IDENTIFIER = "{{params.product_bundle_identifier}}";
+				{# PRODUCT_NAME = "$(TARGET_NAME)"; #}
+        PRODUCT_NAME = "{{params.product_name}}";
+        {% if params.code_sign_style ==='Automatic' %}
+        PROVISIONING_PROFILE_SPECIFIER = "";
+        {% else %}
+				PROVISIONING_PROFILE_SPECIFIER = "";
+        "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "{{params.provisioning_profile_specifier}}";
+        {% endif%}
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		45BE3DDA2AB48A1200D2EAE3 /* Build configuration list for PBXProject "fnet-ios-app" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				45BE3DEB2AB48A1300D2EAE3 /* Debug */,
+				45BE3DEC2AB48A1300D2EAE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		45BE3DED2AB48A1300D2EAE3 /* Build configuration list for PBXNativeTarget "fnet-ios-app" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				45BE3DEE2AB48A1300D2EAE3 /* Debug */,
+				45BE3DEF2AB48A1300D2EAE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 45BE3DD72AB48A1200D2EAE3 /* Project object */;
+}

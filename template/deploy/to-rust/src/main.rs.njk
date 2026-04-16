@@ -1,0 +1,112 @@
+use clap::{App, Arg};
+use mime_guess;
+use rust_embed::RustEmbed;
+use std::env;
+use std::net::{IpAddr, SocketAddr};
+use warp::path::FullPath;
+use warp::Filter;
+use webbrowser::{self, BrowserOptions};
+
+#[derive(RustEmbed)]
+#[folder = "dist/"]  // We use the dist/ folder as the root for our embedded assets.
+struct Asset;
+
+async fn into_response(path: FullPath) -> Result<impl warp::Reply, warp::Rejection> {
+    let mut file_path = path.as_str().to_string();  // Convert to owned String
+
+    // If the request ends with "/", serve the index.html from that directory
+    if file_path.ends_with('/') {
+        file_path = format!("{}index.html", file_path);  // Now works with an owned String
+    }
+
+    // Remove the leading '/' because our asset paths don't start with '/'
+    let file = Asset::get(&file_path[1..]);
+
+    match file {
+        Some(file) => {
+            // Guess MIME type based on the file path
+            let mime_type = mime_guess::from_path(&file_path).first_or_octet_stream();
+            let response: warp::http::Response<Vec<u8>> = warp::http::Response::builder()
+                .header("content-type", mime_type.to_string())
+                .body(file.data.into())
+                .unwrap();
+            Ok(response)
+        }
+        None => Err(warp::reject::not_found()),
+    }
+}
+
+async fn start_server(host: &str, mut port: u16) -> Result<(), Box<dyn std::error::Error>> {
+    // Loop to find the first available port starting from the provided port
+    loop {
+        let socket = SocketAddr::new(host.parse::<IpAddr>()?, port);
+        match warp::serve(warp::path::full().and_then(into_response))
+            .try_bind_ephemeral(socket)
+        {
+            Ok((addr, server)) => {
+                println!("Server running at: http://{}/", addr);
+                // Open the server address in the default web browser, but point directly to /
+                webbrowser::open_browser_with_options(
+                    webbrowser::Browser::Default,
+                    &format!("http://{}/", addr), // Open directly to /
+                    BrowserOptions::new().with_target_hint("_parent"),
+                )
+                .unwrap();
+
+                // Await the server
+                server.await;
+                break;
+            }
+            Err(_) => {
+                // Port is in use, try the next one
+                port += 1;
+                println!("Port {} is in use, trying port {}...", port - 1, port);
+            }
+        }
+    }
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() {
+    // CLI argument parser
+    let matches = App::new("{{params.name}}")
+        .version("{{params.version}}")
+        .author("{{params.author}}")
+        .about("{{params.description or params.title or params.name}}")
+        .arg(
+            Arg::with_name("host")
+                .short('h')  // Use single quotes for char
+                .long("host")
+                .takes_value(true)
+                .help("Sets the host to bind the server to"),
+        )
+        .arg(
+            Arg::with_name("port")
+                .short('p')  // Use single quotes for char
+                .long("port")
+                .takes_value(true)
+                .help("Sets the port to start the server"),
+        )
+        .get_matches();
+
+    // Fetch host and port from environment variables or defaults
+    let default_host = "127.0.0.1".to_string();
+    let default_port = 3000;
+
+    // First, check the CLI arguments, then environment variables, then defaults
+    let host = matches.value_of("host")
+        .map(|s| s.to_string())  // Take CLI argument
+        .or_else(|| env::var("HOST").ok())  // Take environment variable if available
+        .unwrap_or(default_host);  // Fallback to default
+
+    let port: u16 = matches.value_of("port")
+        .and_then(|p| p.parse().ok())  // Try parsing CLI argument
+        .or_else(|| env::var("PORT").ok().and_then(|p| p.parse().ok()))  // Try parsing env variable
+        .unwrap_or(default_port);  // Fallback to default
+
+    // Start the server with the resolved host and port
+    if let Err(e) = start_server(&host, port).await {
+        eprintln!("Server failed to start: {}", e);
+    }
+}

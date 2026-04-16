@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetDeployer from '@flownet/lib-to-docker';
+import fnetDeployer from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

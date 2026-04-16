@@ -13,8 +13,8 @@ build:
     - bun build ./dist/frun/index.js --compile --outfile=$HOME/.fnet/bin/frun
     - bun build ./dist/fbin/index.js --compile --outfile=$HOME/.fnet/bin/fbin
     - bun build ./dist/fservice/index.js --compile --outfile=$HOME/.fnet/bin/fservice
-    - bun build ./dist/fnode/index.js --compile --outfile=$HOME/.fnet/bin/fnodex
-    - bun build ./dist/fnet/index.js --compile --outfile=$HOME/.fnet/bin/fnetx
+    - bun build ./dist/fnode/index.js --compile --outfile=$HOME/.fnet/bin/fnode
+    - bun build ./dist/fnet/index.js --compile --outfile=$HOME/.fnet/bin/fnet
     - echo: "Copying templates to ~/.fnet/template/..."
     - rm -rf $HOME/.fnet/template
     - mkdir -p $HOME/.fnet/template
@@ -41,10 +41,10 @@ test-create:
     # fnode projects
     - wdir: .tests
       steps:
-        - fnodex create --name test-node --runtime node --no-vscode
-        - fnodex create --name test-python --runtime python --no-vscode
-        - fnodex create --name test-bun --runtime bun --no-vscode
-        - fnetx create --name test-flow --no-vscode
+        - fnode create --name test-node --runtime node --no-vscode
+        - fnode create --name test-python --runtime python --no-vscode
+        - fnode create --name test-bun --runtime bun --no-vscode
+        - fnet create --name test-flow --no-vscode
     - echo: "All projects created successfully"
 
 test-build:
@@ -53,20 +53,20 @@ test-build:
   steps:
     - wdir: .tests/test-node
       steps:
-        - fnodex build
-        - fnodex cli
+        - fnode build
+        - fnode cli
     - wdir: .tests/test-python
       steps:
-        - fnodex build
-        - fnodex cli
+        - fnode build
+        - fnode cli
     - wdir: .tests/test-bun
       steps:
-        - fnodex build
-        - fnodex cli
+        - fnode build
+        - fnode cli
     - wdir: .tests/test-flow
       steps:
-        - fnetx build
-        - fnetx cli
+        - fnet build
+        - fnet cli
     - echo: "All projects built and ran successfully"
 
 test-clean:

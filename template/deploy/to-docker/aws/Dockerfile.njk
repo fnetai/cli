@@ -1,0 +1,114 @@
+FROM {{ params.image_base }}
+
+{# BUN INSTALL  #}
+RUN npm install -g bun
+
+{% if config.env %}
+# Add ARG and ENV for config.env
+{% for key, value in config.env %}
+ARG {{ key }}
+ENV {{ key }}=${{ key }}
+{% endfor %}
+{% endif %}
+
+{% if params.env %}
+# Add ARG and ENV for params.env
+{% for key, value in params.env %}
+ARG {{ key }}
+ENV {{ key }}=${{ key }}
+{% endfor %}
+{% endif %}
+
+
+{% if config.args %}
+# Add ARG for config.args (build-time only)
+{% for key, value in config.args %}
+ARG {{ key }}
+{% endfor %}
+{% endif %}
+
+{% if params.args %}
+# Add ARG for params.args (build-time only)
+{% for key, value in params.args %}
+ARG {{ key }}
+{% endfor %}
+{% endif %}
+
+USER root
+
+WORKDIR /app
+
+{% if config.files %}
+# Handle files from config.files
+{% for file in config.files %}
+{% if file.srcfile %}
+# Copy file from {{ file.srcfile }} to {{ file.path }}
+COPY {{ file.srcfile }} {{ file.path }}
+{% elif file.content %}
+# Create file {{ file.path }} from raw content
+RUN mkdir -p $(dirname {{ file.path }}) && echo '{{ file.content | replace("\n", "\\n") | replace("'", "'\\''") }}' > {{ file.path }}
+{% elif file.base64 %}
+# Create file {{ file.path }} from base64 content
+RUN mkdir -p $(dirname {{ file.path }}) && echo '{{ file.base64 }}' | base64 -d > {{ file.path }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if params.files %}
+# Handle files from params.files
+{% for file in params.files %}
+{% if file.srcfile %}
+# Copy file from {{ file.srcfile }} to {{ file.path }}
+COPY {{ file.srcfile }} {{ file.path }}
+{% elif file.content %}
+# Create file {{ file.path }} from raw content
+RUN mkdir -p $(dirname {{ file.path }}) && echo '{{ file.content | replace("\n", "\\n") | replace("'", "'\\''") }}' > {{ file.path }}
+{% elif file.base64 %}
+# Create file {{ file.path }} from base64 content
+RUN mkdir -p $(dirname {{ file.path }}) && echo '{{ file.base64 }}' | base64 -d > {{ file.path }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+
+COPY package.json ./
+COPY package-lock.json ./ 2>/dev/null || true
+COPY bun.lock ./ 2>/dev/null || true
+
+COPY dist ./dist
+
+ENV NODE_ENV=production
+
+{% if config.scripts.start %}
+{% for script in config.scripts.start %}
+{{ script }}
+{% endfor %}
+{% endif %}
+
+{% if params.scripts.start %}
+{% for script in params.scripts.start %}
+{{ script }}
+{% endfor %}
+{% endif %}
+
+{% if params.dev ===true %}
+RUN npm install --force
+{% else %}
+RUN npm install --omit=dev --force
+{% endif %}
+
+{% if config.scripts.end %}
+{% for script in config.scripts.end %}
+{{ script }}
+{% endfor %}
+{% endif %}
+
+{% if params.scripts.end %}
+{% for script in params.scripts.end %}
+{{ script }}
+{% endfor %}
+{% endif %}
+
+EXPOSE 8080
+
+CMD ["npm", "run", "cli" ]

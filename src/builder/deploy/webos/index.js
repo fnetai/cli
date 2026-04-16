@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetToWebos from '@flownet/lib-to-webos';
+import fnetToWebos from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

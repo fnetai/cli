@@ -1,5 +1,5 @@
 import fnetConfig from '@fnet/config';
-import fnetToElectron from '@flownet/lib-to-electron';
+import fnetToElectron from './deployer.js';
 import cloneDeep from "lodash.clonedeep";
 import semver from 'semver';
 

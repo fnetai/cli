@@ -1,0 +1,16 @@
+[package]
+name = "{{params.package_name}}"
+version = "{{params.version}}"
+
+edition = "2021"
+
+[dependencies]
+warp = "0.3.7"
+tokio = { version = "1.40", features = ["full"] }
+webbrowser = "1.0"
+rust-embed = "8.5"
+mime_guess = "2.0"
+serde = "1.0"
+serde_urlencoded = "0.7"
+serde_derive = "1.0"
+clap = "3.0"
