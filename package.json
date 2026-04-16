@@ -1,7 +1,8 @@
 {
   "name": "@fnet/cli",
-  "version": "1.15.1",
+  "version": "1.16.0",
   "files": [
+    "bin",
     "dist",
     "template",
     "scripts"
@@ -73,11 +74,11 @@
     "yargs": "^18.0.0"
   },
   "bin": {
-    "fnet": "scripts/bin/fnet",
-    "fnode": "scripts/bin/fnode",
-    "frun": "scripts/bin/frun",
-    "fbin": "scripts/bin/fbin",
-    "fservice": "scripts/bin/fservice"
+    "fnet": "bin/fnet",
+    "fnode": "bin/fnode",
+    "frun": "bin/frun",
+    "fbin": "bin/fbin",
+    "fservice": "bin/fservice"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.9",
