@@ -313,19 +313,6 @@ jobs:
               end
             end
 
-            def post_install
-              fnet_dir = "#{Dir.home}/.fnet"
-              bin_dir = "#{fnet_dir}/bin"
-              template_dir = "#{fnet_dir}/template"
-
-              mkdir_p bin_dir
-              %w[frun fbin fservice fnode fnet].each do |cli|
-                ln_sf "#{bin}/#{cli}", "#{bin_dir}/#{cli}"
-              end
-
-              rm_rf template_dir
-              cp_r "#{share}/fnet/template/.", template_dir
-            end
 
             test do
               %w[frun fbin fservice fnode fnet].each do |cli|
