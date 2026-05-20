@@ -61,7 +61,7 @@ export function bindSimpleContextCommand(builder, { name, bin, preArgs = [], cre
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
           stdio: 'inherit',
-          shell: true,
+          shell: false,
           env
         });
 
@@ -125,7 +125,7 @@ export function bindCondaContextCommand(builder, { name, bin, preArgs = [], crea
         const subprocess = spawn(bin, [...preArgs, ...rawArgs], {
           cwd: projectDir,
           stdio: 'inherit',
-          shell: true,
+          shell: false,
           env: {
             "PYTHONPATH": projectDir
           }
@@ -196,7 +196,7 @@ export function bindCondaBinCommand(builder, { name, createContext, processManag
         const subprocess = spawn(bin, rawArgs, {
           cwd: projectDir,
           stdio: 'inherit',
-          shell: true,
+          shell: false,
           env: {
             "PYTHONPATH": projectDir
           }
@@ -259,7 +259,7 @@ export function bindWithContextCommand(builder, { name, preArgs = [], createCont
         const subprocess = spawn(commandName, [...preArgs, ...rawArgs], {
           cwd: fs.existsSync(projectDir) ? projectDir : process.cwd(),
           stdio: 'inherit',
-          shell: true,
+          shell: false,
           env: {
             ...process.env,
             ...env
@@ -391,7 +391,7 @@ export function bindInstallCommand(builder, { name, createContext, processManage
         const compileProcess = spawn('bun', ['build', './dist/cli/esm/index.js', '--compile', `--outfile=${binaryPath}`], {
           cwd: projectDir,
           stdio: 'inherit',
-          shell: true
+          shell: false
         });
 
         // Track with centralized ProcessManager
@@ -433,7 +433,7 @@ export function bindInstallCommand(builder, { name, createContext, processManage
 
         const installProcess = spawn('fbin', installArgs, {
           stdio: 'inherit',
-          shell: true
+          shell: false
         });
 
         // Track with centralized ProcessManager

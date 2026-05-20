@@ -1,5 +1,6 @@
-import { runPackageScript } from '../../../utils/run-package-script.js';
 import path from 'node:path';
+import which from '../../which.js';
+import { spawn } from 'node:child_process';
 
 export default async function runNpmBuild({ setProgress, context }) {
 
@@ -18,12 +19,22 @@ export default async function runNpmBuild({ setProgress, context }) {
   env.NODE_PATH = projectNodeModules;
   // Add node_modules/.bin to PATH so local binaries (rollup, tsc, etc.) are found
   env.PATH = `${path.join(projectNodeModules, '.bin')}:${env.PATH || ''}`;
-  // Run the package script directly (detached, no stdio to avoid blocking)
-  await runPackageScript({
-    projectDir,
-    scriptName,
-    shell: true,
-    detached: true,
-    env
+
+  await new Promise((resolve, reject) => {
+    const createProcess = spawn(which('bun')? 'bun':'npm', ['run', 'build'], {
+      stdio: 'inherit',
+      shell: false,
+      cwd: projectDir,
+      env
+    });
+
+    createProcess.on('error', reject);
+    createProcess.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`bun run build exited with code ${code}`));
+      }
+    });
   });
 }

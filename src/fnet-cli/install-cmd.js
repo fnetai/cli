@@ -75,7 +75,7 @@ const command = {
       const compileProcess = spawn('bun', ['build', './dist/cli/esm/index.js', '--compile', `--outfile=${binaryPath}`], {
         cwd: projectDir,
         stdio: 'inherit',
-        shell: true
+        shell: false
       });
 
       // Wait for compilation to complete
@@ -112,7 +112,7 @@ const command = {
 
       const installProcess = spawn('fbin', installArgs, {
         stdio: 'inherit',
-        shell: true
+        shell: false
       });
 
       // Wait for installation to complete

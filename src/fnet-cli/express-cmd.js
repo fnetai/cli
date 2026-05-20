@@ -300,7 +300,7 @@ async function handleExpressCreate(argv) {
 
     const createProcess = spawn('fnet', createArgs, {
       stdio: 'inherit',
-      shell: true,
+      shell: false,
       cwd: parentDir // Set working directory to parent directory
     });
 
@@ -845,7 +845,7 @@ async function openInIDE(projectPath) {
   // Remove quotes from command to avoid shell issues
   const ideProcess = spawn(ideCommand, [projectPath], {
     stdio: 'inherit',
-    shell: true
+    shell: false
   });
 
   return new Promise((resolve, reject) => {
@@ -866,7 +866,7 @@ async function openInIDE(projectPath) {
  */
 async function checkCommand(command) {
   return new Promise((resolve) => {
-    const process = spawn(command, { shell: true, stdio: 'ignore' });
+    const process = spawn(command, { shell: false, stdio: 'ignore' });
     process.on('close', (code) => {
       resolve(code === 0);
     });
@@ -1028,7 +1028,7 @@ async function handleExpressEnter(argv) {
     const shellProcess = spawn(shell, [], {
       stdio: 'inherit',
       cwd: projectPath,
-      shell: true
+      shell: false
     });
 
     return new Promise((resolve) => {
