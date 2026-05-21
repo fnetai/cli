@@ -21,6 +21,7 @@ import buildDevCmd from './build-dev-cmd.js';
 import deployCmd from './deploy-cmd.js';
 import fileCmd from './file-cmd.js';
 import inputCmd from './input-cmd.js';
+import ymlCmd from './yml-cmd.js';
 import { expressCmd } from './express-cmd.js';
 import { setupEnvironment } from './utils.js';
 
@@ -46,6 +47,7 @@ async function main() {
       .command(deployCmd)
       .command(fileCmd)
       .command(inputCmd)
+      .command(ymlCmd)
       .command('express', 'Create and manage express projects', expressCmd);
 
     // Add pass-through commands (all use centralized processManager)

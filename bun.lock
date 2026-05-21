@@ -188,7 +188,7 @@
 
     "@fnet/auto-conda-env": ["@fnet/auto-conda-env@0.2.4", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/shell-flow": "^0.2", "nanoid": "^5.1", "semver": "^7.7" }, "bin": { "auto-conda-env": "dist/cli/esm/index.js" } }, "sha512-0RbSCPF8clbcEoXGxvk4DOwNbnf3QxG0tX5lBFW8bhqQMl7JTtdSNiooHKJdv8UjZBHDUt/nA47SkPhwns0Kbg=="],
 
-    "@fnet/config": ["@fnet/config@0.2.32", "", { "dependencies": { "@fnet/yaml": "^0.1" } }, "sha512-m92vjo0GCSvBxEFZqIvtsCSs7ZqwGVcT+PnbPsGlM8vWW6Wsu3Qp+B+G3Ls0b1a+1pyesJdCHZ0rGLyyVkt2GA=="],
+    "@fnet/config": ["@fnet/config@0.2.33", "", { "dependencies": { "@fnet/yaml": "^0.1" } }, "sha512-FygniwG/flOlxdVM87bK8Z8Y2xyjoU2up9dRkTZO2AsLAeTnOqqqWI3glqIXJKsm0rHar7LjK5TpAlzmdDAzZQ=="],
 
     "@fnet/dir-zipper": ["@fnet/dir-zipper@0.1.8", "", { "dependencies": { "@fnet/args": "^0.1", "@fnet/list-files": "^0.1", "archiver": "^7.0", "ignore": "^7.0", "nanoid": "^5.1" }, "bin": { "fnet-dir-zipper": "dist/cli/esm/index.js" } }, "sha512-oR4QNmEjBDfa0z28DsuY5Iu8yEAuFWUwrN97e6g+wFZGgZ9V1cp/ughZOv/iOSVOpkd9iT9+C8alNGTQqlG3AQ=="],
 
@@ -1038,8 +1038,6 @@
 
     "@fnet/auto-conda-env/semver": ["semver@7.7.4", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA=="],
 
-    "@fnet/config/@fnet/yaml": ["@fnet/yaml@0.1.46", "", { "dependencies": { "@fnet/expression": "^0.1", "get-value": "^4.0", "yaml": "^2.8" } }, "sha512-k9TOSMoy/CATsENb8Z2oylGD547AJZ4FZaysUcoA2qnVt4YpSxwOexHs09AQcK0cBDYiMzkXLYV9UI2jS/iL1A=="],
-
     "@fnet/dir-zipper/nanoid": ["nanoid@5.1.5", "", { "bin": { "nanoid": "bin/nanoid.js" } }, "sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw=="],
 
     "@fnet/npm-list-versions/semver": ["semver@7.7.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="],
@@ -1129,8 +1127,6 @@
     "@aws-crypto/sha256-browser/@smithy/util-utf8/@smithy/util-buffer-from": ["@smithy/util-buffer-from@2.2.0", "", { "dependencies": { "@smithy/is-array-buffer": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA=="],
 
     "@aws-crypto/util/@smithy/util-utf8/@smithy/util-buffer-from": ["@smithy/util-buffer-from@2.2.0", "", { "dependencies": { "@smithy/is-array-buffer": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-IJdWBbTcMQ6DA0gdNhh/BwrLkDR+ADW5Kr1aZmd4k3DIF6ezMV4R2NIAmT08wQJ3yUK82thHWmC/TnK/wpMMIA=="],
-
-    "@fnet/config/@fnet/yaml/yaml": ["yaml@2.8.2", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A=="],
 
     "@fnet/object-from-schema/@fnet/yaml/@fnet/expression": ["@fnet/expression@0.1.29", "", {}, "sha512-06S/BUPjdcZU8IqvufTXhxzJZjlQ6i99eLECSaVkH3HUjebSxJYViQPrg/SLXF0WkxWJ7TY9q4rYmtgLTozyAw=="],
 

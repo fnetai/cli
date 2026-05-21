@@ -1,6 +1,6 @@
 {
   "name": "@fnet/cli",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "files": [
     "bin",
     "dist",
@@ -33,7 +33,7 @@
     "@flownet/lib-create-ios-launch-screens": "^0.2.3",
     "@flownet/lib-render-templates-dir": "^0.1.19",
     "@fnet/auto-conda-env": "^0.2.4",
-    "@fnet/config": "^0.2.32",
+    "@fnet/config": "^0.2.33",
     "@fnet/dir-zipper": "^0.1.8",
     "@fnet/files-to-gcs": "^0.3.12",
     "@fnet/key-value-transformer": "^0.1.4",
