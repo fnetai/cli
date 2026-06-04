@@ -7,6 +7,7 @@ import fnetYaml from '@fnet/yaml';
 import yaml from 'yaml';
 import resolveTemplatePath from '../utils/resolve-template-path.js';
 import { withSystemTags } from '../utils/auto-tags.js';
+import { resolveProjectFile, getProjectFileName } from '../utils/project-file.js';
 
 /**
  * Create a context object for CLI commands
@@ -71,10 +72,11 @@ export async function createContext(argv) {
  * @returns {Promise<Object>} Project information
  */
 async function loadProject({ tags }) {
-  let projectFilePath = findProjectFile(process.cwd());
-  if (!fs.existsSync(projectFilePath)) {
-    throw new Error('fnode.yaml file not found in current directory.');
+  const projectFile = resolveProjectFile(process.cwd(), 'fnode');
+  if (!projectFile) {
+    throw new Error(`${getProjectFileName('fnode')} file not found in current directory.`);
   }
+  const projectFilePath = projectFile.path;
 
   const { raw, parsed } = await fnetYaml({
     file: projectFilePath,
@@ -162,36 +164,3 @@ async function loadProject({ tags }) {
 
   return project;
 }
-
-/**
- * Find project file in directory
- *
- * @param {string} dir - Directory to search in
- * @returns {string} Path to project file
- */
-function findProjectFile(dir) {
-  const nodePath = path.resolve(dir, 'node.yaml');
-  const fnodePath = path.resolve(dir, 'fnode.yaml');
-
-  if (fs.existsSync(fnodePath)) {
-    return fnodePath;
-  }
-
-  if (fs.existsSync(nodePath)) {
-    try {
-      // Migrate node.yaml to fnode.yaml
-      const content = fs.readFileSync(nodePath, 'utf8');
-      fs.writeFileSync(fnodePath, content, 'utf8');
-      fs.unlinkSync(nodePath);
-      console.log(`Migrated node.yaml to fnode.yaml in ${dir}`);
-      return fnodePath;
-    } catch (error) {
-      console.error(`Error migrating node.yaml to fnode.yaml: ${error.message}`);
-      return nodePath;
-    }
-  }
-
-  return fnodePath;
-}
-
-

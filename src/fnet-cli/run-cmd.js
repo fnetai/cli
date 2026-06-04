@@ -24,7 +24,7 @@ const command = {
     try {
       // Run command group using the common utility
       await runCommandGroup({
-        projectType: 'fnet', // Only look for fnet.yaml
+        projectType: 'fnet',
         group: argv.group,
         tags: argv.ftag,
         args: argv,

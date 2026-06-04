@@ -40,10 +40,10 @@ This is the same philosophy that made React successful for UI: provide primitive
 ```text
 @fnet/cli (npm package)
     |
-    |- fnode ---------> Node/Classic Projects (fnode.yaml)
+    |- fnode ---------> Node/Classic Projects (fnode.yml)
     |                   Create, build, deploy reusable Nodes
     |
-    |- fnet ----------> Workflow Projects (fnet.yaml)
+    |- fnet ----------> Workflow Projects (fnet.yml)
     |                   Create, build, deploy Flows
     |
     |- frun ----------> Unified Command Runner
@@ -98,7 +98,7 @@ Each installation method is **fully isolated** — binaries and templates live i
 
 |             | fnode Project                   | fnet Project          |
 | ----------- | ------------------------------- | --------------------- |
-| Config file | `fnode.yaml`                    | `fnet.yaml`           |
+| Config file | `fnode.yml`                    | `fnet.yml`           |
 | Purpose     | Reusable Nodes, standalone apps | Workflow orchestration |
 | CLI         | `fnode`                         | `fnet`                |
 | Runtimes    | Node.js, Bun, Python            | Node.js, Bun          |
@@ -116,7 +116,7 @@ my-project/
 |- src/
 |  |- index.js          # JavaScript (Node.js / Bun)
 |  '- index.py          # Python
-|- fnode.yaml
+|- fnode.yml
 '- .workspace/           # Layers (managed by CLI, not your concern)
 ```
 
@@ -325,7 +325,7 @@ One file, multiple environments. Tags enable environment-specific commands, feat
 ```text
 my-project/
 |- src/                  # Core - your code
-|- fnode.yaml            # or fnet.yaml - project configuration
+|- fnode.yml            # or fnet.yml - project configuration
 |- .workspace/           # Layers - managed by CLI
 '- .fnet/                # Local configuration
 ```

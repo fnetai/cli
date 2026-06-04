@@ -6,6 +6,7 @@ import chalk from 'chalk';
 // import { createContext } from './context.js';
 import fnetPrompt from '@fnet/prompt';
 import promptUtils from '../utils/prompt-utils.js';
+import { detectProjectType, resolveProjectFile } from '../utils/project-file.js';
 
 // Base directory for express projects
 const EXPRESS_BASE_DIR = path.join(os.homedir(), '.fnet', 'express');
@@ -375,10 +376,12 @@ async function handleExpressList(argv) {
 
         // Determine project type
         let projectType = 'unknown';
-        if (projectName.startsWith('fnode-') || fs.existsSync(path.join(projectPath, 'fnode.yaml'))) {
+        if (projectName.startsWith('fnode-')) {
           projectType = 'fnode';
-        } else if (projectName.startsWith('fnet-') || fs.existsSync(path.join(projectPath, 'fnet.yaml'))) {
+        } else if (projectName.startsWith('fnet-')) {
           projectType = 'fnet';
+        } else {
+          projectType = detectProjectType(projectPath) || 'unknown';
         }
 
         // Apply type filter if specified
@@ -638,10 +641,7 @@ async function handleExpressMove(argv) {
  * Check if a project matches this CLI's type (fnode)
  */
 function isOwnType(projectPath, projectName) {
-  if (projectName.startsWith('fnode-') || fs.existsSync(path.join(projectPath, 'fnode.yaml'))) {
-    return true;
-  }
-  return false;
+  return projectName.startsWith('fnode-') || resolveProjectFile(projectPath, 'fnode', { migrate: false }) !== null;
 }
 
 /**

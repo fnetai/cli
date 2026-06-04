@@ -9,6 +9,7 @@ import isObject from 'isobject';
 import { randomUUID } from 'node:crypto';
 import { treeLogger, bpmnLogger, isLogEnabled } from './logger.js';
 import Auth from './auth.js';
+import { getProjectFileName } from '../utils/project-file.js';
 import initFeatures from "./api/init-features/index.js";
 import initDependencies from "./api/init-dependencies/index.js";
 import initDependenciesBun from "./api/init-dependencies/bun.js";
@@ -1184,7 +1185,7 @@ class Builder {
 
   async createProjectYaml() {
 
-    const fileBase = `fnet.yaml`;
+    const fileBase = getProjectFileName('fnet');
     const message = `Creating ${fileBase}`;
 
     await this.setProgress({ message: message });

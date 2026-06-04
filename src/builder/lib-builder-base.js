@@ -13,6 +13,7 @@ import fnetListFiles from '@fnet/list-files';
 // import createRedisClient from '../redisClient.js';
 import Auth from './auth.js';
 import deployTo from './deploy/deploy-to/index.js';
+import { getProjectFileName } from '../utils/project-file.js';
 
 /**
  * Base Builder class with common functionality for all runtimes
@@ -224,7 +225,7 @@ class BuilderBase {
    * @returns {Promise<void>}
    */
   async createProjectYaml() {
-    const fileBase = `fnode.yaml`;
+    const fileBase = getProjectFileName('fnode');
     const message = `Creating ${fileBase}`;
 
     await this.setProgress({ message: message });

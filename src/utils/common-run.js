@@ -1,9 +1,8 @@
-import fs from 'fs';
-import path from 'path';
 import chalk from 'chalk';
 import fnetYaml from '@fnet/yaml';
 import fnetShellFlow, { ProcessManager } from '@fnet/shell-flow';
 import { withSystemTags } from './auto-tags.js';
+import { detectProjectFile } from './project-file.js';
 
 /**
  * Run a command group from a project file
@@ -117,57 +116,4 @@ export async function listCommandGroups({ projectType, tags }) {
   }
 }
 
-/**
- * Detect project file based on project type
- *
- * @param {string} projectType - Type of project ('fnode', 'fnet', or 'auto')
- * @returns {Promise<Object>} Project file information
- */
-export async function detectProjectFile(projectType) {
-  const cwd = process.cwd();
-  const fnodeYamlPath = path.resolve(cwd, 'fnode.yaml');
-  const fnetYamlPath = path.resolve(cwd, 'fnet.yaml');
-
-  // For fnode projects, only check fnode.yaml
-  if (projectType === 'fnode') {
-    if (fs.existsSync(fnodeYamlPath)) {
-      return {
-        path: fnodeYamlPath,
-        name: 'fnode.yaml',
-        type: 'fnode'
-      };
-    }
-    throw new Error('fnode.yaml file not found in current directory');
-  }
-
-  // For fnet projects, only check fnet.yaml
-  if (projectType === 'fnet') {
-    if (fs.existsSync(fnetYamlPath)) {
-      return {
-        path: fnetYamlPath,
-        name: 'fnet.yaml',
-        type: 'fnet'
-      };
-    }
-    throw new Error('fnet.yaml file not found in current directory');
-  }
-
-  // For auto detection, check both files
-  if (fs.existsSync(fnodeYamlPath)) {
-    return {
-      path: fnodeYamlPath,
-      name: 'fnode.yaml',
-      type: 'fnode'
-    };
-  }
-
-  if (fs.existsSync(fnetYamlPath)) {
-    return {
-      path: fnetYamlPath,
-      name: 'fnet.yaml',
-      type: 'fnet'
-    };
-  }
-
-  throw new Error('No project file (fnode.yaml or fnet.yaml) found in current directory');
-}
+export { detectProjectFile };

@@ -24,7 +24,7 @@ const command = {
     try {
       // Run command group using the common utility
       await runCommandGroup({
-        projectType: 'fnode', // Only look for fnode.yaml
+        projectType: 'fnode',
         group: argv.group,
         tags: argv.ftag,
         args: argv,

@@ -7,6 +7,7 @@ import fnetYaml from '@fnet/yaml';
 import yaml from 'yaml';
 import resolveTemplatePath from '../utils/resolve-template-path.js';
 import { withSystemTags } from '../utils/auto-tags.js';
+import { resolveProjectFile, getProjectFileName } from '../utils/project-file.js';
 
 /**
  * Create a context object for CLI commands
@@ -73,10 +74,11 @@ export async function createContext(argv) {
  * @returns {Promise<Object>} Project information
  */
 async function loadProject({ tags, flowsPath }) {
-  let projectFilePath = findProjectFile(process.cwd());
-  if (!fs.existsSync(projectFilePath)) {
-    throw new Error('fnet.yaml file not found in current directory.');
+  const projectFile = resolveProjectFile(process.cwd(), 'fnet');
+  if (!projectFile) {
+    throw new Error(`${getProjectFileName('fnet')} file not found in current directory.`);
   }
+  const projectFilePath = projectFile.path;
 
   const { raw: projectFileContent, parsed: projectFileParsed } = await fnetYaml({
     file: projectFilePath,
@@ -183,27 +185,3 @@ async function loadProject({ tags, flowsPath }) {
 
   return project;
 }
-
-/**
- * Find project file in directory
- * Searches for fnet.yaml first, then fnet.yml
- *
- * @param {string} dir - Directory to search in
- * @returns {string} Path to project file
- */
-function findProjectFile(dir) {
-  const yamlPath = path.resolve(dir, 'fnet.yaml');
-  if (fs.existsSync(yamlPath)) {
-    return yamlPath;
-  }
-
-  const ymlPath = path.resolve(dir, 'fnet.yml');
-  if (fs.existsSync(ymlPath)) {
-    return ymlPath;
-  }
-
-  // Return .yaml path as default (error handling will occur in caller)
-  return yamlPath;
-}
-
-
