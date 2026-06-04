@@ -6,7 +6,7 @@ test::fnode::bun::create:
     - mkdir -p .tests && rm -rf .tests/fnode-bun
     - wdir: .tests
       steps:
-        - fnode create --name fnode-bun --runtime bun --no-vscode --no-git --no-build
+        - fnode create --name fnode-bun --runtime bun --no-vscode --no-git 
 
 test::fnode::bun::build:
   description: Test fnode project build and run with bun runtime
@@ -47,7 +47,7 @@ test::fnode::node::create:
     - mkdir -p .tests && rm -rf .tests/fnode-node
     - wdir: .tests
       steps:
-        - fnode create --name fnode-node --runtime node --no-vscode --no-git --no-build 
+        - fnode create --name fnode-node --runtime node --no-vscode --no-git  
 
 test::fnode::node::build:
   description: Test fnode project build and run with node runtime
@@ -88,7 +88,7 @@ test::fnode::python::create:
     - mkdir -p .tests && rm -rf .tests/fnode-python
     - wdir: .tests
       steps:
-        - fnode create --name fnode-python --runtime python --no-vscode --no-git --no-build
+        - fnode create --name fnode-python --runtime python --no-vscode --no-git 
 
 test::fnode::python::build:
   description: Test fnode project build and run with python runtime
@@ -129,7 +129,7 @@ test::fnet::bun::create:
     - mkdir -p .tests && rm -rf .tests/fnet-bun
     - wdir: .tests
       steps:
-        - fnet create --name fnet-bun --runtime bun --no-vscode --no-git --no-build
+        - fnet create --name fnet-bun --runtime bun --no-vscode --no-git 
 
 test::fnet::bun::build:
   description: Test fnet project build and run with bun runtime
@@ -170,7 +170,7 @@ test::fnet::node::create:
     - mkdir -p .tests && rm -rf .tests/fnet-node
     - wdir: .tests
       steps:
-        - fnet create --name fnet-node --runtime node --no-vscode --no-git --no-build
+        - fnet create --name fnet-node --runtime node --no-vscode --no-git 
 
 test::fnet::node::build:
   description: Test fnet project build and run with node runtime
