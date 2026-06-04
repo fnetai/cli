@@ -1,3 +1,11 @@
 name: {{name}}
 
 flows: g::file://./fnet/flows.yaml
+
+{% if runtime === 'node' %}
+features:
+  s::runtime.type: node
+{% elif runtime === 'bun' %}
+features:
+  s::runtime.type: bun
+{% endif %}
