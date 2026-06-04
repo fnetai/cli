@@ -1,60 +1,227 @@
-# --- Test commands ---
-test::create:
-  description: Test fnode/fnet project creation (node, python, bun)
-  usage: frun test::create
+# fnode-bun
+test::fnode::bun::create:
+  description: Test fnode project creation with bun runtime
+  usage: frun test::fnode::bun::create
   steps:
-    - rm -rf .tests
-    - mkdir -p .tests
-    # fnode projects
+    - mkdir -p .tests && rm -rf .tests/fnode-bun
     - wdir: .tests
       steps:
-        # fnode projects
-        - fnode create --name fnode-node --runtime node --no-vscode --no-git --no-build
-        - fnode create --name fnode-python --runtime python --no-vscode --no-git --no-build
         - fnode create --name fnode-bun --runtime bun --no-vscode --no-git --no-build
-        # fnet projects
-        - fnet create --name fnet-node --runtime node --no-vscode --no-git --no-build
-        - fnet create --name fnet-bun --runtime bun --no-vscode --no-git --no-build
-    - echo: "All projects created successfully"
 
-test::build:
-  description: Test fnode/fnet project build and run
-  usage: frun test::build
+test::fnode::bun::build:
+  description: Test fnode project build and run with bun runtime
+  usage: frun test::fnode::bun::build
+  steps:
+    - wdir: .tests/fnode-bun
+      steps:
+        - fnode build
+
+test::fnode::bun::cli:
+  description: Test fnode project CLI with bun runtime
+  usage: frun test::fnode::bun::cli
+  steps:
+    - wdir: .tests/fnode-bun
+      steps:
+        - fnode cli
+
+test::fnode::bun::cleanup:
+  description: Test fnode project cleanup with bun runtime
+  usage: frun test::fnode::bun::cleanup
+  steps:
+    - rm -rf .tests/fnode-bun
+
+test::fnode::bun:
+  description: Test full fnode project lifecycle with bun runtime
+  usage: frun test::fnode::bun
+  steps:
+    - frun test::fnode::bun::create
+    - frun test::fnode::bun::build
+    - frun test::fnode::bun::cli
+    - frun test::fnode::bun::cleanup
+
+#fnode-node
+test::fnode::node::create:
+  description: Test fnode project creation with node runtime
+  usage: frun test::fnode::node::create
+  steps:
+    - mkdir -p .tests && rm -rf .tests/fnode-node
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-node --runtime node --no-vscode --no-git --no-build 
+
+test::fnode::node::build:
+  description: Test fnode project build and run with node runtime
+  usage: frun test::fnode::node::build
   steps:
     - wdir: .tests/fnode-node
       steps:
         - fnode build
+
+test::fnode::node::cli:
+  description: Test fnode project CLI with node runtime
+  usage: frun test::fnode::node::cli
+  steps:
+    - wdir: .tests/fnode-node
+      steps:
         - fnode cli
+
+test::fnode::node::cleanup:
+  description: Test fnode project cleanup with node runtime
+  usage: frun test::fnode::node::cleanup
+  steps:
+    - rm -rf .tests/fnode-node
+
+test::fnode::node:
+  description: Test full fnode project lifecycle with node runtime
+  usage: frun test::fnode::node
+  steps:
+    - frun test::fnode::node::create
+    - frun test::fnode::node::build
+    - frun test::fnode::node::cli
+    - frun test::fnode::node::cleanup
+
+# fnode-python
+test::fnode::python::create:
+  description: Test fnode project creation with python runtime
+  usage: frun test::fnode::python::create
+  steps:
+    - mkdir -p .tests && rm -rf .tests/fnode-python
+    - wdir: .tests
+      steps:
+        - fnode create --name fnode-python --runtime python --no-vscode --no-git --no-build
+
+test::fnode::python::build:
+  description: Test fnode project build and run with python runtime
+  usage: frun test::fnode::python::build
+  steps:
     - wdir: .tests/fnode-python
       steps:
         - fnode build
-        - fnode cli
-    - wdir: .tests/fnode-bun
+
+test::fnode::python::cli:
+  description: Test fnode project CLI with python runtime
+  usage: frun test::fnode::python::cli
+  steps:
+    - wdir: .tests/fnode-python
       steps:
-        - fnode build
         - fnode cli
-    - wdir: .tests/fnet-node
+
+test::fnode::python::cleanup:
+  description: Test fnode project cleanup with python runtime
+  usage: frun test::fnode::python::cleanup
+  steps:
+    - rm -rf .tests/fnode-python
+
+test::fnode::python:
+  description: Test full fnode project lifecycle with python runtime
+  usage: frun test::fnode::python
+  steps:
+    - frun test::fnode::python::create
+    - frun test::fnode::python::build
+    - frun test::fnode::python::cli
+    - frun test::fnode::python::cleanup
+
+# fnet-bun
+test::fnet::bun::create:
+  description: Test fnet project creation with bun runtime
+  usage: frun test::fnet::bun::create
+  steps:
+    - mkdir -p .tests && rm -rf .tests/fnet-bun
+    - wdir: .tests
       steps:
-        - fnet build
-        - fnet cli
+        - fnet create --name fnet-bun --runtime bun --no-vscode --no-git --no-build
+
+test::fnet::bun::build:
+  description: Test fnet project build and run with bun runtime
+  usage: frun test::fnet::bun::build
+  steps:
     - wdir: .tests/fnet-bun
       steps:
         - fnet build
-        - fnet cli
-    - echo: "All projects built and ran successfully"
 
-test::clean:
-  description: Clean up test artifacts
-  usage: frun test::clean
+test::fnet::bun::cli:
+  description: Test fnet project CLI with bun runtime
+  usage: frun test::fnet::bun::cli
   steps:
-    - rm -rf .tests
-    - echo: "Test artifacts cleaned"
+    - wdir: .tests/fnet-bun
+      steps:
+        - fnet cli
+
+test::fnet::bun::cleanup:
+  description: Test fnet project cleanup with bun runtime
+  usage: frun test::fnet::bun::cleanup
+  steps:
+    - rm -rf .tests/fnet-bun
+
+test::fnet::bun:
+  description: Test full fnet project lifecycle with bun runtime
+  usage: frun test::fnet::bun
+  steps:
+    - frun test::fnet::bun::create
+    - frun test::fnet::bun::build
+    - frun test::fnet::bun::cli
+    - frun test::fnet::bun::cleanup
+
+# fnet-node
+test::fnet::node::create:
+  description: Test fnet project creation with node runtime
+  usage: frun test::fnet::node::create
+  steps:
+    - mkdir -p .tests && rm -rf .tests/fnet-node
+    - wdir: .tests
+      steps:
+        - fnet create --name fnet-node --runtime node --no-vscode --no-git --no-build
+
+test::fnet::node::build:
+  description: Test fnet project build and run with node runtime
+  usage: frun test::fnet::node::build
+  steps:
+    - wdir: .tests/fnet-node
+      steps:
+        - fnet build
+
+test::fnet::node::cli:
+  description: Test fnet project CLI with node runtime
+  usage: frun test::fnet::node::cli
+  steps:
+    - wdir: .tests/fnet-node
+      steps:
+        - fnet cli
+
+test::fnet::node::cleanup:
+  description: Test fnet project cleanup with node runtime
+  usage: frun test::fnet::node::cleanup
+  steps:
+    - rm -rf .tests/fnet-node
+
+test::fnet::node:
+  description: Test full fnet project lifecycle with node runtime
+  usage: frun test::fnet::node
+  steps:
+    - frun test::fnet::node::create
+    - frun test::fnet::node::build
+    - frun test::fnet::node::cli
+    - frun test::fnet::node::cleanup
+
+# overall tests
+test::fnet:
+  description: Test full fnet project lifecycle for all runtimes
+  usage: frun test::fnet
+  steps:
+    - frun test::fnet::bun
+    - frun test::fnet::node
+
+test::fnode:
+  description: Test full fnode project lifecycle for all runtimes
+  usage: frun test::fnode
+  steps:
+    - frun test::fnode::bun
+    - frun test::fnode::node
+    - frun test::fnode::python
 
 test:
-  description: Run full test suite (create, build, clean)
+  description: Test full fnet and fnode project lifecycle for all runtimes
   usage: frun test
   steps:
-    - frun test::create
-    - frun test::build
-    - frun test::clean
-    - echo: "All tests passed!"
+    - frun test::fnode
+    - frun test::fnet
