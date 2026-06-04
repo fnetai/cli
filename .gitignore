@@ -30,3 +30,6 @@ packageshomebrew-tap
 homebrew-tap
 packages/expression
 tests
+
+# Claude Code session/memory data
+.claude
