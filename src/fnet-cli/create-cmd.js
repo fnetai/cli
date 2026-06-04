@@ -17,29 +17,46 @@ const command = {
   describe: 'Initialize a new fnet project',
   builder: (yargs) => {
     return yargs
-      .option('name', { 
+      .option('name', {
         type: 'string',
-        describe: 'Project name' 
+        describe: 'Project name'
       })
-      .option('vscode', { 
-        type: 'boolean', 
-        default: true, 
+      .option('vscode', {
+        type: 'boolean',
+        default: true,
         alias: 'vs',
-        describe: 'Open in VS Code after creation' 
+        describe: 'Open in VS Code after creation'
       })
-      .option('runtime', { 
-        type: 'string', 
-        default: 'node', 
-        choices: ['node'],
-        describe: 'Runtime environment' 
-      });
+      .option('runtime', {
+        type: 'string',
+        default: 'node',
+        choices: ['node', 'bun'],
+        describe: 'Runtime environment'
+      })
+      .option('build', {
+        type: 'boolean', 
+        default: true,
+        describe: 'Build the project after creation'
+      })
+      .option('git', {
+        type: 'boolean',
+        default: true,
+        describe: 'Initialize a git repository'
+      })
+      .option('build', {
+        type: 'boolean',
+        default: true,
+        describe: 'Build the project after creation'
+      })
+      .demandOption('name', 'Please provide a project name using --name')
+      ;
   },
   handler: async (argv) => {
     try {
       const cwd = process.cwd();
       const templateDir = resolveTemplatePath('./template/fnet/project');
       const outDir = path.resolve(cwd, argv.name);
-      
+
       if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
       await fnetRender({
@@ -50,16 +67,18 @@ const command = {
         platform: os.platform()
       });
 
-      let shellResult = await fnetShellJs(`fnet build`, { cwd: outDir });
-      if (shellResult.code !== 0) throw new Error('Failed to build project.');
+      if (argv.build) {
+        let shellResult = await fnetShellJs(`fnet build`, { cwd: outDir });
+        if (shellResult.code !== 0) throw new Error('Failed to build project.');
+      }
 
-      if (which('git')) {
-        shellResult = await fnetShellJs(`git init --initial-branch=main`, { cwd: outDir });
+      if (argv.git && which('git')) {
+        let shellResult = await fnetShellJs(`git init --initial-branch=main`, { cwd: outDir });
         if (shellResult.code !== 0) throw new Error('Failed to initialize git.');
       }
 
-      if (which('code') && argv.vscode) {
-        shellResult = await fnetShellJs(`cd ${outDir} && code .`);
+      if (argv.vscode && which('code')) {
+        let shellResult = await fnetShellJs(`cd ${outDir} && code .`);
         if (shellResult.code !== 0) throw new Error('Failed to open vscode.');
       }
 
