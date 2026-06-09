@@ -126,7 +126,7 @@ const command = {
         serviceSystem.saveServiceMetadata(metadata);
 
         // Delete service manifest if requested
-        if (!argv.keepDefinition && manifestName) {
+        if (!argv.keepManifest && manifestName) {
           if (serviceSystem.servicManifestExists(manifestName)) {
             const success = serviceSystem.deleteServiceManifest(manifestName);
             if (success) {
