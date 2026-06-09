@@ -22,7 +22,7 @@ export default class Workflow extends Object {
   async init(context) {
 
     {% if context.transform.params %}
-      const params = context?.params;
+      const params = context?.params || {};
       
       {% for param in context.transform.params %}
         {% if param.hasDefault%}
